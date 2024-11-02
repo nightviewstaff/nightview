@@ -1,11 +1,6 @@
 buildscript {
     ext.kotlin_version = '1.9.0'
-    ext {
-        compileSdkVersion = 33
-        targetSdkVersion  = 33
-        minimumSdkVersion = 23
-        appCompatVersion  = "1.4.2"
-    }
+
     repositories {
         google()
         mavenCentral()
@@ -13,7 +8,7 @@ buildscript {
 
     dependencies {
         classpath 'com.google.gms:google-services:4.4.2'
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -28,8 +23,6 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 

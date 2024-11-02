@@ -24,7 +24,9 @@ class ShareCodeHelper {
 
     try {
       AggregateQuerySnapshot snap = await firestore.collection('share_codes').where('code', isEqualTo: code).count().get();
-      return snap.count > 0;
+
+        return snap.count > 0;
+
     } catch (e) {
       print(e);
       return true;

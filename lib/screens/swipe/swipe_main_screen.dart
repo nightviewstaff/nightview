@@ -1,4 +1,3 @@
-import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -18,6 +17,27 @@ class SwipeMainScreen extends StatefulWidget {
 }
 
 class _SwipeMainScreenState extends State<SwipeMainScreen> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+
+  void _onSwipe(DragEndDetails details) {
+    final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
+    if (details.velocity.pixelsPerSecond.dx > 0) {
+      // Swiped right
+      globalProvider.setPartyStatusLocal(PartyStatus.yes);
+      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.yes);
+    } else if (details.velocity.pixelsPerSecond.dx < 0) {
+      // Swiped left
+      globalProvider.setPartyStatusLocal(PartyStatus.no);
+      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.no);
+    } else {
+      // Swiped up/down or no significant swipe
+      globalProvider.setPartyStatusLocal(PartyStatus.unsure);
+      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.unsure);
+    }
+
+    Navigator.of(context).pushReplacementNamed(MainScreen.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,42 +46,26 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: kNormalSpacerValue,
-            ),
+            SizedBox(height: kNormalSpacerValue),
             Text(
               'Tid til at swipe!',
               style: kTextStyleH1,
             ),
             Expanded(
-              child: AppinioSwiper(
-                cardsCount: 1,
-                controller: Provider.of<GlobalProvider>(context).cardController,
-                swipeOptions: AppinioSwipeOptions.symmetric(horizontal: true),
-                cardsBuilder: (context, index) => SwipeCardContent(),
-                onSwipe: (index, direction) {
-                  if (direction == AppinioSwiperDirection.right) {
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .setPartyStatusLocal(PartyStatus.yes);
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .userDataHelper
-                        .setCurrentUsersPartyStatus(status: PartyStatus.yes);
-                  } else if (direction == AppinioSwiperDirection.left) {
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .setPartyStatusLocal(PartyStatus.no);
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .userDataHelper
-                        .setCurrentUsersPartyStatus(status: PartyStatus.no);
-                  } else {
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .setPartyStatusLocal(PartyStatus.unsure);
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .userDataHelper
-                        .setCurrentUsersPartyStatus(status: PartyStatus.unsure);
-                  }
-
-                  Navigator.of(context).pushReplacementNamed(MainScreen.id);
-                },
+              child: GestureDetector(
+                onHorizontalDragEnd: _onSwipe,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return SwipeCardContent(); // Your custom card widget
+                  },
+                  itemCount: 1, // Only one card for demonstration, adjust as needed
+                ),
               ),
             ),
           ],
