@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
@@ -98,23 +97,25 @@ class _NightMapState extends State<NightMap> {
                 point: LatLng(friend.lastPositionLat, friend.lastPositionLon),
                 width: 80.0,
                 height: 100.0,
-                builder: (context) =>
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(friend.firstName,
-                          style: TextStyle(color: secondaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.0,
-                          ),
-                        ),
-                        Icon(
-                          Icons.person_pin_circle,
-                          color: primaryColor,
-                          size: 40.0,
-                        ),
-                      ],
-                    ),)
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      friend.firstName,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Icon(
+                      Icons.person_pin_circle,
+                      color: primaryColor,
+                      size: 40.0,
+                    ),
+                  ],
+                ),
+              )
           };
         });
       }
@@ -134,7 +135,7 @@ class _NightMapState extends State<NightMap> {
         point: LatLng(club.lat, club.lon),
         width: 100.0,
         height: 100.0,
-        builder: (context) =>
+        child:
             ClubMarker(
               logo: CachedNetworkImageProvider(club.logo),
               visitors: club.visitors,
@@ -154,23 +155,11 @@ class _NightMapState extends State<NightMap> {
       mapController: Provider
           .of<GlobalProvider>(context)
           .nightMapController,
-      options: MapOptions(
-        center: LatLng(56.15607303880937, 10.208507572938238),
-        zoom: kFarMapZoom,
+      options: const MapOptions(
+        initialCenter: LatLng(56.15607303880937, 10.208507572938238),
+        initialZoom: kFarMapZoom,
         maxZoom: kMaxMapZoom,
       ),
-      nonRotatedChildren: [
-        RichAttributionWidget(
-          attributions: [
-            TextSourceAttribution(
-              'OpenStreetMap contributors',
-              onTap: () {
-                launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
-              },
-            )
-          ],
-        ),
-      ],
       children: [
         TileLayer(
           urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
@@ -181,9 +170,20 @@ class _NightMapState extends State<NightMap> {
           rotate: true,
           markers: [...markers.values, ...friendMarkers.values],
         ),
+        RichAttributionWidget(
+          attributions: [
+            TextSourceAttribution(
+              'OpenStreetMap contributors',
+              onTap: () {
+                launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
+              },
+            ),
+          ],
+        ),
       ],
     );
   }
+
 
   void showClubSheet({required ClubData club}) {
     showStickyFlexibleBottomSheet(

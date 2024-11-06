@@ -28,7 +28,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   Future<int> getUserCount() async {
     try {
       QuerySnapshot snapshot =
-      await FirebaseFirestore.instance.collection('user_data').get();
+          await FirebaseFirestore.instance.collection('user_data').get();
       return snapshot.docs.length;
     } catch (e) {
       print(e);
@@ -106,7 +106,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                     ),
                     child: Padding(
                       padding:
-                      const EdgeInsets.symmetric(horizontal: kMainPadding),
+                          const EdgeInsets.symmetric(horizontal: kMainPadding),
                       child: Center(
                         // Center the text vertically
                         child: Text(
@@ -139,7 +139,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         // Adjusted to be smaller
                         percent: getDecimalValue(
                           amount:
-                          Provider.of<GlobalProvider>(context).partyCount,
+                              Provider.of<GlobalProvider>(context).partyCount,
                           fullAmount: userCount,
                         ),
                         center: RichText(
@@ -147,11 +147,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                             children: [
                               TextSpan(
                                 text: (getDecimalValue(
-                                    amount: Provider.of<GlobalProvider>(
-                                        context)
-                                        .partyCount,
-                                    fullAmount: userCount) *
-                                    100)
+                                            amount: Provider.of<GlobalProvider>(
+                                                    context)
+                                                .partyCount,
+                                            fullAmount: userCount) *
+                                        100)
                                     .toStringAsFixed(0),
                                 style: kTextStyleH3.copyWith(
                                     color: primaryColor,
@@ -192,22 +192,34 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   controller: searchController,
                   itemHeight: 60.0,
                   suggestions: getSearchSuggestions(),
-                  searchInputDecoration: kSearchInputDecoration,
-                  hint: 'Søg efter klub/bar',
+                  searchInputDecoration: SearchInputDecoration(
+                    hintText: 'Søg efter klub/bar',
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                        width: kMainStrokeWidth,
+                      ),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                    ),
+                  ),
                   onSuggestionTap: (value) {
                     FocusManager.instance.primaryFocus?.unfocus();
                     searchController.clear();
                     Provider.of<GlobalProvider>(context, listen: false)
                         .nightMapController
                         .move(LatLng(value.item.lat, value.item.lon),
-                        kCloseMapZoom);
+                            kCloseMapZoom);
                   },
                 ),
               ),
             ],
           ),
         ),
-        const Expanded(
+        Expanded(
           child: NightMap(),
         ),
       ],

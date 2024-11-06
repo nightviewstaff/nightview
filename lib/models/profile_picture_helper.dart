@@ -38,11 +38,8 @@ class ProfilePictureHelper {
   static Future<File?> _cropImage(File original) async {
     CroppedFile? cropped = await ImageCropper().cropImage(
       sourcePath: original.path,
-      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-      ],
-      cropStyle: CropStyle.circle,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+// Removed cropStyle. Is it needed?
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Vælg billede',

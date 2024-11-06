@@ -1,70 +1,72 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/src/map/flutter_map_state.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart'; TODO
+// import 'package:flutter_map/plugin_api.dart';
+import 'package:latlong2/latlong.dart';
+
 
 // THIS IS COPIED FROM MARKER_LAYER BY FLUTTER_MAP
 // ONLY THING DIFFERENT IS, IT DISPLAYS ALL MARKERS, ALSO THOSE NOT ON SCREEN
 
-class CustomMarkerLayer extends MarkerLayer {
+class CustomMarkerLayer extends StatelessWidget {
+  final List<Marker> markers;
+  final bool rotate;
+  final Offset? rotateOrigin;
+  final AlignmentGeometry rotateAlignment;
+
+
   CustomMarkerLayer({
-    super.key,
-    super.markers = const [],
-    super.rotate = false,
-    super.rotateOrigin,
-    super.rotateAlignment = Alignment.center,
-  });
+    Key? key,
+    this.markers = const [],
+    this.rotate = false,
+    this.rotateOrigin,
+    this.rotateAlignment = Alignment.center,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final map = FlutterMapState.of(context);
+    final mapState = MapCamera.of(context);
     final markerWidgets = <Widget>[];
 
     for (final marker in markers) {
-      // Find the position of the point on the screen
-      final pxPoint = map.project(marker.point);
+      final pxPoint = mapState.project(marker.point);
 
-      // See if any portion of the Marker rect resides in the map bounds
-      // If not, don't spend any resources on build function.
-      // This calculation works for any Anchor position whithin the Marker
-      // Note that Anchor coordinates of (0,0) are at bottom-right of the Marker
-      // unlike the map coordinates.
-      final rightPortion = marker.width - marker.anchor.left;
-      final leftPortion = marker.anchor.left;
-      final bottomPortion = marker.height - marker.anchor.top;
-      final topPortion = marker.anchor.top;
+      // Position the marker assuming it's centered
+      final pos = pxPoint - mapState.pixelOrigin;
+      final left = pos.x - marker.width / 2;
+      final top = pos.y - marker.height / 2;
 
-      // THIS IS THE PART THAT HAS BEEN REMOVED TO STOP FLICKERING
-      // final sw =
-      //     CustomPoint(pxPoint.x + leftPortion, pxPoint.y - bottomPortion);
-      // final ne = CustomPoint(pxPoint.x - rightPortion, pxPoint.y + topPortion);
-      //
+      // This part was originally used for flicker prevention by checking bounds,
+      // but it has been disabled here to ensure all markers are displayed.
+      // You can uncomment and modify it if you want bounds checking:
+      // final sw = CustomPoint(left, top + marker.height);
+      // final ne = CustomPoint(left + marker.width, top);
       // if (!map.pixelBounds.containsPartialBounds(Bounds(sw, ne))) {
       //   continue;
       // }
 
-      final pos = pxPoint - map.pixelOrigin;
       final markerWidget = (marker.rotate ?? rotate)
-          // Counter rotated marker to the map rotation
+      // Counter rotated marker to the map rotation
           ? Transform.rotate(
-              angle: -map.rotationRad,
-              origin: marker.rotateOrigin ?? rotateOrigin,
-              alignment: marker.rotateAlignment ?? rotateAlignment,
-              child: marker.builder(context),
-            )
-          : marker.builder(context);
+        angle: -mapState.rotationRad,
+        origin: rotateOrigin,
+        alignment: rotateAlignment,
+        child: marker.child,
+      )
+          : marker.child;
 
       markerWidgets.add(
         Positioned(
           key: marker.key,
           width: marker.width,
           height: marker.height,
-          left: pos.x - rightPortion,
-          top: pos.y - bottomPortion,
+          left: left,
+          top: top,
           child: markerWidget,
         ),
       );
     }
+
+    // Stack all markers
     return Stack(
       children: markerWidgets,
     );

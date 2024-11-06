@@ -23,15 +23,16 @@ class ShareCodeHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      AggregateQuerySnapshot snap = await firestore.collection('share_codes').where('code', isEqualTo: code).count().get();
-
-        return snap.count > 0;
-
+      // Use `?.count ?? 0` to handle any potential null values safely.
+      int count = (await firestore
+          .collection('share_codes')
+          .where('code', isEqualTo: code)
+          .count().get()).count ?? 0;
+      return count > 0;
     } catch (e) {
       print(e);
-      return true;
+      return true; // Assume code exists if there's an error
     }
-
   }
 
   static Future<bool> uploadShareCode({required String code, required String userId}) async {

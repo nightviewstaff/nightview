@@ -23,12 +23,11 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName', '1.0
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace 'com.nightview.nightview'
-
+    namespace "com.nightview.nightview"
     compileSdkVersion 34
 
     defaultConfig {
-        applicationId "com.nightview.nightview"
+        applicationId = "com.nightview.nightview"
         minSdkVersion 23
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
