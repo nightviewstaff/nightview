@@ -32,7 +32,9 @@ class _LocationPermissionAlwaysScreen
           .locationHelper
           .requestLocationPermission();
 
-      checkPermission();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        checkPermission();
+      });
     });
   }
 
@@ -52,16 +54,15 @@ class _LocationPermissionAlwaysScreen
     }
   }
 
-  void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
-        .locationHelper
-        .hasPermissionAlways
-        .then((hasPermission) {
-      if (hasPermission) {
-        Navigator.of(context)
-            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
-      }
-    });
+  Future<void> checkPermission() async {
+    bool hasPermission = await Provider.of<GlobalProvider>(context, listen: false)
+    .locationHelper
+    .requestLocationPermission();
+
+    if(hasPermission){
+      Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+    }
+
   }
 
   @override

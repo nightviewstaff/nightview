@@ -156,7 +156,7 @@ class _NightMapState extends State<NightMap> {
           .of<GlobalProvider>(context)
           .nightMapController,
       options: const MapOptions(
-        initialCenter: LatLng(56.15607303880937, 10.208507572938238),
+        initialCenter: LatLng(56.26392, 9.501785),
         initialZoom: kFarMapZoom,
         maxZoom: kMaxMapZoom,
       ),

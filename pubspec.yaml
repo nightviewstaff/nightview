@@ -60,7 +60,7 @@ dependencies:
   maps_toolkit: ^3.0.0
   modal_side_sheet: ^0.0.1
   shared_preferences: ^2.2.0
-  async: ^2.10.0
+#  async: ^2.12.0
   location: ^7.0.1
   cached_network_image: ^3.2.3
   image_picker: ^1.1.2
@@ -68,11 +68,17 @@ dependencies:
   flutter_image_compress: ^2.0.4
   image: ^4.1.3
   workmanager: ^0.5.2
-  flutter_local_notifications: ^17.2.4
+  awesome_notifications: any
+#  flutter_local_notifications: any NOT compatable with timezone....
   flutter_rating_bar: ^4.0.0
-  timezone: ^0.9.4
+  timezone: ^0.10.0
   firebase_messaging: ^15.1.3
 
+dependency_overrides:
+    async: ^2.12.0
+
+
+  #DANGEROUS TO REMOVE TESTS!
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -82,7 +88,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -99,7 +105,7 @@ flutter:
   assets:
    - images/
    - images/flags/
-
+flutter_lints: ^5.0.0
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

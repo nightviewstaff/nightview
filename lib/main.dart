@@ -43,7 +43,6 @@ import 'package:provider/provider.dart';
 
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
-import 'models/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -4,7 +4,6 @@ import 'package:nightview/models/location_data.dart';
 import 'package:nightview/models/location_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart' as loc;
 import 'package:nightview/locations/geofence_corner.dart';
@@ -13,21 +12,7 @@ import 'package:nightview/locations/geofence.dart';
 
 class GeofencingService {
   static const fetchBackground = "fetchBackground";
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   List<Geofence> geofences = [];
-
-  GeofencingService() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    _initNotifications();
-  }
-
-  void _initNotifications() {
-    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = DarwinInitializationSettings();
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
 
   void callbackDispatcher() {
     Workmanager().executeTask((task, inputData) async {
@@ -105,10 +90,10 @@ class GeofencingService {
           geofence.center.latitude, geofence.center.longitude);
 
       if (distance <= geofence.radius) {
-        _showNotification("Du er ankommet på klubben", "Hav en skøn aften!");
+        // _showNotification("Du er ankommet på klubben", "Hav en skøn aften!");
         _handleGeofenceEvent(geofence, true);  // Entering geofence
       } else {
-        _showNotification("Du har forladt klubben", "Kom sikkert hjem.");
+        // _showNotification("Du har forladt klubben", "Kom sikkert hjem.");
         _handleGeofenceEvent(geofence, false);  // Exiting geofence
       }
     }
@@ -181,17 +166,6 @@ class GeofencingService {
       print(e);
       return false;
     }
-  }
-
-  Future<void> _showNotification(String title, String body) async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name',
-        importance: Importance.max, priority: Priority.high, showWhen: false);
-    var iOSPlatformChannelSpecifics = DarwinNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, title, body, platformChannelSpecifics, payload: 'item id 2');
   }
 
 
