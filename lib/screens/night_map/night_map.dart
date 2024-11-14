@@ -2,7 +2,6 @@ import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/enums.dart';
@@ -57,7 +56,7 @@ class _NightMapState extends State<NightMap> {
         point: LatLng(club.lat, club.lon),
         width: 100.0,
         height: 100.0,
-        builder: (context) => ClubMarker(
+        child: ClubMarker(
           logo: CachedNetworkImageProvider(club.logo),
           visitors: club.visitors,
           onTap: () {
@@ -79,7 +78,7 @@ class _NightMapState extends State<NightMap> {
         initialZoom: kFarMapZoom,
         maxZoom: kMaxMapZoom,
       ),
-      nonRotatedChildren: [
+      children: [
         RichAttributionWidget(
           attributions: [
             TextSourceAttribution(
@@ -90,8 +89,6 @@ class _NightMapState extends State<NightMap> {
             )
           ],
         ),
-      ],
-      children: [
         TileLayer(
           urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.nightview.nightview',
