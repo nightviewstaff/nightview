@@ -75,8 +75,8 @@ class _NightMapState extends State<NightMap> {
     return FlutterMap(
       mapController: Provider.of<GlobalProvider>(context).nightMapController,
       options: MapOptions(
-        center: LatLng(56.15607303880937, 10.208507572938238),
-        zoom: kFarMapZoom,
+        initialCenter: LatLng(56.15607303880937, 10.208507572938238),
+        initialZoom: kFarMapZoom,
         maxZoom: kMaxMapZoom,
       ),
       nonRotatedChildren: [

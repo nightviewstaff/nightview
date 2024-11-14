@@ -1,8 +1,8 @@
 buildscript {
     ext.kotlin_version = '1.9.0'
     ext {
-        compileSdkVersion = 33
-        targetSdkVersion  = 33
+        compileSdkVersion = 34
+        targetSdkVersion  = 34
         minimumSdkVersion = 23
         appCompatVersion  = "1.4.2"
     }

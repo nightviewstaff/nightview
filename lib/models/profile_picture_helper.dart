@@ -37,10 +37,6 @@ class ProfilePictureHelper {
     CroppedFile? cropped = await ImageCropper().cropImage(
       sourcePath: original.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-      ],
-      cropStyle: CropStyle.circle,
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Vælg billede',

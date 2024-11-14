@@ -97,8 +97,15 @@ class ClubDataHelper {
     // });
     final DateTime timeTreshhold = DateTime.now().subtract(Duration(hours: 1));
     clubData.forEach((clubId, clubData) async {
-      AggregateQuerySnapshot snap = await _firestore.collection('location_data').where('club_id', isEqualTo: clubId).where('latest', isEqualTo: true).where('timestamp', isGreaterThan: Timestamp.fromDate(timeTreshhold)).count().get();
-      clubData.visitors = snap.count;
+      AggregateQuerySnapshot snap = await _firestore
+          .collection('location_data')
+          .where('club_id', isEqualTo: clubId)
+          .where('latest', isEqualTo: true)
+          .where('timestamp', isGreaterThan: Timestamp.fromDate(timeTreshhold))
+          .count()
+          .get();
+
+      clubData.visitors = snap.count ?? 0;
     });
   }
 

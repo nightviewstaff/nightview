@@ -86,14 +86,24 @@ class FriendRequestHelper {
   static Future<bool> userHasRequest(String otherId) async {
     final currentUserId = _auth.currentUser!.uid;
 
-    AggregateQuerySnapshot countQuery1 = await _firestore.collection('friend_requests').where('from', isEqualTo: otherId).where('to', isEqualTo: currentUserId).where('status', isEqualTo: _enumToString(FriendRequestStatus.pending)).count().get();
-    AggregateQuerySnapshot countQuery2 = await _firestore.collection('friend_requests').where('from', isEqualTo: currentUserId).where('to', isEqualTo: otherId).where('status', isEqualTo: _enumToString(FriendRequestStatus.pending)).count().get();
+    int count1 = (await _firestore
+        .collection('friend_requests')
+        .where('from', isEqualTo: otherId)
+        .where('to', isEqualTo: currentUserId)
+        .where('status', isEqualTo: _enumToString(FriendRequestStatus.pending))
+        .count().get()).count ?? 0;  // Defaults to 0 if null
 
-    if (countQuery1.count + countQuery2.count > 0) {
+    int count2 = (await _firestore
+        .collection('friend_requests')
+        .where('from', isEqualTo: currentUserId)
+        .where('to', isEqualTo: otherId)
+        .where('status', isEqualTo: _enumToString(FriendRequestStatus.pending))
+        .count().get()).count ?? 0;  // Defaults to 0 if null
+
+    if (count1 + count2 > 0) {
       return true;
     }
     return false;
-
   }
 
   static Future<void> deleteDataAssociatedTo(String userId) async {

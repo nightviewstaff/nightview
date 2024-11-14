@@ -134,7 +134,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   controller: searchController,
                   itemHeight: 60.0,
                   suggestions: getSearchSuggestions(),
-                  searchInputDecoration: kSearchInputDecoration,
+                  searchInputDecoration: kSearchInputDecoration, //TODO be aware/fix of UI here
                   hint: 'Søg efter klub/bar',
                   onSuggestionTap: (value) {
                     FocusManager.instance.primaryFocus?.unfocus();

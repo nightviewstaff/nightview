@@ -26,27 +26,23 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: kNormalSpacerValue,
-            ),
-            Text(
-              'Tid til at swipe!',
-              style: kTextStyleH1,
-            ),
+            SizedBox(height: kNormalSpacerValue),
+            Text('Tid til at swipe!', style: kTextStyleH1,),
             Expanded(
               child: AppinioSwiper(
-                cardsCount: 1,
+                cardCount: 1,
                 controller: Provider.of<GlobalProvider>(context).cardController,
-                swipeOptions: AppinioSwipeOptions.symmetric(horizontal: true),
-                cardsBuilder: (context, index) => SwipeCardContent(),
-                onSwipe: (index, direction) {
-                  if (direction == AppinioSwiperDirection.right) {
+                cardBuilder: (context, index) => SwipeCardContent(),
+                onSwipeEnd: (index, direction, activity) {
+                  print("Swiped direction: $direction");
+                  print(activity);
+                  if (direction == 1) { // TODO Figure out what direction is and how to do it properly
                     Provider.of<GlobalProvider>(context, listen: false)
                         .setPartyStatusLocal(PartyStatus.yes);
                     Provider.of<GlobalProvider>(context, listen: false)
                         .userDataHelper
                         .setCurrentUsersPartyStatus(status: PartyStatus.yes);
-                  } else if (direction == AppinioSwiperDirection.left) {
+                  } else if (direction == -1) {
                     Provider.of<GlobalProvider>(context, listen: false)
                         .setPartyStatusLocal(PartyStatus.no);
                     Provider.of<GlobalProvider>(context, listen: false)
