@@ -1,71 +1,66 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/src/map/flutter_map_state.dart';
+import 'package:latlong2/latlong.dart';
 
 // THIS IS COPIED FROM MARKER_LAYER BY FLUTTER_MAP
 // ONLY THING DIFFERENT IS, IT DISPLAYS ALL MARKERS, ALSO THOSE NOT ON SCREEN
 
-class CustomMarkerLayer extends MarkerLayer {
-  CustomMarkerLayer({
-    super.key,
-    super.markers = const [],
-    super.rotate = false,
-    super.rotateOrigin,
-    super.rotateAlignment = Alignment.center,
-  });
+class CustomMarkerLayer extends StatefulWidget {
+  final List<Marker> markers;
+  final bool rotate;
+  final AlignmentGeometry rotateAlignment;
+  final Offset? rotateOrigin;
+
+  const CustomMarkerLayer({
+    Key? key,
+    required this.markers,
+    this.rotate = false,
+    this.rotateAlignment = Alignment.center,
+    this.rotateOrigin,
+  }) : super(key: key);
 
   @override
+  _CustomMarkerLayerState createState() => _CustomMarkerLayerState();
+  }
+
+  class _CustomMarkerLayerState extends State<CustomMarkerLayer>{
+  @override
   Widget build(BuildContext context) {
-    final map = FlutterMapState.of(context);
-    final markerWidgets = <Widget>[];
+    final map = MapOptions.of(context);
+    // final mapState = FlutterMapState.maybeOf(context)!; Potential fix
+    // final markerWidgets = <Widget>[];
+    return Stack(
+      children: widget.markers.map((marker) {
+        final projectedPoint =
+            _project(marker.point, map.initialCenter, map.initialZoom);
 
-    for (final marker in markers) {
-      // Find the position of the point on the screen
-      final pxPoint = map.project(marker.point);
+        final markerWidget = widget.rotate
+            ? Transform.rotate(
+                angle: 0, // Rotation.
+                origin: widget.rotateOrigin,
+                alignment: widget.rotateAlignment,
+                child: marker.child,
+              )
+            : marker.child;
 
-      // See if any portion of the Marker rect resides in the map bounds
-      // If not, don't spend any resources on build function.
-      // This calculation works for any Anchor position whithin the Marker
-      // Note that Anchor coordinates of (0,0) are at bottom-right of the Marker
-      // unlike the map coordinates.
-      final rightPortion = marker.width - marker.anchor.left;
-      final leftPortion = marker.anchor.left;
-      final bottomPortion = marker.height - marker.anchor.top;
-      final topPortion = marker.anchor.top;
-
-      // THIS IS THE PART THAT HAS BEEN REMOVED TO STOP FLICKERING
-      // final sw =
-      //     CustomPoint(pxPoint.x + leftPortion, pxPoint.y - bottomPortion);
-      // final ne = CustomPoint(pxPoint.x - rightPortion, pxPoint.y + topPortion);
-      //
-      // if (!map.pixelBounds.containsPartialBounds(Bounds(sw, ne))) {
-      //   continue;
-      // }
-
-      final pos = pxPoint - map.pixelOrigin;
-      final markerWidget = (marker.rotate ?? rotate)
-          // Counter rotated marker to the map rotation
-          ? Transform.rotate(
-              angle: -map.rotationRad,
-              origin: marker.rotateOrigin ?? rotateOrigin,
-              alignment: marker.rotateAlignment ?? rotateAlignment,
-              child: marker.builder(context),
-            )
-          : marker.builder(context);
-
-      markerWidgets.add(
-        Positioned(
+        return Positioned(
           key: marker.key,
           width: marker.width,
           height: marker.height,
-          left: pos.x - rightPortion,
-          top: pos.y - bottomPortion,
+          left: projectedPoint.dx - (marker.width / 2), // Just for now.
+          top: projectedPoint.dy - (marker.height / 2), // :--:
           child: markerWidget,
-        ),
-      );
-    }
-    return Stack(
-      children: markerWidgets,
+        );
+      }).toList(),
     );
+  }
+
+  Offset _project(LatLng point, LatLng center, double zoom) {
+    const scale = 256.0;
+    final worldSize = scale * (1 << zoom.toInt());
+    final x = (point.longitude + 180.0) / 360 * worldSize;
+    final y = (1 - (point.latitude + 90.0) / 180.0) * worldSize / 2.0;
+
+    return Offset(x, y);
   }
 }

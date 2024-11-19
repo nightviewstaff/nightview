@@ -58,7 +58,7 @@ dependencies:
   location: ^7.0.1
 
   card_swiper: ^3.0.1
-  bottom_sheet: ^4.0.4
+  bottom_sheet: ^4.0.4 
   slider_button: ^2.0.0
   modal_side_sheet: ^0.0.1
   shared_preferences: ^2.2.0

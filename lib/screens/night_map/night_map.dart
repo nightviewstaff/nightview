@@ -16,7 +16,6 @@ import 'package:nightview/widgets/club_header.dart';
 import 'package:nightview/widgets/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 class NightMap extends StatefulWidget {
   const NightMap({super.key});
 
@@ -97,6 +96,7 @@ class _NightMapState extends State<NightMap> {
         CustomMarkerLayer(
           rotate: true,
           markers: markers.values.toList(),
+          // rotate: true,
         ),
       ],
     );
@@ -121,38 +121,38 @@ class _NightMapState extends State<NightMap> {
         club.offerType == OfferType.none
             ? []
             : [
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    'Hovedtilbud',
-                    style: kTextStyleH1,
+          Container(
+            alignment: Alignment.topCenter,
+            child: Text(
+              'Hovedtilbud',
+              style: kTextStyleH1,
+            ),
+          ),
+          SizedBox(
+            height: kNormalSpacerValue,
+          ),
+          GestureDetector(
+            onTap: () {
+              if (club.offerType == OfferType.redeemable) {
+                Navigator.of(context)
+                    .pushNamed(NightMapMainOfferScreen.id);
+              }
+            },
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(club.mainOfferImg!),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(
-                  height: kNormalSpacerValue,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (club.offerType == OfferType.redeemable) {
-                      Navigator.of(context)
-                          .pushNamed(NightMapMainOfferScreen.id);
-                    }
-                  },
-                  child: AspectRatio(
-                    aspectRatio: 1.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(club.mainOfferImg!),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      alignment: Alignment.bottomRight,
-                      padding: EdgeInsets.all(kMainPadding),
-                    ),
-                  ),
-                ),
-              ],
+                alignment: Alignment.bottomRight,
+                padding: EdgeInsets.all(kMainPadding),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
