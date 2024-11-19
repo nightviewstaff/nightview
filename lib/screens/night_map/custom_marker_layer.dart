@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
-// THIS IS COPIED FROM MARKER_LAYER BY FLUTTER_MAP
-// ONLY THING DIFFERENT IS, IT DISPLAYS ALL MARKERS, ALSO THOSE NOT ON SCREEN
+import 'dart:math';
 
 class CustomMarkerLayer extends StatefulWidget {
   final List<Marker> markers;
@@ -21,34 +19,35 @@ class CustomMarkerLayer extends StatefulWidget {
 
   @override
   _CustomMarkerLayerState createState() => _CustomMarkerLayerState();
-  }
+}
 
-  class _CustomMarkerLayerState extends State<CustomMarkerLayer>{
+class _CustomMarkerLayerState extends State<CustomMarkerLayer> {
   @override
   Widget build(BuildContext context) {
     final map = MapOptions.of(context);
-    // final mapState = FlutterMapState.maybeOf(context)!; Potential fix
-    // final markerWidgets = <Widget>[];
+
     return Stack(
       children: widget.markers.map((marker) {
         final projectedPoint =
-            _project(marker.point, map.initialCenter, map.initialZoom);
+        _project(marker.point, map.initialCenter, map.initialZoom);
 
         final markerWidget = widget.rotate
             ? Transform.rotate(
-                angle: 0, // Rotation.
-                origin: widget.rotateOrigin,
-                alignment: widget.rotateAlignment,
-                child: marker.child,
-              )
+          angle: 0, // Adjust for rotation
+          origin: widget.rotateOrigin,
+          alignment: widget.rotateAlignment,
+          child: marker.child,
+        )
             : marker.child;
+
+        debugPrint('Projected position: $projectedPoint');
 
         return Positioned(
           key: marker.key,
           width: marker.width,
           height: marker.height,
-          left: projectedPoint.dx - (marker.width / 2), // Just for now.
-          top: projectedPoint.dy - (marker.height / 2), // :--:
+          left: projectedPoint.dx - (marker.width / 2),
+          top: projectedPoint.dy - (marker.height / 2),
           child: markerWidget,
         );
       }).toList(),
@@ -56,11 +55,25 @@ class CustomMarkerLayer extends StatefulWidget {
   }
 
   Offset _project(LatLng point, LatLng center, double zoom) {
-    const scale = 256.0;
-    final worldSize = scale * (1 << zoom.toInt());
-    final x = (point.longitude + 180.0) / 360 * worldSize;
-    final y = (1 - (point.latitude + 90.0) / 180.0) * worldSize / 2.0;
+    const double scale = 256; // Base tile size for Mercator projection
+    final double worldSize = scale * (1 << zoom.toInt());
 
-    return Offset(x, y);
+    // Convert LatLng to world coordinates
+    final double x = ((point.longitude + 180) / 360) * worldSize;
+    final double y = ((1 -
+        (log(tan(point.latitude * pi / 180) + 1 / cos(point.latitude * pi / 180)) /
+            pi)) /
+        2) *
+        worldSize;
+
+    // Center offset
+    final double centerX = ((center.longitude + 180) / 360) * worldSize;
+    final double centerY = ((1 -
+        (log(tan(center.latitude * pi / 180) + 1 / cos(center.latitude * pi / 180)) /
+            pi)) /
+        2) *
+        worldSize;
+
+    return Offset(x - centerX + (scale / 2), y - centerY + (scale / 2));
   }
 }
