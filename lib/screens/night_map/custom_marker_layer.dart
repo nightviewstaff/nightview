@@ -1,11 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'dart:math';
 
-// THIS IS COPIED FROM MARKER_LAYER BY FLUTTER_MAP
-// ONLY THING DIFFERENT IS, IT DISPLAYS ALL MARKERS, ALSO THOSE NOT ON SCREEN
-
+/// CustomMarkerLayer: Displays all markers, including those off-screen.
 class CustomMarkerLayer extends MarkerLayer {
   final List<Marker> markers;
   final bool rotate;
@@ -16,51 +12,37 @@ class CustomMarkerLayer extends MarkerLayer {
     Key? key,
     required this.markers,
     this.rotate = false,
-    this.rotateAlignment = Alignment.center,
     this.rotateOrigin,
-  }) : super(key: key);
+    this.rotateAlignment = Alignment.center,
+  }) : super(key: key, markers: markers);
 
   @override
   Widget build(BuildContext context) {
-    final map = MapOptions.of(context);
+    final mapState = MapCamera.of(context);
     final markerWidgets = <Widget>[];
 
     for (final marker in markers) {
-      // Find the position of the point on the screen
-      final pxPoint = map.project(marker.point);
+      final markerWidth = marker.width ?? 1.0;
+      final markerHeight = marker.height ?? 1.0;
 
-      // See if any portion of the Marker rect resides in the map bounds
-      // If not, don't spend any resources on build function.
-      // This calculation works for any Anchor position whithin the Marker
-      // Note that Anchor coordinates of (0,0) are at bottom-right of the Marker
-      // unlike the map coordinates.
-      final rightPortion = marker.width - marker.anchor.left;
-      final leftPortion = marker.anchor.left;
-      final bottomPortion = marker.height - marker.anchor.top;
-      final topPortion = marker.anchor.top;
+      // Calculate the projected position of the marker
+      final pxPoint = mapState.latLngToScreenPoint(marker.point);
 
-        final markerWidget = widget.rotate
-            ?? Transform.rotate(
-          angle: 0, // Adjust for rotation
-          origin: rotateOrigin,
-          alignment: rotateAlignment,
-          child: marker.child,
-        )
-            : marker.child;
+      // Convert Point to Offset
+      final pos = Offset(pxPoint.x, pxPoint.y);
 
+      // Skip rotation logic to ensure markers are fixed
       markerWidgets.add(
         Positioned(
           key: marker.key,
-          width: marker.width,
-          height: marker.height,
-          left: projectedPoint.dx - (marker.width / 2),
-          top: projectedPoint.dy - (marker.height / 2),
-          child: markerWidget,
+          width: markerWidth,
+          height: markerHeight,
+          left: pos.dx - markerWidth / 2,
+          top: pos.dy - markerHeight / 2,
+          child: marker.child,
         ),
       );
     }
-    return Stack(
-      children: markerWidgets.toList()
-    );
+    return Stack(children: markerWidgets);
   }
 }
