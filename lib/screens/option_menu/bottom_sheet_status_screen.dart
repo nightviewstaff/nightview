@@ -11,7 +11,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: black,
       height: 200.0,
       child: SafeArea(
         child: Column(
@@ -35,7 +35,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
               title: Text('Skal ikke i byen i aften'),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
-                color: Colors.redAccent,
+                color: redAccent,
               ),
               onTap: () {
                 Provider.of<GlobalProvider>(context, listen: false)
@@ -50,7 +50,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
               title: Text('Usikker'),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
-                color: Colors.grey,
+                color: grey,
               ),
               onTap: () {
                 Provider.of<GlobalProvider>(context, listen: false)

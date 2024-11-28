@@ -75,7 +75,7 @@ class FriendsHelper {
         }
       }
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
     return friendIds;
@@ -141,7 +141,7 @@ class FriendsHelper {
         firestore.collection('friends').doc(doc.id).set({userId: false});
       }
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
 
@@ -149,9 +149,30 @@ class FriendsHelper {
     try {
       await firestore.collection('friends').doc(userId).delete();
     } catch (e) {
-      print(e);
+      // print(e);
     }
 
+  }
+
+  static Future<List<UserData>> getFriendsData() async {
+    final _firestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+
+    if (_auth.currentUser == null) {
+      return [];
+    }
+
+    List<UserData> friendsData = [];
+    List<String> friendIds = await getAllFriendIds();
+
+    for (String friendId in friendIds) {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('user_data').doc(friendId).get();
+      if (snapshot.exists) {
+        friendsData.add(UserData.fromMap(snapshot.data()!));
+      }
+    }
+
+    return friendsData;
   }
 
 }

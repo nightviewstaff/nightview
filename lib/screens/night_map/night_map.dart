@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -16,6 +21,8 @@ import 'package:nightview/widgets/club_header.dart';
 import 'package:nightview/widgets/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../models/user_data.dart';
+
 class NightMap extends StatefulWidget {
   const NightMap({super.key});
 
@@ -26,20 +33,92 @@ class NightMap extends StatefulWidget {
 class _NightMapState extends State<NightMap> {
   ClubDataHelper clubDataHelper = ClubDataHelper();
   Map<String, Marker> markers = {};
+  Map<String, Marker> friendMarkers = {};
+  StreamSubscription? _friendLocationSubscription;
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GlobalProvider>(context, listen: false)
+      Provider
+          .of<GlobalProvider>(context, listen: false)
           .locationHelper
           .getCurrentPosition()
           .then((position) {
-        Provider.of<GlobalProvider>(context, listen: false)
+        Provider
+            .of<GlobalProvider>(context, listen: false)
             .nightMapController
             .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
       });
+
+      // _listenToFriendLocations(); Not needed now
+    });
+  }
+
+  @override
+  void dispose() {
+    _friendLocationSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _listenToFriendLocations() async {
+    final _firestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+
+    if (_auth.currentUser == null) {
+      return;
+    }
+
+    String userId = _auth.currentUser!.uid;
+    _friendLocationSubscription = _firestore
+        .collection('friends')
+        .doc(userId)
+        .snapshots()
+        .listen((snapshot) async {
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data()!;
+        List<String> friendIds = data.keys.where((k) => data[k] == true)
+            .toList();
+
+        List<UserData> friendsData = [];
+        for (String friendId in friendIds) {
+          DocumentSnapshot<Map<String, dynamic>> friendSnapshot =
+          await _firestore.collection('user_data').doc(friendId).get();
+          if (friendSnapshot.exists) {
+            friendsData.add(UserData.fromMap(friendSnapshot.data()!));
+          }
+        }
+
+        setState(() {
+          friendMarkers = {
+            for (var friend in friendsData)
+              friend.id: Marker(
+                point: LatLng(friend.lastPositionLat, friend.lastPositionLon),
+                width: 80.0,
+                height: 100.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      friend.firstName,
+                      style: TextStyle(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Icon(
+                      Icons.person_pin_circle,
+                      color: primaryColor,
+                      size: 40.0,
+                    ),
+                  ],
+                ),
+              )
+          };
+        });
+      }
     });
   }
 
@@ -47,7 +126,8 @@ class _NightMapState extends State<NightMap> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Provider.of<GlobalProvider>(context)
+    Provider
+        .of<GlobalProvider>(context)
         .clubDataHelper
         .clubData
         .forEach((id, club) {
@@ -55,15 +135,16 @@ class _NightMapState extends State<NightMap> {
         point: LatLng(club.lat, club.lon),
         width: 100.0,
         height: 100.0,
-        child: ClubMarker(
-          logo: CachedNetworkImageProvider(club.logo),
-          visitors: club.visitors,
-          onTap: () {
-            Provider.of<GlobalProvider>(context, listen: false)
-                .setChosenClub(club);
-            showClubSheet(club: club);
-          },
-        ),
+        child:
+            ClubMarker(
+              logo: CachedNetworkImageProvider(club.logo),
+              visitors: club.visitors,
+              onTap: () {
+                Provider.of<GlobalProvider>(context, listen: false)
+                    .setChosenClub(club);
+                showClubSheet(club: club);
+              },
+            ),
       );
     });
   }
@@ -71,23 +152,15 @@ class _NightMapState extends State<NightMap> {
   @override
   Widget build(BuildContext context) {
     return FlutterMap(
-      mapController: Provider.of<GlobalProvider>(context).nightMapController,
-      options: MapOptions(
-        initialCenter: LatLng(56.15607303880937, 10.208507572938238),
+      mapController: Provider
+          .of<GlobalProvider>(context)
+          .nightMapController,
+      options: const MapOptions(
+        initialCenter: LatLng(56.26392, 9.501785),
         initialZoom: kFarMapZoom,
         maxZoom: kMaxMapZoom,
       ),
       children: [
-        RichAttributionWidget(
-          attributions: [
-            TextSourceAttribution(
-              'OpenStreetMap contributors',
-              onTap: () {
-                launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
-              },
-            )
-          ],
-        ),
         TileLayer(
           urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.nightview.nightview',
@@ -95,8 +168,17 @@ class _NightMapState extends State<NightMap> {
         CurrentLocationLayer(),
         CustomMarkerLayer(
           rotate: true,
-          markers: markers.values.toList(),
-          // rotate: true,
+          markers: [...markers.values, ...friendMarkers.values],
+        ),
+        RichAttributionWidget(
+          attributions: [
+            TextSourceAttribution(
+              'OpenStreetMap contributors',
+              onTap: () {
+                launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -105,55 +187,59 @@ class _NightMapState extends State<NightMap> {
   void showClubSheet({required ClubData club}) {
     showStickyFlexibleBottomSheet(
       context: context,
-      initHeight: 0.3,
+      initHeight: 0.35,
+      // maybe more?
       minHeight: 0,
-      maxHeight: club.offerType == OfferType.none ? 0.3 : 1,
-      headerHeight: 200.0,
+      maxHeight: 1,
+      // club.offerType == OfferType.none ? 0.3 : 1,
+      headerHeight: 315,
       isSafeArea: false,
       bottomSheetColor: Colors.transparent,
       decoration: BoxDecoration(
         color: Colors.black,
       ),
-      headerBuilder: (context, offset) => ClubHeader(
-        club: club,
-      ),
-      bodyBuilder: (context, offset) => SliverChildListDelegate(
-        club.offerType == OfferType.none
-            ? []
-            : [
-          Container(
-            alignment: Alignment.topCenter,
-            child: Text(
-              'Hovedtilbud',
-              style: kTextStyleH1,
-            ),
+      headerBuilder: (context, offset) =>
+          ClubHeader(
+            club: club,
           ),
-          SizedBox(
-            height: kNormalSpacerValue,
-          ),
-          GestureDetector(
-            onTap: () {
-              if (club.offerType == OfferType.redeemable) {
-                Navigator.of(context)
-                    .pushNamed(NightMapMainOfferScreen.id);
-              }
-            },
-            child: AspectRatio(
-              aspectRatio: 1.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(club.mainOfferImg!),
-                    fit: BoxFit.cover,
+      bodyBuilder: (context, offset) =>
+          SliverChildListDelegate(
+            club.offerType == OfferType.none
+                ? []
+                : [
+              Container(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  'Hovedtilbud',
+                  style: kTextStyleH1,
+                ),
+              ),
+              SizedBox(
+                height: kNormalSpacerValue,
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (club.offerType == OfferType.redeemable) {
+                    Navigator.of(context)
+                        .pushNamed(NightMapMainOfferScreen.id);
+                  }
+                },
+                child: AspectRatio(
+                  aspectRatio: 1.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(club.mainOfferImg!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    alignment: Alignment.bottomRight,
+                    padding: EdgeInsets.all(kMainPadding),
                   ),
                 ),
-                alignment: Alignment.bottomRight,
-                padding: EdgeInsets.all(kMainPadding),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

@@ -40,7 +40,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: black,
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,7 +67,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: kMainPadding),
                   child: Divider(
-                    color: Colors.white,
+                    color: white,
                     thickness: kMainStrokeWidth,
                   ),
                 ),
@@ -118,7 +118,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                             },
                             child: Text(
                               'Nej',
-                              style: TextStyle(color: Colors.redAccent),
+                              style: TextStyle(color: redAccent),
                             ),
                           ),
                           TextButton(

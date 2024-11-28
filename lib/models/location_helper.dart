@@ -7,10 +7,11 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/club_data.dart';
 import 'package:nightview/models/location_data.dart';
 import 'package:nightview/models/user_data.dart';
+import 'package:nightview/models/club_data_helper.dart';
 
 class LocationHelper {
   LocationPermission _permission = LocationPermission.unableToDetermine;
-  LocationAccuracyStatus _accuracy = LocationAccuracyStatus.unknown;
+  LocationAccuracyStatus _accuracy = LocationAccuracyStatus.precise;
   bool _serviceEnabled = false;
   GeneralAsyncCallback<loc.LocationData> onPositionUpdate;
   loc.Location locationService = loc.Location();
@@ -22,9 +23,35 @@ class LocationHelper {
     return _serviceEnabled;
   }
 
+  Future<bool> requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return false; // Permissions are denied.
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied, cannot request.
+      return false;
+    }
+
+    if (permission == LocationPermission.whileInUse) {
+      // Request background location permission if not already granted
+      permission = await Geolocator.requestPermission();
+      return permission == LocationPermission.always;
+    }
+
+    // If we reach here, permission is granted.
+    return permission == LocationPermission.always;
+  }
+
   Future<bool> get hasPermissionWhileInUse async {
     _permission = await Geolocator.checkPermission();
-    return (_permission == LocationPermission.whileInUse) || (_permission == LocationPermission.always);
+    return (_permission == LocationPermission.whileInUse) ||
+        (_permission == LocationPermission.always);
   }
 
   Future<bool> get hasPermissionAlways async {
@@ -38,7 +65,8 @@ class LocationHelper {
   }
 
   Future<Position> getCurrentPosition() async {
-    return Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    return Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
   }
 
   Future<void> activateBackgroundLocation() async {
@@ -53,7 +81,7 @@ class LocationHelper {
     DateTime lastUpdate = DateTime.now();
 
     locationService.onLocationChanged.listen((loc.LocationData location) {
-      DateTime threshold = DateTime.now().subtract(Duration(minutes: 10));
+      DateTime threshold = DateTime.now().subtract(Duration(minutes: 15));
       // DateTime threshold = DateTime.now().subtract(Duration(seconds: 20));
 
       if (threshold.isAfter(lastUpdate)) {
@@ -64,8 +92,7 @@ class LocationHelper {
   }
 
   Future<void> startLocationService() async {
-
-    Timer.periodic(Duration(minutes: 10), (timer) async {
+    Timer.periodic(const Duration(minutes: 15), (timer) async {
       try {
         loc.LocationData location = await locationService.getLocation();
         onPositionUpdate(location);
@@ -74,7 +101,6 @@ class LocationHelper {
         print('Could not get location');
       }
     });
-
   }
 
   Future<loc.LocationData> getBackgroundLocation() async {
@@ -82,18 +108,8 @@ class LocationHelper {
     return location;
   }
 
-  Future<void> requestLocationPermission() async {
-    _permission = await Geolocator.checkPermission();
-
-    if (_permission == LocationPermission.always || _permission == LocationPermission.whileInUse) {
-      return;
-    }
-
-    _permission = await Geolocator.requestPermission();
-  }
-
   Future<void> openAppSettings() async {
-    Geolocator.openAppSettings();
+    await Geolocator.openAppSettings();
   }
 
   Future<void> openLocationSettings() async {
@@ -101,7 +117,8 @@ class LocationHelper {
   }
 
   bool userInClub({required UserData userData, required ClubData clubData}) {
-    final userPoint = mt.LatLng(userData.lastPositionLat, userData.lastPositionLon);
+    final userPoint =
+        mt.LatLng(userData.lastPositionLat, userData.lastPositionLon);
 
     List<mt.LatLng> clubCorners = [];
 
@@ -112,7 +129,8 @@ class LocationHelper {
     return mt.PolygonUtil.containsLocation(userPoint, clubCorners, true);
   }
 
-  bool locationInClub({required loc.LocationData location, required ClubData clubData}) {
+  bool locationInClub(
+      {required loc.LocationData location, required ClubData clubData}) {
     if (location.latitude == null || location.longitude == null) {
       print('Position is null');
       return false;
@@ -133,8 +151,12 @@ class LocationHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap =
-          await firestore.collection('location_data').where('user_id', isEqualTo: userId).where('latest', isEqualTo: true).limit(1).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('location_data')
+          .where('user_id', isEqualTo: userId)
+          .where('latest', isEqualTo: true)
+          .limit(1)
+          .get();
       QueryDocumentSnapshot<Map<String, dynamic>> doc = snap.docs.first;
       return LocationData(
         userId: doc.get('user_id'),
@@ -172,10 +194,16 @@ class LocationHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap =
-          await firestore.collection('location_data').where('user_id', isEqualTo: userId).where('latest', isEqualTo: true).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('location_data')
+          .where('user_id', isEqualTo: userId)
+          .where('latest', isEqualTo: true)
+          .get();
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snap.docs) {
-        await firestore.collection('location_data').doc(doc.id).set({'latest': false}, SetOptions(merge: true));
+        await firestore
+            .collection('location_data')
+            .doc(doc.id)
+            .set({'latest': false}, SetOptions(merge: true));
       }
       return true;
     } catch (e) {
@@ -214,7 +242,10 @@ class LocationHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('location_data').where('user_id', isEqualTo: userId).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('location_data')
+          .where('user_id', isEqualTo: userId)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         doc.reference.delete();
       }
@@ -222,4 +253,19 @@ class LocationHelper {
       print(e);
     }
   }
+
+// void onPositionUpdate(loc.LocationData location) async { // Not needed anymore?
+//   final user = await userDataHelper.getCurrentUser();
+//   if (user != null) {
+//     for (var entry in clubData.entries) {
+//       String clubId = entry.key;
+//       ClubData club = entry.value;
+//
+//       if (user.lastPositionTime != null &&
+//           locationHelper.userInClub(userData: user, clubData: club)) {
+//         await clubDataHelper.updateVisitCount(user.id, clubId);
+//       }
+//     }
+//   }
+// }
 }

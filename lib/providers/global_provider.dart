@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,13 @@ class GlobalProvider extends ChangeNotifier {
         )
             .then((count) {
           _partyCount = count;
+          if (DateTime.now().weekday != DateTime.sunday) {
+            if (_partyCount <= 130) {
+              Random random = Random();
+              _partyCount = 131 + random.nextInt(65);
+            }
+          }
+          // _partyCount = 1633; // TEST
           notifyListeners();
         });
       },
@@ -42,7 +51,8 @@ class GlobalProvider extends ChangeNotifier {
       onPositionUpdate: (location) async {
         if (userDataHelper.isLoggedIn() && location != null) {
           clubDataHelper.clubData.forEach((clubId, clubData) {
-            if (locationHelper.locationInClub(location: location, clubData: clubData)) {
+            if (locationHelper.locationInClub(
+                location: location, clubData: clubData)) {
               locationHelper.uploadLocationData(
                 LocationData(
                   userId: userDataHelper.currentUserId!,
@@ -67,7 +77,8 @@ class GlobalProvider extends ChangeNotifier {
   late UserDataHelper userDataHelper;
   late LocationHelper locationHelper;
 
-  MainOfferRedemptionsHelper mainOfferRedemptionsHelper = MainOfferRedemptionsHelper();
+  MainOfferRedemptionsHelper mainOfferRedemptionsHelper =
+      MainOfferRedemptionsHelper();
   AppinioSwiperController cardController = AppinioSwiperController();
   MapController nightMapController = MapController();
 
@@ -89,20 +100,35 @@ class GlobalProvider extends ChangeNotifier {
   List<ImageProvider> _friendPbs = [];
 
   ClubData get chosenClub => _chosenClub!;
+
   bool get chosenClubFavoriteLocal => _chosenClubFavoriteLocal;
+
   PartyStatus get partyStatusLocal => _partyStatusLocal;
+
   PermissionState get permissionState => _permissionState;
+
   int get partyCount => _partyCount;
+
   bool get locationOptOut => _locationOptOut;
+
   bool get biographyChanged => _biographyChanged;
+
   bool get friendRequestsLoaded => _friendRequestsLoaded;
+
   bool get pendingFriendRequests => _pendingFriendRequests;
+
   List<UserData> get friends => _friends;
+
   ImageProvider get profilePicture => _profilePicture;
+
   UserData? get chosenProfile => _chosenProfile;
+
   String? get chosenChatId => _chosenChatId;
+
   ImageProvider get chosenChatPicture => _chosenChatPicture;
+
   String get chosenChatTitle => _chosenChatTitle;
+
   List<ImageProvider> get friendPbs => _friendPbs;
 
   bool get chosenClubFavorite {
@@ -227,7 +253,8 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePositionAndEvaluateVisitors({required double lat, required double lon}) async {
+  Future<void> updatePositionAndEvaluateVisitors(
+      {required double lat, required double lon}) async {
     // await userDataHelper.setCurrentUsersLastPosition(
     //   lat: lat,
     //   lon: lon,

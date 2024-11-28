@@ -61,7 +61,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
             ),
             Container(
               padding: EdgeInsets.all(kMainPadding),
-              color: Colors.black,
+              color: black,
               child: Row(
                 children: [
                   FaIcon(
@@ -102,9 +102,9 @@ class _NewChatScreenState extends State<NewChatScreen> {
                           SnackBar(
                             content: Text(
                               'Kunne ikke oprette ny chat',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: white),
                             ),
-                            backgroundColor: Colors.black,
+                            backgroundColor: black,
                           ),
                         );
                         return;
@@ -117,7 +117,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                       BorderRadius.circular(kMainBorderRadius),
                       side: BorderSide(
                         width: kMainStrokeWidth,
-                        color: Colors.white,
+                        color: white,
                       ),
                     ),
                     leading: CircleAvatar(

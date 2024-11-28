@@ -370,7 +370,7 @@ class _BalladefabrikkenMainScreenState extends State<BalladefabrikkenMainScreen>
                       child: Padding(
                         padding: const EdgeInsets.all(kMainPadding),
                         child: Text(
-                          'Indløs shots?',
+                          'Indløs shots!',
                           style: kTextStyleH2,
                         ),
                       ),

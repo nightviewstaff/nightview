@@ -8,6 +8,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 
+import '../constants/colors.dart';
+
 class ProfilePictureHelper {
   static final ImagePicker _picker = ImagePicker();
 
@@ -36,12 +38,13 @@ class ProfilePictureHelper {
   static Future<File?> _cropImage(File original) async {
     CroppedFile? cropped = await ImageCropper().cropImage(
       sourcePath: original.path,
-      aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+// Removed cropStyle. Is it needed?
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Vælg billede',
-          toolbarColor: Colors.black,
-          toolbarWidgetColor: Colors.white,
+          toolbarColor: black,
+          toolbarWidgetColor: white,
           hideBottomControls: true,
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,

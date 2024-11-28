@@ -20,7 +20,8 @@ class LocationPermissionWhileInUseScreen extends StatefulWidget {
 }
 
 class _LocationPermissionWhileInUseScreen
-    extends State<LocationPermissionWhileInUseScreen> with WidgetsBindingObserver {
+    extends State<LocationPermissionWhileInUseScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -58,7 +59,8 @@ class _LocationPermissionWhileInUseScreen
         .hasPermissionWhileInUse
         .then((hasPermission) {
       if (hasPermission) {
-        Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+        Navigator.of(context)
+            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
       }
     });
   }
@@ -104,7 +106,6 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get buttonText {
-
     // KAN KUN VÆRE IOS
 
     if (Platform.isAndroid) {
@@ -116,11 +117,9 @@ class _LocationPermissionWhileInUseScreen
     }
 
     return 'IKKE GYLDIGT STYRESYSTEM';
-
   }
 
   String get guideText {
-
     // KAN KUN VÆRE IOS
 
     if (Platform.isAndroid) {
@@ -132,7 +131,5 @@ class _LocationPermissionWhileInUseScreen
     }
 
     return 'IKKE GYLDIGT STYRESYSTEM';
-
   }
-
 }

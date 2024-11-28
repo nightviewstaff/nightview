@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "573043562926",
+    "project_id": "nightview-d5406",
+    "storage_bucket": "nightview-d5406.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573043562926:android:73aeb3f31d35aa23bcd03f",
+        "android_client_info": {
+          "package_name": "com.nightview.nightview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573043562926-cui17rpehr9m29njv97hm7q90iqmefm7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqn2Sk8IfutCZY88-MgjFY5r9VUsBybyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573043562926-cui17rpehr9m29njv97hm7q90iqmefm7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "573043562926-rtsgvlrmoe1lo7qt8u59lerq5qvo03bp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nightview.nightview"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

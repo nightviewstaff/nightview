@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nightview/api/firebase_api.dart';
 import 'package:nightview/firebase_options.dart';
+import 'package:nightview/firestore/firestore_updater.dart';
 import 'package:nightview/models/chat_subscriber.dart';
 import 'package:nightview/models/search_new_chat_helper.dart';
 import 'package:nightview/models/search_friends_helper.dart';
@@ -38,6 +41,9 @@ import 'package:nightview/screens/swipe/swipe_main_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
 import 'package:provider/provider.dart';
 
+import 'constants/Initializator.dart';
+import 'constants/colors.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -47,16 +53,29 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await FirebaseApi().initNotifications();
+
+  // FirestoreUpdater firestoreUpdater = FirestoreUpdater();
+  // firestoreUpdater.updateFirestoreData(); // Updates Firestore.
+
+
+
+  Initializator initializator = Initializator(); // Rename
+  initializator.initializeNeededTasks();
+
   runApp(NightViewApp());
+
+  // NotificationService().showNotification();
 }
+
 
 class NightViewApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+        return MultiProvider(
       providers: [
         ChangeNotifierProvider<GlobalProvider>(
-          create: (_) => GlobalProvider(),
+          create: (_) => GlobalProvider(), // When is an instance created?
         ),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
@@ -79,12 +98,12 @@ class NightViewApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Colors.black,
+          scaffoldBackgroundColor: black,
           appBarTheme: AppBarTheme(
-            color: Colors.black,
+            color: black,
           ),
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.black,
+            backgroundColor: black,
             showUnselectedLabels: false,
           ),
         ),
@@ -121,4 +140,5 @@ class NightViewApp extends StatelessWidget {
       ),
     );
   }
+
 }

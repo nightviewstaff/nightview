@@ -17,8 +17,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      GlobalProvider provider =
-          Provider.of<GlobalProvider>(context, listen: false);
+      GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
       provider.setChosenClubFavoriteLocal(provider.chosenClubFavorite);
     });
   }
@@ -27,62 +26,32 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        GlobalProvider provider =
-            Provider.of<GlobalProvider>(context, listen: false);
+        GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
 
         String? userId = provider.userDataHelper.currentUserId;
         String clubId = provider.chosenClub.id;
 
-        if (userId ==  null) {
+        if (userId == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 'Der skete en fejl',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: redAccent),
               ),
-              backgroundColor: Colors.black,
+              backgroundColor: black,
             ),
           );
           return;
         }
 
-        if (provider.chosenClubFavorite) {
+        bool isFavorite = provider.chosenClubFavoriteLocal;
+        if (isFavorite) {
+          // Remove favorite club
           provider.clubDataHelper.removeFavoriteClub(clubId, userId);
           provider.setChosenClubFavoriteLocal(false);
         } else {
-          bool doFavorite = true;
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Tilføj favorit'),
-              content: SingleChildScrollView(
-                child: Text(
-                    'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.'),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    doFavorite = false;
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'Fortryd',
-                    style: TextStyle(color: Colors.redAccent),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: primaryColor),
-                  ),
-                ),
-              ],
-            ),
-          );
+          // Add favorite club
+          bool doFavorite = await _showConfirmationDialog(context);
           if (doFavorite) {
             provider.clubDataHelper.setFavoriteClub(clubId, userId);
             provider.setChosenClubFavoriteLocal(true);
@@ -96,5 +65,46 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
         color: primaryColor,
       ),
     );
+  }
+
+  Future<bool> _showConfirmationDialog(BuildContext context) async {
+    bool doFavorite = true;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Tilføj favorit',
+          style: TextStyle(color: primaryColor),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              doFavorite = false;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Fortryd',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Fortsæt',
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
+        ],
+      ),
+    );
+    return doFavorite;
   }
 }

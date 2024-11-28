@@ -14,7 +14,7 @@ class MainBottomNavigationBar extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.pin_drop),
-          label: 'MAP',
+          label: 'MAP', // KORT her i stedet?
         ),
         // BottomNavigationBarItem(
         //   icon: Icon(Icons.percent_sharp),
@@ -22,7 +22,7 @@ class MainBottomNavigationBar extends StatelessWidget {
         // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.people_alt),
-          label: 'SOCIAL',
+          label: 'SOCIAL', //VENNER her i stedet?
         ),
       ],
       onTap: (index) {
@@ -50,4 +50,6 @@ class MainBottomNavigationBar extends StatelessWidget {
 
     );
   }
+
+
 }

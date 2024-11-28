@@ -47,7 +47,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
           children: [
             Container(
               padding: EdgeInsets.all(kBigPadding),
-              color: Colors.black,
+              color: black,
               width: double.maxFinite,
               child: Text(
                 'Find nye venner',
@@ -57,7 +57,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
             ),
             Container(
               padding: EdgeInsets.all(kMainPadding),
-              color: Colors.black,
+              color: black,
               child: Row(
                 children: [
                   FaIcon(
@@ -99,7 +99,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                               BorderRadius.circular(kMainBorderRadius),
                           side: BorderSide(
                             width: kMainStrokeWidth,
-                            color: Colors.white,
+                            color: white,
                           )),
                       leading: CircleAvatar(
                         backgroundImage: getPb(index),

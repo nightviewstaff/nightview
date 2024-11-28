@@ -87,9 +87,9 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                       SnackBar(
                         content: Text(
                           'Der skete en fejl',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: white),
                         ),
-                        backgroundColor: Colors.black,
+                        backgroundColor: black,
                       ),
                     );
                     return;
@@ -175,7 +175,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       builder: (context) => AlertDialog(
         title: Text(
           'Indløsning mislykkedes',
-          style: TextStyle(color: Colors.redAccent),
+          style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text(
@@ -188,7 +188,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
             },
             child: Text(
               'OK',
-              style: TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: redAccent),
             ),
           ),
         ],
@@ -221,7 +221,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   border: Border.all(
                     color: canRedeem == MainOfferRedemptionPermisson.granted
                         ? primaryColor
-                        : Colors.redAccent,
+                        : redAccent,
                     width: kFocussedStrokeWidth,
                   ),
                 ),

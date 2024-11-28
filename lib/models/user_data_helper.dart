@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
+
 // import 'package:nightview/models/profile_picture_helper.dart';
 import 'package:nightview/models/user_data.dart';
 
@@ -29,9 +30,13 @@ class UserDataHelper {
             birthdayYear: data['birthdate_year'],
             lastPositionLat: data['last_position_lat'] ?? 0.0,
             lastPositionLon: data['last_position_lon'] ?? 0.0,
-            lastPositionTime: data['last_position_time']?.toDate() ?? DateTime(2000),
-            partyStatus: stringToPartyStatus(data['party_status'] ?? 'PartyStatus.unsure') ?? PartyStatus.unsure,
-            partyStatusTime: data['party_status_time']?.toDate() ?? DateTime(2000),
+            lastPositionTime:
+                data['last_position_time']?.toDate() ?? DateTime(2000),
+            partyStatus: stringToPartyStatus(
+                    data['party_status'] ?? 'PartyStatus.unsure') ??
+                PartyStatus.unsure,
+            partyStatusTime:
+                data['party_status_time']?.toDate() ?? DateTime(2000),
           );
         } catch (e) {
           print(e);
@@ -45,7 +50,9 @@ class UserDataHelper {
   }
 
   String? get currentUserId => _auth.currentUser?.uid;
+
   UserData? get currentUserData => userData[currentUserId];
+
   int get userCount => userData.length;
 
   Future<bool> createUserWithEmail({
@@ -130,7 +137,8 @@ class UserDataHelper {
     return _auth.currentUser != null;
   }
 
-  Future<bool> setCurrentUsersLastPosition({required double lat, required double lon}) async {
+  Future<bool> setCurrentUsersLastPosition(
+      {required double lat, required double lon}) async {
     try {
       await _firestore.collection('user_data').doc(currentUserId).update({
         'last_position_lat': lat,
@@ -171,7 +179,8 @@ class UserDataHelper {
     }
   }
 
-  Future<int> evaluatePartyCount({required Map<String, UserData> userData}) async {
+  Future<int> evaluatePartyCount(
+      {required Map<String, UserData> userData}) async {
     int count = 0;
 
     userData.forEach((id, user) {
@@ -202,5 +211,17 @@ class UserDataHelper {
 
   Future<void> deleteCurrentUser() async {
     await _auth.currentUser?.delete();
+  }
+
+  Future<int> getUserCount() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('user_data').get();
+      int userCount = snapshot.docs.length;
+      return userCount;
+    } catch (e) {
+      // Handle any errors here
+      print(e);
+      return 0; // Return 0 or handle the error as needed
+    }
   }
 }

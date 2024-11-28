@@ -15,6 +15,8 @@ import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/colors.dart';
+
 class NightSocialMainScreen extends StatefulWidget {
   static const id = 'night_social_main_screen';
 
@@ -57,7 +59,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
       children: [
         Container(
           padding: EdgeInsets.all(kBigPadding),
-          color: Colors.black,
+          color: black,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -96,7 +98,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
             },
             child: Container(
               padding: EdgeInsets.all(kBigPadding),
-              color: Colors.black,
+              color: black,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -130,7 +132,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kMainBorderRadius),
                   side: BorderSide(
-                    color: Colors.white,
+                    color: white,
                     width: kMainStrokeWidth,
                   ),
                 ),

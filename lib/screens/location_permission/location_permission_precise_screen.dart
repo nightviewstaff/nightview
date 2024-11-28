@@ -53,7 +53,8 @@ class _LocationPermissionPreciseScreenState
         .hasPermissionPrecise
         .then((hasPermission) async {
       if (hasPermission) {
-        Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+        Navigator.of(context)
+            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
       }
     });
   }
@@ -99,7 +100,6 @@ class _LocationPermissionPreciseScreenState
   }
 
   String get buttonText {
-
     if (Platform.isAndroid) {
       return 'Åbn app-indstillinger';
     }
@@ -109,11 +109,9 @@ class _LocationPermissionPreciseScreenState
     }
 
     return 'IKKE GYLDIGT STYRESYSTEM';
-
   }
 
   String get guideText {
-
     if (Platform.isAndroid) {
       return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Brug præcis lokation';
     }
@@ -123,6 +121,5 @@ class _LocationPermissionPreciseScreenState
     }
 
     return 'IKKE GYLDIGT STYRESYSTEM';
-
   }
 }

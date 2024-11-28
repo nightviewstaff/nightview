@@ -46,9 +46,9 @@ class FriendRequestHelper {
           .collection('friend_requests')
           .where('to', isEqualTo: currentUserId)
           .where('status',
-          isEqualTo: _enumToString(FriendRequestStatus.pending))
+              isEqualTo: _enumToString(FriendRequestStatus.pending))
           .get();
-      return snapshot.docs.length > 0;
+      return snapshot.docs.isNotEmpty;
     } catch (e) {
       print(e);
       return false;
@@ -68,19 +68,20 @@ class FriendRequestHelper {
     } catch (e) {
       print(e);
     }
-
   }
 
   static Future<void> acceptFriendRequest(String requestId) async {
-
-    await _firestore.collection('friend_requests').doc(requestId).update({'status': _enumToString(FriendRequestStatus.accepted)});
-
+    await _firestore
+        .collection('friend_requests')
+        .doc(requestId)
+        .update({'status': _enumToString(FriendRequestStatus.accepted)});
   }
 
   static Future<void> rejectFriendRequest(String requestId) async {
-
-    await _firestore.collection('friend_requests').doc(requestId).update({'status': _enumToString(FriendRequestStatus.rejected)});
-
+    await _firestore
+        .collection('friend_requests')
+        .doc(requestId)
+        .update({'status': _enumToString(FriendRequestStatus.rejected)});
   }
 
   static Future<bool> userHasRequest(String otherId) async {
@@ -107,9 +108,11 @@ class FriendRequestHelper {
   }
 
   static Future<void> deleteDataAssociatedTo(String userId) async {
-
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await _firestore.collection('friends_requests').where('from', isEqualTo: userId).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await _firestore
+          .collection('friends_requests')
+          .where('from', isEqualTo: userId)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         _firestore.collection('friend_requests').doc(doc.id).delete();
       }
@@ -117,9 +120,11 @@ class FriendRequestHelper {
       print(e);
     }
 
-
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await _firestore.collection('friends_requests').where('to', isEqualTo: userId).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await _firestore
+          .collection('friends_requests')
+          .where('to', isEqualTo: userId)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         _firestore.collection('friend_requests').doc(doc.id).delete();
       }
@@ -151,7 +156,4 @@ class FriendRequestHelper {
         return FriendRequestStatus.rejected;
     }
   }
-
-
-
 }
