@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ import 'package:provider/provider.dart';
 
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
+import 'firestore/add_club.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,10 +60,10 @@ void main() async {
   // FirestoreUpdater firestoreUpdater = FirestoreUpdater();
   // firestoreUpdater.updateFirestoreData(); // Updates Firestore.
 
-
-
   Initializator initializator = Initializator(); // Rename
   initializator.initializeNeededTasks();
+
+   // AddClub addClub = AddClub(); addClub.addSpecificClub1(); // To add each new club manually.
 
   runApp(NightViewApp());
 
@@ -107,7 +109,9 @@ class NightViewApp extends StatelessWidget {
             showUnselectedLabels: false,
           ),
         ),
-        initialRoute: WaitingForLoginScreen.id,
+        initialRoute:
+        WaitingForLoginScreen.id,
+         // SwipeMainScreen.id, // TEST swipescreen
         routes: {
           LoginMainScreen.id: (context) => const LoginMainScreen(),
           LoginRegistrationOptionScreen.id: (context) => const LoginRegistrationOptionScreen(),

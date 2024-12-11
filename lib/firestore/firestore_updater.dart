@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirestoreUpdater {
+class FirestoreUpdater { // TODO write a script that checks all information in the database and report back if mistakes
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> updateFirestoreData() async {

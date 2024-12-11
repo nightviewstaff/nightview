@@ -40,6 +40,14 @@ class ClubDataHelper {
         logoUrl = "null";
       }
 
+      String typeOfClubImageUrl;
+      try {
+        typeOfClubImageUrl = await _storageRef.child('/nightview_images/club_type_images/${data['type_of_club']}_icon.png').getDownloadURL();
+      } catch (e) {
+        print('Error fetching typeOfClub image URL for ${data['name']} (type: ${data['type_of_club']}): $e');
+        typeOfClubImageUrl = "null"; // Provide a fallback URL if necessary
+      }
+
       String? mainOfferImgUrl;
       try {
         if (stringToOfferType(data['offer_type']) != OfferType.none) {
@@ -77,6 +85,7 @@ class ClubDataHelper {
             OfferType.none,
         mainOfferImg: mainOfferImgUrl,
         ageRestriction: data['age_restriction'],
+        typeOfClubImg: typeOfClubImageUrl,
         typeOfClub: data['type_of_club'],
         rating: data['rating'],
         openingHours: openingHours,
@@ -87,7 +96,7 @@ class ClubDataHelper {
 
       print('Club processed successfully: ${clubData[club.id]}');
     } catch (e) {
-      print('Error processing club: $e');
+      print('Error processing club: $e - Club: ${clubData[club.id]}');
     }
   }
 

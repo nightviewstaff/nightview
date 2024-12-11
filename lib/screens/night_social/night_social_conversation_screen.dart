@@ -21,10 +21,12 @@ class NightSocialConversationScreen extends StatefulWidget {
   const NightSocialConversationScreen({super.key});
 
   @override
-  State<NightSocialConversationScreen> createState() => _NightSocialConversationScreenState();
+  State<NightSocialConversationScreen> createState() =>
+      _NightSocialConversationScreenState();
 }
 
-class _NightSocialConversationScreenState extends State<NightSocialConversationScreen> {
+class _NightSocialConversationScreenState
+    extends State<NightSocialConversationScreen> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? chatSubscription;
   TextEditingController messageController = TextEditingController();
   String _lastMessageTimestamp = '';
@@ -32,22 +34,32 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      String? chatId = Provider.of<GlobalProvider>(context, listen: false).chosenChatId;
+      String? chatId =
+          Provider.of<GlobalProvider>(context, listen: false).chosenChatId;
 
       if (chatId == null) {
         return;
       }
       _lastMessageTimestamp = '';
-      chatSubscription = Provider.of<ChatSubscriber>(context, listen: false).subscribeToChat(chatId);
+      chatSubscription = Provider.of<ChatSubscriber>(context, listen: false)
+          .subscribeToChat(chatId);
       String? otherId = await ChatHelper.getOtherMember(chatId);
       if (otherId == null) {
-        Provider.of<GlobalProvider>(context, listen: false).setChosenChatTitle(null);
-        Provider.of<GlobalProvider>(context, listen: false).setChosenChatPicture(null);
+        Provider.of<GlobalProvider>(context, listen: false)
+            .setChosenChatTitle(null);
+        Provider.of<GlobalProvider>(context, listen: false)
+            .setChosenChatPicture(null);
       } else {
-        UserData? otherUser = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.userData[otherId];
-        Provider.of<GlobalProvider>(context, listen: false).setChosenChatTitle('${otherUser?.firstName} ${otherUser?.lastName}');
-        String? otherPbUrl = await ProfilePictureHelper.getProfilePicture(otherId);
-        Provider.of<GlobalProvider>(context, listen: false).setChosenChatPicture(otherPbUrl);
+        UserData? otherUser =
+            Provider.of<GlobalProvider>(context, listen: false)
+                .userDataHelper
+                .userData[otherId];
+        Provider.of<GlobalProvider>(context, listen: false).setChosenChatTitle(
+            '${otherUser?.firstName} ${otherUser?.lastName}');
+        String? otherPbUrl =
+            await ProfilePictureHelper.getProfilePicture(otherId);
+        Provider.of<GlobalProvider>(context, listen: false)
+            .setChosenChatPicture(otherPbUrl);
       }
     });
     super.initState();
@@ -83,14 +95,17 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: Provider.of<GlobalProvider>(context).chosenChatPicture,
+                      backgroundImage: Provider.of<GlobalProvider>(context)
+                          .chosenChatPicture,
                     ),
                     SizedBox(
-                      width: kNormalSpacerValue,
+                      width: kSmallSpacerValue,
                     ),
                     Text(
                       Provider.of<GlobalProvider>(context).chosenChatTitle,
-                      style: kTextStyleH2,
+                      style: kTextStyleH3,
+                      // overflow: TextOverflow.ellipsis, Fix overflow
+                      // maxLines: 1,
                     ),
                   ],
                 ),
@@ -104,17 +119,28 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
                     child: ListView.separated(
                       reverse: true,
                       padding: EdgeInsets.all(kMainPadding),
-                      itemCount: Provider.of<ChatSubscriber>(context).messages.length,
+                      itemCount:
+                          Provider.of<ChatSubscriber>(context).messages.length,
                       itemBuilder: (context, index) {
-                        ChatMessageData? message = Provider.of<ChatSubscriber>(context, listen: false).messages.values.toList().reversed.toList()[index];
+                        ChatMessageData? message =
+                            Provider.of<ChatSubscriber>(context, listen: false)
+                                .messages
+                                .values
+                                .toList()
+                                .reversed
+                                .toList()[index];
 
                         if (message == null) {
                           return null;
                         }
 
-                        bool bySelf = message.sender == Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+                        bool bySelf = message.sender ==
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .userDataHelper
+                                .currentUserId;
 
-                        bool showTimestamp = message.getReadableTimestamp() != _lastMessageTimestamp;
+                        bool showTimestamp = message.getReadableTimestamp() !=
+                            _lastMessageTimestamp;
                         _lastMessageTimestamp = message.getReadableTimestamp();
 
                         return Column(
@@ -132,12 +158,15 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
                               height: kSmallSpacerValue,
                             ),
                             Align(
-                              alignment: bySelf ? Alignment.topRight : Alignment.topLeft,
+                              alignment: bySelf
+                                  ? Alignment.topRight
+                                  : Alignment.topLeft,
                               child: Container(
                                 padding: EdgeInsets.all(kMainPadding),
                                 constraints: BoxConstraints(
                                   minWidth: 40.0,
-                                  maxWidth: MediaQuery.of(context).size.width * 0.75,
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.75,
                                 ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(
@@ -181,8 +210,15 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
                         ),
                         TextButton(
                           onPressed: () async {
-                            String? chatId = Provider.of<GlobalProvider>(context, listen: false).chosenChatId;
-                            String? userId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+                            String? chatId = Provider.of<GlobalProvider>(
+                                    context,
+                                    listen: false)
+                                .chosenChatId;
+                            String? userId = Provider.of<GlobalProvider>(
+                                    context,
+                                    listen: false)
+                                .userDataHelper
+                                .currentUserId;
                             if (chatId == null || userId == null) {
                               return;
                             }
@@ -191,7 +227,8 @@ class _NightSocialConversationScreenState extends State<NightSocialConversationS
                               message: messageController.text,
                               timestamp: DateTime.now(),
                             );
-                            if (await ChatHelper.sendChatMessage(messageData, chatId)) {
+                            if (await ChatHelper.sendChatMessage(
+                                messageData, chatId)) {
                               messageController.text = "";
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(

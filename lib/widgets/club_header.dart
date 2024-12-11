@@ -10,29 +10,36 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:nightview/widgets/rate_club.dart';
 
 class ClubHeader extends StatelessWidget {
+  // TODO rework so the header fits without problems on all screens.
+
   final ClubData club;
 
-  const ClubHeader({super.key, required this.club});
+  // final GlobalKey _circleAvatarKey = GlobalKey(); For popup
+
+  ClubHeader({super.key, required this.club});
 
   @override
   Widget build(BuildContext context) {
-    final String currentWeekday =
-    DateFormat('EEEE').format(DateTime.now()).toLowerCase();
+    final String currentWeekday = DateFormat('EEEE')
+        .format(DateTime.now())
+        .toLowerCase(); // Move to seperate class eventually
     final Map<String, dynamic>? todayHours =
-    club.openingHours[currentWeekday] as Map<String, dynamic>?;
+        club.openingHours[currentWeekday] as Map<String, dynamic>?;
 
     String openingHoursText;
     if (todayHours == null || todayHours.isEmpty) {
-      openingHoursText = 'Lukket i dag.';
-    }
-    else {
+      openingHoursText = 'Lukket ';
+    } else {
       final String openTime = todayHours['open'] ?? '00:00';
       final String closeTime = todayHours['close'] ?? '00:00';
-      openingHoursText = '$openTime - $closeTime';
+      openingHoursText = '$openTime - $closeTime ';
     }
 
-    if(club.visitors<14){
+    if (club.visitors < 5) {
+      // && (todayHours != null || todayHours!.isNotEmpty)) {
+      // TODO
       club.visitors = 14;
+      // Random(5)+10;
     }
 
     double percentOfCapacity = (club.totalPossibleAmountOfVisitors > 0)
@@ -41,19 +48,86 @@ class ClubHeader extends StatelessWidget {
 
     if (percentOfCapacity >= 1) {
       percentOfCapacity =
-      0.99; // Sets capacity to a max of 99% maybe need change.
+          0.99; // Sets capacity to a max of 99% maybe need change.
     }
     if (percentOfCapacity <= 0) {
-      percentOfCapacity = 0.03; // Sets capacity to a min of 3% maybe need change.
+      // percentOfCapacity =
+      //     0.03; // Sets capacity to a min of 3% maybe need change.
     }
 
-   String currentAgeRestriction = club.ageRestriction.toString();
-
-    if (todayHours != null && todayHours.containsKey('age_restriction')) {
-      currentAgeRestriction = todayHours['age_restriction'];
+    int intCurrentAgeRestriction = club.ageRestriction;
+    String stringCurrentAgeRestriction;
+    if (todayHours != null && todayHours.containsKey('age_restriction')
+        // && !todayHours.containsKey('age_restriction')==null
+        ) {
+      intCurrentAgeRestriction = todayHours['age_restriction'];
     }
 
-    String currentTypeOfClub = club.typeOfClub.substring(0,1).toUpperCase() + club.typeOfClub.substring(1,);
+    if (intCurrentAgeRestriction <= 17) {
+      stringCurrentAgeRestriction = 'ikke oplyst';
+    } else {
+      stringCurrentAgeRestriction = '$intCurrentAgeRestriction+';
+    }
+
+    final Map<String, String> clubTypeTranslations = {
+      'bar': 'Bar',
+      'bar_club': 'Bar/klub',
+      'beer_bar': 'Ølbar',
+      'bodega': 'Bodega',
+      'club': 'Klub',
+      'cocktail_bar': 'Cocktailbar',
+      'gay_bar': 'Gaybar',
+      'jazz_bar': 'Jazzbar',
+      'karaoke_bar': 'Karaokebar',
+      'live_music_bar': 'Livemusikbar',
+      'pub': 'Pub',
+      'sports_bar': 'Sportsbar',
+      'wine_bar': 'Vinbar',
+    };
+
+    String currentTypeOfClubTranslated(String typeOfClub) {
+      final translated = clubTypeTranslations[typeOfClub] ??
+          typeOfClub; // Default to original if not found
+      return translated.substring(0, 1).toUpperCase() + translated.substring(1);
+    }
+
+    // TODO later for better visability of place.
+    // void _showPopup(BuildContext context) { For better showing of clubType
+    //   final RenderBox renderBox =
+    //       _circleAvatarKey.currentContext!.findRenderObject() as RenderBox;
+    //   final Offset position = renderBox.localToGlobal(
+    //       Offset.zero); // Get the global position of the CircleAvatar
+    //
+    //   final overlay = Overlay.of(context); // Get the overlay
+    //   final overlayEntry = OverlayEntry(
+    //     builder: (context) => Positioned(
+    //       Position the popup dynamically based on the CircleAvatar location
+    // left: position.dx + renderBox.size.width + 10,
+    // Adjust this based on where you want the popup
+    // top: position.dy,
+    // Adjust this based on where you want the popup
+    // child: Material(
+    //   color: Colors.transparent, // Transparent background
+    //   child: Container(
+    //     padding: EdgeInsets.all(8.0),
+    //     decoration: BoxDecoration(
+    //       color: Colors.black.withOpacity(1),
+    //       borderRadius: BorderRadius.circular(10),
+    //     ),
+    //     child: Text(
+    //       'Bar', // Display the type of club
+    //       style: TextStyle(color: white),
+    //     ),
+    //   ),
+    // ),
+    // ),
+    // );
+    // overlay?.insert(overlayEntry);
+    // Duration
+    // Future.delayed(Duration(seconds: 1), () {
+    //   overlayEntry.remove();
+    // });
+    // }
 
     return Container(
       decoration: BoxDecoration(
@@ -62,41 +136,88 @@ class ClubHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: FaIcon(
-                  FontAwesomeIcons.chevronDown,
-                  size: 30.0,
-                ),
-              ),
-            ),
-          ),
-          Center(
+          Padding(
+            padding: const EdgeInsets.all(kSmallPadding),
             child: Stack(
-              children: <Widget>[
-                // Stroked text as border.
-                Text(
-                  club.name,
-                  style: kTextStyleH1.copyWith(
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 0.2
-                      ..color = white,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      // _showPopup(context); TODO future release
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => Container(
+                          padding: EdgeInsets.all(15.0),
+                          child: Text(
+                            currentTypeOfClubTranslated(club.typeOfClub),
+                            style: kTextStyleP1,
+                          ),
+                        ),
+                      );
+                      Future.delayed(Duration(seconds: 2), () {
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    child: CircleAvatar(
+                      // key: _circleAvatarKey,
+                      backgroundImage: NetworkImage(club.typeOfClubImg),
+                      radius: 20.0,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                // Solid text as fill.
-                Text(
-                  club.name,
-                  style: kTextStyleH1.copyWith(color: primaryColor),
-                  textAlign: TextAlign.center,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: kSmallSpacerValue),
+                          child: FaIcon(
+                            FontAwesomeIcons.chevronDown,
+                            size: 30.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 0),
+            // EdgeInsets.symmetric(vertical: kSmallSpacerValue),
+            child: Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  // Stroked text as border.
+                  Text(
+                    club.name, // TODO Move text just a bit further up
+                    style: kTextStyleH1.copyWith(
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 0.2
+                        ..color = white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  // Solid text as fill.
+                  Text(
+                    club.name,
+                    style: kTextStyleH1.copyWith(color: primaryColor),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
           Padding(
@@ -108,15 +229,19 @@ class ClubHeader extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       backgroundImage: NetworkImage(club.logo),
-                      radius: 25.0,
+                      radius: 30.0,
                     ),
-                    const SizedBox(width: kNormalSpacerValue),
+                    // const SizedBox(width: kSmallSpacerValue), // space between logo and X
+
+                    const SizedBox(width: kSmallSpacerValue),
+                    // Space between
                     const FavoriteClubButton(),
                   ],
                 ),
                 CircularPercentIndicator(
                   radius: 30.0,
                   lineWidth: 5.0,
+                  // padding-right: 10
                   percent: percentOfCapacity,
                   center: RichText(
                     text: TextSpan(
@@ -135,6 +260,8 @@ class ClubHeader extends StatelessWidget {
                   progressColor: secondaryColor,
                   backgroundColor: white,
                 ),
+
+                // )
               ],
             ),
           ),
@@ -144,12 +271,17 @@ class ClubHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$currentTypeOfClub: $currentAgeRestriction+',
-                  style: kTextStyleH3,
+                  // 'Aldersgrænse: '+
+                  stringCurrentAgeRestriction,
+                  style: kTextStyleP1,
                 ),
-                Text(
-                  '${club.visitors} Gæster', //Set visitors to primaryColor. TODO
-                  style: kTextStyleH3,
+                Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  // Adds a tiny bit of space
+                  child: Text(
+                    'Kapacitet',
+                    style: kTextStyleP1,
+                  ),
                 ),
               ],
             ),
@@ -157,15 +289,17 @@ class ClubHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kSmallSpacerValue),
             child: Text(
-              openingHoursText,
-              style: kTextStyleH3,
+              // 'Åbningstider: ' +
+              '$openingHoursText i dag.',
+              // Dropdown til hele ugens åbningstider TODO
+              style: kTextStyleP1,
             ),
           ),
           RateClub(clubId: club.id),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: kMainPadding),
             child: Divider(
-              height: kNormalSpacerValue * 2,
+              height: kNormalSpacerValue,
               color: white,
               thickness: kMainStrokeWidth,
             ),

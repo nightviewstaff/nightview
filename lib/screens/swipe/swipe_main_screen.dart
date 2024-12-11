@@ -36,7 +36,6 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
       globalProvider.setPartyStatusLocal(PartyStatus.unsure);
       globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.unsure);
     }
-
     Navigator.of(context).pushReplacementNamed(MainScreen.id);
   }
 
@@ -44,15 +43,10 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
           children: [
-            SizedBox(height: kNormalSpacerValue),
-            Text(
-              'Tid til at swipe!',
-              style: kTextStyleH1,
-            ),
-            Expanded(
+            // Swipe card content
+            Positioned.fill(
               child: GestureDetector(
                 onHorizontalDragEnd: _onSwipe,
                 child: PageView.builder(
@@ -63,9 +57,21 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
                     });
                   },
                   itemBuilder: (context, index) {
-                    return SwipeCardContent(); // Your custom card widget
+                    return SwipeCardContent();
                   },
-                  itemCount: 1, // Only one card for demonstration, adjust as needed
+                  itemCount: 1, // Only one card
+                ),
+              ),
+            ),
+            // Overlay text
+            Positioned(
+              top: 20.0, // Adjust as needed
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  'Swipe!',
+                  style: kTextStyleSwipeH1,
                 ),
               ),
             ),

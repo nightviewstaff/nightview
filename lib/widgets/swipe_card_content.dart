@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -12,7 +13,7 @@ import 'package:provider/provider.dart';
 class SwipeCardContent extends StatelessWidget {
   const SwipeCardContent({super.key});
 
-  //TODO Put variables in here. Pictures and text
+  //TODO Put variables in here. Pictures and text Also reduce reduancy with a lot of methods.
 
   String getRandomMessage() {
     Random random = Random();
@@ -80,7 +81,7 @@ class SwipeCardContent extends StatelessWidget {
     return messages[random.nextInt(messages.length)];
   }
 
-  Future<String> getRandomImage() async {
+  Future<String> getRandomImage() async { // Move to db class.
     Random random = Random();
     final storageRef = FirebaseStorage.instance.ref();
     final imagesRef = storageRef.child('nightview_images/swipe_card_images/');
@@ -109,55 +110,84 @@ class SwipeCardContent extends StatelessWidget {
         } else if (!snapshot.hasData) {
           return Center(child: Text('No image found'));
         } else {
-          return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(snapshot.data!),
-                fit: BoxFit.fitHeight,
-              ),
-              borderRadius: BorderRadius.circular(kMainBorderRadius),
-            ),
-            width: double.maxFinite,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: kSwipeBottomPadding),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(getRandomMessage(), style: kTextStyleH2),
-                  SizedBox(
-                    height: kNormalSpacerValue,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconWithText(
-                        icon: FontAwesomeIcons.xmark,
-                        text: 'Ikke i dag',
-                        iconColor: Colors.white,
-                        onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false)
-                              .cardController
-                              .swipeLeft();
-                        },
-                      ),
-                      IconWithText(
-                        icon: FontAwesomeIcons.solidHeart,
-                        text: 'Jeg er frisk!',
-                        iconColor: Colors.redAccent,
-                        onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false)
-                              .cardController
-                              .swipeRight();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+          return Stack(
+              children: [
+          // Background image
+          Container(
+          decoration: BoxDecoration(
+          image: DecorationImage(
+              image: NetworkImage(snapshot.data!),
+        fit: BoxFit.fitHeight,
+        ),
+        borderRadius: BorderRadius.circular(kMainBorderRadius),
+        border: Border.all(
+        color: primaryColor,
+        width: 1,
+        ),
+        ),
+        width: double.maxFinite,
+        ),
+
+        // Centered text
+        Positioned(
+        top: 350.0, // Dangerous with hardcoded values
+        left: 0,
+        right: 0,
+        child: Center(
+        child: Text(
+        getRandomMessage(),
+        style: kTextStyleSwipeH2.copyWith(),
+        textAlign: TextAlign.center,
+        ),
+        ),
+        ),
+
+        // Bottom controls
+        Positioned(
+        bottom: kSwipeBottomPadding,
+        left: 0,
+        right: 0,
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+        SizedBox(height: kNormalSpacerValue),
+        Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+        Container(
+        child: IconWithText(
+        icon: FontAwesomeIcons.xmark,
+        text: 'Ikke i dag',
+        onTap: () {
+        Provider.of<GlobalProvider>(context, listen: false)
+            .cardController
+            .swipeLeft();
+        },
+        ),
+        ),
+        IconWithText(
+        icon: FontAwesomeIcons.solidHeart,
+        text: 'Jeg er frisk!',
+        iconColor: primaryColor,
+        showCircle: false,
+        onTap: () {
+        Provider.of<GlobalProvider>(context, listen: false)
+            .cardController
+            .swipeRight();
+        },
+        ),
+        ],
+        ),
+        ],
+        ),
+        )
+        ,
+        ]
+        ,
+        );
+      }
       },
     );
   }
+
 }

@@ -46,6 +46,7 @@ class ClubMarker extends StatelessWidget {
           ),
           CircleAvatar(
             backgroundImage: logo,
+            radius: 15, //What is default size?
           )
         ],
       ),

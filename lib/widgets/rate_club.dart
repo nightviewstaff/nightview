@@ -136,7 +136,7 @@ class _RateClubState extends State<RateClub>
         return AlertDialog(
           title: const Text('Bekræft bedømmelse'),
           content: Text(
-              'Vil du give $clubName en bedømmelse på $rating/6 stjerner?'),
+              'Vil du give $clubName en bedømmelse på $rating/5 stjerner?'),
           backgroundColor: black,
           titleTextStyle: TextStyle(color: primaryColor, fontSize: 20),
           contentTextStyle: TextStyle(color: white),
@@ -167,6 +167,9 @@ class _RateClubState extends State<RateClub>
       );
       await addRating(ratingObj);
       await _fetchClubData(); // Refresh club rating from the database
+      setState(() {
+        _canRate = false;
+      });
     }
 
     // await showDialog( kun hvis modtaget!
@@ -265,7 +268,7 @@ class _RateClubState extends State<RateClub>
       child: Wrap(
         alignment: WrapAlignment.center,
         spacing: 4.0,
-        children: List.generate(6, (index) {
+        children: List.generate(5, (index) {
           return _buildStar(index);
         }),
       ),
