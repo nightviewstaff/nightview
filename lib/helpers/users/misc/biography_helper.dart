@@ -27,7 +27,8 @@ class BiographyHelper {
   static Future<String?> getBiography(String userId) async {
     final firestore = FirebaseFirestore.instance;
 
-    DocumentSnapshot<Map<String,dynamic>> snap = await firestore.collection('user_data').doc(userId).get();
+    DocumentSnapshot<Map<String, dynamic>> snap =
+        await firestore.collection('user_data').doc(userId).get();
 
     if (!snap.exists) {
       return null;
@@ -39,6 +40,5 @@ class BiographyHelper {
       print(e);
       return null;
     }
-
   }
 }
