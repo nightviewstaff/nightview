@@ -6,7 +6,11 @@ class Rating {
   final int rating;
   final Timestamp timestamp;
 
-  Rating({required this.userId, required this.clubId, required this.rating, required this.timestamp});
+  Rating(
+      {required this.userId,
+      required this.clubId,
+      required this.rating,
+      required this.timestamp});
 
   Map<String, dynamic> toMap() {
     return {
@@ -16,5 +20,4 @@ class Rating {
       'timestamp': timestamp,
     };
   }
-
 }
