@@ -1,13 +1,11 @@
-
-
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ShareCodeHelper {
-
-  static const _characters = 'abcdefghijklmnopgrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789';
+  static const _characters =
+      'abcdefghijklmnopgrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789';
 
   static Future<String> generateNewShareCode() async {
     while (true) {
@@ -25,9 +23,12 @@ class ShareCodeHelper {
     try {
       // Use `?.count ?? 0` to handle any potential null values safely.
       int count = (await firestore
-          .collection('share_codes')
-          .where('code', isEqualTo: code)
-          .count().get()).count ?? 0;
+                  .collection('share_codes')
+                  .where('code', isEqualTo: code)
+                  .count()
+                  .get())
+              .count ??
+          0;
       return count > 0;
     } catch (e) {
       print(e);
@@ -35,7 +36,8 @@ class ShareCodeHelper {
     }
   }
 
-  static Future<bool> uploadShareCode({required String code, required String userId}) async {
+  static Future<bool> uploadShareCode(
+      {required String code, required String userId}) async {
     final firestore = FirebaseFirestore.instance;
 
     try {
@@ -51,14 +53,17 @@ class ShareCodeHelper {
     }
 
     return true;
-
   }
 
   static Future<String?> getStatusOfCode(String code) async {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('share_codes').where('code', isEqualTo: code).limit(1).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('share_codes')
+          .where('code', isEqualTo: code)
+          .limit(1)
+          .get();
       return snap.docs.first.get('status');
     } catch (e) {
       print(e);
@@ -77,7 +82,10 @@ class ShareCodeHelper {
     }
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('share_codes').where('code', isEqualTo: code).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('share_codes')
+          .where('code', isEqualTo: code)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         if (doc.get('owner') == userId) {
           return false;
@@ -116,7 +124,11 @@ Ha' en go' dag!''';
     int count = 0;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('share_codes').where('owner', isEqualTo: userId).where('status', isEqualTo: 'accepted').get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('share_codes')
+          .where('owner', isEqualTo: userId)
+          .where('status', isEqualTo: 'accepted')
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         try {
           doc.reference.update({'status': 'redeemed'});
@@ -131,11 +143,9 @@ Ha' en go' dag!''';
     }
 
     return count;
-
   }
 
   static String _generateCode(int digits) {
-
     String code = '';
 
     for (int i = 0; i < digits; i++) {
@@ -144,21 +154,21 @@ Ha' en go' dag!''';
     }
 
     return code;
-
   }
 
   static Future<void> deleteDataAssociatedTo(String userId) async {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('share_codes').where('owner', isEqualTo: userId).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('share_codes')
+          .where('owner', isEqualTo: userId)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         await doc.reference.delete();
       }
     } catch (e) {
       print(e);
     }
-
   }
-
 }

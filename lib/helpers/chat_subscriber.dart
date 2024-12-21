@@ -3,30 +3,40 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nightview/models/chat_data.dart';
-import 'package:nightview/models/chat_helper.dart';
-import 'package:nightview/models/chat_message_data.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/models/users/chat_data.dart';
+import 'package:nightview/helpers/users/chats/chat_helper.dart';
+import 'package:nightview/models/users/chat_message_data.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
-class ChatSubscriber extends ChangeNotifier {
+class ChatSubscriber extends ChangeNotifier { // Needs refac
   Map<String, ChatMessageData> _messages = {};
   Map<String, ChatData> _chats = {};
   Map<String, ImageProvider> _chatImages = {};
 
   Map<String, ChatMessageData> get messages => _messages;
+
   Map<String, ChatData> get chats => _chats;
+
   Map<String, ImageProvider> get chatImages => _chatImages;
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscribeToChat(String chatId) {
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>> subscribeToChat(
+      String chatId) {
     final firestore = FirebaseFirestore.instance;
 
     _messages.clear();
 
-    return firestore.collection('chats').doc(chatId).collection('messages').orderBy('timestamp').snapshots().listen((snapshot) {
-      for (DocumentChange<Map<String, dynamic>> docChange in snapshot.docChanges) {
+    return firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('timestamp')
+        .snapshots()
+        .listen((snapshot) {
+      for (DocumentChange<Map<String, dynamic>> docChange
+          in snapshot.docChanges) {
         switch (docChange.type) {
           case DocumentChangeType.added:
             _messages[docChange.doc.id] = ChatMessageData(
@@ -51,7 +61,8 @@ class ChatSubscriber extends ChangeNotifier {
     });
   }
 
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? subscribeToUsersChats(BuildContext context) {
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+      subscribeToUsersChats(BuildContext context) {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
 
@@ -67,7 +78,8 @@ class ChatSubscriber extends ChangeNotifier {
         .orderBy('last_updated')
         .snapshots()
         .listen((snapshot) {
-      for (DocumentChange<Map<String, dynamic>> docChange in snapshot.docChanges) {
+      for (DocumentChange<Map<String, dynamic>> docChange
+          in snapshot.docChanges) {
         switch (docChange.type) {
           case DocumentChangeType.added:
             _chats[docChange.doc.id] = ChatData(
@@ -75,7 +87,8 @@ class ChatSubscriber extends ChangeNotifier {
               lastMessage: docChange.doc.get('last_message'),
               lastSender: docChange.doc.get('last_sender'),
               lastUpdated: docChange.doc.get('last_updated').toDate(),
-              participants: List<String>.from(docChange.doc.get('participants')),
+              participants:
+                  List<String>.from(docChange.doc.get('participants')),
             );
             updateValues(context, _chats[docChange.doc.id]!);
             break;
@@ -85,7 +98,8 @@ class ChatSubscriber extends ChangeNotifier {
               lastMessage: docChange.doc.get('last_message'),
               lastSender: docChange.doc.get('last_sender'),
               lastUpdated: docChange.doc.get('last_updated').toDate(),
-              participants: List<String>.from(docChange.doc.get('participants')),
+              participants:
+                  List<String>.from(docChange.doc.get('participants')),
             );
             updateValues(context, _chats[docChange.doc.id]!);
             break;
@@ -99,22 +113,29 @@ class ChatSubscriber extends ChangeNotifier {
   }
 
   void updateValues(BuildContext context, ChatData chatData) async {
-
     String? otherId = await ChatHelper.getOtherMember(chatData.id);
 
     if (otherId == null) {
       return;
     }
 
-    UserData? otherUser = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.userData[otherId];
-    UserData? lastSenderUser = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.userData[chatData.lastSender];
-    UserData? currentUser = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserData;
+    UserData? otherUser = Provider.of<GlobalProvider>(context, listen: false)
+        .userDataHelper
+        .userData[otherId];
+    UserData? lastSenderUser =
+        Provider.of<GlobalProvider>(context, listen: false)
+            .userDataHelper
+            .userData[chatData.lastSender];
+    UserData? currentUser = Provider.of<GlobalProvider>(context, listen: false)
+        .userDataHelper
+        .currentUserData;
 
     _updateChatData(
       chatData.id,
       title: '${otherUser?.firstName} ${otherUser?.lastName}',
       imageUrl: await ProfilePictureHelper.getProfilePicture(otherId),
-    lastSenderName: lastSenderUser == currentUser ? 'Dig' : lastSenderUser?.firstName,
+      lastSenderName:
+          lastSenderUser == currentUser ? 'Dig' : lastSenderUser?.firstName,
     );
 
     ProfilePictureHelper.getProfilePicture(otherId).then((url) {

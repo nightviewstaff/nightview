@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/models/users/user_data.dart';
 
 class FriendsHelper {
   static Future<void> addFriend(String otherId) async {
@@ -136,7 +136,10 @@ class FriendsHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('friends').where(userId, isEqualTo: true).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('friends')
+          .where(userId, isEqualTo: true)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         firestore.collection('friends').doc(doc.id).set({userId: false});
       }
@@ -144,14 +147,11 @@ class FriendsHelper {
       // print(e);
     }
 
-
-
     try {
       await firestore.collection('friends').doc(userId).delete();
     } catch (e) {
       // print(e);
     }
-
   }
 
   static Future<List<UserData>> getFriendsData() async {
@@ -166,7 +166,8 @@ class FriendsHelper {
     List<String> friendIds = await getAllFriendIds();
 
     for (String friendId in friendIds) {
-      DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore.collection('user_data').doc(friendId).get();
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('user_data').doc(friendId).get();
       if (snapshot.exists) {
         friendsData.add(UserData.fromMap(snapshot.data()!));
       }
@@ -174,5 +175,4 @@ class FriendsHelper {
 
     return friendsData;
   }
-
 }

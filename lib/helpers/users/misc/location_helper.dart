@@ -4,12 +4,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
 import 'package:maps_toolkit/maps_toolkit.dart' as mt;
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/club_data.dart';
-import 'package:nightview/models/location_data.dart';
-import 'package:nightview/models/user_data.dart';
-import 'package:nightview/models/club_data_helper.dart';
+import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/models/users/location_data.dart';
+import 'package:nightview/models/users/user_data.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 
-class LocationHelper {
+class LocationHelper { // Needs refac
   LocationPermission _permission = LocationPermission.unableToDetermine;
   LocationAccuracyStatus _accuracy = LocationAccuracyStatus.precise;
   bool _serviceEnabled = false;

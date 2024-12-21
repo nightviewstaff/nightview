@@ -4,9 +4,9 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 
 // import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/models/users/user_data.dart';
 
-class UserDataHelper {
+class UserDataHelper { // Needs refac
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 

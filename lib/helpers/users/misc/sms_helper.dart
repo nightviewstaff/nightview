@@ -1,13 +1,10 @@
-
-
 import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
 
 class SMSHelper {
-
-  static Future<bool> launchSMS({required String phoneNumber, required String message}) async {
-
+  static Future<bool> launchSMS(
+      {required String phoneNumber, required String message}) async {
     late String uriString;
 
     if (Platform.isAndroid) {
@@ -26,7 +23,5 @@ class SMSHelper {
     } else {
       return false;
     }
-
   }
-
 }

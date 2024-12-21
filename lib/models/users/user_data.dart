@@ -71,13 +71,19 @@ class UserData {
       birthdayDay: map['birthdayDay'],
       birthdayMonth: map['birthdayMonth'],
       birthdayYear: map['birthdayYear'],
-      lastPositionLat: map.containsKey('last_position_lat') ? map['last_position_lat']?.toDouble() : null,
-      lastPositionLon: map.containsKey('last_position_lon') ? map['last_position_lon']?.toDouble() : null,
+      lastPositionLat: map.containsKey('last_position_lat')
+          ? map['last_position_lat']?.toDouble()
+          : null,
+      lastPositionLon: map.containsKey('last_position_lon')
+          ? map['last_position_lon']?.toDouble()
+          : null,
       lastPositionTime: map.containsKey('last_position_time')
           ? DateTime.fromMillisecondsSinceEpoch(map['last_position_time'])
           : null,
-      partyStatus: PartyStatus.values.firstWhere((e) => e.toString() == 'PartyStatus.' + map['partyStatus']),
-      partyStatusTime: DateTime.fromMillisecondsSinceEpoch(map['partyStatusTime']),
+      partyStatus: PartyStatus.values.firstWhere(
+          (e) => e.toString() == 'PartyStatus.' + map['partyStatus']),
+      partyStatusTime:
+          DateTime.fromMillisecondsSinceEpoch(map['partyStatusTime']),
     );
   }
 }

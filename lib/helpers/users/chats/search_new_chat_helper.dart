@@ -1,16 +1,16 @@
-
 import 'package:flutter/material.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 
 class SearchNewChatHelper extends ChangeNotifier {
-
   List<UserData> _friends = [];
   List<UserData> _filteredFriends = [];
   List<ImageProvider> _filteredFriendPbs = [];
 
   List<UserData> get friends => _friends;
+
   List<UserData> get filteredFriends => _filteredFriends;
+
   List<ImageProvider> get filteredFriendPbs => _filteredFriendPbs;
 
   void setFriends(List<UserData> friends) {
@@ -31,12 +31,14 @@ class SearchNewChatHelper extends ChangeNotifier {
   }
 
   void updateSearch(String searchStr) {
-
-    _filteredFriends = _friends.where((user) => '${user.firstName.trim()} ${user.lastName.trim()}'.toLowerCase().contains(searchStr.toLowerCase())).toList();
+    _filteredFriends = _friends
+        .where((user) => '${user.firstName.trim()} ${user.lastName.trim()}'
+            .toLowerCase()
+            .contains(searchStr.toLowerCase()))
+        .toList();
     notifyListeners();
 
     _fetchProfilePictures();
-
   }
 
   void _fetchProfilePictures() async {
@@ -46,5 +48,4 @@ class SearchNewChatHelper extends ChangeNotifier {
       _addUserPb(url);
     }
   }
-
 }

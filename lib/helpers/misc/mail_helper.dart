@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class MailHelper {
-
   Future sendMail({
     required String verificationCode,
     required String userMail,

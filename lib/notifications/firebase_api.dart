@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+
+
 // import 'package:nightview/constants/colors.dart';
 
 class FirebaseApi {
@@ -50,22 +52,28 @@ class FirebaseApi {
     });
   }
 
-  // Future<void> initLocalNotifications() async {
+  // Future<void> initLocalNotifications() async { // TODO SOON
   //   AwesomeNotifications().initialize(
   //     'images/logo_icon.png',
   //     [
   //       NotificationChannel(
   //         channelKey: 'nightview_channel',
   //         channelName: 'Nightview Notifications',
-  //         channelDescription: 'Used for NV notifications.',
+  //         channelDescription: 'Used for Nightview notifications.',
   //         defaultColor: primaryColor,
   //         ledColor: secondaryColor,
-  //         importance: NotificationImportance.Default,
+  //         importance: NotificationImportance.High,
+  //         channelShowBadge: true
   //       )
   //     ],
   //   );
+  //
+  //   Future<void> showInstantNotification({
+  //     required int id,
+  //     required String title,
+  //   }}
 
-  //   AwesomeNotifications().actionStream.listen((notification) {
+        //   AwesomeNotifications().actionStream.listen((notification) {
   //     if (notification.payload != null) {
   //       final message = RemoteMessage.fromMap(
   //         jsonDecode(notification.payload!['data']!),

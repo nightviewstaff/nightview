@@ -1,7 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nightview/models/chat_message_data.dart';
+import 'package:nightview/models/users/chat_message_data.dart';
 
 class ChatHelper {
 

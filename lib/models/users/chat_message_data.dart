@@ -1,23 +1,19 @@
-
 class ChatMessageData {
-
   final String sender;
   final String message;
   final DateTime timestamp;
 
-  ChatMessageData({required this.sender, required this.message, required this.timestamp});
+  ChatMessageData(
+      {required this.sender, required this.message, required this.timestamp});
 
   String getReadableTimestamp() {
-
     String hour = timestamp.hour.toString().padLeft(2, '0');
     String minute = timestamp.minute.toString().padLeft(2, '0');
 
     return '${getShortWeekday().toUpperCase()}$hour:$minute';
-
   }
 
   String getShortWeekday() {
-
     int dayToday = DateTime.now().weekday;
 
     if (dayToday == timestamp.weekday) {
@@ -42,7 +38,5 @@ class ChatMessageData {
     }
 
     return '';
-
   }
-
 }

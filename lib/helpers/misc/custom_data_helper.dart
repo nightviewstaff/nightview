@@ -1,20 +1,19 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomDataHelper {
-
-  static Future<List<String>?> getBalladeFabrikkenCertified() async {
+  static Future<List<String>?> getBalladeFabrikkenCertified() async { // Never finished.
     final firestore = FirebaseFirestore.instance;
 
     try {
-      DocumentSnapshot<Map<String, dynamic>> snap = await firestore.collection('values').doc('balladefabrikken_certified').get();
+      DocumentSnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('values')
+          .doc('balladefabrikken_certified')
+          .get();
       return List<String>.from(snap.get('clubs'));
     } catch (e) {
       print(e);
       return null;
     }
-
   }
 
   static Future<String?> getBalladeFabrikkenCertifiedAsString() async {
@@ -32,5 +31,4 @@ class CustomDataHelper {
       return str;
     }
   }
-
 }

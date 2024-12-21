@@ -95,7 +95,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                     FontAwesomeIcons.lock,
                   ),
                   onTap: () {
-                    launchUrl(Uri.parse('https://nightview.dk/privatlivspolitik'));
+                    launchUrl(Uri.parse('https://night-view.dk/privacy-policy/'));
                   },
                 ),
                 ListTile(

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/models/friend_request.dart';
+import 'package:nightview/models/users/friend_request.dart';
 
-class FriendRequestHelper {
+class FriendRequestHelper { // Too long class.
   static final _firestore = FirebaseFirestore.instance;
   static final _auth = FirebaseAuth.instance;
 
@@ -88,18 +88,26 @@ class FriendRequestHelper {
     final currentUserId = _auth.currentUser!.uid;
 
     int count1 = (await _firestore
-        .collection('friend_requests')
-        .where('from', isEqualTo: otherId)
-        .where('to', isEqualTo: currentUserId)
-        .where('status', isEqualTo: _enumToString(FriendRequestStatus.pending))
-        .count().get()).count ?? 0;  // Defaults to 0 if null
+                .collection('friend_requests')
+                .where('from', isEqualTo: otherId)
+                .where('to', isEqualTo: currentUserId)
+                .where('status',
+                    isEqualTo: _enumToString(FriendRequestStatus.pending))
+                .count()
+                .get())
+            .count ??
+        0; // Defaults to 0 if null
 
     int count2 = (await _firestore
-        .collection('friend_requests')
-        .where('from', isEqualTo: currentUserId)
-        .where('to', isEqualTo: otherId)
-        .where('status', isEqualTo: _enumToString(FriendRequestStatus.pending))
-        .count().get()).count ?? 0;  // Defaults to 0 if null
+                .collection('friend_requests')
+                .where('from', isEqualTo: currentUserId)
+                .where('to', isEqualTo: otherId)
+                .where('status',
+                    isEqualTo: _enumToString(FriendRequestStatus.pending))
+                .count()
+                .get())
+            .count ??
+        0; // Defaults to 0 if null
 
     if (count1 + count2 > 0) {
       return true;

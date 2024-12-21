@@ -23,8 +23,8 @@ class ClubData {
 
   final OfferType offerType;
 
-
-  ClubData({ // would be nice to only have the necessaries required, so the marker can be displayed even if db is incomplete
+  ClubData({
+    // would be nice to only have the necessaries required, so the marker can be displayed even if db is incomplete
     required this.id,
     required this.name,
     required this.logo,
@@ -32,10 +32,8 @@ class ClubData {
     required this.lon,
     required this.favorites,
     required this.corners,
-
     required this.offerType,
     required this.mainOfferImg,
-
     required this.ageRestriction,
     required this.typeOfClub,
     required this.typeOfClubImg,
@@ -44,5 +42,4 @@ class ClubData {
     required this.totalPossibleAmountOfVisitors,
     this.visitors = 0,
   });
-
 }
