@@ -7,11 +7,11 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/chat_helper.dart';
-import 'package:nightview/models/chat_message_data.dart';
-import 'package:nightview/models/chat_subscriber.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/chats/chat_helper.dart';
+import 'package:nightview/models/users/chat_message_data.dart';
+import 'package:nightview/helpers/chat_subscriber.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 

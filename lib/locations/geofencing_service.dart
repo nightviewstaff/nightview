@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:nightview/models/location_data.dart';
-import 'package:nightview/models/location_helper.dart';
+import 'package:nightview/models/users/location_data.dart';
+import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,6 +32,9 @@ class GeofencingService {
       isInDebugMode: false,
     );
   }
+
+
+
 
   void registerPeriodicTask() {
     Workmanager().registerPeriodicTask(

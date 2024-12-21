@@ -5,7 +5,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/club_data.dart';
+import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:slider_button/slider_button.dart';

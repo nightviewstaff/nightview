@@ -12,8 +12,8 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/club_data.dart';
-import 'package:nightview/models/club_data_helper.dart';
+import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
@@ -21,7 +21,7 @@ import 'package:nightview/widgets/club_header.dart';
 import 'package:nightview/widgets/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../models/user_data.dart';
+import '../../models/users/user_data.dart';
 
 class NightMap extends StatefulWidget {
   const NightMap({super.key});
@@ -137,12 +137,12 @@ class _NightMapState extends State<NightMap> {
         height: 100.0,
         child:
             ClubMarker(
-              logo: CachedNetworkImageProvider(club.logo),
+              logo: CachedNetworkImageProvider(club.logo), // TODO Cache all images
               visitors: club.visitors,
               onTap: () {
                 Provider.of<GlobalProvider>(context, listen: false)
                     .setChosenClub(club);
-                showClubSheet(club: club);
+                showClubSheet(context: context,club: club);
               },
             ),
       );
@@ -184,11 +184,10 @@ class _NightMapState extends State<NightMap> {
     );
   }
 
-  void showClubSheet({required ClubData club}) {
+  static void showClubSheet({required BuildContext context,required ClubData club}) { // TODO Move to seperate class
     showStickyFlexibleBottomSheet(
       context: context,
-      initHeight: 0.35,
-      // maybe more?
+      initHeight: 0.40, // maybe more?
       minHeight: 0,
       maxHeight: 1,
       // club.offerType == OfferType.none ? 0.3 : 1,

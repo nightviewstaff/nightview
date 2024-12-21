@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/referral_points_helper.dart';
+import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/registration_welcome_screen.dart';

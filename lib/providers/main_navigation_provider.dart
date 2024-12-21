@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/screens/night_map/night_map_main_screen.dart';
-import 'package:nightview/screens/night_offers/night_offers_main_screen.dart';
 import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 
 class MainNavigationProvider extends ChangeNotifier {

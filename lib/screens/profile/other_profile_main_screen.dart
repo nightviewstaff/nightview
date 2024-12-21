@@ -4,12 +4,12 @@ import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/biography_helper.dart';
-import 'package:nightview/models/friend_request_helper.dart';
-import 'package:nightview/models/friends_helper.dart';
-import 'package:nightview/models/location_data.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/misc/biography_helper.dart';
+import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/models/users/location_data.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 

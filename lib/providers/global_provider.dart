@@ -7,18 +7,18 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/chat_helper.dart';
-import 'package:nightview/models/club_data.dart';
-import 'package:nightview/models/club_data_helper.dart';
-import 'package:nightview/models/friend_request_helper.dart';
-import 'package:nightview/models/friends_helper.dart';
-import 'package:nightview/models/location_data.dart';
-import 'package:nightview/models/location_helper.dart';
-import 'package:nightview/models/main_offer_redemptions_helper.dart';
-import 'package:nightview/models/referral_points_helper.dart';
-import 'package:nightview/models/share_code_helper.dart';
-import 'package:nightview/models/user_data.dart';
-import 'package:nightview/models/user_data_helper.dart';
+import 'package:nightview/helpers/users/chats/chat_helper.dart';
+import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
+import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/models/users/location_data.dart';
+import 'package:nightview/helpers/users/misc/location_helper.dart';
+import 'package:nightview/helpers/misc/main_offer_redemptions_helper.dart';
+import 'package:nightview/helpers/misc/referral_points_helper.dart';
+import 'package:nightview/helpers/misc/share_code_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
+import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {

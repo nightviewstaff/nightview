@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/phone_country_code.dart';
+import 'package:nightview/constants/phone_country_code.dart';
 
 class PhoneCountryCodeDropdownButton extends StatelessWidget {
   final Callback<CountryCode>? onChanged;

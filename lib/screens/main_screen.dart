@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';

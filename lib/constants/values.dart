@@ -26,4 +26,4 @@ const kCloseMapZoom = 18.0;
 const kMaxMapZoom = 18.4;
 const kNewDayHour = 8;
 
-const backgroundLocationEnabled = false;
+const backgroundLocationEnabled = false; // TODO?
