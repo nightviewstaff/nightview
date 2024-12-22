@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/club_data.dart';
+import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
+import 'package:nightview/utilities/club_data/club_capacity_calculator.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
+import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/favorite_club_button.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:nightview/widgets/rate_club.dart';
+
+import '../utilities/club_data/club_name_formatter.dart';
+import '../utilities/messages/custom_modal_message.dart';
 
 class ClubHeader extends StatelessWidget {
   // TODO rework so the header fits without problems on all screens.
@@ -16,118 +22,18 @@ class ClubHeader extends StatelessWidget {
 
   // final GlobalKey _circleAvatarKey = GlobalKey(); For popup
 
-  ClubHeader({super.key, required this.club});
+  const ClubHeader({super.key, required this.club});
 
   @override
   Widget build(BuildContext context) {
-    final String currentWeekday = DateFormat('EEEE')
-        .format(DateTime.now())
-        .toLowerCase(); // Move to seperate class eventually
-    final Map<String, dynamic>? todayHours =
-        club.openingHours[currentWeekday] as Map<String, dynamic>?;
-
-    String openingHoursText;
-    if (todayHours == null || todayHours.isEmpty) {
-      openingHoursText = 'Lukket ';
-    } else {
-      final String openTime = todayHours['open'] ?? '00:00';
-      final String closeTime = todayHours['close'] ?? '00:00';
-      openingHoursText = '$openTime - $closeTime ';
-    }
-
-    if (club.visitors < 5) {
-      // && (todayHours != null || todayHours!.isNotEmpty)) {
-      // TODO
-      club.visitors = 14;
-      // Random(5)+10;
-    }
-
-    double percentOfCapacity = (club.totalPossibleAmountOfVisitors > 0)
-        ? club.visitors / club.totalPossibleAmountOfVisitors
-        : 0.15;
-
-    if (percentOfCapacity >= 1) {
-      percentOfCapacity =
-          0.99; // Sets capacity to a max of 99% maybe need change.
-    }
-    if (percentOfCapacity <= 0) {
-      // percentOfCapacity =
-      //     0.03; // Sets capacity to a min of 3% maybe need change.
-    }
-
-    int intCurrentAgeRestriction = club.ageRestriction;
-    String stringCurrentAgeRestriction;
-    if (todayHours != null && todayHours.containsKey('age_restriction')
-        // && !todayHours.containsKey('age_restriction')==null
-        ) {
-      intCurrentAgeRestriction = todayHours['age_restriction'];
-    }
-
-    if (intCurrentAgeRestriction <= 17) {
-      stringCurrentAgeRestriction = 'ikke oplyst';
-    } else {
-      stringCurrentAgeRestriction = '$intCurrentAgeRestriction+';
-    }
-
-    final Map<String, String> clubTypeTranslations = {
-      'bar': 'Bar',
-      'bar_club': 'Bar/klub',
-      'beer_bar': 'Ølbar',
-      'bodega': 'Bodega',
-      'club': 'Klub',
-      'cocktail_bar': 'Cocktailbar',
-      'gay_bar': 'Gaybar',
-      'jazz_bar': 'Jazzbar',
-      'karaoke_bar': 'Karaokebar',
-      'live_music_bar': 'Livemusikbar',
-      'pub': 'Pub',
-      'sports_bar': 'Sportsbar',
-      'wine_bar': 'Vinbar',
-    };
-
-    String currentTypeOfClubTranslated(String typeOfClub) {
-      final translated = clubTypeTranslations[typeOfClub] ??
-          typeOfClub; // Default to original if not found
-      return translated.substring(0, 1).toUpperCase() + translated.substring(1);
-    }
-
-    // TODO later for better visability of place.
-    // void _showPopup(BuildContext context) { For better showing of clubType
-    //   final RenderBox renderBox =
-    //       _circleAvatarKey.currentContext!.findRenderObject() as RenderBox;
-    //   final Offset position = renderBox.localToGlobal(
-    //       Offset.zero); // Get the global position of the CircleAvatar
-    //
-    //   final overlay = Overlay.of(context); // Get the overlay
-    //   final overlayEntry = OverlayEntry(
-    //     builder: (context) => Positioned(
-    //       Position the popup dynamically based on the CircleAvatar location
-    // left: position.dx + renderBox.size.width + 10,
-    // Adjust this based on where you want the popup
-    // top: position.dy,
-    // Adjust this based on where you want the popup
-    // child: Material(
-    //   color: Colors.transparent, // Transparent background
-    //   child: Container(
-    //     padding: EdgeInsets.all(8.0),
-    //     decoration: BoxDecoration(
-    //       color: Colors.black.withOpacity(1),
-    //       borderRadius: BorderRadius.circular(10),
-    //     ),
-    //     child: Text(
-    //       'Bar', // Display the type of club
-    //       style: TextStyle(color: white),
-    //     ),
-    //   ),
-    // ),
-    // ),
-    // );
-    // overlay?.insert(overlayEntry);
-    // Duration
-    // Future.delayed(Duration(seconds: 1), () {
-    //   overlayEntry.remove();
-    // });
-    // }
+    String formattedClubName = ClubNameFormatter.displayClubName(club);
+    String formattedClubType = ClubTypeFormatter.displayClubTypeFormatted(club);
+    String openingHoursToday =
+        ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club);
+    String currentAgeRestriction =
+        ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
+    double percentOfCapacity =
+        ClubCapacityCalculator.displayCalculatedPercentageOfCapacity(club);
 
     return Container(
       decoration: BoxDecoration(
@@ -144,24 +50,16 @@ class ClubHeader extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: GestureDetector(
                     onTap: () {
-                      // _showPopup(context); TODO future release
-                      showModalBottomSheet(
+                      // _showPopup(context); TODO future release for cleaner message.
+                      CustomModalMessage.showCustomBottomSheetOneSecond(
                         context: context,
-                        builder: (context) => Container(
-                          padding: EdgeInsets.all(15.0),
-                          child: Text(
-                            currentTypeOfClubTranslated(club.typeOfClub),
-                            style: kTextStyleP1,
-                          ),
-                        ),
+                        message: formattedClubType,
+                        textStyle: kTextStyleP1,
                       );
-                      Future.delayed(Duration(seconds: 2), () {
-                        Navigator.of(context).pop();
-                      });
                     },
                     child: CircleAvatar(
-                      // key: _circleAvatarKey,
                       backgroundImage: NetworkImage(club.typeOfClubImg),
+                      // Todo white outline on pic
                       radius: 20.0,
                     ),
                   ),
@@ -189,6 +87,54 @@ class ClubHeader extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                //ALTERNATIVE
+
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end, // Align content to the right
+                //   children: [
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.end, // Align text to the right
+                //       children: [
+                //         Text(
+                //           ClubNameFormatter.displayLocation(club),
+                //           style: kTextStyleP3, // Add styling if needed
+                //         ),
+                //         const SizedBox(height: 4.0), // Add spacing between texts
+                //         Text(
+                //           ClubNameFormatter.displayDistance(
+                //             club: club,
+                //             userLon: 551,
+                //             userLat: 123,
+                //           ),
+                //           style: kTextStyleP3, // Add styling if needed
+                //         ),
+                //       ],
+                //     ),
+                //     const SizedBox(width: kSmallPadding), // Spacing between this and other widgets
+                //   ],
+                // ),
+
+
+                // PIC OF BIKE/ Feet or BUS whatever?
+                // rutevejlednign her.
+            Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    ClubNameFormatter.displayDistanceToClub(
+                      club: club,
+                      userLon: 551,
+                      userLat: 123,
+                    ),
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+
+
+                const SizedBox(width: kSmallPadding,)
               ],
             ),
           ),
@@ -201,7 +147,8 @@ class ClubHeader extends StatelessWidget {
                 children: <Widget>[
                   // Stroked text as border.
                   Text(
-                    club.name, // TODO Move text just a bit further up
+                    formattedClubName,
+                    // TODO Move text just a bit further up
                     style: kTextStyleH1.copyWith(
                       foreground: Paint()
                         ..style = PaintingStyle.stroke
@@ -212,7 +159,7 @@ class ClubHeader extends StatelessWidget {
                   ),
                   // Solid text as fill.
                   Text(
-                    club.name,
+                    formattedClubName,
                     style: kTextStyleH1.copyWith(color: primaryColor),
                     textAlign: TextAlign.center,
                   ),
@@ -238,30 +185,38 @@ class ClubHeader extends StatelessWidget {
                     const FavoriteClubButton(),
                   ],
                 ),
-                CircularPercentIndicator(
-                  radius: 30.0,
-                  lineWidth: 5.0,
-                  // padding-right: 10
-                  percent: percentOfCapacity,
-                  center: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: (percentOfCapacity * 100).toStringAsFixed(0),
-                          style: kTextStyleH3.copyWith(color: primaryColor),
-                        ),
-                        TextSpan(
-                          text: '%',
-                          style: kTextStyleH3.copyWith(color: white),
-                        ),
-                      ],
+                GestureDetector(
+                  onTap: () {
+                    CustomModalMessage.showCustomBottomSheetOneSecond(
+                      context: context,
+                      message:
+                          "${(percentOfCapacity * 100).toStringAsFixed(0)}% fyldt op",
+                      textStyle: kTextStyleP1,
+                    );
+                  },
+                  child: CircularPercentIndicator(
+                    radius: 30.0,
+                    lineWidth: 5.0,
+                    // padding-right: 10
+                    percent: percentOfCapacity,
+                    center: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: (percentOfCapacity * 100).toStringAsFixed(0),
+                            style: kTextStyleH3.copyWith(color: primaryColor),
+                          ),
+                          TextSpan(
+                            text: '%',
+                            style: kTextStyleH3.copyWith(color: white),
+                          ),
+                        ],
+                      ),
                     ),
+                    progressColor: secondaryColor,
+                    backgroundColor: white,
                   ),
-                  progressColor: secondaryColor,
-                  backgroundColor: white,
-                ),
-
-                // )
+                )
               ],
             ),
           ),
@@ -272,7 +227,7 @@ class ClubHeader extends StatelessWidget {
               children: [
                 Text(
                   // 'Aldersgrænse: '+
-                  stringCurrentAgeRestriction,
+                  currentAgeRestriction,
                   style: kTextStyleP1,
                 ),
                 Padding(
@@ -288,12 +243,55 @@ class ClubHeader extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kSmallSpacerValue),
-            child: Text(
-              // 'Åbningstider: ' +
-              '$openingHoursText i dag.',
-              // Dropdown til hele ugens åbningstider TODO
-              style: kTextStyleP1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  openingHoursToday,
+                  style: kTextStyleP1,
+                ),
+                PopupMenuButton<MapEntry<String, dynamic>>(
+                  icon: FaIcon(
+                    FontAwesomeIcons.chevronDown,
+                    color: white,
+                    size: 20,
+                  ),
+                  itemBuilder: (context) {
+                    //TODO Refactor
+                    return club.openingHours.entries.where((entry) {
+                      final hours = entry.value as Map<String, dynamic>?;
+                      return hours != null &&
+                          hours.isNotEmpty; // Skip if closed
+                    }).map((entry) {
+                      final hours = entry.value as Map<String, dynamic>;
+                      final openTime = hours['open'] ?? '00:00';
+                      final closeTime = hours['close'] ?? '00:00';
+                      final currentAgeRestriction = ClubAgeRestrictionFormatter
+                          .displayClubAgeRestrictionFormattedShort(club);
+                      return PopupMenuItem(
+                        value: entry,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${entry.key[0].toUpperCase()}${entry.key.substring(1)}: $openTime - $closeTime',
+                              style: kTextStyleP1,
+                            ),
+                            Text(
+                              currentAgeRestriction,
+                              style: kTextStyleP1.copyWith(color: primaryColor),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList();
+                  },
+                ),
+              ],
             ),
+          ),
+          const SizedBox(
+            width: kSmallSpacerValue,
           ),
           RateClub(clubId: club.id),
           Padding(
