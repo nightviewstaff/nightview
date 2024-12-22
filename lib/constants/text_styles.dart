@@ -19,6 +19,12 @@ const kTextStyleH3 = TextStyle(
   color: Colors.white,
 );
 
+const kTextStyleH3ToP1 = TextStyle(
+  fontSize: 15.0,
+  fontWeight: FontWeight.w600,
+  color: Colors.white,
+);
+
 const kTextStyleP1 = TextStyle(
   fontSize: 14.0,
   color: Colors.white,
@@ -33,6 +39,13 @@ const kTextStyleP3 = TextStyle(
   fontSize: 10.0,
   color: Colors.white,
 );
+
+// TODO make a cool style with white and NV-Green combined.
+
+// const kTextStyleLocation = TextStyle(
+//   fontSize: 8.0,
+//   color: primaryColor,
+// );
 
 const kTextStyleSwipeH2 = TextStyle(
     fontSize: 24.0,
