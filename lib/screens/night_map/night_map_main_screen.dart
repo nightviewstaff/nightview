@@ -3,16 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/services/firestore/add_club.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
-import 'package:nightview/utilities/club_data/club_capacity_calculator.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
-import 'package:nightview/widgets/club_header.dart';
+import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:searchfield/searchfield.dart';
@@ -44,6 +41,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   }
 
   Future<LatLng?> getUserLocation() async {
+    //TODO Move so can acess from anywhere
     // Move
     try {
       // Check location permissions
@@ -64,7 +62,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       // Convert Position to LatLng
       return LatLng(position.latitude, position.longitude);
     } catch (e) {
-      print('Error fetching user location: $e');
       return null; // Return null if there's an error
     }
   }
@@ -78,7 +75,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         .forEach((id, clubData) {
       suggestions.add(
         SearchFieldListItem<ClubData>(
-          ClubNameFormatter.displayClubNameFormattedWithLocation(clubData),
+          "${ClubNameFormatter.formatClubName(clubData.name)}\n"
+          "${ClubNameFormatter.displayClubLocation(clubData)}",
           item: clubData,
           child: ListTile(
             leading: CircleAvatar(
@@ -86,7 +84,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               radius: 25.0,
             ),
             title: Text(
-              ClubNameFormatter.displayClubNameFormattedWithLocation(clubData),
+              "${ClubNameFormatter.formatClubName(clubData.name)}\n"
+              "${ClubNameFormatter.displayClubLocation(clubData)}",
               // What is the diff with these 2 diplays
               style: kTextStyleP3,
             ), // TODO If logo = default dont show CA below.
@@ -167,7 +166,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           final userLocation = snapshot.data!;
 
           return Column(
-            children: [
+            children:
+                // toggledStates.keys.map((clubTypeKey))
+                [
               Padding(
                 padding: const EdgeInsets.all(kMainPadding),
                 child: Row(
@@ -305,7 +306,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                           Provider.of<GlobalProvider>(context, listen: false)
                               .nightMapController
-                              .move(LatLng(value.item.lat, value.item.lon), // TODO BUG. Move to person
+                              .move(
+                                  LatLng(value.item.lat, value.item.lon),
+                                  // TODO BUG. Move to person
                                   kCloseMapZoom);
 
                           // TODO  NightMap.showClubSheet(context: context, club: value.item);
@@ -341,7 +344,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         });
   }
 
-  void showAllTypesOfBars(BuildContext context, LatLng userLocation) { // TODO Always sort after closest.
+  void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
+    // TODO Always sort after closest.
     // todo Class of it own
     // Fetch all clubs and their types
     final clubDataHelper =
@@ -367,10 +371,36 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             final type = entry.key;
             final clubs = entry.value;
 
+            clubs.sort((a, b) {
+              final double distanceA = Geolocator.distanceBetween(
+                userLocation.latitude,
+                userLocation.longitude,
+                a.lat,
+                a.lon,
+              );
+              final double distanceB = Geolocator.distanceBetween(
+                userLocation.latitude,
+                userLocation.longitude,
+                b.lat,
+                b.lon,
+              );
+              return distanceA.compareTo(distanceB);
+            });
+
+
             return ExpansionTile(
               // Show an image of typeOfClubImg before the text
               title: Row(
                 children: [
+                  // BarTypeToggle(
+                  //   onToggle: (isToggled) {
+                  //     if (isToggled) {
+                  //       TODO
+                  // } else {
+                  //   TODO
+                  // }
+                  // },
+                  // ),
                   CircleAvatar(
                     backgroundImage: NetworkImage(clubs.first.typeOfClubImg),
                     radius: 25.0,
@@ -384,6 +414,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               ),
               children: clubs.map((club) {
                 return ListTile(
+                  //TODO Sort list by distance
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage(club.logo),
                     radius: 20.0,
@@ -395,22 +426,24 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         child: Text(
                           ClubNameFormatter.formatClubName(club.name),
                           style: kTextStyleH3,
-                          overflow: TextOverflow.ellipsis, // Prevents text overflow
+                          overflow:
+                              TextOverflow.ellipsis, // Prevents text overflow
                         ),
                       ),
                       Text(
-                        ClubNameFormatter.displayDistance(
+                        ClubNameFormatter.displayDistanceToClub(
                           club: club,
                           userLat: userLocation.latitude,
                           userLon: userLocation.longitude,
                         ),
-                        style: kTextStyleP2.copyWith(color: primaryColor), // Adjust style
+                        style: kTextStyleP2.copyWith(
+                            color: primaryColor), // Adjust style
                       ),
                     ],
                   ),
                   subtitle: Text(
-                    ClubNameFormatter.displayLocation(club),
-                    style: kTextStyleP3.copyWith(color: Colors.indigo),
+                    ClubNameFormatter.displayClubLocation(club),
+                    style: kTextStyleP3,
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -419,7 +452,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         .move(LatLng(club.lat, club.lon), kCloseMapZoom);
                   },
                 );
-
               }).toList(),
             );
           }).toList(),
