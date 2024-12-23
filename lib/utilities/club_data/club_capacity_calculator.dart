@@ -24,4 +24,17 @@ class ClubCapacityCalculator {
     } // TODO Figure out exact time. (if open at 18 and is 17 still say 0)
     return percentOfCapacity;
   }
+
+
+
+  double getDecimalValue({required int amount, required int fullAmount}) {
+    double value = amount / fullAmount;
+    if (value < 0.01) return 0.01;
+    if (value > 1.0) return 1.0;
+    return value;
+  }
+
+  int getPercentValue({required int amount, required int fullAmount}) {
+    return (amount / fullAmount * 100).round();
+  }
 }
