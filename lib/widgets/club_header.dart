@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_capacity_calculator.dart';
+import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/favorite_club_button.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:nightview/widgets/rate_club.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../utilities/club_data/club_name_formatter.dart';
 import '../utilities/messages/custom_modal_message.dart';
@@ -115,26 +119,70 @@ class ClubHeader extends StatelessWidget {
                 //   ],
                 // ),
 
-
                 // PIC OF BIKE/ Feet or BUS whatever?
                 // rutevejlednign her.
-            Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    ClubNameFormatter.displayDistanceToClub(
-                      club: club,
-                      userLon: 551,
-                      userLat: 123,
-                    ),
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontSize: 16.0,
+                //TODO cache distance - When scrolling in header its loading.
+                Align(
+                  alignment: Alignment.topRight, // Position in top-right
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0), // Add padding
+                    child: FutureBuilder<LatLng?>(
+                      future: LocationService.getUserLocation(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text(
+                            'Loading...',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16.0,
+                            ),
+                          );
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Text(
+                            'Location unavailable',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16.0,
+                            ),
+                          );
+                        } else {
+                          final userLocation = snapshot.data!;
+                          return GestureDetector(
+                            onTap: () async {
+                              final String googleMapsUrl =
+                                  'https://www.google.com/maps/dir/?api=1&destination=${club.lat},${club.lon}&origin=${userLocation.latitude},${userLocation.longitude}';
+                              final String appleMapsUrl =
+                                  'https://maps.apple.com/?daddr=${club.lat},${club.lon}&saddr=${userLocation.latitude},${userLocation.longitude}';
+
+                              // Launch the URL
+                              if (await canLaunch(googleMapsUrl)) {
+                                await launch(googleMapsUrl);
+                              } else if (await canLaunch(appleMapsUrl)) {
+                                await launch(appleMapsUrl);
+                              } else {
+                                throw 'Could not launch maps';
+                              }
+                            },
+                            child: Text(
+                              ClubDistanceCalculator.displayDistanceToClub(
+                                club: club,
+                                userLon: userLocation.longitude,
+                                userLat: userLocation.latitude,
+                              ),
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline, // Indicate it's clickable
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),
 
-
-                const SizedBox(width: kSmallPadding,)
               ],
             ),
           ),

@@ -5,9 +5,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
+import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -40,99 +42,68 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
     }
   }
 
-  Future<LatLng?> getUserLocation() async {
-    //TODO Move so can acess from anywhere
-    // Move
-    try {
-      // Check location permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.deniedForever ||
-            permission == LocationPermission.denied) {
-          throw Exception('Location permissions are denied');
-        }
-      }
 
-      // Get the user's current location
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      // Convert Position to LatLng
-      return LatLng(position.latitude, position.longitude);
-    } catch (e) {
-      return null; // Return null if there's an error
-    }
-  }
-
+  //TODO Remove searchfield when pressed another place.
   List<SearchFieldListItem> getSearchSuggestions() {
-    List<SearchFieldListItem> suggestions = [];
+    final clubDataHelper = Provider.of<GlobalProvider>(context).clubDataHelper;
+    // future: getUserLocation(),
 
-    Provider.of<GlobalProvider>(context)
-        .clubDataHelper
-        .clubData
-        .forEach((id, clubData) {
-      suggestions.add(
-        SearchFieldListItem<ClubData>(
-          "${ClubNameFormatter.formatClubName(clubData.name)}\n"
-          "${ClubNameFormatter.displayClubLocation(clubData)}",
-          item: clubData,
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(clubData.logo),
-              radius: 25.0,
-            ),
-            title: Text(
-              "${ClubNameFormatter.formatClubName(clubData.name)}\n"
-              "${ClubNameFormatter.displayClubLocation(clubData)}",
-              // What is the diff with these 2 diplays
-              style: kTextStyleP3,
-            ), // TODO If logo = default dont show CA below.
-            trailing: clubData.logo != clubData.typeOfClubImg
-                ? CircleAvatar(
-                    backgroundImage: NetworkImage(clubData.typeOfClubImg),
-                    radius: 15.0, // Specific size TBD.
-                  )
-                : null, // Hide the trailing CircleAvatar if logo equals typeOfClubImg
+    // builder: (context, snapshot) {
+    //   if (snapshot.connectionState == ConnectionState.waiting) {
+    //     return Center(child: CircularProgressIndicator());
+    //   } else if (snapshot.hasError || !snapshot.hasData) {
+    //     return Center(child: Text('Failed to fetch location'));
+    //   }
+    // final userLocation = snapshot.data!;
+
+    return clubDataHelper.clubData.values.map((clubData) {
+      final clubName = ClubNameFormatter.displayClubName(clubData);
+      final clubLocation = ClubNameFormatter.displayClubLocation(clubData);
+      final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
+
+      return SearchFieldListItem<ClubData>(
+        clubName,
+        item: clubData,
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(clubData.logo),
+            radius: 25.0,
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                clubName,
+                style: kTextStyleP3,
+              ),
+              const SizedBox(height: 2.0), // Spacing between name and location
+              Text(
+                clubLocation,
+                style: kTextStyleP3.copyWith(
+                    color: primaryColor), // Smaller and gray text for location
+              ),
+            ],
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Text(
+              //   ClubDistanceCalculator.displayDistanceToClub(
+              //       userLat: userLat, userLon: userLon, club: club),
+              //   style: kTextStyleP3.copyWith(color: Colors.grey),
+              // ),
+              hasCustomLogo
+                  ? CircleAvatar(
+                      backgroundImage: NetworkImage(clubData.typeOfClubImg),
+                      radius: 15.0,
+                    )
+                  : const SizedBox.shrink(), // Empty widget if no custom logo
+            ],
           ),
         ),
       );
-    });
-
-    return suggestions;
+    }).toList();
   }
-
-  /// REPLACE ABOVE WITH:
-  /// List<SearchFieldListItem> getSearchSuggestions() {
-  //   final clubDataHelper = Provider.of<GlobalProvider>(context).clubDataHelper;
-  //
-  //   return clubDataHelper.clubData.values.map((clubData) {
-  //     final formattedName = ClubNameFormatter.displayClubNameFormattedWithLocation(clubData);
-  //     final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
-  //
-  //     return SearchFieldListItem<ClubData>(
-  //       formattedName,
-  //       item: clubData,
-  //       child: ListTile(
-  //         leading: CircleAvatar(
-  //           backgroundImage: NetworkImage(clubData.logo),
-  //           radius: 25.0,
-  //         ),
-  //         title: Text(
-  //           formattedName,
-  //           style: kTextStyleP3,
-  //         ),
-  //         trailing: hasCustomLogo
-  //             ? CircleAvatar(
-  //                 backgroundImage: NetworkImage(clubData.typeOfClubImg),
-  //                 radius: 15.0,
-  //               )
-  //             : null,
-  //       ),
-  //     );
-  //   }).toList();
-  // }
 
   double getDecimalValue({required int amount, required int fullAmount}) {
     // TODO In utility
@@ -155,7 +126,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<LatLng?>(
-        future: getUserLocation(),
+        future: LocationService.getUserLocation(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -387,7 +358,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               return distanceA.compareTo(distanceB);
             });
 
-
             return ExpansionTile(
               // Show an image of typeOfClubImg before the text
               title: Row(
@@ -425,13 +395,13 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                       Expanded(
                         child: Text(
                           ClubNameFormatter.formatClubName(club.name),
-                          style: kTextStyleH3,
+                          style: kTextStyleP1,
                           overflow:
                               TextOverflow.ellipsis, // Prevents text overflow
                         ),
                       ),
                       Text(
-                        ClubNameFormatter.displayDistanceToClub(
+                        ClubDistanceCalculator.displayDistanceToClub(
                           club: club,
                           userLat: userLocation.latitude,
                           userLon: userLocation.longitude,
@@ -443,7 +413,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   ),
                   subtitle: Text(
                     ClubNameFormatter.displayClubLocation(club),
-                    style: kTextStyleP3,
+                    style: kTextStyleP3.copyWith(color: primaryColor),
                   ),
                   onTap: () {
                     Navigator.pop(context);
