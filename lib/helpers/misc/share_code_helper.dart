@@ -103,17 +103,18 @@ class ShareCodeHelper {
   }
 
   static String getMessageFromCode(String code) {
+    // Du kan give mig et shot, ganske gratis, ved at downloade NightView, trykke på lyn-ikonet i øverste venstre hjørne og indtaste koden:
+    // $code
+
     return '''
-Hej
+Hey
 
-Du kan give mig et shot, ganske gratis, ved at downloade NightView, trykke på lyn-ikonet i øverste venstre hjørne og indtaste koden:
-
-$code
+Download NightView appen!
 
 IOS: https://apps.apple.com/dk/app/nightview/id6458585988
 Android: https://play.google.com/store/apps/details?id=com.nightview.nightview
 
-Ha' en go' dag!''';
+Jeg glæder mig til, at vi skal fyre den af i byen sammen!''';
   }
 
   static Future<int?> redeemAcceptedCodes() async {

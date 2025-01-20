@@ -1,43 +1,60 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/utilities/caching/image_cache_manager.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_capacity_calculator.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
-import 'package:nightview/widgets/favorite_club_button.dart';
+import 'package:nightview/widgets/stateful/favorite_club_button.dart';
+import 'package:nightview/widgets/stateless/distance_display_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:nightview/widgets/rate_club.dart';
+import 'package:nightview/widgets/stateful/rate_club.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../utilities/club_data/club_name_formatter.dart';
-import '../utilities/messages/custom_modal_message.dart';
+import '../../utilities/club_data/club_name_formatter.dart';
+import '../../utilities/messages/custom_modal_message.dart';
 
 class ClubHeader extends StatelessWidget {
   // TODO rework so the header fits without problems on all screens.
 
   final ClubData club;
+  // final LatLng userLocation;
 
   // final GlobalKey _circleAvatarKey = GlobalKey(); For popup
 
-  const ClubHeader({super.key, required this.club});
+
+  const ClubHeader({
+    Key? key,
+    required this.club,
+    // required this.userLocation,
+  }) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
-    String formattedClubName = ClubNameFormatter.displayClubName(club);
-    String formattedClubType = ClubTypeFormatter.displayClubTypeFormatted(club);
-    String openingHoursToday =
+    final String formattedClubName = ClubNameFormatter.displayClubName(club);
+    final String formattedClubType = ClubTypeFormatter.displayClubTypeFormatted(club);
+    final String openingHoursToday =
         ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club);
-    String currentAgeRestriction =
+    final String currentAgeRestriction =
         ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
-    double percentOfCapacity =
+    final double percentOfCapacity =
         ClubCapacityCalculator.displayCalculatedPercentageOfCapacity(club);
+    // final distance = ClubDistanceCalculator.displayDistanceToClub(
+    //   club: club,
+      // userLat: userLocation.latitude,
+      // userLon: userLocation.longitude,
+    // );
 
     return Container(
       decoration: BoxDecoration(
@@ -62,9 +79,9 @@ class ClubHeader extends StatelessWidget {
                       );
                     },
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(club.typeOfClubImg),
+                      backgroundImage: CachedNetworkImageProvider(club.typeOfClubImg),
                       // Todo white outline on pic
-                      radius: 20.0,
+                      radius: kNormalSizeRadius,
                     ),
                   ),
                 ),
@@ -83,106 +100,20 @@ class ClubHeader extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               vertical: kSmallSpacerValue),
                           child: FaIcon(
-                            FontAwesomeIcons.chevronDown,
-                            size: 30.0,
+                            defaultDownArrow,
+                            size: kBiggerSizeRadius,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                //ALTERNATIVE
-
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.end, // Align content to the right
-                //   children: [
-                //     Column(
-                //       crossAxisAlignment: CrossAxisAlignment.end, // Align text to the right
-                //       children: [
-                //         Text(
-                //           ClubNameFormatter.displayLocation(club),
-                //           style: kTextStyleP3, // Add styling if needed
-                //         ),
-                //         const SizedBox(height: 4.0), // Add spacing between texts
-                //         Text(
-                //           ClubNameFormatter.displayDistance(
-                //             club: club,
-                //             userLon: 551,
-                //             userLat: 123,
-                //           ),
-                //           style: kTextStyleP3, // Add styling if needed
-                //         ),
-                //       ],
-                //     ),
-                //     const SizedBox(width: kSmallPadding), // Spacing between this and other widgets
-                //   ],
-                // ),
-
-                // PIC OF BIKE/ Feet or BUS whatever?
-                // rutevejlednign her.
-                //TODO cache distance - When scrolling in header its loading.
+                // TODO rutevejlednign her.
+                //TODO cache distance
                 Align(
-                  alignment: Alignment.topRight, // Position in top-right
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0), // Add padding
-                    child: FutureBuilder<LatLng?>(
-                      future: LocationService.getUserLocation(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Text(
-                            'Loading...',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16.0,
-                            ),
-                          );
-                        } else if (snapshot.hasError || snapshot.data == null) {
-                          return Text(
-                            'Location unavailable',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16.0,
-                            ),
-                          );
-                        } else {
-                          final userLocation = snapshot.data!;
-                          return GestureDetector(
-                            onTap: () async {
-                              final String googleMapsUrl =
-                                  'https://www.google.com/maps/dir/?api=1&destination=${club.lat},${club.lon}&origin=${userLocation.latitude},${userLocation.longitude}';
-                              final String appleMapsUrl =
-                                  'https://maps.apple.com/?daddr=${club.lat},${club.lon}&saddr=${userLocation.latitude},${userLocation.longitude}';
-
-                              // Launch the URL
-                              if (await canLaunch(googleMapsUrl)) {
-                                await launch(googleMapsUrl);
-                              } else if (await canLaunch(appleMapsUrl)) {
-                                await launch(appleMapsUrl);
-                              } else {
-                                throw 'Could not launch maps';
-                              }
-                            },
-                            child: Text(
-                              ClubDistanceCalculator.displayDistanceToClub(
-                                club: club,
-                                userLon: userLocation.longitude,
-                                userLat: userLocation.latitude,
-                              ),
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline, // Indicate it's clickable
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  ),
+                  alignment: Alignment.topRight,
+                  child: DistanceDisplayWidget(club: club),
                 ),
-
               ],
             ),
           ),
@@ -222,11 +153,11 @@ class ClubHeader extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(club.logo),
-                      radius: 30.0,
-                    ),
-                    // const SizedBox(width: kSmallSpacerValue), // space between logo and X
+            CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(club.logo),
+            radius: kBiggerSizeRadius,
+            ),
+              // const SizedBox(width: kSmallSpacerValue), // space between logo and X
 
                     const SizedBox(width: kSmallSpacerValue),
                     // Space between
@@ -243,8 +174,10 @@ class ClubHeader extends StatelessWidget {
                     );
                   },
                   child: CircularPercentIndicator(
-                    radius: 30.0,
+                    radius:kBiggerSizeRadius,
+                    // radius:20.0,
                     lineWidth: 5.0,
+                    // lineWidth: 3.0,
                     // padding-right: 10
                     percent: percentOfCapacity,
                     center: RichText(
@@ -253,10 +186,12 @@ class ClubHeader extends StatelessWidget {
                           TextSpan(
                             text: (percentOfCapacity * 100).toStringAsFixed(0),
                             style: kTextStyleH3.copyWith(color: primaryColor),
+                            // style: kTextStyleP1.copyWith(color: primaryColor),
                           ),
                           TextSpan(
                             text: '%',
                             style: kTextStyleH3.copyWith(color: white),
+                            // style: kTextStyleP1.copyWith(color: white),
                           ),
                         ],
                       ),
@@ -274,9 +209,8 @@ class ClubHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  // 'Aldersgrænse: '+
                   currentAgeRestriction,
-                  style: kTextStyleP1,
+                  style: kTextStyleP1.copyWith(color: primaryColor),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 4.0),
@@ -300,7 +234,7 @@ class ClubHeader extends StatelessWidget {
                 ),
                 PopupMenuButton<MapEntry<String, dynamic>>(
                   icon: FaIcon(
-                    FontAwesomeIcons.chevronDown,
+                    defaultDownArrow,
                     color: white,
                     size: 20,
                   ),

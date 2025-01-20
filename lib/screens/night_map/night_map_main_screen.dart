@@ -1,15 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
+import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -30,6 +34,9 @@ class NightMapMainScreen extends StatefulWidget {
 
 class _NightMapMainScreenState extends State<NightMapMainScreen> {
   final searchController = TextEditingController();
+  final GlobalKey<NightMapState> nightMapKey =
+      GlobalKey<NightMapState>(); // Prop needs refac
+  // Map<String, bool> toggledClubTypeStates = {};
 
   Future<int> getUserCount() async {
     try {
@@ -42,62 +49,100 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
     }
   }
 
-
   //TODO Remove searchfield when pressed another place.
-  List<SearchFieldListItem> getSearchSuggestions() {
-    final clubDataHelper = Provider.of<GlobalProvider>(context).clubDataHelper;
-    // future: getUserLocation(),
+  //TODO Search for place.
+  List<SearchFieldListItem> getSearchSuggestions(
+      LatLng userLocation, String query) {
+    final clubDataHelper =
+        Provider.of<GlobalProvider>(context, listen: false).clubDataHelper;
 
-    // builder: (context, snapshot) {
-    //   if (snapshot.connectionState == ConnectionState.waiting) {
-    //     return Center(child: CircularProgressIndicator());
-    //   } else if (snapshot.hasError || !snapshot.hasData) {
-    //     return Center(child: Text('Failed to fetch location'));
-    //   }
-    // final userLocation = snapshot.data!;
+    print('QUERY: $query');
+    final sortedClubsByQuery = clubDataHelper.clubData.values.where((clubData) {
+      final clubName =
+          ClubNameFormatter.displayClubName(clubData).toLowerCase();
+      final clubLocation =
+          ClubNameFormatter.displayClubLocation(clubData).toLowerCase();
+      final searchQuery = query.toLowerCase();
 
-    return clubDataHelper.clubData.values.map((clubData) {
-      final clubName = ClubNameFormatter.displayClubName(clubData);
-      final clubLocation = ClubNameFormatter.displayClubLocation(clubData);
+      return clubName.contains(searchQuery) ||
+          clubLocation.contains(searchQuery);
+    }).toList();
+
+    sortedClubsByQuery.sort((a, b) {
+      final distanceA = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        a.lat,
+        a.lon,
+      );
+      final distanceB = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        b.lat,
+        b.lon,
+      );
+      return distanceA.compareTo(distanceB); // Closest clubs first
+    });
+
+    return sortedClubsByQuery.map((clubData) {
+      final formattedClubName = ClubNameFormatter.displayClubName(clubData);
+      final formattedClubLocation =
+          ClubNameFormatter.displayClubLocation(clubData);
       final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
+      final formattedDistance = ClubDistanceCalculator.displayDistanceToClub(
+        userLat: userLocation.latitude,
+        userLon: userLocation.longitude,
+        club: clubData,
+      );
 
       return SearchFieldListItem<ClubData>(
-        clubName,
+        formattedClubName,
         item: clubData,
         child: ListTile(
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(clubData.logo),
-            radius: 25.0,
+            backgroundImage: CachedNetworkImageProvider(clubData.logo),
+            radius: kBigSizeRadius,
           ),
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                clubName,
+                formattedClubName,
                 style: kTextStyleP3,
               ),
               const SizedBox(height: 2.0), // Spacing between name and location
-              Text(
-                clubLocation,
-                style: kTextStyleP3.copyWith(
-                    color: primaryColor), // Smaller and gray text for location
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      formattedClubLocation,
+                      style: kTextStyleP3.copyWith(color: primaryColor),
+                      overflow:
+                          TextOverflow.ellipsis, // Handle long text gracefully
+                    ),
+                  ),
+                  Text(
+                    formattedDistance,
+                    style: kTextStyleP3.copyWith(color: primaryColor),
+                  ),
+                ],
+              )
             ],
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Text(
-              //   ClubDistanceCalculator.displayDistanceToClub(
-              //       userLat: userLat, userLon: userLon, club: club),
-              //   style: kTextStyleP3.copyWith(color: Colors.grey),
-              // ),
               hasCustomLogo
                   ? CircleAvatar(
-                      backgroundImage: NetworkImage(clubData.typeOfClubImg),
+                      backgroundImage:
+                          CachedNetworkImageProvider(clubData.typeOfClubImg),
                       radius: 15.0,
                     )
-                  : const SizedBox.shrink(), // Empty widget if no custom logo
+                  : const SizedBox(
+                      width: 30, // Same width and height as CircleAvatar
+                      height: 30,
+                    ),
             ],
           ),
         ),
@@ -125,20 +170,23 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO Needs complete rework. Does too much
     return FutureBuilder<LatLng?>(
-        future: LocationService.getUserLocation(),
+        future:
+        LocationService.getUserLocation(),
+        // Needed in order to call showalltypesbar + seach. Prop needs refac
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError || !snapshot.hasData) {
-            return Center(child: Text('Failed to fetch location'));
+            return Center(child: Text('N/A'));
           }
 
           final userLocation = snapshot.data!;
 
           return Column(
             children:
-                // toggledStates.keys.map((clubTypeKey))
+                //toggledStates.keys.map((clubTypeKey))
                 [
               Padding(
                 padding: const EdgeInsets.all(kMainPadding),
@@ -196,7 +244,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                             int userCount = snapshot.data!;
                             return CircularPercentIndicator(
-                              radius: 20.0,
+                              radius: kNormalSizeRadius,
                               lineWidth: 3.0,
                               // Adjusted to be smaller
                               percent: getDecimalValue(
@@ -240,75 +288,89 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(kMainPadding),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SearchField(
-                        controller: searchController,
-                        itemHeight: 60.0,
-                        suggestions: getSearchSuggestions(),
-                        searchInputDecoration: SearchInputDecoration(
-                          hintText: 'Søg efter steder'
-                          // ', områder eller typer'
-                          ,
-                          searchStyle: kTextStyleH3ToP1,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 10.0),
-                          // Left!
-                          border: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.grey,
-                              width: kMainStrokeWidth,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    searchController.clear();
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SearchField(
+                          controller: searchController,
+                          itemHeight: 60.0,
+                          suggestions: getSearchSuggestions(
+                              userLocation, searchController.text),
+                          searchInputDecoration: SearchInputDecoration(
+                            hintText: ' Søg efter steder eller områder',
+                            // TODO Color cursorColor: primaryColor
+                            searchStyle: kTextStyleP1,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 10.0),
+                            // Left!
+                            border: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.grey,
+                                width: kMainStrokeWidth,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(kNormalSizeRadius),
+                              ),
                             ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
+                            // TODO NEED PADDING BETWEEN TEXT AND ICON
+                            prefixIcon: const Icon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              color: primaryColor,
+                              size: 20.0,
                             ),
                           ),
-                          // TODO NEED PADDING BETWEEN TEXT AND ICON
-                          prefixIcon: const Icon(
-                            FontAwesomeIcons.magnifyingGlass,
-                            color: primaryColor,
-                            size: 20.0,
-                          ),
+                          onSuggestionTap: (value) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            searchController.clear();
+
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .nightMapController
+                                .move(LatLng(value.item.lat, value.item.lon),
+                                    kCloseMapZoom);
+                            // ClubBottomSheet.showClubSheet(
+                            //     context: context, club: value.item);
+                          },
                         ),
-                        onSuggestionTap: (value) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          searchController.clear();
-
-                          Provider.of<GlobalProvider>(context, listen: false)
-                              .nightMapController
-                              .move(
-                                  LatLng(value.item.lat, value.item.lon),
-                                  // TODO BUG. Move to person
-                                  kCloseMapZoom);
-
-                          // TODO  NightMap.showClubSheet(context: context, club: value.item);
+                      ),
+                      const SizedBox(
+                        width: kNormalSpacerValue,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showAllTypesOfBars(context,
+                              userLocation); // Trigger the bottom sheet
                         },
+                        child: const FaIcon(
+                          //   Delete this?!
+                          defaultDownArrow,
+                          color: primaryColor,
+                          size: 20.0,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: kNormalSpacerValue,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showAllTypesOfBars(
-                            context, userLocation); // Trigger the bottom sheet
-                      },
-                      child: const FaIcon(
-                        //   Delete this?!
-                        FontAwesomeIcons.chevronDown,
-                        color: primaryColor,
-                        size: 20.0,
+                      const SizedBox(
+                        width: kSmallSpacerValue,
                       ),
-                    ),
-                    const SizedBox(
-                      width: kSmallSpacerValue,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Expanded(
-                child: NightMap(),
+                child: GestureDetector(
+                  // Maybe close everyhting else when clicking map?
+                  behavior: HitTestBehavior.translucent,
+                  // Detect taps on the map
+                  onTap: () {
+                    // Unfocus the SearchField when tapping the map
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: NightMap(key: nightMapKey), // Your map widget
+                ),
               ),
             ],
           );
@@ -316,7 +378,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   }
 
   void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
-    // TODO Always sort after closest.
+    // Make sense to add a distance bar?
     // todo Class of it own
     // Fetch all clubs and their types
     final clubDataHelper =
@@ -326,6 +388,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
     // Group clubs by their type
     for (var club in allClubs) {
+      // TODO move to a static class so everyone can acess. Store in cache from beginning.
       clubsByType.putIfAbsent(club.typeOfClub, () => []).add(club);
     }
 
@@ -339,10 +402,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         // TODO Make CustomCircularIndicator class to use everywhere
         return ListView(
           children: clubsByType.entries.map((entry) {
+            // Center logic for reusability
             final type = entry.key;
             final clubs = entry.value;
 
             clubs.sort((a, b) {
+              // Make reuseable method. Used more places
               final double distanceA = Geolocator.distanceBetween(
                 userLocation.latitude,
                 userLocation.longitude,
@@ -359,35 +424,52 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             });
 
             return ExpansionTile(
-              // Show an image of typeOfClubImg before the text
+              // Show all at the top with toggle.
               title: Row(
                 children: [
-                  // BarTypeToggle(
-                  //   onToggle: (isToggled) {
-                  //     if (isToggled) {
-                  //       TODO
-                  // } else {
-                  //   TODO
-                  // }
-                  // },
-                  // ),
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(clubs.first.typeOfClubImg),
-                    radius: 25.0,
+                  BarTypeMapToggle(
+                    // Diff actions when long press etc.
+                    clubType: type,
+                    onToggle: (isToggled) {
+                      // String formattedClubType = ClubTypeFormatter
+                      //     .formatClubType(type);
+                      // String formattedToggle = isToggled ? "slået til" : "slået fra";
+                      // CustomModalMessage.showCustomBottomSheetOneSecond( //TODO rewamp - popup
+                      //   context: context,
+                      //   message: "$formattedClubType er $formattedToggle på kortet.",
+                      //   textStyle: kTextStyleP1,
+                      //   autoDismissDuration: Duration(milliseconds: 800),
+                      // );
+                    },
+                    updateMarkers: () {
+                      nightMapKey.currentState?.updateMarkers();
+                    },
+
                   ),
-                  const SizedBox(width: 10.0), // Space between image and text
+                  // built in padding from BTMT.
+                  CircleAvatar(
+                    backgroundImage:
+                        CachedNetworkImageProvider(clubs.first.typeOfClubImg),
+                    radius: kBigSizeRadius,
+                  ),
+                  const SizedBox(width: kSmallPadding),
                   Text(
                     ClubTypeFormatter.formatClubType(type),
-                    style: kTextStyleH3.copyWith(color: primaryColor),
+                    style: kTextStyleH4.copyWith(color: primaryColor),
+                    // overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '(${clubs.length})', // Display the count
+                    style: kTextStyleP3,
                   ),
                 ],
               ),
               children: clubs.map((club) {
                 return ListTile(
-                  //TODO Sort list by distance
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(club.logo),
-                    radius: 20.0,
+                    backgroundImage: CachedNetworkImageProvider(club.logo),
+                    radius: kNormalSizeRadius,
                   ),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -401,6 +483,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         ),
                       ),
                       Text(
+                        ClubAgeRestrictionFormatter
+                            .displayClubAgeRestrictionFormattedOnlyAge(club),
+                        style: kTextStyleP2.copyWith(color: primaryColor), // A
+                      ),
+                      const SizedBox(width: kSmallPadding),
+                      Text(
                         ClubDistanceCalculator.displayDistanceToClub(
                           club: club,
                           userLat: userLocation.latitude,
@@ -411,9 +499,24 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                       ),
                     ],
                   ),
-                  subtitle: Text(
-                    ClubNameFormatter.displayClubLocation(club),
-                    style: kTextStyleP3.copyWith(color: primaryColor),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Push content to edges
+                    children: [
+                      Expanded(
+                        child: Text(
+                          ClubNameFormatter.displayClubLocation(club),
+                          style: kTextStyleP3.copyWith(color: primaryColor),
+                          overflow: TextOverflow
+                              .ellipsis, // Handle long text gracefully
+                        ),
+                      ),
+                      Text(
+                        ClubOpeningHoursFormatter
+                            .displayClubOpeningHoursFormatted(club),
+                        style: kTextStyleP3, // Adjust style as needed
+                      ),
+                    ],
                   ),
                   onTap: () {
                     Navigator.pop(context);
@@ -428,5 +531,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         );
       },
     );
+
   }
 }

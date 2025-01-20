@@ -4,8 +4,8 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/registration_password_screen.dart';
-import 'package:nightview/widgets/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationConfirmationScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _RegistrationConfirmationScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Du er blevet tilsendt en bekræftelseskode på mail:',
+                'Du er blevet tilsendt en bekræftelseskode:',
                 textAlign: TextAlign.center,
                 style: kTextStyleH2,
               ),

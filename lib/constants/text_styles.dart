@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 
+
+//TOdo: Names, normalText, NightViewNormal, etc
+
+
+
 const kTextStyleH1 = TextStyle(
   fontSize: 36.0,
   fontWeight: FontWeight.w800,
-  color: Colors.white,
+  color: white,
 );
+
+const kTextStyleH1SColor = TextStyle(
+  fontSize: 36.0,
+  fontWeight: FontWeight.w800,
+  color: secondaryColor,
+);
+
+//TODO Need more h4,5,6 etc
 
 const kTextStyleH2 = TextStyle(
   fontSize: 24.0,
@@ -15,6 +28,11 @@ const kTextStyleH2 = TextStyle(
 
 const kTextStyleH3 = TextStyle(
   fontSize: 20.0,
+  fontWeight: FontWeight.w600,
+  color: Colors.white,
+);
+const kTextStyleH4 = TextStyle(
+  fontSize: 18.0,
   fontWeight: FontWeight.w600,
   color: Colors.white,
 );
@@ -38,6 +56,17 @@ const kTextStyleP2 = TextStyle(
 const kTextStyleP3 = TextStyle(
   fontSize: 10.0,
   color: Colors.white,
+);
+
+const kTextStyleP4 = TextStyle(
+  fontSize: 8.0,
+  color: Colors.white,
+);
+
+final TextStyle linkTextStyle = TextStyle(
+  fontSize: 18,
+  color: primaryColor,
+  decoration: TextDecoration.underline, // Underlined text
 );
 
 // TODO make a cool style with white and NV-Green combined.

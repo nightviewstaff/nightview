@@ -5,7 +5,7 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/main_screen.dart';
-import 'package:nightview/widgets/swipe_card_content.dart';
+import 'package:nightview/widgets/stateless/swipe_card_content.dart';
 import 'package:provider/provider.dart';
 
 class SwipeMainScreen extends StatefulWidget {

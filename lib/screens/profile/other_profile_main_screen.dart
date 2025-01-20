@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/button_styles.dart';
@@ -40,7 +41,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
       }
 
       biographyController.text = await BiographyHelper.getBiography(userId!) ?? '';
-      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!).then((url) => url == null ? null : NetworkImage(url));
+      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!).then((url) => url == null ? null : CachedNetworkImageProvider(url));
       setState(() {});
 
       await checkFriendButton();
@@ -79,7 +80,8 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             children: [
               Text(
                 'Fjern ven',
-                style: kTextStyleH2,
+                style: kTextStyleH4
+                ,
               ),
               FaIcon(FontAwesomeIcons.userMinus),
             ],
@@ -115,6 +117,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
     } else if (locationData.private) {
       text = 'Denne person deler ikke sin lokation';
     } else {
+      // Add check for more than 100 days ago
       String? clubName = Provider.of<GlobalProvider>(context, listen: false).clubDataHelper.clubData[locationData.clubId]?.name;
       if (clubName == null) {
         text = 'Kunne ikke finde seneste lokation';
@@ -159,7 +162,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(kMainBorderRadius),
                         border: Border.all(
-                          color: Colors.white,
+                          color: primaryColor,
                           width: kMainStrokeWidth,
                         ),
                       ),
@@ -173,7 +176,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             style: kTextStyleH3,
                           ),
                           Divider(
-                            color: Colors.white,
+                            color: primaryColor,
                             thickness: kMainStrokeWidth,
                           ),
                           Padding(
@@ -204,7 +207,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                       ),
                       Visibility(
                         visible: isFriend,
-                        child: FilledButton(
+                        child: FilledButton( // Change color
                           onPressed: () async {
                             UserData? user = Provider.of<GlobalProvider>(context, listen: false).chosenProfile;
                             if (user == null) {
@@ -223,7 +226,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             children: [
                               Text(
                                 'Find',
-                                style: kTextStyleH3,
+                                style: kTextStyleP1,
                               ),
                               SizedBox(
                                 width: kSmallSpacerValue,

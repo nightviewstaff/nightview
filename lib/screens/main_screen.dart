@@ -6,7 +6,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';
 import 'package:nightview/screens/option_menu/side_sheet_main_screen.dart';
-import 'package:nightview/widgets/main_bottom_navigation_bar.dart';
+import 'package:nightview/widgets/stateless/main_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {

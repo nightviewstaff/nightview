@@ -40,8 +40,8 @@ class LocationHelper { // Needs refac
 
     if (permission == LocationPermission.whileInUse) {
       // Request background location permission if not already granted
-      permission = await Geolocator.requestPermission();
-      return permission == LocationPermission.always;
+      // permission = await Geolocator.requestPermission();
+      return permission == LocationPermission.whileInUse;
     }
 
     // If we reach here, permission is granted.
@@ -69,27 +69,27 @@ class LocationHelper { // Needs refac
         desiredAccuracy: LocationAccuracy.best);
   }
 
-  Future<void> activateBackgroundLocation() async {
-    bool enabled = await locationService.isBackgroundModeEnabled();
+  // Future<void> activateBackgroundLocation() async {
+  //   bool enabled = await locationService.isBackgroundModeEnabled();
+  //
+  //   if (!enabled) {
+  //     await locationService.enableBackgroundMode();
+  //   }
+  // }
 
-    if (!enabled) {
-      await locationService.enableBackgroundMode();
-    }
-  }
-
-  Future<void> startBackgroundLocationService() async {
-    DateTime lastUpdate = DateTime.now();
-
-    locationService.onLocationChanged.listen((loc.LocationData location) {
-      DateTime threshold = DateTime.now().subtract(Duration(minutes: 15));
-      // DateTime threshold = DateTime.now().subtract(Duration(seconds: 20));
-
-      if (threshold.isAfter(lastUpdate)) {
-        lastUpdate = DateTime.now();
-        onPositionUpdate(location);
-      }
-    });
-  }
+  // Future<void> startBackgroundLocationService() async {
+  //   DateTime lastUpdate = DateTime.now();
+  //
+  //   locationService.onLocationChanged.listen((loc.LocationData location) {
+  //     DateTime threshold = DateTime.now().subtract(Duration(minutes: 15));
+      DateTime threshold = DateTime.now().subtract(Duration(seconds: 20));
+      //
+      // if (threshold.isAfter(lastUpdate)) {
+      //   lastUpdate = DateTime.now();
+      //   onPositionUpdate(location);
+      // }
+    // });
+  // }
 
   Future<void> startLocationService() async {
     Timer.periodic(const Duration(minutes: 15), (timer) async {
@@ -103,10 +103,10 @@ class LocationHelper { // Needs refac
     });
   }
 
-  Future<loc.LocationData> getBackgroundLocation() async {
-    loc.LocationData location = await locationService.getLocation();
-    return location;
-  }
+  // Future<loc.LocationData> getBackgroundLocation() async {
+  //   loc.LocationData location = await locationService.getLocation();
+  //   return location;
+  // }
 
   Future<void> openAppSettings() async {
     await Geolocator.openAppSettings();

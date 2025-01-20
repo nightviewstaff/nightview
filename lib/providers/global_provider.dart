@@ -1,13 +1,16 @@
 import 'dart:math';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
@@ -76,11 +79,13 @@ class GlobalProvider extends ChangeNotifier {
   late ClubDataHelper clubDataHelper;
   late UserDataHelper userDataHelper;
   late LocationHelper locationHelper;
+  // late LocationService locationService;
 
   MainOfferRedemptionsHelper mainOfferRedemptionsHelper =
       MainOfferRedemptionsHelper();
   AppinioSwiperController cardController = AppinioSwiperController();
   MapController nightMapController = MapController();
+
 
   ClubData? _chosenClub;
   bool _chosenClubFavoriteLocal = false;
@@ -98,6 +103,18 @@ class GlobalProvider extends ChangeNotifier {
   ImageProvider _chosenChatPicture = AssetImage('images/user_pb.jpg');
   String _chosenChatTitle = '';
   List<ImageProvider> _friendPbs = [];
+  LatLng? _userLocation;
+
+  // TEST //
+  LatLng? get userLocation => _userLocation;
+  Future<void> fetchUserLocation() async {
+    try {
+      LocationService.getUserLocation();
+    }catch(e){
+      print(e.toString());
+    }
+  }
+  // TEST //
 
   ClubData get chosenClub => _chosenClub!;
 
@@ -149,11 +166,11 @@ class GlobalProvider extends ChangeNotifier {
   Color get partyStatusColor {
     switch (_partyStatusLocal) {
       case PartyStatus.unsure:
-        return Colors.grey;
+        return grey;
       case PartyStatus.yes:
         return primaryColor;
       case PartyStatus.no:
-        return Colors.redAccent;
+        return redAccent;
     }
   }
 
@@ -206,7 +223,7 @@ class GlobalProvider extends ChangeNotifier {
     if (url == null) {
       _profilePicture = AssetImage('images/user_pb.jpg');
     } else {
-      _profilePicture = NetworkImage(url);
+      _profilePicture = CachedNetworkImageProvider(url);
     }
     notifyListeners();
   }
@@ -225,7 +242,7 @@ class GlobalProvider extends ChangeNotifier {
     if (url == null) {
       _chosenChatPicture = AssetImage('images/user_pb.jpg');
     } else {
-      _chosenChatPicture = NetworkImage(url);
+      _chosenChatPicture = CachedNetworkImageProvider(url);
     }
     notifyListeners();
   }
@@ -243,7 +260,7 @@ class GlobalProvider extends ChangeNotifier {
     if (url == null) {
       _friendPbs.add(const AssetImage('images/user_pb.jpg'));
     } else {
-      _friendPbs.add(NetworkImage(url));
+      _friendPbs.add(CachedNetworkImageProvider(url));
     }
     notifyListeners();
   }
@@ -255,7 +272,7 @@ class GlobalProvider extends ChangeNotifier {
 
   Future<void> updatePositionAndEvaluateVisitors(
       {required double lat, required double lon}) async {
-    // await userDataHelper.setCurrentUsersLastPosition(
+     //await userDataHelper.setCurrentUsersLastPosition(
     //   lat: lat,
     //   lon: lon,
     // );
@@ -264,6 +281,7 @@ class GlobalProvider extends ChangeNotifier {
       locationHelper: locationHelper,
     );
   }
+
 
   Future<bool> deleteAllUserData() async {
     String? userIdToDelete = userDataHelper.currentUserId;

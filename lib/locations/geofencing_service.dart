@@ -11,17 +11,17 @@ import 'package:nightview/locations/geofence_center.dart';
 import 'package:nightview/locations/geofence.dart';
 
 class GeofencingService {
-  static const fetchBackground = "fetchBackground";
+  // static const fetchBackground = "fetchBackground";
   List<Geofence> geofences = [];
 
   void callbackDispatcher() {
     Workmanager().executeTask((task, inputData) async {
-      if (task == fetchBackground) {
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best);
-        await _loadGeofencesIfNeeded();
-        _checkGeofence(position);
-      }
+      // if (task == fetchBackground) {
+      //   Position position = await Geolocator.getCurrentPosition(
+      //       desiredAccuracy: LocationAccuracy.best);
+      //   await _loadGeofencesIfNeeded();
+      //   _checkGeofence(position);
+      // }
       return Future.value(true);
     });
   }
@@ -33,16 +33,14 @@ class GeofencingService {
     );
   }
 
-
-
-
-  void registerPeriodicTask() {
-    Workmanager().registerPeriodicTask(
-      "1",
-      fetchBackground,
-      frequency: const Duration(minutes: 20),
-    );
-  }
+  // void registerPeriodicTask() {
+  //   Workmanager().registerPeriodicTask(
+  //     "1"
+  //     ,
+  //     fetchBackground,
+      // frequency: const Duration(minutes: 20),
+    // );
+  // }
 
   Future<void> _loadGeofencesIfNeeded() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -58,7 +56,8 @@ class GeofencingService {
 
   Future<void> _loadGeofencesFromDatabase() async {
     geofences.clear();
-    CollectionReference clubData = FirebaseFirestore.instance.collection('club_data');
+    CollectionReference clubData =
+        FirebaseFirestore.instance.collection('club_data');
     QuerySnapshot querySnapshot = await clubData.get();
     for (var doc in querySnapshot.docs) {
       var data = doc.data() as Map<String, dynamic>;
@@ -66,7 +65,8 @@ class GeofencingService {
       if (corners != null && corners.length >= 4) {
         geofences.add(Geofence(
           clubId: doc.id, // Add clubId to Geofence
-          corners: corners.map((corner) => GeofenceCorner.fromMap(corner)).toList(),
+          corners:
+              corners.map((corner) => GeofenceCorner.fromMap(corner)).toList(),
           center: _calculateCenter(corners),
         ));
       }
@@ -89,15 +89,17 @@ class GeofencingService {
   void _checkGeofence(Position position) {
     for (var geofence in geofences) {
       double distance = Geolocator.distanceBetween(
-          position.latitude, position.longitude,
-          geofence.center.latitude, geofence.center.longitude);
+          position.latitude,
+          position.longitude,
+          geofence.center.latitude,
+          geofence.center.longitude);
 
       if (distance <= geofence.radius) {
         // _showNotification("Du er ankommet på klubben", "Hav en skøn aften!");
-        _handleGeofenceEvent(geofence, true);  // Entering geofence
+        _handleGeofenceEvent(geofence, true); // Entering geofence
       } else {
         // _showNotification("Du har forladt klubben", "Kom sikkert hjem.");
-        _handleGeofenceEvent(geofence, false);  // Exiting geofence
+        _handleGeofenceEvent(geofence, false); // Exiting geofence
       }
     }
   }
@@ -133,7 +135,6 @@ class GeofencingService {
     }
   }
 
-
   // Redundant method
   Future<bool> uploadLocationData(LocationData locationData) async {
     final firestore = FirebaseFirestore.instance;
@@ -159,10 +160,16 @@ class GeofencingService {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap =
-      await firestore.collection('location_data').where('user_id', isEqualTo: userId).where('latest', isEqualTo: true).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('location_data')
+          .where('user_id', isEqualTo: userId)
+          .where('latest', isEqualTo: true)
+          .get();
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in snap.docs) {
-        await firestore.collection('location_data').doc(doc.id).set({'latest': false}, SetOptions(merge: true));
+        await firestore
+            .collection('location_data')
+            .doc(doc.id)
+            .set({'latest': false}, SetOptions(merge: true));
       }
       return true;
     } catch (e) {
@@ -170,6 +177,4 @@ class GeofencingService {
       return false;
     }
   }
-
-
 }

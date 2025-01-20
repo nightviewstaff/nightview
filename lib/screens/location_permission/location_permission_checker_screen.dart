@@ -49,7 +49,7 @@ class _LocationPermissionCheckerScreenState
                 if (!Provider
                     .of<GlobalProvider>(context, listen: false)
                     .locationOptOut) {
-                  await locationHelper.activateBackgroundLocation();
+                  // await locationHelper.activateBackgroundLocation();
                   locationHelper.startLocationService();
                 }
                 UserData? currentUserData;
@@ -79,8 +79,8 @@ class _LocationPermissionCheckerScreenState
           if (await locationHelper.serviceEnabled) {
             if (await locationHelper.hasPermissionWhileInUse) {
               if (await locationHelper.hasPermissionPrecise) {
-                await locationHelper.activateBackgroundLocation();
-                locationHelper.startBackgroundLocationService();
+                // await locationHelper.activateBackgroundLocation();
+                // locationHelper.startBackgroundLocationService();
                 UserData? currentUserData;
                 do {
                   currentUserData = Provider

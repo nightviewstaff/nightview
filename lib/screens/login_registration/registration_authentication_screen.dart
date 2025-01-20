@@ -3,15 +3,17 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/helpers/misc/mail_helper.dart';
+import 'package:nightview/helpers/misc/prelude_helper.dart';
 import 'package:nightview/constants/phone_country_code.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/registration_confirmation_screen.dart';
-import 'package:nightview/widgets/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
-import 'package:nightview/widgets/phone_country_code_dropdown_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/phone_country_code_dropdown_button.dart';
 import 'package:provider/provider.dart';
+import 'package:nightview/screens/login_registration/registration_password_screen.dart';
+
 
 class RegistrationAuthenticationScreen extends StatefulWidget {
   static const id = 'registration_authentication_screen';
@@ -24,7 +26,7 @@ class RegistrationAuthenticationScreen extends StatefulWidget {
 
 class _RegistrationAuthenticationScreenState extends State<RegistrationAuthenticationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final mailHelper = MailHelper();
+  final otpHelper = PreludeHelper();
   final phoneInputController = TextEditingController();
   final mailInputController = TextEditingController();
 
@@ -154,8 +156,8 @@ class _RegistrationAuthenticationScreenState extends State<RegistrationAuthentic
                       provider.setPhone(fullPhoneNumber.trim());
                       provider.setMail(mailInputController.text.trim());
                       provider.generateRandomVerificationCode();
-                      mailHelper.sendMail(verificationCode: provider.verificationCode, userMail: mailInputController.text.trim());
-                      Navigator.of(context).pushReplacementNamed(RegistrationConfirmationScreen.id);
+                      otpHelper.sendOTP(verificationCode: provider.verificationCode, userMail: mailInputController.text.trim(), userPhoneNumber: fullPhoneNumber);
+                      Navigator.of(context).pushReplacementNamed(RegistrationPasswordScreen.id);
                     }
                   }
                 },

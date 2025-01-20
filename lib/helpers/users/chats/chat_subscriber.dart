@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -162,7 +163,7 @@ class ChatSubscriber extends ChangeNotifier { // Needs refac
     if (url == null) {
       _chatImages[chatId] = AssetImage('images/user_pb.jpg');
     } else {
-      _chatImages[chatId] = NetworkImage(url);
+      _chatImages[chatId] = CachedNetworkImageProvider(url);
     }
     notifyListeners();
   }

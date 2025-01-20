@@ -3,7 +3,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/screens/login_registration/login_main_screen.dart';
 import 'package:nightview/screens/login_registration/registration_name_screen.dart';
-import 'package:nightview/widgets/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
 
 class LoginRegistrationOptionScreen extends StatelessWidget {
   static const id = 'login_registration_option_screen';

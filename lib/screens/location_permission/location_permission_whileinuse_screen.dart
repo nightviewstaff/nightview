@@ -5,8 +5,8 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/widgets/login_registration_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionWhileInUseScreen extends StatefulWidget {
@@ -106,7 +106,7 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get buttonText {
-    // KAN KUN VÆRE IOS
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
       return 'Åbn app-indstillinger';
@@ -120,7 +120,7 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get guideText {
-    // KAN KUN VÆRE IOS
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
       return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad kun, mens appen er i brug';

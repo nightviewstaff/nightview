@@ -3,9 +3,8 @@ import 'package:flutter_glow/flutter_glow.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/screens/swipe/swipe_main_screen.dart';
-import 'package:nightview/widgets/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 
 class RegistrationWelcomeScreen extends StatelessWidget {
   static const id = 'registration_welcome_screen';
@@ -32,7 +31,7 @@ class RegistrationWelcomeScreen extends StatelessWidget {
             'Ha\' den bedste bytur med alle dine nære venner',
             textAlign: TextAlign.center,
             style: kTextStyleH3,
-            blurRadius: 20.0,
+            blurRadius: kNormalSizeRadius,
           ),
           SizedBox(
             height: kNormalSpacerValue,

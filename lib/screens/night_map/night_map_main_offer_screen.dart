@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -109,7 +111,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                 ),
                 alignLabel: Alignment.centerLeft,
                 icon: FaIcon(
-                  FontAwesomeIcons.chevronRight,
+                  defaultDownArrow,
                   //color: Colors.black,
                   size: kSliderHeight * 0.5,
                 ),
@@ -210,7 +212,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(Provider.of<GlobalProvider>(context)
+                    image: CachedNetworkImageProvider(Provider.of<GlobalProvider>(context)
                         .chosenClub
                         .mainOfferImg!),
                     fit: BoxFit.cover,

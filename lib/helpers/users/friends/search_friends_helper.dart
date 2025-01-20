@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
@@ -29,7 +30,7 @@ class SearchFriendsHelper extends ChangeNotifier {
     if (url == null) {
       _searchedUserPbs.add(const AssetImage('images/user_pb.jpg'));
     } else {
-      _searchedUserPbs.add(NetworkImage(url));
+      _searchedUserPbs.add(CachedNetworkImageProvider(url));
     }
     notifyListeners();
   }

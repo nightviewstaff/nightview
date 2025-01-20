@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-class LocationService {
+class LocationService { // TODO Prop needs to be removed entirely - should be done in provider.
   static Future<LatLng?> getUserLocation() async {
     //TODO Move so can acess from anywhere
     // Move
@@ -27,4 +29,6 @@ class LocationService {
       return null; // Return null if there's an error
     }
   }
+
+
 }

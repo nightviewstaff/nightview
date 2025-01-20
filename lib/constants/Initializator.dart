@@ -6,7 +6,7 @@ class Initializator {
   void initializeNeededTasks() async {
     GeofencingService geofencingService = GeofencingService();
     geofencingService.initializeWorkManager();
-    geofencingService.registerPeriodicTask();
+    // geofencingService.registerPeriodicTask();
 
   }
 

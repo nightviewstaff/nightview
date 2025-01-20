@@ -6,12 +6,12 @@ import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/registration_welcome_screen.dart';
-import 'package:nightview/widgets/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RegistrationPasswordScreen extends StatefulWidget {
+class RegistrationPasswordScreen extends StatefulWidget { //TODO FIX
   static const id = 'registration_password_screen';
 
   const RegistrationPasswordScreen({super.key});

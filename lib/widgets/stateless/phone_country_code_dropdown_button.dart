@@ -20,7 +20,7 @@ class PhoneCountryCodeDropdownButton extends StatelessWidget {
           value: code,
           child: SizedBox(
             width: 80.0,
-            height: 25.0,
+            height: kBigSizeRadius,
             child: Row(
               children: [
                 PhoneCountryCode(code).flagImage!,

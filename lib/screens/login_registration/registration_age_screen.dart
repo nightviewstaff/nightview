@@ -5,9 +5,9 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/registration_authentication_screen.dart';
-import 'package:nightview/widgets/date_picker_button.dart';
-import 'package:nightview/widgets/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/date_picker_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationAgeScreen extends StatelessWidget {
@@ -94,7 +94,7 @@ class RegistrationAgeScreen extends StatelessWidget {
             SizedBox(
               width: double.maxFinite,
               child: Text(
-                'Blot for at sikre os, at du er gammel nok!',
+                'Du skal være over 18.',
                 textAlign: TextAlign.center,
                 style: kTextStyleP1,
               ),
@@ -121,7 +121,7 @@ class RegistrationAgeScreen extends StatelessWidget {
                       title: Text('Ikke gammel nok'),
                       content: SingleChildScrollView(
                         child:
-                            Text('Du skal være 18 år for at bruge NightView'),
+                            Text('Du skal være mindst 18 år for at bruge NightView'),
                       ),
                       actions: [
                         TextButton(

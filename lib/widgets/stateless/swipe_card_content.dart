@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,7 +8,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/widgets/icon_with_text.dart';
+import 'package:nightview/widgets/stateless/icon_with_text.dart';
 import 'package:provider/provider.dart';
 
 class SwipeCardContent extends StatelessWidget {
@@ -116,7 +117,7 @@ class SwipeCardContent extends StatelessWidget {
           Container(
           decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(snapshot.data!),
+              image: CachedNetworkImageProvider(snapshot.data!),
         fit: BoxFit.fitHeight,
         ),
         borderRadius: BorderRadius.circular(kMainBorderRadius),

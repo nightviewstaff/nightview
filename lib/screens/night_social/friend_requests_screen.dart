@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -46,7 +47,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
         if (url == null) {
           friendRequestPbs.add(const AssetImage('images/user_pb.jpg'));
         } else {
-          friendRequestPbs.add(NetworkImage(url));
+          friendRequestPbs.add(CachedNetworkImageProvider(url));
         }
       }
       Provider.of<GlobalProvider>(context, listen: false)

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
@@ -25,7 +26,7 @@ class SearchNewChatHelper extends ChangeNotifier {
     if (url == null) {
       _filteredFriendPbs.add(const AssetImage('images/user_pb.jpg'));
     } else {
-      _filteredFriendPbs.add(NetworkImage(url));
+      _filteredFriendPbs.add(CachedNetworkImageProvider(url));
     }
     notifyListeners();
   }

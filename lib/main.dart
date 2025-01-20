@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nightview/firebase_options.dart';
 import 'package:nightview/services/firestore/firestore_updater.dart';
-import 'package:nightview/helpers/chat_subscriber.dart';
+import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
 import 'package:nightview/providers/balladefabrikken_provider.dart';
@@ -44,6 +44,7 @@ import 'package:provider/provider.dart';
 
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
+import 'never_used/preferences/preferences_main_screen.dart';
 import 'services/firestore/add_club.dart';
 import 'notifications/notification_manager.dart';
 
@@ -57,9 +58,9 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  final notificationManager = NotificationManager();
-  await notificationManager.initLocalNotifications();
-  notificationManager.scheduleWeeklyNotifications();
+  // final notificationManager = NotificationManager();
+  // await notificationManager.initLocalNotifications();
+  // notificationManager.scheduleWeeklyNotifications();
 
 
 
@@ -153,7 +154,7 @@ class NightViewApp extends StatelessWidget {
           MyProfileMainScreen.id: (context) => const MyProfileMainScreen(),
           NightSocialConversationScreen.id: (context) => const NightSocialConversationScreen(),
           MainScreen.id: (context) => const MainScreen(),
-          // PreferencesMainScreen.id: (context) => const PreferencesMainScreen(),
+          PreferencesMainScreen.id: (context) => const PreferencesMainScreen(), // NUserd
           SwipeMainScreen.id: (context) => const SwipeMainScreen(),
           WaitingForLoginScreen.id: (context) => const WaitingForLoginScreen(),
           NightMapMainOfferScreen.id: (context) => const NightMapMainOfferScreen(),

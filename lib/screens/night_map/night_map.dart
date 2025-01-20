@@ -15,10 +15,12 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
-import 'package:nightview/widgets/club_header.dart';
-import 'package:nightview/widgets/club_marker.dart';
+import 'package:nightview/widgets/icons/bar_type_toggle.dart';
+import 'package:nightview/widgets/stateless/club_header.dart';
+import 'package:nightview/widgets/stateless/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/users/user_data.dart';
@@ -27,10 +29,10 @@ class NightMap extends StatefulWidget {
   const NightMap({super.key});
 
   @override
-  State<NightMap> createState() => _NightMapState();
+  State<NightMap> createState() => NightMapState();
 }
 
-class _NightMapState extends State<NightMap> {
+class NightMapState extends State<NightMap> {
   ClubDataHelper clubDataHelper = ClubDataHelper();
   Map<String, Marker> markers = {};
   Map<String, Marker> friendMarkers = {};
@@ -138,12 +140,40 @@ class _NightMapState extends State<NightMap> {
           onTap: () {
              // Provider.of<GlobalProvider>(context, listen: false)
              //     .setChosenClub(club); // Just remove for good? What does setchosenClub do?
-            showClubSheet(context: context, club: club);
+            ClubBottomSheet.showClubSheet(context: context, club: club);
           },
         ),
       );
     });
   }
+  void updateMarkers() {
+    final toggledStates = BarTypeMapToggle.toggledStates;
+
+    setState(() {
+      markers.clear(); // Clear existing markers
+
+      Provider.of<GlobalProvider>(context, listen: false)
+          .clubDataHelper
+          .clubData
+          .forEach((id, club) {
+        if (toggledStates[club.typeOfClub] ?? true) { // Only add markers for enabled types
+          markers[id] = Marker(
+            point: LatLng(club.lat, club.lon),
+            width: 100.0,
+            height: 100.0,
+            child: ClubMarker(
+              logo: CachedNetworkImageProvider(club.logo),
+              visitors: club.visitors,
+              onTap: () {
+                ClubBottomSheet.showClubSheet(context: context, club: club);
+              },
+            ),
+          );
+        }
+      });
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -178,62 +208,5 @@ class _NightMapState extends State<NightMap> {
     );
   }
 
-  static void showClubSheet(
-      {required BuildContext context, required ClubData club}) {
-    // TODO Move to seperate class
-    showStickyFlexibleBottomSheet(
-      context: context,
-      initHeight: 0.40,
-      // maybe more?
-      minHeight: 0,
-      maxHeight: 1,
-      // club.offerType == OfferType.none ? 0.3 : 1,
-      headerHeight: 315,
-      isSafeArea: false,
-      bottomSheetColor: Colors.transparent,
-      decoration: BoxDecoration(
-        color: Colors.black,
-      ),
-      headerBuilder: (context, offset) => ClubHeader(
-        club: club,
-      ),
-      bodyBuilder: (context, offset) => SliverChildListDelegate(
-        club.offerType == OfferType.none
-            ? []
-            : [
-                Container(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    'Hovedtilbud',
-                    style: kTextStyleH1,
-                  ),
-                ),
-                SizedBox(
-                  height: kNormalSpacerValue,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (club.offerType == OfferType.redeemable) {
-                      Navigator.of(context)
-                          .pushNamed(NightMapMainOfferScreen.id);
-                    }
-                  },
-                  child: AspectRatio(
-                    aspectRatio: 1.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(club.mainOfferImg!),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      alignment: Alignment.bottomRight,
-                      padding: EdgeInsets.all(kMainPadding),
-                    ),
-                  ),
-                ),
-              ],
-      ),
-    );
-  }
+
 }

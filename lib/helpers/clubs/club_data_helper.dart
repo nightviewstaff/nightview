@@ -102,9 +102,9 @@ class ClubDataHelper {
         data['total_possible_amount_of_visitors'],
       );
 
-      print('Club processed successfully: ${clubData[club.id]}');
+      print('Club processed successfully: ${[club.id]}');
     } catch (e) {
-      print('Error processing club: $e - Club: ${clubData[club.id]}');
+      print('Error processing club: $e - Club: ${[club.id]}');
     }
   }
 
