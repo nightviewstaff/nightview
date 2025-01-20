@@ -82,7 +82,8 @@ class SwipeCardContent extends StatelessWidget {
     return messages[random.nextInt(messages.length)];
   }
 
-  Future<String> getRandomImage() async { // Move to db class.
+  Future<String> getRandomImage() async {
+    // Move to db class.
     Random random = Random();
     final storageRef = FirebaseStorage.instance.ref();
     final imagesRef = storageRef.child('nightview_images/swipe_card_images/');
@@ -112,83 +113,81 @@ class SwipeCardContent extends StatelessWidget {
           return Center(child: Text('No image found'));
         } else {
           return Stack(
-              children: [
-          // Background image
-          Container(
-          decoration: BoxDecoration(
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(snapshot.data!),
-        fit: BoxFit.fitHeight,
-        ),
-        borderRadius: BorderRadius.circular(kMainBorderRadius),
-        border: Border.all(
-        color: primaryColor,
-        width: 1,
-        ),
-        ),
-        width: double.maxFinite,
-        ),
+            children: [
+              // Background image
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(snapshot.data!),
+                    fit: BoxFit.fitHeight,
+                  ),
+                  borderRadius: BorderRadius.circular(kMainBorderRadius),
+                  border: Border.all(
+                    color: primaryColor,
+                    width: 1,
+                  ),
+                ),
+                width: double.maxFinite,
+              ),
 
-        // Centered text
-        Positioned(
-        top: 350.0, // Dangerous with hardcoded values
-        left: 0,
-        right: 0,
-        child: Center(
-        child: Text(
-        getRandomMessage(),
-        style: kTextStyleSwipeH2.copyWith(),
-        textAlign: TextAlign.center,
-        ),
-        ),
-        ),
+              // Centered text
+              Positioned(
+                top: 350.0, // Dangerous with hardcoded values
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Text(
+                    getRandomMessage(), // TODO CALL notifi_messa
+                    style: kTextStyleSwipeH2.copyWith(),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
 
-        // Bottom controls
-        Positioned(
-        bottom: kSwipeBottomPadding,
-        left: 0,
-        right: 0,
-        child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-        SizedBox(height: kNormalSpacerValue),
-        Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-        Container(
-        child: IconWithText(
-        icon: FontAwesomeIcons.xmark,
-        text: 'Ikke i dag',
-        onTap: () {
-        Provider.of<GlobalProvider>(context, listen: false)
-            .cardController
-            .swipeLeft();
-        },
-        ),
-        ),
-        IconWithText(
-        icon: FontAwesomeIcons.solidHeart,
-        text: 'Jeg er frisk!',
-        iconColor: primaryColor,
-        showCircle: false,
-        onTap: () {
-        Provider.of<GlobalProvider>(context, listen: false)
-            .cardController
-            .swipeRight();
-        },
-        ),
-        ],
-        ),
-        ],
-        ),
-        )
-        ,
-        ]
-        ,
-        );
-      }
+              // Bottom controls
+              Positioned(
+                bottom: kSwipeBottomPadding,
+                left: 0,
+                right: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: kNormalSpacerValue),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          child: IconWithText(
+                            icon: FontAwesomeIcons.xmark,
+                            text: 'Ikke i dag',
+                            onTap: () {
+                              Provider.of<GlobalProvider>(context,
+                                      listen: false)
+                                  .cardController
+                                  .swipeLeft();
+                            },
+                          ),
+                        ),
+                        IconWithText(
+                          icon: FontAwesomeIcons.solidHeart,
+                          text: 'Jeg er frisk!',
+                          iconColor: primaryColor,
+                          showCircle: false,
+                          onTap: () {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .cardController
+                                .swipeRight();
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
       },
     );
   }
-
 }
