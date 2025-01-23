@@ -155,8 +155,8 @@ class _RegistrationAuthenticationScreenState extends State<RegistrationAuthentic
                       String fullPhoneNumber = PhoneCountryCode(provider.countryCode).phoneCode! + phoneInputController.text;
                       provider.setPhone(fullPhoneNumber.trim());
                       provider.setMail(mailInputController.text.trim());
-                      provider.generateRandomVerificationCode();
-                      otpHelper.sendOTP(verificationCode: provider.verificationCode, userMail: mailInputController.text.trim(), userPhoneNumber: fullPhoneNumber);
+                      // provider.generateRandomVerificationCode();
+                      // otpHelper.sendOTP(verificationCode: provider.verificationCode, userMail: mailInputController.text.trim(), userPhoneNumber: fullPhoneNumber);
                       Navigator.of(context).pushReplacementNamed(RegistrationPasswordScreen.id);
                     }
                   }
