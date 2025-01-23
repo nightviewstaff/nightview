@@ -47,6 +47,7 @@ import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
 import 'services/firestore/add_club.dart';
 import 'notifications/notification_manager.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,9 +96,11 @@ void main() async {
    //  addClub.addSpecificClub97(); // To add each new club manually.
    //  addClub.addSpecificClub96(); // To add each new club manually.
 
-  runApp(NightViewApp());
 
   // NotificationService().showNotification();
+
+  await AppTrackingTransparency.requestTrackingAuthorization();
+  runApp(NightViewApp());
 }
 
 

@@ -69,6 +69,6 @@
     <key>NSCalendarsUsageDescription</key>
     <string>This app requires access to your calendar to show event reminders.</string>
     <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to deliver personalized ads to you.</string>
+    <string>Your data will be used to provide a better experience and personalized app.</string>
 </dict>
 </plist>
