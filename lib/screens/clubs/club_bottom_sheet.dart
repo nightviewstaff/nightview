@@ -1,14 +1,12 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
 import 'package:nightview/utilities/club_data/club_name_formatter.dart';
-import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/stateless/club_header.dart';
 
 class ClubBottomSheet {
