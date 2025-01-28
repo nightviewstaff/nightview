@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 
 import '../../models/clubs/club_data.dart';
 import 'club_data_location_formatting.dart';
-import 'club_distance_calculator.dart';
 
 class ClubNameFormatter {
   // TODO rework so i have everything with its own method. then call them when needed.
@@ -12,6 +10,11 @@ class ClubNameFormatter {
   static String displayClubName(ClubData club) {
     return formatClubName(club.name);
   }
+
+  static String displayClubNameShort(ClubData club, int maxLength) {
+    return formatClubNameShort(club.name, maxLength);
+  }
+
 
   // static Text displayClubNameText(ClubData club){
   // }
@@ -36,6 +39,18 @@ class ClubNameFormatter {
         .join(' '); // Join the words back with spaces
 
     //TODO Make exceptions for specific names like 'BAR', 'KB3' and so on.
+  }
+
+  static String formatClubNameShort(String clubName, int maxLength) {
+    String formattedName = formatClubName(clubName);
+
+    // If the name fits within the maximum length, return as is.
+    if (formattedName.length <= maxLength) {
+      return formattedName;
+    }
+
+    // Truncate and append "..." if the name exceeds the maximum length.
+    return '${formattedName.substring(0, maxLength - 3)}...';
   }
 
 

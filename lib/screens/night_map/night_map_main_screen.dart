@@ -86,6 +86,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
     return sortedClubsByQuery.map((clubData) {
       final formattedClubName = ClubNameFormatter.displayClubName(clubData);
+      final formattedClubNameShort = ClubNameFormatter.displayClubNameShort(clubData, 20);
       final formattedClubLocation =
           ClubNameFormatter.displayClubLocation(clubData);
       final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
@@ -107,7 +108,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                formattedClubName,
+                formattedClubNameShort,
                 style: kTextStyleP3,
               ),
               const SizedBox(height: 2.0), // Spacing between name and location
@@ -378,7 +379,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   }
 
   void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
-    // Make sense to add a distance bar?
+
     // todo Class of it own
     // Fetch all clubs and their types
     final clubDataHelper =
@@ -391,6 +392,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       // TODO move to a static class so everyone can acess. Store in cache from beginning.
       clubsByType.putIfAbsent(club.typeOfClub, () => []).add(club);
     }
+    print(clubsByType.keys);
 
     showModalBottomSheet(
       context: context,
@@ -424,7 +426,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             });
 
             return ExpansionTile(
-              // Show all at the top with toggle.
+              // Show all at the top with toggle. TODO
               title: Row(
                 children: [
                   BarTypeMapToggle(

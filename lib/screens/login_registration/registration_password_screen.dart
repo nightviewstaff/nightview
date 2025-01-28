@@ -48,7 +48,7 @@ class _RegistrationPasswordScreenState
                 obscureText: true,
                 keyboardType: TextInputType.visiblePassword,
                 onChanged: (value) {
-                  inputIsFilled[0] = !(value == null || value.isEmpty);
+                  inputIsFilled[0] = !(value.isEmpty);
                   provider.setCanContinue(!inputIsFilled.contains(false));
                 },
                 validator: (value) {
@@ -76,7 +76,7 @@ class _RegistrationPasswordScreenState
                 obscureText: true,
                 keyboardType: TextInputType.visiblePassword,
                 onChanged: (value) {
-                  inputIsFilled[1] = !(value == null || value.isEmpty);
+                  inputIsFilled[1] = !(value.isEmpty);
                   provider.setCanContinue(!inputIsFilled.contains(false));
                 },
                 validator: (value) {

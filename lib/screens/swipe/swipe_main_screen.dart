@@ -1,8 +1,6 @@
-import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
-import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/main_screen.dart';
 import 'package:nightview/widgets/stateless/swipe_card_content.dart';

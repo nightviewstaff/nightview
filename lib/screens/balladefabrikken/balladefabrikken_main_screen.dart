@@ -422,7 +422,7 @@ class _BalladefabrikkenMainScreenState
                               }
                             },
                             style: kFilledButtonStyle.copyWith(
-                              fixedSize: MaterialStatePropertyAll(
+                              fixedSize: WidgetStatePropertyAll(
                                 Size(60.0, 60.0),
                               ),
                             ),
@@ -443,12 +443,13 @@ class _BalladefabrikkenMainScreenState
                     children: [
                       GestureDetector(
                         onTap: () async {
+                          // Copy and open the App Store link
                           await Clipboard.setData(ClipboardData(text: iosLink));
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar( // redund
-                                content: Text(
-                                    'Link copied to clipboard!')), // Optional feedback
+                            SnackBar(
+                              content: Text('App Store link copied to clipboard!'),
+                            ),
                           );
                         },
                         child: Text(
@@ -456,22 +457,23 @@ class _BalladefabrikkenMainScreenState
                           style: linkTextStyle,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          await Clipboard.setData(
-                              ClipboardData(text: androidLink));
-                          await launchUrl(Uri.parse(androidLink));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Link copied to clipboard!')), // Optional feedback
-                          );
-                        },
-                        child: Text(
-                          'Google Play',
-                          style: linkTextStyle,
+                      if (Platform.isAndroid) // Only show Google Play option on Android
+                        GestureDetector(
+                          onTap: () async {
+                            // Copy and open the Google Play link
+                            await Clipboard.setData(ClipboardData(text: androidLink));
+                            await launchUrl(Uri.parse(androidLink));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Google Play link copied to clipboard!'),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Google Play',
+                            style: linkTextStyle,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   FutureBuilder(

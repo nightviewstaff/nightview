@@ -7,7 +7,6 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/users/location_data.dart';
 import 'package:nightview/models/users/user_data.dart';
-import 'package:nightview/helpers/clubs/club_data_helper.dart';
 
 class LocationHelper { // Needs refac
   LocationPermission _permission = LocationPermission.unableToDetermine;

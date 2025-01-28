@@ -7,7 +7,7 @@ import '../../models/clubs/rating.dart';
 class RateClub extends StatefulWidget {
   final String clubId;
 
-  RateClub({required this.clubId});
+  const RateClub({super.key, required this.clubId});
 
   @override
   _RateClubState createState() => _RateClubState();

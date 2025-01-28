@@ -45,7 +45,7 @@ class MainBottomNavigationBar extends StatelessWidget {
             print('ERROR - BUTTON DOES NOT EXIST');
             break;
 
-        };
+        }
       },
 
     );

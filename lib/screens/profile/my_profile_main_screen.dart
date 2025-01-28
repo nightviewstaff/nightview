@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -77,6 +76,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

@@ -11,7 +11,7 @@ class IconWithText extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showCircle; // Toggle for circle or outline
 
-  IconWithText({
+  const IconWithText({
     super.key,
     required this.icon,
     required this.text,

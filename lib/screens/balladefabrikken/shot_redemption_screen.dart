@@ -110,7 +110,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(kMainPadding),
                         child: Text(
-                          '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske'}',
+                          Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske',
                           style: kTextStyleH2,
                         ),
                       ),
@@ -150,6 +150,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                     await showErrorDialog();
                   }
                   Navigator.of(context).pop();
+                  return null;
                 },
               ),
               SizedBox(

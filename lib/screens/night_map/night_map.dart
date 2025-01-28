@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,17 +8,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
-import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
-import 'package:nightview/widgets/stateless/club_header.dart';
 import 'package:nightview/widgets/stateless/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -63,15 +57,15 @@ class NightMapState extends State<NightMap> {
   }
 
   void _listenToFriendLocations() async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return;
     }
 
-    String userId = _auth.currentUser!.uid;
-    _friendLocationSubscription = _firestore
+    String userId = auth.currentUser!.uid;
+    _friendLocationSubscription = firestore
         .collection('friends')
         .doc(userId)
         .snapshots()
@@ -84,7 +78,7 @@ class NightMapState extends State<NightMap> {
         List<UserData> friendsData = [];
         for (String friendId in friendIds) {
           DocumentSnapshot<Map<String, dynamic>> friendSnapshot =
-              await _firestore.collection('user_data').doc(friendId).get();
+              await firestore.collection('user_data').doc(friendId).get();
           if (friendSnapshot.exists) {
             friendsData.add(UserData.fromMap(friendSnapshot.data()!));
           }

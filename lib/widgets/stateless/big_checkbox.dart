@@ -15,8 +15,8 @@ class BigCheckbox extends StatelessWidget {
       scale: 2.0,
       child: Checkbox(
         value: value,
-        fillColor: MaterialStatePropertyAll(Colors.transparent),
-        side: MaterialStateBorderSide.resolveWith(
+        fillColor: WidgetStatePropertyAll(Colors.transparent),
+        side: WidgetStateBorderSide.resolveWith(
               (states) => BorderSide(
             color: Colors.white,
             width: kMainStrokeWidth * 0.5,

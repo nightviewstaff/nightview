@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -67,7 +66,7 @@ class ProfilePictureHelper {
   static Future<File?> _compressImage(File original) async {
     XFile? compressed = await FlutterImageCompress.compressAndGetFile(
       original.absolute.path,
-      original.absolute.path + "_compressed.jpg",
+      "${original.absolute.path}_compressed.jpg",
       quality: 88, // 0-100, lower value means higher compression
       format: CompressFormat.jpeg,
     );

@@ -74,7 +74,7 @@ class _RegistrationConfirmationScreenState
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
-                  inputIsFilled = !(value == null || value.isEmpty);
+                  inputIsFilled = !(value.isEmpty);
                   provider.setCanContinue(inputIsFilled);
                 },
                 validator: (value) {
@@ -87,6 +87,7 @@ class _RegistrationConfirmationScreenState
                   if (value != provider.verificationCode) {
                     return 'Forkert bekræftelseskode';
                   }
+                  return null;
                 },
               ),
               SizedBox(

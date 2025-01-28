@@ -102,7 +102,7 @@ class GlobalProvider extends ChangeNotifier {
   String? _chosenChatId;
   ImageProvider _chosenChatPicture = AssetImage('images/user_pb.jpg');
   String _chosenChatTitle = '';
-  List<ImageProvider> _friendPbs = [];
+  final List<ImageProvider> _friendPbs = [];
   LatLng? _userLocation;
 
   // TEST //

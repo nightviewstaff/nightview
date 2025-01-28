@@ -7,7 +7,6 @@ import 'package:nightview/helpers/misc/prelude_helper.dart';
 import 'package:nightview/constants/phone_country_code.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
-import 'package:nightview/screens/login_registration/registration_confirmation_screen.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:nightview/widgets/stateless/phone_country_code_dropdown_button.dart';
@@ -72,7 +71,7 @@ class _RegistrationAuthenticationScreenState extends State<RegistrationAuthentic
                       ),
                       keyboardType: TextInputType.phone,
                       onChanged: (value) {
-                        inputIsFilled[0] = !(value == null || value.isEmpty);
+                        inputIsFilled[0] = !(value.isEmpty);
                         provider.setCanContinue(!inputIsFilled.contains(false));
                       },
                       validator: (value) {
@@ -100,7 +99,7 @@ class _RegistrationAuthenticationScreenState extends State<RegistrationAuthentic
                 ),
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
-                  inputIsFilled[1] = !(value == null || value.isEmpty);
+                  inputIsFilled[1] = !(value.isEmpty);
                   provider.setCanContinue(!inputIsFilled.contains(false));
                 },
                 validator: (value) {

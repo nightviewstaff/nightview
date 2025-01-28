@@ -22,11 +22,11 @@ class LoginRegistrationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: kLoginRegistrationButtonStyle.copyWith(
-        backgroundColor: MaterialStatePropertyAll(
+        backgroundColor: WidgetStatePropertyAll(
             type == LoginRegistrationButtonType.filled
                 ? primaryColor
                 : Colors.transparent),
-        side: MaterialStatePropertyAll(
+        side: WidgetStatePropertyAll(
           BorderSide(
             color: type == LoginRegistrationButtonType.filled ? Colors.transparent : Colors.white,
             width: type == LoginRegistrationButtonType.filled ? 0.0 : kMainStrokeWidth,

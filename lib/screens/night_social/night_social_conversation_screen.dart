@@ -130,10 +130,6 @@ class _NightSocialConversationScreenState
                                 .reversed
                                 .toList()[index];
 
-                        if (message == null) {
-                          return null;
-                        }
-
                         bool bySelf = message.sender ==
                             Provider.of<GlobalProvider>(context, listen: false)
                                 .userDataHelper

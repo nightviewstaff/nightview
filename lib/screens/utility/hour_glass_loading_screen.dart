@@ -7,11 +7,11 @@ class LoadingScreen extends StatelessWidget {
   final double strokeWidth;
 
   const LoadingScreen({
-    Key? key,
+    super.key,
     required this.color,
     this.size = 150.0,
     this.strokeWidth = 2.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) { // TODO

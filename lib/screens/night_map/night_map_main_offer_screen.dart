@@ -54,7 +54,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
   Widget getBottomContent() {
     switch (canRedeem) {
       case MainOfferRedemptionPermisson.pending:
-        return Container(
+        return SizedBox(
           height: kBottomSpacerValue + kSliderHeight,
           child: SpinKitPouringHourGlass(
             color: primaryColor,
@@ -64,7 +64,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         );
 
       case MainOfferRedemptionPermisson.granted:
-        return Container(
+        return SizedBox(
           height: kBottomSpacerValue + kSliderHeight,
           child: Column(
             children: [
@@ -104,6 +104,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   succes ? await showSuccesDialog() : await showErrorDialog();
 
                   Navigator.of(context).pop();
+                  return null;
                 },
                 label: Text(
                   '            Indløs',
@@ -129,7 +130,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         );
 
       case MainOfferRedemptionPermisson.denied:
-        return Container(
+        return SizedBox(
           height: kSliderHeight + kBottomSpacerValue,
           child: Text(
             'Du har allerede indløst dette tilbud i dag.\nKom igen i morgen!',

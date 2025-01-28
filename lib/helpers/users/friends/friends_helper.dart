@@ -5,21 +5,21 @@ import 'package:nightview/models/users/user_data.dart';
 
 class FriendsHelper {
   static Future<void> addFriend(String otherId) async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return;
     }
 
-    String userId = _auth.currentUser!.uid;
+    String userId = auth.currentUser!.uid;
 
     await Future.wait([
-      _firestore
+      firestore
           .collection('friends')
           .doc(userId)
           .set({otherId: true}, SetOptions(merge: true)),
-      _firestore
+      firestore
           .collection('friends')
           .doc(otherId)
           .set({userId: true}, SetOptions(merge: true)),
@@ -27,21 +27,21 @@ class FriendsHelper {
   }
 
   static Future<void> removeFriend(String otherId) async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return;
     }
 
-    String userId = _auth.currentUser!.uid;
+    String userId = auth.currentUser!.uid;
 
     await Future.wait([
-      _firestore
+      firestore
           .collection('friends')
           .doc(userId)
           .set({otherId: false}, SetOptions(merge: true)),
-      _firestore
+      firestore
           .collection('friends')
           .doc(otherId)
           .set({userId: false}, SetOptions(merge: true)),
@@ -49,20 +49,20 @@ class FriendsHelper {
   }
 
   static Future<List<String>> getAllFriendIds() async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
     List<String> friendIds = [];
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return [];
     }
 
-    String userId = _auth.currentUser!.uid;
+    String userId = auth.currentUser!.uid;
 
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await _firestore.collection('friends').doc(userId).get();
+          await firestore.collection('friends').doc(userId).get();
       Map<String, dynamic>? data = snapshot.data();
 
       if (data == null) {
@@ -82,17 +82,17 @@ class FriendsHelper {
   }
 
   static Future<bool> isFriend(String otherId) async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return false;
     }
 
-    String userId = _auth.currentUser!.uid;
+    String userId = auth.currentUser!.uid;
 
     DocumentSnapshot<Map<String, dynamic>> snap =
-        await _firestore.collection('friends').doc(userId).get();
+        await firestore.collection('friends').doc(userId).get();
 
     if (!snap.exists) {
       return false;
@@ -107,16 +107,16 @@ class FriendsHelper {
 
   static Future<List<UserData>> filterFriends(List<UserData> users,
       {FriendFilterType filterType = FriendFilterType.exclude}) async {
-    final _auth = FirebaseAuth.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return [];
     }
 
     List<UserData> filteredUsers = [];
 
     for (UserData user in users) {
-      if (user.id == _auth.currentUser!.uid) {
+      if (user.id == auth.currentUser!.uid) {
         continue;
       }
 
@@ -155,10 +155,10 @@ class FriendsHelper {
   }
 
   static Future<List<UserData>> getFriendsData() async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
 
-    if (_auth.currentUser == null) {
+    if (auth.currentUser == null) {
       return [];
     }
 
@@ -167,7 +167,7 @@ class FriendsHelper {
 
     for (String friendId in friendIds) {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await _firestore.collection('user_data').doc(friendId).get();
+          await firestore.collection('user_data').doc(friendId).get();
       if (snapshot.exists) {
         friendsData.add(UserData.fromMap(snapshot.data()!));
       }

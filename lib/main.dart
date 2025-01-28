@@ -1,11 +1,7 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nightview/firebase_options.dart';
-import 'package:nightview/services/firestore/firestore_updater.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
@@ -36,6 +32,7 @@ import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/night_social/friend_requests_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
+
 // import 'package:nightview/screens/preferences/preferences_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_main_screen.dart';
@@ -46,7 +43,6 @@ import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
 import 'services/firestore/add_club.dart';
-import 'notifications/notification_manager.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 void main() async {
@@ -63,51 +59,86 @@ void main() async {
   // await notificationManager.initLocalNotifications();
   // notificationManager.scheduleWeeklyNotifications();
 
-
-
   // FirestoreUpdater firestoreUpdater = FirestoreUpdater();
   // firestoreUpdater.updateFirestoreData(); // Updates Firestore.
 
   Initializator initializator = Initializator(); // Rename
   initializator.initializeNeededTasks();
 
-   AddClub addClub = AddClub();
-   // addClub.addSpecificClub72(); // To add each new club manually.
-   // addClub.addSpecificClub73(); // To add each new club manually.
-   // addClub.addSpecificClub74(); // To add each new club manually.
-   // addClub.addSpecificClub75(); // To add each new club manually.
-   //  addClub.addSpecificClub76(); // To add each new club manually.
-   //  addClub.addSpecificClub77(); // To add each new club manually.
-   //  addClub.addSpecificClub78(); // To add each new club manually.
-   //  addClub.addSpecificClub79(); // To add each new club manually.
-   //  addClub.addSpecificClub80(); // To add each new club manually.
-   //  addClub.addSpecificClub81(); // To add each new club manually.
-   //  addClub.addSpecificClub82(); // To add each new club manually.
-   //  addClub.addSpecificClub84(); // To add each new club manually.
-   //  addClub.addSpecificClub85(); // To add each new club manually.
-   //  addClub.addSpecificClub86(); // To add each new club manually.
-   //  addClub.addSpecificClub87(); // To add each new club manually.
-   //  addClub.addSpecificClub88(); // To add each new club manually.
-   //  addClub.addSpecificClub89(); // To add each new club manually.
-   //  addClub.addSpecificClub90(); // To add each new club manually.
-   //  addClub.addSpecificClub100(); // To add each new club manually.
-   //  addClub.addSpecificClub99(); // To add each new club manually.
-   //  addClub.addSpecificClub98(); // To add each new club manually.
-   //  addClub.addSpecificClub97(); // To add each new club manually.
-   //  addClub.addSpecificClub96(); // To add each new club manually.
+  AddClub addClub = AddClub();
+  // addClub.addSpecificClub122(); // To add each new club manually.
+  // addClub.addSpecificClub123(); // To add each new club manually.
+  // addClub.addSpecificClub124(); // To add each new club manually.
+  // addClub.addSpecificClub125(); // To add each new club manually.
+  // addClub.addSpecificClub126(); // To add each new club manually.
+  // addClub.addSpecificClub127(); // To add each new club manually.
+  // addClub.addSpecificClub128(); // To add each new club manually.
+  // addClub.addSpecificClub129(); // To add each new club manually.
+  // addClub.addSpecificClub130(); // To add each new club manually.
+  // addClub.addSpecificClub131(); // To add each new club manually.
+
 
 
   // NotificationService().showNotification();
 
-  await AppTrackingTransparency.requestTrackingAuthorization();
   runApp(NightViewApp());
 }
 
+class NightViewApp extends StatefulWidget {
+  const NightViewApp({super.key});
 
-class NightViewApp extends StatelessWidget {
+  @override
+  State<NightViewApp> createState() => _NightViewAppState();
+}
+
+class _NightViewAppState extends State<NightViewApp> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initAppTrackingTransparency();
+    });
+  }
+
+  Future<void> _initAppTrackingTransparency() async {
+    // Ensure tracking authorization is requested properly
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+
+    if (status == TrackingStatus.notDetermined) {
+      // Show custom explainer dialog
+      await _showCustomTrackingDialog();
+      // Delay slightly before showing the system dialog
+      await Future.delayed(const Duration(milliseconds: 1000));
+      // Request tracking authorization
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
+
+  Future<void> _showCustomTrackingDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location tracking'),
+          content: const Text(
+            'We use your location data to improve the app for you and others.'
+                'You can opt out at any time in your device settings.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
-        return MultiProvider(
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider<GlobalProvider>(
           create: (_) => GlobalProvider(), // When is an instance created?
@@ -142,41 +173,55 @@ class NightViewApp extends StatelessWidget {
             showUnselectedLabels: false,
           ),
         ),
-        initialRoute:
-        WaitingForLoginScreen.id,
-         // SwipeMainScreen.id, // TEST swipescreen
+        initialRoute: WaitingForLoginScreen.id,
+        // SwipeMainScreen.id, // TEST swipescreen
         routes: {
           LoginMainScreen.id: (context) => const LoginMainScreen(),
-          LoginRegistrationOptionScreen.id: (context) => const LoginRegistrationOptionScreen(),
+          LoginRegistrationOptionScreen.id: (context) =>
+              const LoginRegistrationOptionScreen(),
           RegistrationAgeScreen.id: (context) => const RegistrationAgeScreen(),
-          RegistrationAuthenticationScreen.id: (context) => const RegistrationAuthenticationScreen(),
-          RegistrationConfirmationScreen.id: (context) => const RegistrationConfirmationScreen(),
-          RegistrationNameScreen.id: (context) => const RegistrationNameScreen(),
-          RegistrationPasswordScreen.id: (context) => const RegistrationPasswordScreen(),
-          RegistrationWelcomeScreen.id: (context) => const RegistrationWelcomeScreen(),
+          RegistrationAuthenticationScreen.id: (context) =>
+              const RegistrationAuthenticationScreen(),
+          RegistrationConfirmationScreen.id: (context) =>
+              const RegistrationConfirmationScreen(),
+          RegistrationNameScreen.id: (context) =>
+              const RegistrationNameScreen(),
+          RegistrationPasswordScreen.id: (context) =>
+              const RegistrationPasswordScreen(),
+          RegistrationWelcomeScreen.id: (context) =>
+              const RegistrationWelcomeScreen(),
           MyProfileMainScreen.id: (context) => const MyProfileMainScreen(),
-          NightSocialConversationScreen.id: (context) => const NightSocialConversationScreen(),
+          NightSocialConversationScreen.id: (context) =>
+              const NightSocialConversationScreen(),
           MainScreen.id: (context) => const MainScreen(),
-          PreferencesMainScreen.id: (context) => const PreferencesMainScreen(), // NUserd
+          PreferencesMainScreen.id: (context) => const PreferencesMainScreen(),
+          // NUserd
           SwipeMainScreen.id: (context) => const SwipeMainScreen(),
           WaitingForLoginScreen.id: (context) => const WaitingForLoginScreen(),
-          NightMapMainOfferScreen.id: (context) => const NightMapMainOfferScreen(),
-          LocationPermissionWhileInUseScreen.id: (context) => const LocationPermissionWhileInUseScreen(),
-          LocationPermissionAlwaysScreen.id: (context) => const LocationPermissionAlwaysScreen(),
-          LocationPermissionPreciseScreen.id: (context) => const LocationPermissionPreciseScreen(),
-          LocationPermissionServiceScreen.id: (context) => const LocationPermissionServiceScreen(),
-          LocationPermissionCheckerScreen.id: (context) => const LocationPermissionCheckerScreen(),
+          NightMapMainOfferScreen.id: (context) =>
+              const NightMapMainOfferScreen(),
+          LocationPermissionWhileInUseScreen.id: (context) =>
+              const LocationPermissionWhileInUseScreen(),
+          LocationPermissionAlwaysScreen.id: (context) =>
+              const LocationPermissionAlwaysScreen(),
+          LocationPermissionPreciseScreen.id: (context) =>
+              const LocationPermissionPreciseScreen(),
+          LocationPermissionServiceScreen.id: (context) =>
+              const LocationPermissionServiceScreen(),
+          LocationPermissionCheckerScreen.id: (context) =>
+              const LocationPermissionCheckerScreen(),
           FriendRequestsScreen.id: (context) => const FriendRequestsScreen(),
           FindNewFriendsScreen.id: (context) => const FindNewFriendsScreen(),
-          OtherProfileMainScreen.id: (context) => const OtherProfileMainScreen(),
+          OtherProfileMainScreen.id: (context) =>
+              const OtherProfileMainScreen(),
           NewChatScreen.id: (context) => const NewChatScreen(),
-          BalladefabrikkenMainScreen.id: (context) => const BalladefabrikkenMainScreen(),
-          ShotAccumulationScreen.id: (context) => const ShotAccumulationScreen(),
+          BalladefabrikkenMainScreen.id: (context) =>
+              const BalladefabrikkenMainScreen(),
+          ShotAccumulationScreen.id: (context) =>
+              const ShotAccumulationScreen(),
           ShotRedemtionScreen.id: (context) => const ShotRedemtionScreen(),
         },
       ),
     );
   }
 }
-
-

@@ -43,22 +43,25 @@ class DistanceDisplayWidget extends StatelessWidget {
               final userLocation = snapshot.data!;
               return GestureDetector(
                 onTap: () async {
-                  final Uri googleMapsUri = Uri.parse(
-                      'https://www.google.com/maps/dir/?api=1&destination=${club.lat},${club.lon}&origin=${userLocation.latitude},${userLocation.longitude}');
                   final Uri appleMapsUri = Uri.parse(
                       'https://maps.apple.com/?daddr=${club.lat},${club.lon}&saddr=${userLocation.latitude},${userLocation.longitude}');
+                  final Uri googleMapsUri = Uri.parse(
+                      'https://www.google.com/maps/dir/?api=1&destination=${club.lat},${club.lon}&origin=${userLocation.latitude},${userLocation.longitude}');
 
-                  // Launch the URL
-                  if (await canLaunchUrl(googleMapsUri)) {
-                    await launchUrl(googleMapsUri);
-                  } else if (await canLaunchUrl(appleMapsUri)) {
+                  // Attempt to launch Apple Maps first
+                  if (await canLaunchUrl(appleMapsUri)) {
                     await launchUrl(appleMapsUri);
+                  }
+                  // Fallback to Google Maps if Apple Maps is unavailable
+                  else if (await canLaunchUrl(googleMapsUri)) {
+                    await launchUrl(googleMapsUri);
                   } else {
                     throw 'Could not launch maps';
                   }
                 },
 
-                //DISPLAY!
+
+              //DISPLAY!
                 child: Text(
                   ClubDistanceCalculator.displayDistanceToClub(
                     club: club,

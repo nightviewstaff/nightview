@@ -118,7 +118,7 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                       }
                     : null,
                 style: kFilledButtonStyle.copyWith(
-                  fixedSize: MaterialStatePropertyAll(
+                  fixedSize: WidgetStatePropertyAll(
                     Size(double.maxFinite, 60.0),
                   ),
                 ),

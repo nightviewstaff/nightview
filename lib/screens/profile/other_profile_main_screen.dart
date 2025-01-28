@@ -71,7 +71,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           checkFriendButton();
         },
         style: kFilledButtonStyle.copyWith(
-          backgroundColor: MaterialStatePropertyAll(Colors.redAccent),
+          backgroundColor: WidgetStatePropertyAll(Colors.redAccent),
         ),
         child: Padding(
           padding: EdgeInsets.all(kMainPadding),

@@ -28,7 +28,7 @@ class OfferListItem extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                '${price} DKK - ved ${place}',
+                '$price DKK - ved $place',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

@@ -3,18 +3,20 @@ import 'package:flutter_map/flutter_map.dart';
 
 /// CustomMarkerLayer: Displays all markers, including those off-screen.
 class CustomMarkerLayer extends MarkerLayer {
+  @override
   final List<Marker> markers;
+  @override
   final bool rotate;
   final Offset? rotateOrigin;
   final AlignmentGeometry rotateAlignment;
 
   const CustomMarkerLayer({
-    Key? key,
+    super.key,
     required this.markers,
     this.rotate = false,
     this.rotateOrigin,
     this.rotateAlignment = Alignment.center,
-  }) : super(key: key, markers: markers);
+  }) : super(markers: markers);
 
   @override
   Widget build(BuildContext context) {

@@ -80,6 +80,8 @@ dependencies:
 #  flutter_dotenv: ^5.0.2
 #  qr_flutter: ^4.0.0
 
+  flutter_cache_manager: any
+  intl: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
