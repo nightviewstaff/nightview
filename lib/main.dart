@@ -17,14 +17,13 @@ import 'package:nightview/screens/location_permission/location_permission_whilei
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_service_screen.dart';
-import 'package:nightview/screens/login_registration/login_main_screen.dart';
-import 'package:nightview/screens/login_registration/login_registration_option_screen.dart';
-import 'package:nightview/screens/login_registration/registration_age_screen.dart';
-import 'package:nightview/screens/login_registration/registration_authentication_screen.dart';
-import 'package:nightview/screens/login_registration/registration_confirmation_screen.dart';
-import 'package:nightview/screens/login_registration/registration_name_screen.dart';
-import 'package:nightview/screens/login_registration/registration_password_screen.dart';
-import 'package:nightview/screens/login_registration/registration_welcome_screen.dart';
+import 'package:nightview/screens/login_registration/login/login_google_screen.dart';
+import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
+import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
+import 'package:nightview/screens/login_registration/todo/registration_confirmation_screen.dart';
+import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
+import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/screens/main_screen.dart';
 import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
@@ -176,20 +175,20 @@ class _NightViewAppState extends State<NightViewApp> {
         initialRoute: WaitingForLoginScreen.id,
         // SwipeMainScreen.id, // TEST swipescreen
         routes: {
-          LoginMainScreen.id: (context) => const LoginMainScreen(),
-          LoginRegistrationOptionScreen.id: (context) =>
-              const LoginRegistrationOptionScreen(),
-          RegistrationAgeScreen.id: (context) => const RegistrationAgeScreen(),
-          RegistrationAuthenticationScreen.id: (context) =>
-              const RegistrationAuthenticationScreen(),
+          LoginScreen.id: (context) => const LoginScreen(),
+          LoginOrCreateAccountScreen.id: (context) =>
+              const LoginOrCreateAccountScreen(),
+
+          LoginGoogleScreen.id: (context) => const LoginGoogleScreen(),
+
+          CreateAccountScreenTwoContact.id: (context) =>
+              const CreateAccountScreenTwoContact(),
           RegistrationConfirmationScreen.id: (context) =>
               const RegistrationConfirmationScreen(),
-          RegistrationNameScreen.id: (context) =>
-              const RegistrationNameScreen(),
-          RegistrationPasswordScreen.id: (context) =>
-              const RegistrationPasswordScreen(),
-          RegistrationWelcomeScreen.id: (context) =>
-              const RegistrationWelcomeScreen(),
+          CreateAccountScreenOnePersonal.id: (context) =>
+              const CreateAccountScreenOnePersonal(),
+          CreateAccountScreenThreePassword.id: (context) =>
+              const CreateAccountScreenThreePassword(),
           MyProfileMainScreen.id: (context) => const MyProfileMainScreen(),
           NightSocialConversationScreen.id: (context) =>
               const NightSocialConversationScreen(),
