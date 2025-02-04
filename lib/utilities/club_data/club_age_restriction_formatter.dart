@@ -20,7 +20,8 @@ class ClubAgeRestrictionFormatter {
     final String currentWeekday = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
     final Map<String, dynamic>? openingHoursToday = club.openingHours[currentWeekday];
 
-    final int currentAgeRestriction = openingHoursToday?['age_restriction'] ?? club.ageRestriction;
+
+    final int currentAgeRestriction = (openingHoursToday?['ageRestriction'] as int?) ?? club.ageRestriction;
 
     return currentAgeRestriction <= 17
         ? 'Aldersgrænse ikke oplyst.'
