@@ -195,7 +195,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Brugere i byen',
+                      'Brugere i byen nu',
                       style: kTextStyleH3,
                     ),
                     Row(
@@ -387,12 +387,14 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
     final allClubs = clubDataHelper.clubData.values.toList(); // Fetch all clubs
     final Map<String, List<ClubData>> clubsByType = {};
 
-    // Group clubs by their type
+// Group clubs by their type
     for (var club in allClubs) {
-      // TODO move to a static class so everyone can acess. Store in cache from beginning.
       clubsByType.putIfAbsent(club.typeOfClub, () => []).add(club);
     }
-    print(clubsByType.keys);
+
+// Sort club types by the number of clubs (most first)
+    final sortedClubTypes = clubsByType.entries.toList()
+      ..sort((a, b) => b.value.length.compareTo(a.value.length));
 
     showModalBottomSheet(
       context: context,
@@ -403,12 +405,13 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       builder: (context) {
         // TODO Make CustomCircularIndicator class to use everywhere
         return ListView(
-          children: clubsByType.entries.map((entry) {
+          children: sortedClubTypes.map((entry) {
             // Center logic for reusability
             final type = entry.key;
             final clubs = entry.value;
 
-            clubs.sort((a, b) {
+            clubs.sort((a, b)
+            {
               // Make reuseable method. Used more places
               final double distanceA = Geolocator.distanceBetween(
                 userLocation.latitude,
@@ -425,7 +428,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               return distanceA.compareTo(distanceB);
             });
 
+
             return ExpansionTile(
+
+
               // Show all at the top with toggle. TODO
               title: Row(
                 children: [
