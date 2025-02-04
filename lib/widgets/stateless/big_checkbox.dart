@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
 
 class BigCheckbox extends StatelessWidget {
@@ -8,17 +9,17 @@ class BigCheckbox extends StatelessWidget {
 
   const BigCheckbox({super.key, required this.value, this.onChanged});
 
-
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
       scale: 2.0,
       child: Checkbox(
+        checkColor: secondaryColor,
         value: value,
         fillColor: WidgetStatePropertyAll(Colors.transparent),
         side: WidgetStateBorderSide.resolveWith(
               (states) => BorderSide(
-            color: Colors.white,
+            color: white,
             width: kMainStrokeWidth * 0.5,
           ),
         ),
