@@ -16,7 +16,7 @@ class SwipeCardContent extends StatelessWidget {
 
   //TODO Put variables in here. Pictures and text Also reduce reduancy with a lot of methods.
 
-  String getRandomMessage() {
+ static String getRandomMessage() {
     Random random = Random();
     List<String> messages = [
       "Er du klar til at erobre dansegulvet i nat?",

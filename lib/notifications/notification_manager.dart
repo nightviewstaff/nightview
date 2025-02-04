@@ -65,7 +65,9 @@ class NotificationManager {
     for (var weekday in targetWeekdays) {
       // Schedule multiple random notifications for each day
       for (int i = 0; i < 3; i++) {
-        final randomMessage = NotificationMessage
+        final randomMessage =
+        //TODO
+        NotificationMessage
             .getNotificationMessages()[rng.nextInt(NotificationMessage.getNotificationMessages().length)];
 
         final DateTime scheduledDate = _getNextWeekdayTime(weekday, hour: 14); // Test

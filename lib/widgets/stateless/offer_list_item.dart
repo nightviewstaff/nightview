@@ -17,7 +17,7 @@ class OfferListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(kOfferItemPadding),
+        padding: EdgeInsets.all(kMainPadding),
         child: ListTile(
           leading: image,
           title: Column(

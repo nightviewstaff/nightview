@@ -12,7 +12,7 @@ class NightOffersMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(kPagePadding),
+      padding: const EdgeInsets.all(kBiggerPadding),
       child: ListView(
         children: [
           Center(

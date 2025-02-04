@@ -69,6 +69,11 @@ final TextStyle linkTextStyle = TextStyle(
   decoration: TextDecoration.underline, // Underlined text
 );
 
+const kTextStyleP3ErrorText = TextStyle(
+  fontSize: 10.0,
+  color: redAccent,
+);
+
 // TODO make a cool style with white and NV-Green combined.
 
 // const kTextStyleLocation = TextStyle(

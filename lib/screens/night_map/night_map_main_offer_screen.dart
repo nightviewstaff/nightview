@@ -204,7 +204,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(kCardPadding),
+        padding: EdgeInsets.all(kBiggerPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

@@ -5,7 +5,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/screens/login_registration/login_registration_option_screen.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
 import 'package:provider/provider.dart';
@@ -158,7 +158,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                               if (succes) {
                                 await Navigator.of(deleteUserContext)
                                     .pushNamedAndRemoveUntil(
-                                        LoginRegistrationOptionScreen.id,
+                                        LoginOrCreateAccountScreen.id,
                                         (route) => false);
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
@@ -206,7 +206,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                         .userDataHelper
                         .signOutCurrentUser();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginRegistrationOptionScreen.id, (route) => false);
+                        LoginOrCreateAccountScreen.id, (route) => false);
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.remove('mail');

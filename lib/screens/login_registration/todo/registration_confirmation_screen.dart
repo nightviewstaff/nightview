@@ -3,12 +3,12 @@ import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
-import 'package:nightview/screens/login_registration/registration_password_screen.dart';
+import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
-class RegistrationConfirmationScreen extends StatefulWidget {
+class RegistrationConfirmationScreen extends StatefulWidget { // TODO PRelude is working. Maybe use firebase instead?
   static const id = 'registration_confirmation_screen';
 
   const RegistrationConfirmationScreen({super.key});
@@ -103,7 +103,7 @@ class _RegistrationConfirmationScreenState
                   }
                   if (valid) {
                     Navigator.of(context)
-                        .pushReplacementNamed(RegistrationPasswordScreen.id);
+                        .pushReplacementNamed(CreateAccountScreenThreePassword.id);
                   }
                 },
               ),

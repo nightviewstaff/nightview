@@ -82,7 +82,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(kCardPadding),
+          padding: EdgeInsets.all(kBiggerPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [

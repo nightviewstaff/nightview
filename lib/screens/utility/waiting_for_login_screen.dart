@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/screens/login_registration/login_registration_option_screen.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +28,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
 
       if (mail == null || password == null) {
         Navigator.of(context)
-            .pushReplacementNamed(LoginRegistrationOptionScreen.id);
+            .pushReplacementNamed(LoginOrCreateAccountScreen.id);
       } else {
         bool loginSucces = await Provider.of<GlobalProvider>(context, listen: false)
             .userDataHelper
@@ -63,7 +63,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
             ),
           );
           Navigator.of(context)
-              .pushReplacementNamed(LoginRegistrationOptionScreen.id);
+              .pushReplacementNamed(LoginOrCreateAccountScreen.id);
         }
       }
     });
