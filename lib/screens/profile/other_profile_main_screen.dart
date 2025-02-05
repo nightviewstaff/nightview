@@ -12,6 +12,7 @@ import 'package:nightview/models/users/location_data.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:provider/provider.dart';
 
 class OtherProfileMainScreen extends StatefulWidget {
@@ -214,7 +215,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                               return;
                             }
                             LocationData? lastLocation =
-                                await Provider.of<GlobalProvider>(context, listen: false).locationHelper.getLastPositionOfUser(user.id);
+                                await Provider.of<NightMapProvider>(context, listen: false).locationHelper.getLastPositionOfUser(user.id);
                             await showDialog(
                               context: context,
                               barrierDismissible: false,

@@ -61,6 +61,7 @@ dependencies:
   maps_toolkit: ^3.0.0
   location: ^7.0.1
 
+
   card_swiper: ^3.0.1
   bottom_sheet: ^4.0.4 
   slider_button: ^2.0.0
@@ -84,6 +85,7 @@ dependencies:
 
   flutter_cache_manager: any
   intl: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

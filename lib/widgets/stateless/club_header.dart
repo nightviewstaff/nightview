@@ -155,10 +155,7 @@ class ClubHeader extends StatelessWidget {
                         backgroundImage: CachedNetworkImageProvider(club.logo),
                         radius: kBiggerSizeRadius,
                       ),
-                      // const SizedBox(width: kSmallSpacerValue), // space between logo and X
-
-                      const SizedBox(width: kSmallSpacerValue),
-                      // Space between
+                      const SizedBox(width: kSmallSpacerValue),                      // Space between
                       const FavoriteClubButton(),
                     ],
                   ),

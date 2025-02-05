@@ -25,67 +25,43 @@ import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {
-    clubDataHelper = ClubDataHelper(
-      onReceive: (data) {
-        clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-        notifyListeners();
-      },
-    );
+    // Load clubs ONCE at startup //TODO
+    clubDataHelper.loadClubsOnce().then((_) {
+      // clubDataHelper.listenForUpdates(); // Listen for changes
+    notifyListeners(); // Notify UI when first load is complete
+    });
+
     userDataHelper = UserDataHelper(
       onReceive: (data) {
-        userDataHelper
-            .evaluatePartyCount(
-          userData: data ?? {},
-        )
-            .then((count) {
+        userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
           _partyCount = count;
           if (DateTime.now().weekday != DateTime.sunday) {
-            if (_partyCount <= 130) {
-              Random random = Random();
-              _partyCount = 131 + random.nextInt(65);
-            }
+            // if (_partyCount <= 99) { // TEST
+            //   Random random = Random();
+            //   _partyCount = 99 + random.nextInt(65);
+            // }
           }
           // _partyCount = 1633; // TEST
           notifyListeners();
         });
       },
     );
-    locationHelper = LocationHelper(
-      onPositionUpdate: (location) async {
-        if (userDataHelper.isLoggedIn() && location != null) {
-          clubDataHelper.clubData.forEach((clubId, clubData) {
-            if (locationHelper.locationInClub(
-                location: location, clubData: clubData)) {
-              locationHelper.uploadLocationData(
-                LocationData(
-                  userId: userDataHelper.currentUserId!,
-                  clubId: clubId,
-                  private: false,
-                  timestamp: Timestamp.now(),
-                ),
-              );
-              return;
-            }
-          });
-        }
-        if (backgroundLocationEnabled) {
-          await clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-          notifyListeners();
-        }
+
+    clubDataHelper = ClubDataHelper(
+      onReceive: (data) {
+        clubDataHelper.evaluateVisitors();
+        notifyListeners();
       },
     );
+
   }
 
-  late ClubDataHelper clubDataHelper;
+  ClubDataHelper clubDataHelper = ClubDataHelper();
   late UserDataHelper userDataHelper;
-  late LocationHelper locationHelper;
-  // late LocationService locationService;
-
+  // late LocationHelper locationHelper;
   MainOfferRedemptionsHelper mainOfferRedemptionsHelper =
       MainOfferRedemptionsHelper();
   AppinioSwiperController cardController = AppinioSwiperController();
-  MapController nightMapController = MapController();
-
 
   ClubData? _chosenClub;
   bool _chosenClubFavoriteLocal = false;
@@ -107,13 +83,15 @@ class GlobalProvider extends ChangeNotifier {
 
   // TEST //
   LatLng? get userLocation => _userLocation;
+
   Future<void> fetchUserLocation() async {
     try {
       LocationService.getUserLocation();
-    }catch(e){
+    } catch (e) {
       print(e.toString());
     }
   }
+
   // TEST //
 
   ClubData get chosenClub => _chosenClub!;
@@ -270,19 +248,6 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePositionAndEvaluateVisitors(
-      {required double lat, required double lon}) async {
-     //await userDataHelper.setCurrentUsersLastPosition(
-    //   lat: lat,
-    //   lon: lon,
-    // );
-    clubDataHelper.evaluateVisitors(
-      // userData: userDataHelper.userData,
-      locationHelper: locationHelper,
-    );
-  }
-
-
   Future<bool> deleteAllUserData() async {
     String? userIdToDelete = userDataHelper.currentUserId;
 
@@ -293,7 +258,7 @@ class GlobalProvider extends ChangeNotifier {
     try {
       await userDataHelper.deleteDataAssociatedTo(userIdToDelete);
       await clubDataHelper.deleteDataAssociatedTo(userIdToDelete);
-      await locationHelper.deleteDataAssociatedTo(userIdToDelete);
+      // await locationHelper.deleteDataAssociatedTo(userIdToDelete); In provider now
       await mainOfferRedemptionsHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendRequestHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendsHelper.deleteDataAssociatedTo(userIdToDelete);

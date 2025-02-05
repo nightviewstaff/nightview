@@ -6,8 +6,20 @@ import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 class MainNavigationProvider extends ChangeNotifier {
 
   PageName _currentPageName = PageName.nightMap;
-
   PageName get currentPageName => _currentPageName;
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const NightMapMainScreen(), // Use const if possible
+    NightSocialMainScreen(),
+  ];
+
+  Widget get currentScreen => _screens[_currentIndex];
+
+  void setCurrentIndex(int index) {
+    _currentIndex = index;
+    notifyListeners();
+  }
 
   String get currentPageNameAsString {
     switch (_currentPageName) {
@@ -24,37 +36,25 @@ class MainNavigationProvider extends ChangeNotifier {
     }
   }
 
-  int get pageIndex {
+  int get currentScreenAsInt {
     switch (_currentPageName) {
       case PageName.nightMap:
-        return 0;
+        return _currentIndex = 0;
 
       // case PageName.nightOffers:
       //   return 1;
 
       case PageName.nightSocial:
-        return 1;
-    }
-  }
-
-  Widget? get currentScreen {
-    switch (_currentPageName) {
-
-      case PageName.nightMap:
-        return NightMapMainScreen();
-
-      // case PageName.nightOffers:
-      //   return NightOffersMainScreen();
-
-      case PageName.nightSocial:
-        return NightSocialMainScreen();
+return        _currentIndex = 1;
     }
   }
 
   void setScreen({required PageName newPage}) {
 
     _currentPageName = newPage;
-    notifyListeners();
+    if(_currentPageName != PageName.nightMap) {
+      notifyListeners();
+    }
 
   }
 

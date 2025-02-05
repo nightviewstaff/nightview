@@ -10,6 +10,7 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
@@ -36,7 +37,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   final searchController = TextEditingController();
   final GlobalKey<NightMapState> nightMapKey =
       GlobalKey<NightMapState>(); // Prop needs refac
-  // Map<String, bool> toggledClubTypeStates = {};
+  Map<String, bool> toggledClubTypeStates = {};
 
   Future<int> getUserCount() async {
     try {
@@ -86,7 +87,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
     return sortedClubsByQuery.map((clubData) {
       final formattedClubName = ClubNameFormatter.displayClubName(clubData);
-      final formattedClubNameShort = ClubNameFormatter.displayClubNameShort(clubData, 20);
+      final formattedClubNameShort =
+          ClubNameFormatter.displayClubNameShort(clubData, 20);
       final formattedClubLocation =
           ClubNameFormatter.displayClubLocation(clubData);
       final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
@@ -173,8 +175,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   Widget build(BuildContext context) {
     // TODO Needs complete rework. Does too much
     return FutureBuilder<LatLng?>(
-        future:
-        LocationService.getUserLocation(),
+        future: LocationService.getUserLocation(),
         // Needed in order to call showalltypesbar + seach. Prop needs refac
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -194,42 +195,39 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+
+                    //TOP part
                     Text(
                       'Brugere i byen nu',
                       style: kTextStyleH3,
                     ),
                     Row(
                       children: [
-                        Container(
-                          height: 40.00,
-                          // width: getwidth(), Ugly if partyCount < 10
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            ),
-                            border: Border.all(
-                              color: white,
-                              width: kMainStrokeWidth,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: kMainPadding),
-                            child: Center(
-                              // Center the text vertically
-                              child: Text(
-                                Provider.of<GlobalProvider>(context)
-                                    .partyCount
-                                    .toString(),
-                                style:
-                                    kTextStyleH3.copyWith(color: primaryColor),
+                        Consumer<GlobalProvider>(
+                          builder: (context, provider, child) {
+                            return Container(
+                              height: 40.00,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                border: Border.all(
+                                    color: white, width: kMainStrokeWidth),
                               ),
-                            ),
-                          ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: kMainPadding),
+                                child: Center(
+                                  child: Text(
+                                    provider.partyCount.toString(),
+                                    style: kTextStyleH3.copyWith(
+                                        color: primaryColor),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        SizedBox(
-                          width: kNormalSpacerValue,
-                        ),
+                        SizedBox(width: kNormalSpacerValue),
                         FutureBuilder<int>(
                           future: getUserCount(),
                           builder: (context, snapshot) {
@@ -244,41 +242,41 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                             }
 
                             int userCount = snapshot.data!;
-                            return CircularPercentIndicator(
-                              radius: kNormalSizeRadius,
-                              lineWidth: 3.0,
-                              // Adjusted to be smaller
-                              percent: getDecimalValue(
-                                amount: Provider.of<GlobalProvider>(context)
-                                    .partyCount,
-                                fullAmount: userCount,
-                              ),
-                              center: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: (getDecimalValue(
-                                                  amount: Provider.of<
-                                                              GlobalProvider>(
-                                                          context)
-                                                      .partyCount,
-                                                  fullAmount: userCount) *
-                                              100)
-                                          .toStringAsFixed(0),
-                                      style: kTextStyleH3.copyWith(
-                                          color: primaryColor,
-                                          fontSize: 15.0), // Adjusted font size
+
+                            return Consumer<GlobalProvider>(
+                              builder: (context, provider, child) {
+                                double percentValue = getDecimalValue(
+                                  amount: provider.partyCount,
+                                  fullAmount: userCount,
+                                );
+
+                                return CircularPercentIndicator(
+                                  radius: kNormalSizeRadius,
+                                  lineWidth: 3.0,
+                                  percent: percentValue,
+                                  center: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: (percentValue * 100)
+                                              .toStringAsFixed(0),
+                                          style: kTextStyleH3.copyWith(
+                                            color: primaryColor,
+                                            fontSize: 15.0,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '%',
+                                          style: kTextStyleH3.copyWith(
+                                              fontSize: 15.0),
+                                        ),
+                                      ],
                                     ),
-                                    TextSpan(
-                                      text: '%',
-                                      style: kTextStyleH3.copyWith(
-                                          fontSize: 15.0), // Adjusted font size
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              progressColor: secondaryColor,
-                              backgroundColor: Colors.white,
+                                  ),
+                                  progressColor: secondaryColor,
+                                  backgroundColor: Colors.white,
+                                );
+                              },
                             );
                           },
                         ),
@@ -287,6 +285,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   ],
                 ),
               ),
+
+              // Search field
               Padding(
                 padding: const EdgeInsets.all(kMainPadding),
                 child: GestureDetector(
@@ -330,7 +330,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                             FocusManager.instance.primaryFocus?.unfocus();
                             searchController.clear();
 
-                            Provider.of<GlobalProvider>(context, listen: false)
+                            Provider.of<NightMapProvider>(context, listen: false)
                                 .nightMapController
                                 .move(LatLng(value.item.lat, value.item.lon),
                                     kCloseMapZoom);
@@ -361,6 +361,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   ),
                 ),
               ),
+
+              // The actual map
               Expanded(
                 child: GestureDetector(
                   // Maybe close everyhting else when clicking map?
@@ -378,13 +380,18 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         });
   }
 
-  void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
-
+  void showAllTypesOfBars(BuildContext context, LatLng userLocation) async {
     // todo Class of it own
     // Fetch all clubs and their types
     final clubDataHelper =
         Provider.of<GlobalProvider>(context, listen: false).clubDataHelper;
-    final allClubs = clubDataHelper.clubData.values.toList(); // Fetch all clubs
+    await Future.doWhile(() async {
+      if (clubDataHelper.clubData.isNotEmpty) return false; // Exit loop if data exists
+      await Future.delayed(const Duration(milliseconds: 100)); // Wait 100ms
+      return true; // Keep looping if data is still empty
+    });
+
+    var allClubs = clubDataHelper.clubData.values.toList();
     final Map<String, List<ClubData>> clubsByType = {};
 
 // Group clubs by their type
@@ -410,8 +417,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             final type = entry.key;
             final clubs = entry.value;
 
-            clubs.sort((a, b)
-            {
+            clubs.sort((a, b) {
               // Make reuseable method. Used more places
               final double distanceA = Geolocator.distanceBetween(
                 userLocation.latitude,
@@ -428,10 +434,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               return distanceA.compareTo(distanceB);
             });
 
-
             return ExpansionTile(
-
-
               // Show all at the top with toggle. TODO
               title: Row(
                 children: [
@@ -450,9 +453,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                       // );
                     },
                     updateMarkers: () {
+                      // TODO Updates too much? Markers need to be changed if changed in db
                       nightMapKey.currentState?.updateMarkers();
                     },
-
                   ),
                   // built in padding from BTMT.
                   CircleAvatar(
@@ -528,7 +531,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Provider.of<GlobalProvider>(context, listen: false)
+                    Provider.of<NightMapProvider>(context, listen: false)
                         .nightMapController
                         .move(LatLng(club.lat, club.lon), kCloseMapZoom);
                   },
@@ -539,6 +542,5 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         );
       },
     );
-
   }
 }

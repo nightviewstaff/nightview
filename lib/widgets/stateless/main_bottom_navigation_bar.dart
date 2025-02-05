@@ -10,10 +10,10 @@ class MainBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: Provider.of<MainNavigationProvider>(context).pageIndex,
+      currentIndex: Provider.of<MainNavigationProvider>(context).currentScreenAsInt,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.pin_drop),
+          icon: Icon(Icons.pin_drop), // Color
           label: 'MAP', // KORT her i stedet?
         ),
         // BottomNavigationBarItem(

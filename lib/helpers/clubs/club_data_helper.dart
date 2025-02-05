@@ -5,31 +5,99 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
+import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/screens/night_map/night_map.dart';
 
 class ClubDataHelper {
   final _firestore = FirebaseFirestore.instance;
   final _storageRef = FirebaseStorage.instance.ref();
 
   Map<String, ClubData> clubData = {};
+  bool _isLoaded = false; // Prevents multiple loads
 
   ClubDataHelper({Callback<Map<String, ClubData>>? onReceive}) {
     _firestore.collection('club_data').snapshots().listen((snap) {
-      clubData.clear();
+      print("🔄 Firestore updated: Processing only changed clubs...");
 
-      List<Future<void>> futures =
-          snap.docs.map((club) => _processClub(club)).toList();
-      Future.wait(futures).then((value) {
-        if (onReceive != null) {
-          onReceive(clubData);
+      for (var club in snap.docChanges) {
+        switch (club.type) {
+          case DocumentChangeType.added:
+          case DocumentChangeType.modified:
+            // _processClub(club.doc); // ✅ Update only the changed club
+            break;
+          case DocumentChangeType.removed:
+            clubData.remove(club.doc.id); // ✅ Remove deleted club
+            break;
         }
-      });
+      }
     });
   }
 
+  Future<void> loadClubsOnce() async { // TODO
+    if (_isLoaded) {
+      print("⚠️ Clubs already loaded, skipping...");
+      return; // Prevent multiple loads
+    }
+
+    print("🔄 Loading clubs for the first time...");
+
+    // Explicitly type the snapshot to `Map<String, dynamic>`
+    QuerySnapshot<Map<String, dynamic>> snapshot =
+    await _firestore.collection('club_data').get();
+
+    if (snapshot.docs.isEmpty) {
+      print("❌ No clubs found in Firestore!");
+      return;
+    }
+
+    print("📊 Found ${snapshot.docs.length} clubs, processing...");
+
+    // Process the clubs
+    List<Future<void>> futures = snapshot.docs.map((club) {
+      return _processClub(club);
+    }).toList();
+
+    await Future.wait(futures);
+
+    _isLoaded = true; // Mark as loaded
+    print("✅ All clubs processed successfully!");
+
+  }
+
+
+  void listenForUpdates() { // TODO
+    _firestore.collection('club_data').snapshots().listen((snap) {
+      print("🔄 Firestore updated: Reloading clubs...");
+      // clubData.clear(); // Clear old data TODO SMARTER
+
+      // List<Future<void>> futures =
+      // snap.docs.map((club) => _processClub(club)).toList();
+      // Future.wait(futures).then((_) => print("✅ Clubs updated."));
+    });
+  }
+
+
   Future<void> _processClub(
       QueryDocumentSnapshot<Map<String, dynamic>> club) async {
+
+    if (_isLoaded){// Clubs are being created multiple times!? TODO
+      return;
+    }
+
     try {
       final data = club.data();
+      if (clubData.containsKey(club.id)) {
+        final existingClub = clubData[club.id]!;
+        bool hasChanged = existingClub.name != data['name'] ||
+            existingClub.rating != data['rating'] ||
+            existingClub.visitors != data['visitors'] ||
+            existingClub.logo != data['logo'];
+
+        if (!hasChanged) {
+          print("✅ No changes detected for ${club.id}, skipping update.");
+          return; // 🚀 Skip processing if no change
+        }
+      }
 
       Map<String, Map<String, dynamic>> parseOpeningHours(
           Map<String, dynamic> rawOpeningHours, int baseAgeRestriction) {
@@ -61,11 +129,11 @@ class ClubDataHelper {
         data['age_restriction'] ?? 0, // Pass base age restriction
       );
 
-      String typeOfClubImageUrl;
+      String typeOfClubImageUrl; //TODO SMarter
       try {
         typeOfClubImageUrl = await _storageRef
             .child(
-                '/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
+            '/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
             .getDownloadURL();
       } catch (e) {
         print(
@@ -132,7 +200,7 @@ class ClubDataHelper {
         openingHours: openingHours,
         visitors: data['visitors'],
         totalPossibleAmountOfVisitors:
-            data['total_possible_amount_of_visitors'],
+        data['total_possible_amount_of_visitors'],
       );
 
       print('Club processed successfully: ${[club.id]}');
@@ -141,6 +209,7 @@ class ClubDataHelper {
       print('Stack trace: $stackTrace');
     }
   }
+
 
   void setFavoriteClub(String clubId, String userId) async {
     DocumentSnapshot<Map<String, dynamic>> clubDocument =
@@ -215,8 +284,7 @@ class ClubDataHelper {
   }
 
   // prompts updateVisitCount (club_visits in Firestore) TODO Think about LocationHelper here
-  Future<void> evaluateVisitors(
-      {required LocationHelper locationHelper}) async {
+  Future<void> evaluateVisitors() async {
     // Fetch all documents from the 'location_data' collection
     QuerySnapshot locationDataSnapshot =
         await _firestore.collection('location_data').get();

@@ -19,19 +19,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   @override
   void initState() {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-
       String? currentUserId;
       do {
-        currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+        currentUserId = Provider.of<GlobalProvider>(context, listen: false)
+            .userDataHelper
+            .currentUserId;
         await Future.delayed(Duration(milliseconds: 100));
       } while (currentUserId == null);
-      String? pbUrl = await ProfilePictureHelper.getProfilePicture(currentUserId);
-      Provider.of<GlobalProvider>(context, listen: false).setProfilePicture(pbUrl);
+      String? pbUrl =
+          await ProfilePictureHelper.getProfilePicture(currentUserId);
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setProfilePicture(pbUrl);
     });
 
     super.initState();
@@ -77,14 +78,28 @@ class _MainScreenState extends State<MainScreen> {
                 padding: const EdgeInsets.only(right: kSmallSpacerValue),
                 child: CircleAvatar(
                   backgroundImage:
-                      Provider.of<GlobalProvider>(context).profilePicture,
+                      context.watch<GlobalProvider>().profilePicture,
                 ),
               ),
             ),
           ),
         ],
       ),
-      body: Provider.of<MainNavigationProvider>(context).currentScreen,
+      body: Consumer<MainNavigationProvider>(
+        builder: (context, provider, child) {
+          return provider.currentScreen ?? const Center(
+            child: CircularProgressIndicator(), // Fallback widget
+          );
+        },
+      ),
+      // body: Consumer<MainNavigationProvider>(
+      //   builder: (context, provider, child) {
+      //     return KeyedSubtree(
+      //       key: ValueKey(provider.currentIndex),
+      //       child: provider.currentScreen ?? const Center(...),
+      //     );
+      //   },
+      // ),
       bottomNavigationBar: MainBottomNavigationBar(),
     );
   }
