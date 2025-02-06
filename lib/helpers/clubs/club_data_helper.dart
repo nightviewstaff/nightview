@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -22,22 +23,68 @@ class ClubDataHelper with ChangeNotifier{
   Stream<ClubData> get initialClubStream => _initialLoadController.stream;
 
   final bool _isLoaded = false; // Prevents multiple loads
+  final ValueNotifier<int> remainingNearbyClubsNotifier = ValueNotifier(0);
   final ValueNotifier<int> remainingClubsNotifier = ValueNotifier(0);
 
   Future<void> loadInitialClubs() async {
-    final snapshot = await _firestore.collection('club_data').get();
-    remainingClubsNotifier.value = snapshot.docs.length; // Set total clubs count
+    // Step 1: Get user's current location
+    Position userPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
 
-    for (var doc in snapshot.docs) {
+    final snapshot = await _firestore.collection('club_data').get();
+
+    // Step 2: Initialize the total count for remaining clubs
+    remainingClubsNotifier.value = snapshot.docs.length;
+
+    // Step 3: Count only clubs within 50 km
+    int nearbyClubCount = snapshot.docs.where((doc) {
+      double lat = doc.data()['lat'];
+      double lon = doc.data()['lon'];
+
+      double distance = Geolocator.distanceBetween(
+          userPosition.latitude, userPosition.longitude, lat, lon);
+
+      return distance <= 50000; // ✅ 50 km in meters
+    }).length;
+
+    remainingNearbyClubsNotifier.value = nearbyClubCount; // ✅ Set nearby count
+
+    // Step 4: Sort all clubs by distance
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> sortedDocs = snapshot.docs;
+    sortedDocs.sort((a, b) {
+      double latA = a.data()['lat'];
+      double lonA = a.data()['lon'];
+      double latB = b.data()['lat'];
+      double lonB = b.data()['lon'];
+
+      double distanceA = Geolocator.distanceBetween(
+          userPosition.latitude, userPosition.longitude, latA, lonA);
+      double distanceB = Geolocator.distanceBetween(
+          userPosition.latitude, userPosition.longitude, latB, lonB);
+
+      return distanceA.compareTo(distanceB); // Sort ascending (closest first)
+    });
+
+    // Step 5: Process all clubs
+    for (var doc in sortedDocs) {
       final club = await _processClub(doc);
       if (club != null) {
         clubMarkerData[club.id] = club;
         _initialLoadController.add(club);
 
-        // Decrement remaining count
+        // Decrement total remaining count
         remainingClubsNotifier.value--;
 
-        await Future.delayed(const Duration(milliseconds: 10)); // Smooth spacing
+        // Check if club is within 50 km and decrement nearby count if applicable
+        double lat = doc.data()['lat'];
+        double lon = doc.data()['lon'];
+        double distance = Geolocator.distanceBetween(
+            userPosition.latitude, userPosition.longitude, lat, lon);
+
+        if (distance <= 50000) {
+          remainingNearbyClubsNotifier.value--;
+        }
       }
     }
   }

@@ -199,7 +199,7 @@ class _CreateAccountScreenOnePersonalState
           context: context,
           message: "Man skal være over 18 for at bruge NightView i Danmark",
           textStyle: kTextStyleP3ErrorText,
-          autoDismissDuration: Duration(seconds: 3),
+          autoDismissDurationSeconds: 3,
         );
       }
     });

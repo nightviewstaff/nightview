@@ -5,7 +5,6 @@ import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 
 class MainNavigationProvider extends ChangeNotifier {
   PageName _currentPageName = PageName.nightMap;
-
   PageName get currentPageName => _currentPageName;
   int _currentIndex = 0;
 
@@ -34,23 +33,19 @@ class MainNavigationProvider extends ChangeNotifier {
     }
   }
 
-  int get currentScreenAsInt {
+  int get currentScreenIndex {
     switch (_currentPageName) {
       case PageName.nightMap:
-        return _currentIndex = 0;
-
-      // case PageName.nightOffers:
-      //   return 1;
-
+        return 0;
       case PageName.nightSocial:
-        return _currentIndex = 1;
+        return 1;
     }
   }
 
   void setScreen({required PageName newPage}) {
+    if (_currentPageName == newPage) return; // ✅ Prevent redundant rebuilds
     _currentPageName = newPage;
-    if (_currentPageName != PageName.nightMap) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
+
 }
