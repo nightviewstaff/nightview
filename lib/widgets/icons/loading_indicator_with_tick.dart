@@ -44,7 +44,7 @@ class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
               );
             },
             child: Container(
-              margin: const EdgeInsets.only(bottom: 10),
+              margin: const EdgeInsets.only(bottom: 0),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.1), // ✅ Subtle background
                 shape: BoxShape.circle,
@@ -87,7 +87,7 @@ class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(6),
               child: const Icon(
-                Icons.check, // ✅ Small tick icon
+                Icons.check_sharp, // ✅ Small tick icon
                 size: 10,
                 color: primaryColor,
               ),

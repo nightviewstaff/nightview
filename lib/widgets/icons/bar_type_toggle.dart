@@ -35,7 +35,7 @@ class _BarTypeMapToggleState extends State<BarTypeMapToggle> {
     super.initState();
     if (!BarTypeMapToggle.toggledStates.containsKey(widget.clubType)) {
       BarTypeMapToggle.toggledStates[widget.clubType] =
-          true; // Default to toggled
+          true; // Default toggled true
     }
     isToggled = BarTypeMapToggle.toggledStates[widget.clubType]!; // Sync state
   }

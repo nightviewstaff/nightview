@@ -31,44 +31,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                 alignment: Alignment.topRight,
                 children: [
                   const Icon(Icons.pin_drop), // Base icon
-                  ValueListenableBuilder<int>(
-                    valueListenable: clubDataHelper.remainingNearbyClubsNotifier,
-                    builder: (context, remainingNearby, child) {
-                      if (remainingNearby < 1) return const SizedBox(); // ✅ Hide when done
 
-                      // ✅ Make the red counter clickable to show a message
-                      return GestureDetector(
-                        onTap: () {
-                          CustomModalMessage.showCustomBottomSheetOneSecond(
-                            // autoDismissDurationSeconds: 2,
-                            context: context,
-                            message: "Henter lokationer nær dig",
-                            textStyle: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: redAccent,
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            remainingNearby > 999 ? "999+" : remainingNearby.toString(),
-                            style: const TextStyle(
-                              color: white,
-                              fontSize: 9,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
               // TODO civilized colors at some point?
@@ -95,17 +58,62 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
-
-        // ✅ Centered Small Loader (ONLY if `remainingNearbyClubsNotifier == 0` AND `remainingClubsNotifier > 0`)
         ValueListenableBuilder<int>(
           valueListenable: clubDataHelper.remainingNearbyClubsNotifier,
           builder: (context, remainingNearby, child) {
-            if (remainingNearby > 0) return const SizedBox(); // ✅ Prioritize red counter
-
-            return LoadingIndicatorWithTick( // ✅ Added return
-              remainingItemsNotifier: clubDataHelper.remainingClubsNotifier, // ✅ Pass custom ValueListenable
-              messageOnTap: "Henter resterende lokationer i baggrunden ({count})", // ✅ Pass custom message
-            );
+            if (remainingNearby > 1) {
+              // ✅ Display Red Counter While Nearby Clubs are Loading
+              return GestureDetector(
+                onTap: () {
+                  CustomModalMessage.showCustomBottomSheetOneSecond(
+                    // TODO CHANGE COLOR FROM RED -> GREY -> Primcol when 1/3 2/3 and 3/3 fetched of nearby!
+                    context: context,
+                    message: "Henter lokationer nær dig",
+                    textStyle: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2, // ✅ Thin indicator
+                        valueColor: AlwaysStoppedAnimation<Color>(secondaryColor), // ✅ Subtle color
+                      ),
+                    ),
+                    Text(
+                      remainingNearby > 999 ? "999+" : remainingNearby.toString(),
+                      style: const TextStyle(
+                        color: redAccent,
+                        fontSize: 7,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+            else {
+              // ✅ Switch to Loader when Nearby Clubs are Fully Loaded
+              return ValueListenableBuilder<int>(
+                valueListenable: clubDataHelper.remainingClubsNotifier,
+                builder: (context, remainingClubs, child) {
+                  if (remainingClubs > 0) {
+                    return LoadingIndicatorWithTick(
+                      remainingItemsNotifier: clubDataHelper
+                          .remainingClubsNotifier,
+                      messageOnTap: "Henter resterende lokationer i baggrunden ({count})",
+                    );
+                  }
+                  return const SizedBox(); // ✅ Hide when everything is fully loaded
+                },
+              );
+            }
           },
         ),
 

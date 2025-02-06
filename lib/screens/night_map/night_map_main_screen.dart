@@ -7,6 +7,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -380,28 +381,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         });
   }
 
-  void showAllTypesOfBars(BuildContext context, LatLng userLocation) async {
-    // todo Class of it own
-    // Fetch all clubs and their types
+  void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
     final clubDataHelper =
-        Provider.of<GlobalProvider>(context, listen: false).clubDataHelper;
-    await Future.doWhile(() async {
-      if (clubDataHelper.clubData.isNotEmpty) return false; // Exit loop if data exists
-      await Future.delayed(const Duration(milliseconds: 100)); // Wait 100ms
-      return true; // Keep looping if data is still empty
-    });
-
-    var allClubs = clubDataHelper.clubData.values.toList();
-    final Map<String, List<ClubData>> clubsByType = {};
-
-// Group clubs by their type
-    for (var club in allClubs) {
-      clubsByType.putIfAbsent(club.typeOfClub, () => []).add(club);
-    }
-
-// Sort club types by the number of clubs (most first)
-    final sortedClubTypes = clubsByType.entries.toList()
-      ..sort((a, b) => b.value.length.compareTo(a.value.length));
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
 
     showModalBottomSheet(
       context: context,
@@ -410,137 +392,175 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
       builder: (context) {
-        // TODO Make CustomCircularIndicator class to use everywhere
-        return ListView(
-          children: sortedClubTypes.map((entry) {
-            // Center logic for reusability
-            final type = entry.key;
-            final clubs = entry.value;
+        return FutureBuilder(
+          future: _waitForClubs(clubDataHelper),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return _buildLoadingIndicator();
+            }
 
-            clubs.sort((a, b) {
-              // Make reuseable method. Used more places
-              final double distanceA = Geolocator.distanceBetween(
-                userLocation.latitude,
-                userLocation.longitude,
-                a.lat,
-                a.lon,
-              );
-              final double distanceB = Geolocator.distanceBetween(
-                userLocation.latitude,
-                userLocation.longitude,
-                b.lat,
-                b.lon,
-              );
-              return distanceA.compareTo(distanceB);
-            });
+            var allClubs = clubDataHelper.clubData.values.toList();
+            final clubsByType = _groupClubsByType(allClubs);
+            final sortedClubTypes = _sortClubTypes(clubsByType);
 
-            return ExpansionTile(
-              // Show all at the top with toggle. TODO
-              title: Row(
-                children: [
-                  BarTypeMapToggle(
-                    // Diff actions when long press etc.
-                    clubType: type,
-                    onToggle: (isToggled) {
-                      // String formattedClubType = ClubTypeFormatter
-                      //     .formatClubType(type);
-                      // String formattedToggle = isToggled ? "slået til" : "slået fra";
-                      // CustomModalMessage.showCustomBottomSheetOneSecond( //TODO rewamp - popup
-                      //   context: context,
-                      //   message: "$formattedClubType er $formattedToggle på kortet.",
-                      //   textStyle: kTextStyleP1,
-                      //   autoDismissDuration: Duration(milliseconds: 800),
-                      // );
-                    },
-                    updateMarkers: () {
-                      // TODO Updates too much? Markers need to be changed if changed in db
-                      nightMapKey.currentState?.updateMarkers();
-                    },
-                  ),
-                  // built in padding from BTMT.
-                  CircleAvatar(
-                    backgroundImage:
-                        CachedNetworkImageProvider(clubs.first.typeOfClubImg),
-                    radius: kBigSizeRadius,
-                  ),
-                  const SizedBox(width: kSmallPadding),
-                  Text(
-                    ClubTypeFormatter.formatClubType(type),
-                    style: kTextStyleH4.copyWith(color: primaryColor),
-                    // overflow: TextOverflow.ellipsis,
-                  ),
-                  const Spacer(),
-                  Text(
-                    '(${clubs.length})', // Display the count
-                    style: kTextStyleP3,
-                  ),
-                ],
-              ),
-              children: clubs.map((club) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: CachedNetworkImageProvider(club.logo),
-                    radius: kNormalSizeRadius,
-                  ),
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          ClubNameFormatter.formatClubName(club.name),
-                          style: kTextStyleP1,
-                          overflow:
-                              TextOverflow.ellipsis, // Prevents text overflow
-                        ),
-                      ),
-                      Text(
-                        ClubAgeRestrictionFormatter
-                            .displayClubAgeRestrictionFormattedOnlyAge(club),
-                        style: kTextStyleP2.copyWith(color: primaryColor), // A
-                      ),
-                      const SizedBox(width: kSmallPadding),
-                      Text(
-                        ClubDistanceCalculator.displayDistanceToClub(
-                          club: club,
-                          userLat: userLocation.latitude,
-                          userLon: userLocation.longitude,
-                        ),
-                        style: kTextStyleP2.copyWith(
-                            color: primaryColor), // Adjust style
-                      ),
-                    ],
-                  ),
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    // Push content to edges
-                    children: [
-                      Expanded(
-                        child: Text(
-                          ClubNameFormatter.displayClubLocation(club),
-                          style: kTextStyleP3.copyWith(color: primaryColor),
-                          overflow: TextOverflow
-                              .ellipsis, // Handle long text gracefully
-                        ),
-                      ),
-                      Text(
-                        ClubOpeningHoursFormatter
-                            .displayClubOpeningHoursFormatted(club),
-                        style: kTextStyleP3, // Adjust style as needed
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Provider.of<NightMapProvider>(context, listen: false)
-                        .nightMapController
-                        .move(LatLng(club.lat, club.lon), kCloseMapZoom);
-                  },
+            return ListView(
+              children: sortedClubTypes.map((entry) {
+                final type = entry.key;
+                final clubs = _sortClubsByDistance(entry.value, userLocation);
+
+                return ExpansionTile(
+                  title: _buildExpansionTileTitle(type, clubs),
+                  children: _buildClubListTiles(clubs, context, userLocation),
                 );
               }).toList(),
             );
-          }).toList(),
+          },
         );
       },
     );
+  }
+
+  Future<void> _waitForClubs(ClubDataHelper clubDataHelper) async {
+    while (clubDataHelper.clubData.length < clubDataHelper.totalAmountOfClubs) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(color: primaryColor),
+          const SizedBox(height: 16),
+          Text(
+            'Henter alle klubber',
+            style: kTextStyleP1.copyWith(color: primaryColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Map<String, List<ClubData>> _groupClubsByType(List<ClubData> allClubs) {
+    final Map<String, List<ClubData>> clubsByType = {};
+    for (var club in allClubs) {
+      clubsByType.putIfAbsent(club.typeOfClub, () => []).add(club);
+    }
+    return clubsByType;
+  }
+
+  List<MapEntry<String, List<ClubData>>> _sortClubTypes(
+      Map<String, List<ClubData>> clubsByType) {
+    return clubsByType.entries.toList()
+      ..sort((a, b) => b.value.length.compareTo(a.value.length));
+  }
+
+  List<ClubData> _sortClubsByDistance(List<ClubData> clubs, LatLng userLocation) {
+    clubs.sort((a, b) {
+      final distanceA = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        a.lat,
+        a.lon,
+      );
+      final distanceB = Geolocator.distanceBetween(
+        userLocation.latitude,
+        userLocation.longitude,
+        b.lat,
+        b.lon,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    return clubs;
+  }
+
+  Widget _buildExpansionTileTitle(String type, List<ClubData> clubs) {
+    return Row(
+      children: [
+        BarTypeMapToggle(
+          clubType: type,
+          onToggle: (isToggled) {},
+          updateMarkers: () {
+            nightMapKey.currentState?.updateMarkers();
+          },
+        ),
+        CircleAvatar(
+          backgroundImage:
+          CachedNetworkImageProvider(clubs.first.typeOfClubImg),
+          radius: kBigSizeRadius,
+        ),
+        const SizedBox(width: kSmallPadding),
+        Text(
+          ClubTypeFormatter.formatClubType(type),
+          style: kTextStyleH4.copyWith(color: primaryColor),
+        ),
+        const Spacer(),
+        Text(
+          '(${clubs.length})',
+          style: kTextStyleP3,
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildClubListTiles(
+      List<ClubData> clubs, BuildContext context, LatLng userLocation) {
+    return clubs.map((club) {
+      return ListTile(
+        leading: CircleAvatar(
+          backgroundImage: CachedNetworkImageProvider(club.logo),
+          radius: kNormalSizeRadius,
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                ClubNameFormatter.formatClubName(club.name),
+                style: kTextStyleP1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text(
+              ClubAgeRestrictionFormatter
+                  .displayClubAgeRestrictionFormattedOnlyAge(club),
+              style: kTextStyleP2.copyWith(color: primaryColor),
+            ),
+            const SizedBox(width: kSmallPadding),
+            Text(
+              ClubDistanceCalculator.displayDistanceToClub(
+                club: club,
+                userLat: userLocation.latitude,
+                userLon: userLocation.longitude,
+              ),
+              style: kTextStyleP2.copyWith(color: primaryColor),
+            ),
+          ],
+        ),
+        subtitle: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                ClubNameFormatter.displayClubLocation(club),
+                style: kTextStyleP3.copyWith(color: primaryColor),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text(
+              ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club),
+              style: kTextStyleP3,
+            ),
+          ],
+        ),
+        onTap: () {
+          Navigator.pop(context);
+          Provider.of<NightMapProvider>(context, listen: false)
+              .nightMapController
+              .move(LatLng(club.lat, club.lon), kCloseMapZoom);
+        },
+      );
+    }).toList();
   }
 }

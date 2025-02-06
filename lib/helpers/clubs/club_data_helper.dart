@@ -22,51 +22,9 @@ class ClubDataHelper with ChangeNotifier{
 
   Stream<ClubData> get initialClubStream => _initialLoadController.stream;
 
-  final bool _isLoaded = false; // Prevents multiple loads
   final ValueNotifier<int> remainingNearbyClubsNotifier = ValueNotifier(0);
   final ValueNotifier<int> remainingClubsNotifier = ValueNotifier(0);
-
-
-
-  Future<void> loadInitialClubs() async {
-    // Step 1: Get user's current location
-    Position userPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    final snapshot = await _firestore.collection('club_data').get();
-
-    // Step 2: Initialize the total count for remaining clubs
-    remainingClubsNotifier.value = snapshot.docs.length;
-
-    // Step 3: Process all clubs concurrently
-    final tasks = snapshot.docs.map((doc) async {
-      final data = doc.data();
-      final lat = data['lat'];
-      final lon = data['lon'];
-
-      // Calculate distance once
-      final distance = Geolocator.distanceBetween(
-          userPosition.latitude, userPosition.longitude, lat, lon);
-
-      // Check if within 50 km
-      final isNearby = distance <= 50000;
-
-      final club = await _processClub(doc);
-      if (club != null) {
-        clubMarkerData[club.id] = club;
-        _initialLoadController.add(club);
-
-        // Update counts using notifiers
-        remainingClubsNotifier.value--;
-        if (isNearby) remainingNearbyClubsNotifier.value--;
-      }
-    }).toList();
-
-    // Wait for all tasks to complete
-    await Future.wait(tasks);
-  }
-
+  int totalAmountOfClubs = 0;
 
   ClubDataHelper({Callback<Map<String, ClubData>>? onReceive}) {
     _firestore.collection('club_data').snapshots().listen((snap) {
@@ -76,7 +34,7 @@ class ClubDataHelper with ChangeNotifier{
         switch (club.type) {
           case DocumentChangeType.added:
           case DocumentChangeType.modified:
-            // _processClub(club.doc); // ✅ Update only the changed club
+          // _processClub(club.doc); // ✅ Update only the changed club
             break;
           case DocumentChangeType.removed:
             clubData.remove(club.doc.id); // ✅ Remove deleted club
@@ -85,6 +43,83 @@ class ClubDataHelper with ChangeNotifier{
       }
     });
   }
+
+
+
+
+  Future<void> loadInitialClubs() async {
+    // Step 1: Get user's current location & Firestore snapshot concurrently
+    final positionFuture = Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    final snapshotFuture = _firestore.collection('club_data').get();
+
+    final results = await Future.wait([positionFuture, snapshotFuture]);
+    final userPosition = results[0] as Position;
+    final snapshot = results[1] as QuerySnapshot<Map<String, dynamic>>;
+
+    remainingClubsNotifier.value = snapshot.docs.length;
+    totalAmountOfClubs = snapshot.docs.length;
+
+    // Step 2: Separate nearby and remaining clubs
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
+
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final lat = data['lat'];
+      final lon = data['lon'];
+
+      final distance = Geolocator.distanceBetween(
+        userPosition.latitude, userPosition.longitude, lat, lon,
+      );
+
+      if (distance <= 50000) {
+        nearbyClubs.add(doc);
+      } else {
+        remainingClubs.add(doc);
+      }
+    }
+
+    // Step 3: Update nearby clubs count first
+    remainingNearbyClubsNotifier.value = nearbyClubs.length;
+
+    // Step 4: Process Nearby Clubs in Batches
+    await _processClubsInBatches(nearbyClubs);
+
+    // Step 5: Lazy Load Remaining Clubs in Background
+    Future.microtask(() => _processClubsInBatches(remainingClubs));
+
+    notifyListeners();
+
+  }
+
+  Future<void> _processClubsInBatches(List<QueryDocumentSnapshot<Map<String, dynamic>>> clubs) async {
+    final userLocation = await Geolocator.getCurrentPosition();
+    final stopwatch = Stopwatch()..start();
+    const int batchSize = 20;
+    for (int i = 0; i < clubs.length; i += batchSize) {
+      final batch = clubs.skip(i).take(batchSize).toList();
+      await Future.wait(batch.map((doc) async {
+        final club = await _processClub(doc);
+        if (club != null) {
+          clubMarkerData[club.id] = club;
+          clubData[club.id] = club;
+          _initialLoadController.add(club);
+          remainingClubsNotifier.value--;
+          if (Geolocator.distanceBetween(
+            userLocation.latitude, userLocation.longitude,
+            club.lat, club.lon,
+          ) <= 50000) {
+            remainingNearbyClubsNotifier.value--;
+          }
+        }
+      }));
+    }
+    stopwatch.stop();
+    print('Total time: ${stopwatch.elapsed}'); // Test
+  }
+
 
   Future<ClubData?> _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) async {
     try {
