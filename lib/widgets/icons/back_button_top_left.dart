@@ -9,12 +9,12 @@ class BackButtonTopLeft extends StatelessWidget {
   final Color color;
 
   const BackButtonTopLeft({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.top = 10.0,
     this.left = 10.0,
     this.color = white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,6 @@ import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
-import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
 import 'package:nightview/widgets/stateless/login_pages_basic.dart';

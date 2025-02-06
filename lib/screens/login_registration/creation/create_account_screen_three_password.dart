@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/misc/referral_points_helper.dart';
@@ -14,7 +13,6 @@ import 'package:nightview/screens/login_registration/utility/init_state_manager.
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
 import 'package:nightview/widgets/stateless/login_pages_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -95,14 +93,18 @@ class _CreateAccountScreenThreePasswordState
                         confirmPasswordController);
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Kodeord er tomt';
-                    if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])').hasMatch(value))
+                    }
+                    if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])').hasMatch(value)) {
                       return 'Skal indeholde store og små bogstaver';
-                    if (!RegExp(r'^(?=.*?[0-9])').hasMatch(value))
+                    }
+                    if (!RegExp(r'^(?=.*?[0-9])').hasMatch(value)) {
                       return 'Skal indeholde tal';
-                    if (!RegExp(r'^.{8,}').hasMatch(value))
+                    }
+                    if (!RegExp(r'^.{8,}').hasMatch(value)) {
                       return 'Skal være mindst 8 cifre';
+                    }
                     return null;
                   },
                 ),
@@ -125,10 +127,12 @@ class _CreateAccountScreenThreePasswordState
                         confirmPasswordController);
                   },
                   validator: (value) {
-                    if (value == null || value.isEmpty)
+                    if (value == null || value.isEmpty) {
                       return 'Skriv venligst et kodeord';
-                    if (passwordController.text != value)
+                    }
+                    if (passwordController.text != value) {
                       return 'Kodeord stemmer ikke overens';
+                    }
                     return null;
                   },
                 ),

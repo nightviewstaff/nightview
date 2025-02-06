@@ -1,35 +1,22 @@
-import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
-import 'package:nightview/helpers/users/misc/user_data_helper.dart';
-import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/providers/login_registration_provider.dart';
-import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/screens/login_registration/login/login_google_screen.dart';
-import 'package:nightview/screens/login_registration/utility/apple_sign_in_manager.dart';
 import 'package:nightview/screens/login_registration/utility/google_sign_in_manager.dart';
-import 'package:nightview/widgets/icons/back_button_top_left.dart';
 import 'package:nightview/widgets/icons/logo_top_right.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
-import 'package:nightview/widgets/stateless/login_registration_icon_button.dart';
 
 class LoginOrCreateAccountScreen extends StatelessWidget {
   static const id = 'login_or_create_account_screen';
 
   const LoginOrCreateAccountScreen({super.key});
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

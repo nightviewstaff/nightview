@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -11,7 +10,6 @@ import 'package:nightview/screens/login_registration/utility/custom_text_field.d
 import 'package:nightview/widgets/stateless/big_checkbox.dart';
 import 'package:nightview/widgets/stateless/login_pages_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
-import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
@@ -10,7 +9,6 @@ import 'package:nightview/screens/login_registration/creation/create_account_scr
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
-import 'package:nightview/widgets/stateless/misc/progress_bar.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
 import 'package:nightview/widgets/stateless/login_pages_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';

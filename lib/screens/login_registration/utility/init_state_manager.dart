@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InitStateManager {
   /// **Initialize Personal Info Screen**
@@ -30,7 +29,7 @@ class InitStateManager {
 
       setSelectedDate(selectedDate);
 
-      if (selectedDate != null && selectedDate.isBefore(legalAgeAgo)) {
+      if (selectedDate.isBefore(legalAgeAgo)) {
         setShowHintDatePicker(false);
         ValidationHelper.updateValidationStateFormOne(
             formKey, provider, inputIsFilled, 2, selectedDate.toString());
@@ -92,13 +91,9 @@ class InitStateManager {
     phoneController.text = provider.phone;
 
     // ✅ Check if birthdate exists & update UI safely
-    if (provider.birthDate != null) {
-      setSelectedDate(provider.birthDate);
-      setShowHintDatePicker(false);
-    } else {
-      setSelectedDate(null); // Prevents null errors
+    setSelectedDate(provider.birthDate);
+    setShowHintDatePicker(false);
     }
-  }
 
 
 }

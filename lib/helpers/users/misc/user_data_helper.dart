@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';

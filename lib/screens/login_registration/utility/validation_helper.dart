@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/helpers/users/misc/user_data_helper.dart';
-import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
-import 'package:provider/provider.dart';
 
 class ValidationHelper {
   static void updateValidationStateFormOne(
@@ -163,8 +160,9 @@ class ValidationHelper {
   }
 
   static bool validatePhone(String? value) {
-    if (value == null || value.isEmpty)
+    if (value == null || value.isEmpty) {
       return false; // todo Keep red outline without message
+    }
     if (!RegExp(r'^[0-9]+$').hasMatch(value)) return false;
     //     if(value > provider.CountryCodeMinimumLength) TODO
     return true;

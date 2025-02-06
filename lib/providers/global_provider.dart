@@ -1,22 +1,16 @@
-import 'dart:math';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
-import 'package:nightview/models/users/location_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/helpers/misc/main_offer_redemptions_helper.dart';
 import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/helpers/misc/share_code_helper.dart';

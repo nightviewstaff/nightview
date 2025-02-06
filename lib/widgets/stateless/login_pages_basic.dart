@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/values.dart';
 import 'package:nightview/widgets/stateless/misc/progress_bar.dart';
 import 'package:nightview/widgets/icons/back_button_top_left.dart';
 import 'package:nightview/widgets/icons/logo_top_right.dart';

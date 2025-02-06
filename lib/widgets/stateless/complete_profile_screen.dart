@@ -11,7 +11,7 @@ class CompleteProfileScreen extends StatelessWidget {
       int birthdateYear,
       ) onProfileComplete;
 
-  CompleteProfileScreen({
+  CompleteProfileScreen({super.key, 
     required this.firstName,
     required this.lastName,
     required this.mail,

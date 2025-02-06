@@ -7,10 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
-import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/screens/night_map/night_map.dart';
 
 class ClubDataHelper with ChangeNotifier{
   final _firestore = FirebaseFirestore.instance;
@@ -170,7 +167,7 @@ class ClubDataHelper with ChangeNotifier{
       // Fetch all URLs concurrently
       final urls = await Future.wait(fetchUrls);
       final logoUrl = urls[0] as String;
-      final mainOfferImgUrl = urls[1] as String?;
+      final mainOfferImgUrl = urls[1];
 
       // Parse corners
       final corners = (data['corners'] as List?)

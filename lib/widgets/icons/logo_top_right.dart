@@ -10,7 +10,7 @@ class ImageInsertDefaultTopRight extends StatelessWidget {
   final double borderRadius;
 
   const ImageInsertDefaultTopRight({
-    Key? key,
+    super.key,
     this.imagePath = 'images/logo_text.png',
     this.top = 10.0,
     this.left = 0.0,
@@ -18,7 +18,7 @@ class ImageInsertDefaultTopRight extends StatelessWidget {
     this.width = 50.0,
     this.height = 50.0,
     this.borderRadius = 0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
