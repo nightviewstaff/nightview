@@ -4,8 +4,8 @@ import 'package:nightview/screens/night_map/night_map_main_screen.dart';
 import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 
 class MainNavigationProvider extends ChangeNotifier {
-
   PageName _currentPageName = PageName.nightMap;
+
   PageName get currentPageName => _currentPageName;
   int _currentIndex = 0;
 
@@ -23,7 +23,6 @@ class MainNavigationProvider extends ChangeNotifier {
 
   String get currentPageNameAsString {
     switch (_currentPageName) {
-
       case PageName.nightMap:
         return 'NightMap';
 
@@ -32,7 +31,6 @@ class MainNavigationProvider extends ChangeNotifier {
 
       case PageName.nightSocial:
         return 'NightSocial';
-
     }
   }
 
@@ -45,17 +43,14 @@ class MainNavigationProvider extends ChangeNotifier {
       //   return 1;
 
       case PageName.nightSocial:
-return        _currentIndex = 1;
+        return _currentIndex = 1;
     }
   }
 
   void setScreen({required PageName newPage}) {
-
     _currentPageName = newPage;
-    if(_currentPageName != PageName.nightMap) {
+    if (_currentPageName != PageName.nightMap) {
       notifyListeners();
     }
-
   }
-
 }

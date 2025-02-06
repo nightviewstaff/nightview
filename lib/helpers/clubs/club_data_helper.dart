@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -8,12 +11,37 @@ import 'package:nightview/models/clubs/club_visit.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
 
-class ClubDataHelper {
+class ClubDataHelper with ChangeNotifier{
   final _firestore = FirebaseFirestore.instance;
   final _storageRef = FirebaseStorage.instance.ref();
 
   Map<String, ClubData> clubData = {};
-  bool _isLoaded = false; // Prevents multiple loads
+  Map<String, ClubData> clubMarkerData = {};
+  final StreamController<ClubData> _initialLoadController = StreamController.broadcast();
+
+  Stream<ClubData> get initialClubStream => _initialLoadController.stream;
+
+  final bool _isLoaded = false; // Prevents multiple loads
+  final ValueNotifier<int> remainingClubsNotifier = ValueNotifier(0);
+
+  Future<void> loadInitialClubs() async {
+    final snapshot = await _firestore.collection('club_data').get();
+    remainingClubsNotifier.value = snapshot.docs.length; // Set total clubs count
+
+    for (var doc in snapshot.docs) {
+      final club = await _processClub(doc);
+      if (club != null) {
+        clubMarkerData[club.id] = club;
+        _initialLoadController.add(club);
+
+        // Decrement remaining count
+        remainingClubsNotifier.value--;
+
+        await Future.delayed(const Duration(milliseconds: 10)); // Smooth spacing
+      }
+    }
+  }
+
 
   ClubDataHelper({Callback<Map<String, ClubData>>? onReceive}) {
     _firestore.collection('club_data').snapshots().listen((snap) {
@@ -33,59 +61,54 @@ class ClubDataHelper {
     });
   }
 
-  Future<void> loadClubsOnce() async { // TODO
-    if (_isLoaded) {
-      print("⚠️ Clubs already loaded, skipping...");
-      return; // Prevent multiple loads
-    }
-
-    print("🔄 Loading clubs for the first time...");
-
-    // Explicitly type the snapshot to `Map<String, dynamic>`
-    QuerySnapshot<Map<String, dynamic>> snapshot =
-    await _firestore.collection('club_data').get();
-
-    if (snapshot.docs.isEmpty) {
-      print("❌ No clubs found in Firestore!");
-      return;
-    }
-
-    print("📊 Found ${snapshot.docs.length} clubs, processing...");
-
+  // Future<void> loadClubsOnce() async { // TODO
+  //   if (_isLoaded) {
+  //     print("⚠️ Clubs already loaded, skipping...");
+  //     return; // Prevent multiple loads
+  //   }
+  //
+  //   print("🔄 Loading clubs for the first time...");
+  //
+  //   Explicitly type the snapshot to `Map<String, dynamic>`
+    // QuerySnapshot<Map<String, dynamic>> snapshot =
+    // await _firestore.collection('club_data').get();
+    //
+    // if (snapshot.docs.isEmpty) {
+    //   print("❌ No clubs found in Firestore!");
+    //   return;
+    // }
+    //
+    // print("📊 Found ${snapshot.docs.length} clubs, processing...");
+    //
     // Process the clubs
-    List<Future<void>> futures = snapshot.docs.map((club) {
-      return _processClub(club);
-    }).toList();
-
-    await Future.wait(futures);
-
-    _isLoaded = true; // Mark as loaded
-    print("✅ All clubs processed successfully!");
-
-  }
-
-
-  void listenForUpdates() { // TODO
-    _firestore.collection('club_data').snapshots().listen((snap) {
-      print("🔄 Firestore updated: Reloading clubs...");
-      // clubData.clear(); // Clear old data TODO SMARTER
-
+    // List<Future<void>> futures = snapshot.docs.map((club) {
+    //   return _processClub(club);
+    // }).toList();
+    //
+    // await Future.wait(futures);
+    //
+    // _isLoaded = true; // Mark as loaded
+    // print("✅ All clubs processed successfully!");
+  //
+  // }
+  //
+  //
+  // void listenForUpdates() { // TODO
+  //   _firestore.collection('club_data').snapshots().listen((snap) {
+  //     print("🔄 Firestore updated: Reloading clubs...");
+  //     clubData.clear(); // Clear old data TODO SMARTER
+      //
       // List<Future<void>> futures =
       // snap.docs.map((club) => _processClub(club)).toList();
       // Future.wait(futures).then((_) => print("✅ Clubs updated."));
-    });
-  }
+    // });
+  // }
 
-
-  Future<void> _processClub(
-      QueryDocumentSnapshot<Map<String, dynamic>> club) async {
-
-    if (_isLoaded){// Clubs are being created multiple times!? TODO
-      return;
-    }
-
+  Future<ClubData?> _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) async {
     try {
       final data = club.data();
+
+      // Check if the club already exists and has no meaningful changes
       if (clubData.containsKey(club.id)) {
         final existingClub = clubData[club.id]!;
         bool hasChanged = existingClub.name != data['name'] ||
@@ -95,74 +118,54 @@ class ClubDataHelper {
 
         if (!hasChanged) {
           print("✅ No changes detected for ${club.id}, skipping update.");
-          return; // 🚀 Skip processing if no change
+          return null; // ✅ Explicitly return null if no changes
         }
       }
 
+      // Function to parse opening hours
       Map<String, Map<String, dynamic>> parseOpeningHours(
-          Map<String, dynamic> rawOpeningHours, int baseAgeRestriction) {
+          Map<String, dynamic>? rawOpeningHours, int baseAgeRestriction) {
+        if (rawOpeningHours == null) return {};
         return rawOpeningHours.map((day, hours) {
-          if (hours == null) {
-            return MapEntry(
-              day,
-              {
-                'open': '20:00',
-                'close': '01:00',
-                'ageRestriction': baseAgeRestriction, // Use base if day-specific is missing
-              },
-            );
-          }
-
           return MapEntry(
             day,
             {
-              'open': hours['open']?.toString() ?? '00:00',
-              'close': hours['close']?.toString() ?? '00:00',
-              'ageRestriction': hours['ageRestriction'] ?? baseAgeRestriction, // Fallback to base
+              'open': hours?['open']?.toString() ?? '20:00',
+              'close': hours?['close']?.toString() ?? '02:00',
+              'ageRestriction': hours?['ageRestriction'] ?? baseAgeRestriction,
             },
           );
         });
       }
 
       final openingHours = parseOpeningHours(
-        data['opening_hours'] as Map<String, dynamic>,
-        data['age_restriction'] ?? 0, // Pass base age restriction
+        data['opening_hours'] as Map<String, dynamic>?,
+        data['age_restriction'] ?? 0,
       );
 
-      String typeOfClubImageUrl; //TODO SMarter
+      // Fetch club type image URL
+      String typeOfClubImageUrl = "null";
       try {
         typeOfClubImageUrl = await _storageRef
-            .child(
-            '/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
+            .child('/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
             .getDownloadURL();
       } catch (e) {
-        print(
-            'Error fetching typeOfClub image URL for ${data['name']} (type: ${data['type_of_club']}): $e');
-        typeOfClubImageUrl = "null"; // Provide a fallback URL if necessary
+        print('⚠️ Error fetching typeOfClub image for ${data['name']}: $e');
       }
 
-      String logoUrl;
+      // Fetch club logo URL
+      String logoUrl = typeOfClubImageUrl;
       try {
-
-        if (data['logo'] == 'default_logo.png') {
-          // If the logo is default, use the typeOfClubImageUrl
-          logoUrl = typeOfClubImageUrl;
-        } else {
+        if (data['logo'] != 'default_logo.png') {
           logoUrl = await _storageRef
               .child('club_logos/${data['logo']}')
               .getDownloadURL();
         }
       } catch (e) {
-        print('Error fetching logo URL for ${data['name']}: $e');
-        logoUrl = "null"; // Fallback URL if necessary
-      }
-      if (logoUrl == "null") {
-        logoUrl = await _storageRef
-            .child(
-            '/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
-            .getDownloadURL();
+        print('⚠️ Error fetching logo URL for ${data['name']}: $e');
       }
 
+      // Fetch main offer image (if exists)
       String? mainOfferImgUrl;
       try {
         if (stringToOfferType(data['offer_type']) != OfferType.none) {
@@ -171,44 +174,42 @@ class ClubDataHelper {
               .getDownloadURL();
         }
       } catch (e) {
-        print('Error fetching main offer image URL for ${data['name']}: $e');
-        mainOfferImgUrl = null;
+        print('⚠️ Error fetching main offer image for ${data['name']}: $e');
       }
 
+      // Parse corners (GeoPoints)
       final corners = (data['corners'] as List).map((geoPoint) {
         final point = geoPoint as GeoPoint;
         return {'latitude': point.latitude, 'longitude': point.longitude};
       }).toList();
 
-
-
-      clubData[club.id] = ClubData(
+      // ✅ Return ClubData object
+      return ClubData(
         id: club.id,
         name: data['name'],
         logo: logoUrl,
         lat: data['lat'],
         lon: data['lon'],
-        favorites: List<String>.from(data['favorites']),
+        favorites: List<String>.from(data['favorites'] ?? []),
         corners: corners,
-        offerType: stringToOfferType(data['offer_type'] ?? 'OfferType.none') ??
-            OfferType.none,
+        offerType: stringToOfferType(data['offer_type'] ?? 'OfferType.none') ?? OfferType.none,
         mainOfferImg: mainOfferImgUrl,
-        ageRestriction: data['age_restriction'],
+        ageRestriction: data['age_restriction'] ?? 0,
         typeOfClubImg: typeOfClubImageUrl,
-        typeOfClub: data['type_of_club'],
-        rating: data['rating'],
+        typeOfClub: data['type_of_club'] ?? '',
+        rating: data['rating'] ?? 0.0,
         openingHours: openingHours,
-        visitors: data['visitors'],
-        totalPossibleAmountOfVisitors:
-        data['total_possible_amount_of_visitors'],
+        visitors: data['visitors'] ?? 0,
+        totalPossibleAmountOfVisitors: data['total_possible_amount_of_visitors'] ?? 0,
       );
 
-      print('Club processed successfully: ${[club.id]}');
     } catch (e, stackTrace) {
-      print('Error processing club: $e - Club: ${[club.id]}');
+      print('❌ Error processing club ${club.id}: $e');
       print('Stack trace: $stackTrace');
+      return null; // ✅ Return null on error
     }
   }
+
 
 
   void setFavoriteClub(String clubId, String userId) async {
@@ -518,4 +519,7 @@ class ClubDataHelper {
 
     return total = total / snapshot.docs.length;
   }
+
+
+
 }

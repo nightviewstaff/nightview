@@ -3,6 +3,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
@@ -27,7 +28,7 @@ class _LocationPermissionServiceScreenState
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GlobalProvider>(context, listen: false)
+      Provider.of<NightMapProvider>(context, listen: false)
           .locationHelper
           .requestLocationPermission();
 
@@ -52,7 +53,7 @@ class _LocationPermissionServiceScreenState
   }
 
   void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
+    Provider.of<NightMapProvider>(context, listen: false)
         .locationHelper
         .serviceEnabled
         .then((hasPermission) {

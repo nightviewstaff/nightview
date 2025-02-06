@@ -36,25 +36,32 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
 
   ClubDataHelper clubDataHelper = ClubDataHelper();
 
-  // Map<String, Marker> markers = {};
   // Map<String, Marker> friendMarkers = {};
+  final Map<String, Marker> _markers = {};
+  final ValueNotifier<int> _updateTrigger = ValueNotifier(0); // Simple update trigger
+  StreamSubscription<ClubData>? _clubStreamSub;
 
   final ValueNotifier<Map<String, Marker>> _markersNotifier = ValueNotifier({});
-  final ValueNotifier<Map<String, Marker>> _friendMarkersNotifier =
-      ValueNotifier({});
-  StreamSubscription? _friendLocationSubscription; // what is this?
+  // final ValueNotifier<Map<String, Marker>> _friendMarkersNotifier =      ValueNotifier({});
+  // StreamSubscription? _friendLocationSubscription; // what is this?
+
 
   @override
-  void initState() {
-    // How often is init called?
+  void initState() {    // How often is init called?
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final clubDataHelper =
-          Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
-      await clubDataHelper.loadClubsOnce(); // Ensure clubs are loaded first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final helper =context.read<NightMapProvider>().clubDataHelper;
+      helper.loadInitialClubs();
+      _clubStreamSub = helper.initialClubStream.listen(_addMarker);
       _initializeUserLocation();
-      _initializeMarkers();
+
+      // _initializeMarkers();
     });
+  }
+
+  void _addMarker(ClubData club) {
+    _markers[club.id] = _buildClubMarker(club);
+    _updateTrigger.value++; // Trigger UI update
   }
 
   void _initializeUserLocation() async {
@@ -72,7 +79,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
     print("${clubDataHelper.clubData.values} + !!!!!");
     _markersNotifier.value = {
-      for (var club in clubDataHelper.clubData.values)
+      for (var club in clubDataHelper.clubMarkerData.values)
         club.id: _buildClubMarker(club)
     };
   }
@@ -106,11 +113,9 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   }
 
   @override
-  void dispose() {
-    //TODO who calls dispose and what does it do?
-    _friendLocationSubscription?.cancel();
+  void dispose() {    //TODO who calls dispose and what does it do?    // _friendLocationSubscription?.cancel();    // _friendMarkersNotifier.dispose();
+    _clubStreamSub?.cancel();
     _markersNotifier.dispose();
-    _friendMarkersNotifier.dispose();
     super.dispose();
   }
 
@@ -133,15 +138,11 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
           // tileProvider:
         ),
         CurrentLocationLayer(),
-        ValueListenableBuilder<Map<String, Marker>>(
-          // Updates markers without rebuilding the entire map.
-          valueListenable: _markersNotifier,
-
-          builder: (context, markers, child) {
+        ValueListenableBuilder<int>(
+          valueListenable: _updateTrigger,
+          builder: (context, _, __) {
             return CustomMarkerLayer(
-              rotate: true,
-              markers: [...markers.values],
-              // , ..._friendMarkersNotifier.value.values],
+              markers: _markers.values.toList(),
             );
           },
         ),

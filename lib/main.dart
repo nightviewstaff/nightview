@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nightview/firebase_options.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
@@ -9,6 +10,7 @@ import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_accumulation_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_redemption_screen.dart';
@@ -76,9 +78,9 @@ void main() async {
   // addClub.addSpecificClub130(); // To add each new club manually.
   // addClub.addSpecificClub131(); // To add each new club manually.
 
-
-
   // NotificationService().showNotification();
+  // await FMTC.instance('mapCache').manage.createAsync();
+
 
   runApp(NightViewApp());
 }
@@ -100,6 +102,7 @@ class _NightViewAppState extends State<NightViewApp> {
   }
 
   Future<void> _initAppTrackingTransparency() async {
+    // IOS needs to b moved TODO
     // Ensure tracking authorization is requested properly
     final status = await AppTrackingTransparency.trackingAuthorizationStatus;
 
@@ -121,7 +124,7 @@ class _NightViewAppState extends State<NightViewApp> {
           title: const Text('Location tracking'),
           content: const Text(
             'We use your location data to improve the app for you and others.'
-                'You can opt out at any time in your device settings.',
+            'You can opt out at any time in your device settings.',
           ),
           actions: [
             TextButton(
@@ -134,12 +137,13 @@ class _NightViewAppState extends State<NightViewApp> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<GlobalProvider>(
+        ChangeNotifierProvider<NightMapProvider>(
+          create: (_) => NightMapProvider(),
+        ),ChangeNotifierProvider<GlobalProvider>(
           create: (_) => GlobalProvider(), // When is an instance created?
         ),
         ChangeNotifierProvider<MainNavigationProvider>(

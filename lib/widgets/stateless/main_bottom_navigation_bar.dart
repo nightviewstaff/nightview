@@ -1,53 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:provider/provider.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
   const MainBottomNavigationBar({super.key});
 
-
   @override
   Widget build(BuildContext context) {
+    final clubDataHelper = Provider
+        .of<NightMapProvider>(context, listen: false)
+        .clubDataHelper;
+
     return BottomNavigationBar(
-      currentIndex: Provider.of<MainNavigationProvider>(context).currentScreenAsInt,
+      selectedItemColor: primaryColor,
+      unselectedItemColor: secondaryColor,
+      currentIndex: Provider
+          .of<MainNavigationProvider>(context)
+          .currentScreenAsInt,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.pin_drop), // Color
-          label: 'MAP', // KORT her i stedet?
+
+          icon: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              const Icon(Icons.pin_drop), // Base icon
+              ValueListenableBuilder<int>(
+                valueListenable: clubDataHelper.remainingClubsNotifier,
+                builder: (context, remaining, child) {
+                  if (remaining == 0) return const SizedBox(); // Hide when done
+
+                  return Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      remaining > 99 ? "99+" : remaining.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          //TODO Civilized colors
+          label: 'MAP',
         ),
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.percent_sharp),
-        //   label: 'OFFERS',
-        // ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.people_alt),
-          label: 'SOCIAL', //VENNER her i stedet?
+          icon: const Icon(Icons.people_alt),
+          label: 'SOCIAL',
         ),
       ],
       onTap: (index) {
-
         switch (index) {
-
           case 0:
-            Provider.of<MainNavigationProvider>(context, listen: false).setScreen(newPage: PageName.nightMap);
+            Provider.of<MainNavigationProvider>(context, listen: false)
+                .setScreen(newPage: PageName.nightMap);
             break;
-
-          // case 1:
-          //   Provider.of<MainNavigationProvider>(context, listen: false).setScreen(newPage: PageName.nightOffers);
-          //   break;
-
           case 1:
-            Provider.of<MainNavigationProvider>(context, listen: false).setScreen(newPage: PageName.nightSocial);
+            Provider.of<MainNavigationProvider>(context, listen: false)
+                .setScreen(newPage: PageName.nightSocial);
             break;
-
           default:
             print('ERROR - BUTTON DOES NOT EXIST');
             break;
-
         }
       },
-
     );
   }
 

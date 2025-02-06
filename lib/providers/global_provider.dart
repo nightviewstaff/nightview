@@ -25,11 +25,6 @@ import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {
-    // Load clubs ONCE at startup //TODO
-    clubDataHelper.loadClubsOnce().then((_) {
-      // clubDataHelper.listenForUpdates(); // Listen for changes
-    notifyListeners(); // Notify UI when first load is complete
-    });
 
     userDataHelper = UserDataHelper(
       onReceive: (data) {

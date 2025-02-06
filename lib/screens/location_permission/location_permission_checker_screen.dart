@@ -7,6 +7,7 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
@@ -33,7 +34,7 @@ class _LocationPermissionCheckerScreenState
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       LocationHelper locationHelper =
-          Provider.of<GlobalProvider>(context, listen: false).locationHelper;
+          Provider.of<NightMapProvider>(context, listen: false).locationHelper;
 
       if (backgroundLocationEnabled) {
         // Opt out not implemented
