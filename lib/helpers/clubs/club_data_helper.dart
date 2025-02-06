@@ -26,6 +26,8 @@ class ClubDataHelper with ChangeNotifier{
   final ValueNotifier<int> remainingNearbyClubsNotifier = ValueNotifier(0);
   final ValueNotifier<int> remainingClubsNotifier = ValueNotifier(0);
 
+
+
   Future<void> loadInitialClubs() async {
     // Step 1: Get user's current location
     Position userPosition = await Geolocator.getCurrentPosition(
@@ -37,56 +39,32 @@ class ClubDataHelper with ChangeNotifier{
     // Step 2: Initialize the total count for remaining clubs
     remainingClubsNotifier.value = snapshot.docs.length;
 
-    // Step 3: Count only clubs within 50 km
-    int nearbyClubCount = snapshot.docs.where((doc) {
-      double lat = doc.data()['lat'];
-      double lon = doc.data()['lon'];
+    // Step 3: Process all clubs concurrently
+    final tasks = snapshot.docs.map((doc) async {
+      final data = doc.data();
+      final lat = data['lat'];
+      final lon = data['lon'];
 
-      double distance = Geolocator.distanceBetween(
+      // Calculate distance once
+      final distance = Geolocator.distanceBetween(
           userPosition.latitude, userPosition.longitude, lat, lon);
 
-      return distance <= 50000; // ✅ 50 km in meters
-    }).length;
+      // Check if within 50 km
+      final isNearby = distance <= 50000;
 
-    remainingNearbyClubsNotifier.value = nearbyClubCount; // ✅ Set nearby count
-
-    // Step 4: Sort all clubs by distance
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> sortedDocs = snapshot.docs;
-    sortedDocs.sort((a, b) {
-      double latA = a.data()['lat'];
-      double lonA = a.data()['lon'];
-      double latB = b.data()['lat'];
-      double lonB = b.data()['lon'];
-
-      double distanceA = Geolocator.distanceBetween(
-          userPosition.latitude, userPosition.longitude, latA, lonA);
-      double distanceB = Geolocator.distanceBetween(
-          userPosition.latitude, userPosition.longitude, latB, lonB);
-
-      return distanceA.compareTo(distanceB); // Sort ascending (closest first)
-    });
-
-    // Step 5: Process all clubs
-    for (var doc in sortedDocs) {
       final club = await _processClub(doc);
       if (club != null) {
         clubMarkerData[club.id] = club;
         _initialLoadController.add(club);
 
-        // Decrement total remaining count
+        // Update counts using notifiers
         remainingClubsNotifier.value--;
-
-        // Check if club is within 50 km and decrement nearby count if applicable
-        double lat = doc.data()['lat'];
-        double lon = doc.data()['lon'];
-        double distance = Geolocator.distanceBetween(
-            userPosition.latitude, userPosition.longitude, lat, lon);
-
-        if (distance <= 50000) {
-          remainingNearbyClubsNotifier.value--;
-        }
+        if (isNearby) remainingNearbyClubsNotifier.value--;
       }
-    }
+    }).toList();
+
+    // Wait for all tasks to complete
+    await Future.wait(tasks);
   }
 
 
@@ -108,54 +86,11 @@ class ClubDataHelper with ChangeNotifier{
     });
   }
 
-  // Future<void> loadClubsOnce() async { // TODO
-  //   if (_isLoaded) {
-  //     print("⚠️ Clubs already loaded, skipping...");
-  //     return; // Prevent multiple loads
-  //   }
-  //
-  //   print("🔄 Loading clubs for the first time...");
-  //
-  //   Explicitly type the snapshot to `Map<String, dynamic>`
-    // QuerySnapshot<Map<String, dynamic>> snapshot =
-    // await _firestore.collection('club_data').get();
-    //
-    // if (snapshot.docs.isEmpty) {
-    //   print("❌ No clubs found in Firestore!");
-    //   return;
-    // }
-    //
-    // print("📊 Found ${snapshot.docs.length} clubs, processing...");
-    //
-    // Process the clubs
-    // List<Future<void>> futures = snapshot.docs.map((club) {
-    //   return _processClub(club);
-    // }).toList();
-    //
-    // await Future.wait(futures);
-    //
-    // _isLoaded = true; // Mark as loaded
-    // print("✅ All clubs processed successfully!");
-  //
-  // }
-  //
-  //
-  // void listenForUpdates() { // TODO
-  //   _firestore.collection('club_data').snapshots().listen((snap) {
-  //     print("🔄 Firestore updated: Reloading clubs...");
-  //     clubData.clear(); // Clear old data TODO SMARTER
-      //
-      // List<Future<void>> futures =
-      // snap.docs.map((club) => _processClub(club)).toList();
-      // Future.wait(futures).then((_) => print("✅ Clubs updated."));
-    // });
-  // }
-
   Future<ClubData?> _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) async {
     try {
       final data = club.data();
 
-      // Check if the club already exists and has no meaningful changes
+      // Skip if no meaningful changes
       if (clubData.containsKey(club.id)) {
         final existingClub = clubData[club.id]!;
         bool hasChanged = existingClub.name != data['name'] ||
@@ -165,72 +100,51 @@ class ClubDataHelper with ChangeNotifier{
 
         if (!hasChanged) {
           print("✅ No changes detected for ${club.id}, skipping update.");
-          return null; // ✅ Explicitly return null if no changes
+          return null;
         }
       }
 
-      // Function to parse opening hours
-      Map<String, Map<String, dynamic>> parseOpeningHours(
-          Map<String, dynamic>? rawOpeningHours, int baseAgeRestriction) {
-        if (rawOpeningHours == null) return {};
-        return rawOpeningHours.map((day, hours) {
-          return MapEntry(
-            day,
-            {
-              'open': hours?['open']?.toString() ?? '20:00',
-              'close': hours?['close']?.toString() ?? '02:00',
-              'ageRestriction': hours?['ageRestriction'] ?? baseAgeRestriction,
-            },
-          );
+      // Parse opening hours
+      final openingHours = (data['opening_hours'] as Map<String, dynamic>?)
+          ?.map((day, hours) {
+        return MapEntry(day, {
+          'open': hours?['open']?.toString() ?? '20:00',
+          'close': hours?['close']?.toString() ?? '02:00',
+          'ageRestriction': hours?['ageRestriction'] ?? data['age_restriction'] ?? 0,
         });
-      }
+      }) ??
+          {};
 
-      final openingHours = parseOpeningHours(
-        data['opening_hours'] as Map<String, dynamic>?,
-        data['age_restriction'] ?? 0,
+      // Fetch typeOfClub image URL
+      final typeOfClubImageUrl = await _fetchStorageUrl(
+        '/nightview_images/club_type_images/${data['type_of_club']}_icon.png',
+        fallback: "null",
       );
 
-      // Fetch club type image URL
-      String typeOfClubImageUrl = "null";
-      try {
-        typeOfClubImageUrl = await _storageRef
-            .child('/nightview_images/club_type_images/${data['type_of_club']}_icon.png')
-            .getDownloadURL();
-      } catch (e) {
-        print('⚠️ Error fetching typeOfClub image for ${data['name']}: $e');
-      }
+      // Prepare parallel network requests with fallback for the logo
+      final fetchUrls = [
+        (data['logo'] != 'default_logo.png')
+            ? _fetchStorageUrl(
+            'club_logos/${data['logo']}', fallback: typeOfClubImageUrl)
+            : Future.value(typeOfClubImageUrl),
+        (stringToOfferType(data['offer_type'] ?? '') != OfferType.none)
+            ? _fetchStorageUrl('main_offers/${data['main_offer_img']}', fallback: '')
+            : Future.value(null),
+      ];
 
-      // Fetch club logo URL
-      String logoUrl = typeOfClubImageUrl;
-      try {
-        if (data['logo'] != 'default_logo.png') {
-          logoUrl = await _storageRef
-              .child('club_logos/${data['logo']}')
-              .getDownloadURL();
-        }
-      } catch (e) {
-        print('⚠️ Error fetching logo URL for ${data['name']}: $e');
-      }
+      // Fetch all URLs concurrently
+      final urls = await Future.wait(fetchUrls);
+      final logoUrl = urls[0] as String;
+      final mainOfferImgUrl = urls[1] as String?;
 
-      // Fetch main offer image (if exists)
-      String? mainOfferImgUrl;
-      try {
-        if (stringToOfferType(data['offer_type']) != OfferType.none) {
-          mainOfferImgUrl = await _storageRef
-              .child('main_offers/${data['main_offer_img']}')
-              .getDownloadURL();
-        }
-      } catch (e) {
-        print('⚠️ Error fetching main offer image for ${data['name']}: $e');
-      }
+      // Parse corners
+      final corners = (data['corners'] as List?)
+          ?.whereType<GeoPoint>()
+          .map((point) => {'latitude': point.latitude, 'longitude': point.longitude})
+          .toList() ??
+          [];
 
-      // Parse corners (GeoPoints)
-      final corners = (data['corners'] as List).map((geoPoint) {
-        final point = geoPoint as GeoPoint;
-        return {'latitude': point.latitude, 'longitude': point.longitude};
-      }).toList();
-
-      // ✅ Return ClubData object
+      // Create and return the ClubData object
       return ClubData(
         id: club.id,
         name: data['name'],
@@ -249,15 +163,21 @@ class ClubDataHelper with ChangeNotifier{
         visitors: data['visitors'] ?? 0,
         totalPossibleAmountOfVisitors: data['total_possible_amount_of_visitors'] ?? 0,
       );
-
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ Error processing club ${club.id}: $e');
-      print('Stack trace: $stackTrace');
-      return null; // ✅ Return null on error
+      return null;
     }
   }
 
-
+// Helper function to fetch URLs with a fallback
+  Future<String> _fetchStorageUrl(String path, {required String fallback}) async {
+    try {
+      return await _storageRef.child(path).getDownloadURL();
+    } catch (e) {
+      print('⚠️ Error fetching storage URL for $path: $e. Returning fallback.');
+      return fallback;
+    }
+  }
 
   void setFavoriteClub(String clubId, String userId) async {
     DocumentSnapshot<Map<String, dynamic>> clubDocument =
@@ -566,6 +486,7 @@ class ClubDataHelper with ChangeNotifier{
 
     return total = total / snapshot.docs.length;
   }
+
 
 
 

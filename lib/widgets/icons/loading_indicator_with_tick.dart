@@ -19,8 +19,8 @@ class LoadingIndicatorWithTick extends StatefulWidget {
 }
 
 class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
-  bool _showTick = false;
-  bool _hasShownTick = false; // ✅ New flag to track if tick was shown
+  bool _showTick = false; //TODO SHOWS WHEN OPEN
+  bool _hasShownTick = true; // ✅ New flag to track if tick was shown
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
           duration: const Duration(milliseconds: 300),
           // ✅ Matches scale duration
           child: AnimatedScale(
-            scale: _showTick ? 3 : 1.0, // ✅ Pop up to 3x size
+            scale: _showTick ? 2.5 : 1.0, // ✅ Pop up to 2.5x size
             duration: const Duration(milliseconds: 300), // ✅ Animation duration
             curve: Curves.easeOut, // ✅ Smooth easing
             child: Container(
