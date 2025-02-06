@@ -20,7 +20,7 @@ class ClubNameFormatter {
   // }
 
   //TODO big small location text
-  static String displayClubLocation(ClubData club) {
+  static String displayClubLocation(ClubData club) { // ERROR handeling? todo
     return ClubDataLocationFormatting.determineLocationFromCoordinates(
         club.lat, club.lon);
   }

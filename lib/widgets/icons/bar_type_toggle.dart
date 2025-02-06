@@ -51,7 +51,7 @@ class _BarTypeMapToggleState extends State<BarTypeMapToggle> {
           BarTypeMapToggle.toggledStates[widget.clubType] = isToggled;
         });
         widget.onToggle(isToggled);
-        widget.updateMarkers(); // Call the callback to update markers
+        widget.updateMarkers(); // Call the callback to update markers //TODO
       },
 
       // onLongPress: () {
@@ -84,9 +84,13 @@ class _BarTypeMapToggleState extends State<BarTypeMapToggle> {
         children: [
           Icon(
             isToggled
-                ? FontAwesomeIcons.toggleOn // Icon for toggled state
-                : FontAwesomeIcons.toggleOff, // Icon for untoggled state
-            color: isToggled ? primaryColor : redAccent, // Dynamic color
+                ?
+            FontAwesomeIcons.toggleOn // Icon for toggled state
+                :
+            FontAwesomeIcons.toggleOn, // not working atm TODO
+            // FontAwesomeIcons.toggleOff,
+            color: isToggled ? primaryColor :primaryColor,
+            // redAccent, // not working atm TOdo
             size: 30, // Icon size
           ),
           const SizedBox(width: kBigPadding), // Spacing after the icon
