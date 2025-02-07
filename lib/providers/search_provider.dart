@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:latlong2/latlong.dart';
 
 class SearchProvider extends ChangeNotifier {
-  List<ClubData> _allClubs = [];
+  final ClubDataHelper clubDataHelper = ClubDataHelper();
+
+  List<ClubData> _allClubs = []; // needs to be filled when clubs load. They load in correct order, this just needs to be iterated when clubs load.
   List<ClubData> _filteredClubs = [];
 
   bool showOnlyOpen = false;
@@ -86,6 +89,33 @@ class SearchProvider extends ChangeNotifier {
     });
   }
 
+  List<ClubData> filterClubs(String query, LatLng? userLocation) {
+    final now = DateTime.now();
+
+    // Filter clubs based on all criteria
+    List<ClubData> filtered = _allClubs.where((club) {
+      final matchesQuery = _matchesSearchQuery(club, query);
+      final withinDistance = _matchesLocation(club, userLocation);
+      // final isOpen = !showOnlyOpen || club.isOpenNow(now); // Ensure `isOpenNow()` is implemented
+      final isFavorite = !showFavoritesOnly || club.favorites.isNotEmpty;
+      final matchesRating = club.rating >= minRating;
+
+      return matchesQuery && withinDistance && isFavorite && matchesRating;
+      // isOpen &&
+    }).toList();
+
+    // Sort results by distance if enabled
+    if (sortByDistance && userLocation != null) {
+      filtered.sort((a, b) {
+        final distanceA = Geolocator.distanceBetween(userLocation.latitude, userLocation.longitude, a.lat, a.lon);
+        final distanceB = Geolocator.distanceBetween(userLocation.latitude, userLocation.longitude, b.lat, b.lon);
+        return distanceA.compareTo(distanceB);
+      });
+    }
+
+    return filtered;
+  }
+
 
   // void updateSearch(String query, LatLng userLocation) {
   //   _filteredClubs = _allClubs.where((club) {
@@ -99,25 +129,25 @@ class SearchProvider extends ChangeNotifier {
   //         userLocation.latitude, userLocation.longitude, club.lat, club.lon) / 1000 <= 10.0; // 10 km limit
   //
   //     final isOpen = !showOnlyOpen || club.isOpenNow(); //Todo
-      // final isFavorite = !showFavoritesOnly || club.favorites.isNotEmpty;
-      // final matchesRating = club.rating >= minRating;
-      //
-      // return matchesQuery && withinDistance;
-      // &&
-          // isOpen && isFavorite && matchesRating;
-    // }).toList();
+  // final isFavorite = !showFavoritesOnly || club.favorites.isNotEmpty;
+  // final matchesRating = club.rating >= minRating;
+  //
+  // return matchesQuery && withinDistance;
+  // &&
+  // isOpen && isFavorite && matchesRating;
+  // }).toList();
 
-    // if (sortByDistance) {
-    //   _filteredClubs.sort((a, b) {
-    //     double distanceA = Geolocator.distanceBetween(
-    //         userLocation.latitude, userLocation.longitude, a.lat, a.lon);
-    //     double distanceB = Geolocator.distanceBetween(
-    //         userLocation.latitude, userLocation.longitude, b.lat, b.lon);
-    //     return distanceA.compareTo(distanceB);
-    //   });
-    // }
-    //
-    // notifyListeners();
+  // if (sortByDistance) {
+  //   _filteredClubs.sort((a, b) {
+  //     double distanceA = Geolocator.distanceBetween(
+  //         userLocation.latitude, userLocation.longitude, a.lat, a.lon);
+  //     double distanceB = Geolocator.distanceBetween(
+  //         userLocation.latitude, userLocation.longitude, b.lat, b.lon);
+  //     return distanceA.compareTo(distanceB);
+  //   });
+  // }
+  //
+  // notifyListeners();
   // }
 
   void toggleShowOnlyOpen() {
