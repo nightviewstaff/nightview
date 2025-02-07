@@ -10,6 +10,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/providers/search_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_accumulation_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_redemption_screen.dart';
@@ -80,7 +81,6 @@ void main() async {
   // NotificationService().showNotification();
   // await FMTC.instance('mapCache').manage.createAsync();
 
-
   runApp(NightViewApp());
 }
 
@@ -142,15 +142,16 @@ class _NightViewAppState extends State<NightViewApp> {
       providers: [
         ChangeNotifierProvider<NightMapProvider>(
           create: (_) => NightMapProvider(),
-        ),ChangeNotifierProvider<GlobalProvider>(
+        ),
+        ChangeNotifierProvider<GlobalProvider>(
           create: (_) => GlobalProvider(), // When is an instance created?
         ),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
         ),
         ChangeNotifierProvider<LoginRegistrationProvider>(
-          create: (_) => LoginRegistrationProvider(),
-        ),
+            create: (_) => LoginRegistrationProvider()),
+        ChangeNotifierProvider<SearchProvider>(create: (_) => SearchProvider()),
         ChangeNotifierProvider<SearchFriendsHelper>(
           create: (_) => SearchFriendsHelper(),
         ),

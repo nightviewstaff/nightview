@@ -21,7 +21,6 @@ import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart'
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -41,50 +40,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       GlobalKey<NightMapState>(); // Prop needs refac
   Map<String, bool> toggledClubTypeStates = {};
 
-  bool hasPermission = false;
-  bool isCheckingPermission = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkPermission();
-  }
-
-  Future<void> _checkPermission() async {
-    while (true) {
-      final status = await Permission.location.status;
-      if (status.isGranted) {
-        setState(() {
-          hasPermission = true;
-          isCheckingPermission = false;
-        });
-        break; // Stop checking when permission is granted
-      } else if (status.isPermanentlyDenied) {
-        setState(() {
-          hasPermission = false;
-          isCheckingPermission = true;
-        });
-        break; // Stop checking for permanently denied case
-      } else {
-        setState(() {
-          hasPermission = false;
-          isCheckingPermission = true;
-        });
-      }
-      await Future.delayed(const Duration(seconds: 1));
-    }
-  }
-
-  Future<void> _requestPermission() async {
-    final status = await Permission.location.request();
-    if (status.isGranted) {
-      setState(() {
-        hasPermission = true;
-        isCheckingPermission = false;
-      });
-    }
-  }
-
   Future<int> getUserCount() async {
     try {
       QuerySnapshot snapshot =
@@ -95,6 +50,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       return 0;
     }
   }
+
+
 
   double getDecimalValue({required int amount, required int fullAmount}) {
     // TODO In utility
@@ -470,4 +427,5 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       );
     }).toList();
   }
+
 }

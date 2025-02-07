@@ -77,15 +77,15 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
     };
   }
 
-  void updateMarkers() {
+  void updateMarkers() { //TODO needs rework
     final toggledStates = BarTypeMapToggle.toggledStates;
-    final clubDataHelper =
-        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
-    _markersNotifier.value = {
-      for (var club in clubDataHelper.clubData.values)
-        if (toggledStates[club.typeOfClub] ?? true)
-          club.id: _buildClubMarker(club)
-    };
+    // final clubDataHelper =
+        // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    // _markersNotifier.value = {
+      // for (var club in clubDataHelper.clubData.values)
+      //   if (toggledStates[club.typeOfClub] ?? true)
+      //     club.id: _buildClubMarker(club)
+    // };
   }
 
   Marker _buildClubMarker(ClubData club) {
@@ -151,5 +151,12 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         ),
       ],
     );
+  }
+
+  void moveToPosition(LatLng position) {
+    Provider.of<NightMapProvider>(context, listen: false)
+        .nightMapController
+        .move(LatLng(position.latitude,position.longitude), // TODO
+        kCloseMapZoom);
   }
 }
