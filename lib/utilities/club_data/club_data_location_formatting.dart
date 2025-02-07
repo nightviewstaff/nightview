@@ -1,5 +1,50 @@
 class ClubDataLocationFormatting {
+  static final Map<String, List<String>> danishCitiesAndAreas = { //TODO ALL
+    "København": ["København", "Copenhagen", "KBH", "Koebenhavn"],
+    "Aarhus": ["Aarhus", "Århus", "Arhus"],
+    "Odense": ["Odense"],
+    "Aalborg": ["Aalborg", "Ålborg"],
+    "Frederiksberg": ["Frederiksberg"],
+    "Esbjerg": ["Esbjerg"],
+    "Randers": ["Randers"],
+    "Kolding": ["Kolding"],
+    "Vejle": ["Vejle"],
+    "Horsens": ["Horsens"],
+    "Herning": ["Herning"],
+    "Roskilde": ["Roskilde"],
+    "Silkeborg": ["Silkeborg"],
+    "Næstved": ["Næstved", "Naestved"],
+    "Fredericia": ["Fredericia"],
+    "Helsingør": ["Helsingør", "Helsingoer"],
+    "Viborg": ["Viborg"],
+    "Køge": ["Køge", "Koge"],
+    "Holstebro": ["Holstebro"],
+    "Slagelse": ["Slagelse"],
+    "Svendborg": ["Svendborg"],
+    "Sønderborg": ["Sønderborg", "Soenderborg"],
+    "Hjørring": ["Hjørring", "Hjorring"],
+    "Holbæk": ["Holbæk", "Holbaek"],
+    "Frederikshavn": ["Frederikshavn"],
+    "Haderslev": ["Haderslev"],
+    "Skive": ["Skive"],
+    "Ringsted": ["Ringsted"],
+    "Farum": ["Farum"],
+    "Nykøbing Falster": ["Nykøbing Falster", "Nykobing Falster"],
+    "Aabenraa": ["Aabenraa"],
+    "Kalundborg": ["Kalundborg"],
+    "Nyborg": ["Nyborg"],
+  };
+
   static String determineLocationFromCoordinates(double lat, double lon) {
+
+  //   for (var entry in danishCitiesAndAreas.entries) { //TODO
+  //     if (_isInCity(lat, lon, entry.key)) {
+  //       return entry.key; // Return official city name
+  //     }
+  //   }
+  //   return ""; // Default for unknown locations
+  // }
+
     if (_isInCopenhagen(lat, lon)) {
       return "København";
     } else if (_isInAarhus(lat, lon)) {
@@ -202,6 +247,8 @@ class ClubDataLocationFormatting {
   static bool _isInNyborg(double lat, double lon) {
     return lat >= 55.32 && lat <= 55.36 && lon >= 10.78 && lon <= 10.82; // 16k pop
   }
+
+
 
 
 

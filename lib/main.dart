@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nightview/firebase_options.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
@@ -163,7 +164,8 @@ class _NightViewAppState extends State<NightViewApp> {
         ),
         ChangeNotifierProvider<BalladefabrikkenProvider>(
           create: (_) => BalladefabrikkenProvider(),
-        )
+        ),
+        ChangeNotifierProvider(create: (_) => ClubDataHelper()),
       ],
       child: MaterialApp(
         theme: ThemeData.dark().copyWith(

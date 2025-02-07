@@ -4,10 +4,13 @@ import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../widgets/icons/loading_indicator_with_tick.dart';
+
 class SearchProvider extends ChangeNotifier {
   final ClubDataHelper clubDataHelper = ClubDataHelper();
 
-  List<ClubData> _allClubs = []; // needs to be filled when clubs load. They load in correct order, this just needs to be iterated when clubs load.
+  List<ClubData> _allClubs =
+      []; // needs to be filled when clubs load. They load in correct order, this just needs to be iterated when clubs load.
   List<ClubData> _filteredClubs = [];
 
   bool showOnlyOpen = false;
@@ -17,11 +20,15 @@ class SearchProvider extends ChangeNotifier {
 
   List<ClubData> get filteredClubs => _filteredClubs;
 
-  void setClubs(List<ClubData> clubs) {
+  void setClubs(List<ClubData> clubs) { // Keeps updating
     _allClubs = clubs;
     _filteredClubs = clubs;
     notifyListeners();
   }
+  List<ClubData> getAllClubs() {
+    return clubDataHelper.clubData.values.toList();
+  }
+
 
   void updateSearch(String query, LatLng? userLocation) {
     final now = DateTime.now();
@@ -48,7 +55,8 @@ class SearchProvider extends ChangeNotifier {
       club.totalPossibleAmountOfVisitors.toString(),
     ];
 
-    return searchTerms.any((term) => term.toLowerCase().contains(query.toLowerCase()));
+    return searchTerms
+        .any((term) => term.toLowerCase().contains(query.toLowerCase()));
   }
 
   bool _matchesLocation(ClubData club, LatLng? userLocation) {
@@ -90,32 +98,75 @@ class SearchProvider extends ChangeNotifier {
   }
 
   List<ClubData> filterClubs(String query, LatLng? userLocation) {
-    final now = DateTime.now();
-
-    // Filter clubs based on all criteria
-    List<ClubData> filtered = _allClubs.where((club) {
+    final filtered = clubDataHelper.clubData.values.where((club) {
       final matchesQuery = _matchesSearchQuery(club, query);
       final withinDistance = _matchesLocation(club, userLocation);
-      // final isOpen = !showOnlyOpen || club.isOpenNow(now); // Ensure `isOpenNow()` is implemented
-      final isFavorite = !showFavoritesOnly || club.favorites.isNotEmpty;
-      final matchesRating = club.rating >= minRating;
-
-      return matchesQuery && withinDistance && isFavorite && matchesRating;
-      // isOpen &&
+      return matchesQuery && withinDistance;
     }).toList();
 
-    // Sort results by distance if enabled
     if (sortByDistance && userLocation != null) {
       filtered.sort((a, b) {
-        final distanceA = Geolocator.distanceBetween(userLocation.latitude, userLocation.longitude, a.lat, a.lon);
-        final distanceB = Geolocator.distanceBetween(userLocation.latitude, userLocation.longitude, b.lat, b.lon);
+        final distanceA = Geolocator.distanceBetween(
+          userLocation.latitude,
+          userLocation.longitude,
+          a.lat,
+          a.lon,
+        );
+        final distanceB = Geolocator.distanceBetween(
+          userLocation.latitude,
+          userLocation.longitude,
+          b.lat,
+          b.lon,
+        );
         return distanceA.compareTo(distanceB);
       });
     }
-
     return filtered;
   }
 
+
+  // Object filterClubs(String query, LatLng? userLocation) {
+  //   return ValueListenableBuilder<int>(
+  //     valueListenable: clubDataHelper.remainingClubsNotifier,
+  //     builder: (context, remainingClubs, child) {
+  //       if (remainingClubs > 0) {
+  //         return LoadingIndicatorWithTick(
+  //           remainingItemsNotifier: clubDataHelper.remainingClubsNotifier,
+  //           messageOnTap: "Henter resterende lokationer i baggrunden ({count})",
+  //         );
+  //       } else {
+  //         _allClubs = clubDataHelper.clubData as List<ClubData>;
+  //       }
+  //       return const SizedBox(); // ✅ Hide when everything is fully loaded
+  //     },
+  //   );
+  //   final now = DateTime.now();
+
+    // Filter clubs based on all criteria
+    // List<ClubData> filtered = _allClubs.where((club) {
+    //   final matchesQuery = _matchesSearchQuery(club, query);
+    //   final withinDistance = _matchesLocation(club, userLocation);
+    //   final isOpen = !showOnlyOpen || club.isOpenNow(now); // Ensure `isOpenNow()` is implemented
+      // final isFavorite = !showFavoritesOnly || club.favorites.isNotEmpty;
+      // final matchesRating = club.rating >= minRating;
+      //
+      // return matchesQuery && withinDistance && isFavorite && matchesRating;
+      // isOpen &&
+    // }).toList();
+    //
+    // Sort results by distance if enabled
+  //   if (sortByDistance && userLocation != null) {
+  //     filtered.sort((a, b) {
+  //       final distanceA = Geolocator.distanceBetween(
+  //           userLocation.latitude, userLocation.longitude, a.lat, a.lon);
+  //       final distanceB = Geolocator.distanceBetween(
+  //           userLocation.latitude, userLocation.longitude, b.lat, b.lon);
+  //       return distanceA.compareTo(distanceB);
+  //     });
+  //   }
+  //
+  //   return filtered;
+  // }
 
   // void updateSearch(String query, LatLng userLocation) {
   //   _filteredClubs = _allClubs.where((club) {
@@ -169,5 +220,5 @@ class SearchProvider extends ChangeNotifier {
     minRating = rating;
     notifyListeners();
   }
-}
 
+}

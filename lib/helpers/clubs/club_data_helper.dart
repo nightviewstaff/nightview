@@ -9,13 +9,16 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
 
-class ClubDataHelper with ChangeNotifier{
+class ClubDataHelper with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _storageRef = FirebaseStorage.instance.ref();
 
   Map<String, ClubData> clubData = {};
-  Map<String, ClubData> clubMarkerData = {};
-  final StreamController<ClubData> _initialLoadController = StreamController.broadcast();
+  final ValueNotifier<List<ClubData>> clubDataList = ValueNotifier([]);
+  final ValueNotifier<Set<String>> allClubTypes = ValueNotifier({});
+
+  final StreamController<ClubData> _initialLoadController =
+      StreamController.broadcast();
 
   Stream<ClubData> get initialClubStream => _initialLoadController.stream;
 
@@ -31,7 +34,7 @@ class ClubDataHelper with ChangeNotifier{
         switch (club.type) {
           case DocumentChangeType.added:
           case DocumentChangeType.modified:
-          // _processClub(club.doc); // ✅ Update only the changed club
+            // _processClub(club.doc); // ✅ Update only the changed club
             break;
           case DocumentChangeType.removed:
             clubData.remove(club.doc.id); // ✅ Remove deleted club
@@ -41,11 +44,7 @@ class ClubDataHelper with ChangeNotifier{
     });
   }
 
-
-
-
   Future<void> loadInitialClubs() async {
-    // Step 1: Get user's current location & Firestore snapshot concurrently
     final positionFuture = Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
@@ -58,7 +57,6 @@ class ClubDataHelper with ChangeNotifier{
     remainingClubsNotifier.value = snapshot.docs.length;
     totalAmountOfClubs = snapshot.docs.length;
 
-    // Step 2: Separate nearby and remaining clubs
     List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
     List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
 
@@ -68,7 +66,10 @@ class ClubDataHelper with ChangeNotifier{
       final lon = data['lon'];
 
       final distance = Geolocator.distanceBetween(
-        userPosition.latitude, userPosition.longitude, lat, lon,
+        userPosition.latitude,
+        userPosition.longitude,
+        lat,
+        lon,
       );
 
       if (distance <= 50000) {
@@ -78,20 +79,27 @@ class ClubDataHelper with ChangeNotifier{
       }
     }
 
-    // Step 3: Update nearby clubs count first
+    // Step 1: Process nearby clubs immediately
     remainingNearbyClubsNotifier.value = nearbyClubs.length;
-
-    // Step 4: Process Nearby Clubs in Batches
     await _processClubsInBatches(nearbyClubs);
 
-    // Step 5: Lazy Load Remaining Clubs in Background
+    // Step 2: Lazy load remaining clubs in the background
     Future.microtask(() => _processClubsInBatches(remainingClubs));
 
-    notifyListeners();
+    // Step 3: Listen for remaining clubs count and update when done
+    remainingClubsNotifier.addListener(() {
+      if (remainingClubsNotifier.value <= 0) {
+        clubDataList.value = clubData.values.toList(); // Update with all clubs
+        notifyListeners();
+        print('!!!!! $clubDataList');
+      }
+    });
 
+    notifyListeners();
   }
 
-  Future<void> _processClubsInBatches(List<QueryDocumentSnapshot<Map<String, dynamic>>> clubs) async {
+  Future<void> _processClubsInBatches(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> clubs) async {
     final userLocation = await Geolocator.getCurrentPosition();
     final stopwatch = Stopwatch()..start();
     const int batchSize = 20;
@@ -100,14 +108,18 @@ class ClubDataHelper with ChangeNotifier{
       await Future.wait(batch.map((doc) async {
         final club = await _processClub(doc);
         if (club != null) {
-          clubMarkerData[club.id] = club;
           clubData[club.id] = club;
           _initialLoadController.add(club);
           remainingClubsNotifier.value--;
+          allClubTypes.value.add(club.typeOfClub);
+
           if (Geolocator.distanceBetween(
-            userLocation.latitude, userLocation.longitude,
-            club.lat, club.lon,
-          ) <= 50000) {
+                userLocation.latitude,
+                userLocation.longitude,
+                club.lat,
+                club.lon,
+              ) <=
+              50000) {
             remainingNearbyClubsNotifier.value--;
           }
         }
@@ -117,8 +129,8 @@ class ClubDataHelper with ChangeNotifier{
     print('Total time: ${stopwatch.elapsed}'); // Test
   }
 
-
-  Future<ClubData?> _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) async {
+  Future<ClubData?> _processClub(
+      QueryDocumentSnapshot<Map<String, dynamic>> club) async {
     try {
       final data = club.data();
 
@@ -137,15 +149,16 @@ class ClubDataHelper with ChangeNotifier{
       }
 
       // Parse opening hours
-      final openingHours = (data['opening_hours'] as Map<String, dynamic>?)
-          ?.map((day, hours) {
-        return MapEntry(day, {
-          'open': hours?['open']?.toString() ?? '20:00',
-          'close': hours?['close']?.toString() ?? '02:00',
-          'ageRestriction': hours?['ageRestriction'] ?? data['age_restriction'] ?? 0,
-        });
-      }) ??
-          {};
+      final openingHours =
+          (data['opening_hours'] as Map<String, dynamic>?)?.map((day, hours) {
+                return MapEntry(day, {
+                  'open': hours?['open']?.toString() ?? '20:00',
+                  'close': hours?['close']?.toString() ?? '02:00',
+                  'ageRestriction':
+                      hours?['ageRestriction'] ?? data['age_restriction'] ?? 0,
+                });
+              }) ??
+              {};
 
       // Fetch typeOfClub image URL
       final typeOfClubImageUrl = await _fetchStorageUrl(
@@ -156,11 +169,12 @@ class ClubDataHelper with ChangeNotifier{
       // Prepare parallel network requests with fallback for the logo
       final fetchUrls = [
         (data['logo'] != 'default_logo.png')
-            ? _fetchStorageUrl(
-            'club_logos/${data['logo']}', fallback: typeOfClubImageUrl)
+            ? _fetchStorageUrl('club_logos/${data['logo']}',
+                fallback: typeOfClubImageUrl)
             : Future.value(typeOfClubImageUrl),
         (stringToOfferType(data['offer_type'] ?? '') != OfferType.none)
-            ? _fetchStorageUrl('main_offers/${data['main_offer_img']}', fallback: '')
+            ? _fetchStorageUrl('main_offers/${data['main_offer_img']}',
+                fallback: '')
             : Future.value(null),
       ];
 
@@ -171,9 +185,10 @@ class ClubDataHelper with ChangeNotifier{
 
       // Parse corners
       final corners = (data['corners'] as List?)
-          ?.whereType<GeoPoint>()
-          .map((point) => {'latitude': point.latitude, 'longitude': point.longitude})
-          .toList() ??
+              ?.whereType<GeoPoint>()
+              .map((point) =>
+                  {'latitude': point.latitude, 'longitude': point.longitude})
+              .toList() ??
           [];
 
       // Create and return the ClubData object
@@ -185,7 +200,8 @@ class ClubDataHelper with ChangeNotifier{
         lon: data['lon'],
         favorites: List<String>.from(data['favorites'] ?? []),
         corners: corners,
-        offerType: stringToOfferType(data['offer_type'] ?? 'OfferType.none') ?? OfferType.none,
+        offerType: stringToOfferType(data['offer_type'] ?? 'OfferType.none') ??
+            OfferType.none,
         mainOfferImg: mainOfferImgUrl,
         ageRestriction: data['age_restriction'] ?? 0,
         typeOfClubImg: typeOfClubImageUrl,
@@ -193,7 +209,8 @@ class ClubDataHelper with ChangeNotifier{
         rating: data['rating'] ?? 0.0,
         openingHours: openingHours,
         visitors: data['visitors'] ?? 0,
-        totalPossibleAmountOfVisitors: data['total_possible_amount_of_visitors'] ?? 0,
+        totalPossibleAmountOfVisitors:
+            data['total_possible_amount_of_visitors'] ?? 0,
       );
     } catch (e) {
       print('❌ Error processing club ${club.id}: $e');
@@ -202,7 +219,8 @@ class ClubDataHelper with ChangeNotifier{
   }
 
 // Helper function to fetch URLs with a fallback
-  Future<String> _fetchStorageUrl(String path, {required String fallback}) async {
+  Future<String> _fetchStorageUrl(String path,
+      {required String fallback}) async {
     try {
       return await _storageRef.child(path).getDownloadURL();
     } catch (e) {
@@ -309,7 +327,7 @@ class ClubDataHelper with ChangeNotifier{
 
         // Mark the document as processed
         await locationDoc.reference.update({'processed': true});
-            }
+      }
     }
   }
 
@@ -518,8 +536,4 @@ class ClubDataHelper with ChangeNotifier{
 
     return total = total / snapshot.docs.length;
   }
-
-
-
-
 }

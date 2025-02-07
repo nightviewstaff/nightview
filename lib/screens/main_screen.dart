@@ -96,14 +96,6 @@ class _MainScreenState extends State<MainScreen> {
           NightSocialMainScreen(),
         ],
       ),
-      // body: Consumer<MainNavigationProvider>(
-      //   builder: (context, provider, child) {
-      //     return KeyedSubtree(
-      //       key: ValueKey(provider.currentIndex),
-      //       child: provider.currentScreen ?? const Center(...),
-      //     );
-      //   },
-      // ),
       bottomNavigationBar: MainBottomNavigationBar(),
     );
   }

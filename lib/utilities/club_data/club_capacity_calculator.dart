@@ -25,8 +25,6 @@ class ClubCapacityCalculator {
     return percentOfCapacity;
   }
 
-
-
   double getDecimalValue({required int amount, required int fullAmount}) {
     double value = amount / fullAmount;
     if (value < 0.01) return 0.01;

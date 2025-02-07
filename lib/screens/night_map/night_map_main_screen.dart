@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -12,10 +13,13 @@ import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/providers/search_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
 import 'package:nightview/screens/night_map/utility/custom_search_bar.dart';
+import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
+import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
@@ -39,6 +43,16 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   final GlobalKey<NightMapState> nightMapKey =
       GlobalKey<NightMapState>(); // Prop needs refac
   Map<String, bool> toggledClubTypeStates = {};
+
+  late final ClubDataHelper clubDataHelper; // Store instance
+
+  @override
+  void initState() {
+    super.initState();
+    clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    var userlocation = LocationService.getUserLocation();
+  }
 
   Future<int> getUserCount() async {
     try {
@@ -185,42 +199,293 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               ),
 
               Padding(
-                padding: const EdgeInsets.all(kMainPadding),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent, // ??? TODO
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                  child: Row(
-                    children: [
-                      Expanded(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ValueListenableBuilder<List<ClubData>>(
+                        //TODO if clubdatalist contains too few display loader!
+                        valueListenable: clubDataHelper.clubDataList,
+                        builder: (context, allClubs, _) {
+                          if (allClubs.isEmpty) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
 
-                        child: CustomSearchBar(
-                          onClubSelected: (position) {
-                            nightMapKey.currentState?.moveToPosition(position);
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: kNormalSpacerValue,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          showAllTypesOfBars(context,
-                              userLocation); // Trigger the bottom sheet
+                                color: secondaryColor,
+                              ),
+                            );
+                          }
+                          return ValueListenableBuilder<Set<String>>(
+                            valueListenable: clubDataHelper.allClubTypes,
+                            builder: (context, typeOfClub, _) {
+                              return SearchAnchor(
+                                viewBackgroundColor: secondaryColor,
+                                viewElevation: 2,
+                                // viewConstraints:  ,
+                                builder: (BuildContext context,
+                                    SearchController controller) {
+                                  return SearchBar(
+                                    keyboardType: TextInputType.text,
+                                    controller: controller,
+                                    leading: Icon(Icons.search_sharp,
+                                        color: primaryColor),
+                                    hintText:
+                                        "Søg efter lokationer, områder eller andet",
+                                    hintStyle:
+                                        MaterialStateProperty.all(kTextStyleP2),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        grey.shade800),
+                                    shadowColor: MaterialStateProperty.all(
+                                        secondaryColor),
+                                    elevation: MaterialStateProperty.all(4),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                    ),
+                                    onChanged: (value) {
+                                      controller.openView();
+                                      // updateRecommendedClub
+                                    },
+                                    onTap: () {
+                                      controller.openView();
+                                      // Somehow toggleview
+                                      if (allClubs.isEmpty || allClubs.length < clubDataHelper.remainingNearbyClubsNotifier.value) {
+                                       LoadingScreen(color: secondaryColor,);
+                                      }else{
+                                        //Build clubs TODO
+                                      }
+                                    },
+                                    onTapOutside: (PointerDownEvent event) {
+                                      controller.closeView(controller.text.trim()); // maybe store last search. TODO
+                                      // controller.clear(); // Delete search text
+                                      // Close everything search-related
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                    },
+                                  );
+                                },
+                                suggestionsBuilder: (BuildContext context,
+                                    SearchController controller) {
+                                  if (allClubs.isEmpty) {
+                                    return [
+                                      ListTile(
+                                        title: Text(
+                                          "Ingen klubber til rådighed",
+                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                      )
+                                    ];
+                                  }
+                                  // Make sure populated or display loading. Continually populate
+
+                                  String userInputLowerCase =
+                                      controller.text.toLowerCase().trim();
+
+                                  List<ClubData> openClubs = [];
+                                  List<ClubData> closedClubs = [];
+
+                                  bool toggleIsOpen = true;
+                                  int clubDistance;
+
+                                  if (toggleIsOpen) {
+                                    //TODO
+                                    // Can toggle open or not
+                                    // RETURN OPEN CLUBS first. closed at bottom.
+                                  }
+                                  if (userInputLowerCase.isEmpty) {
+                                    // TODO all clubs secondary filter sholuld be distance
+                                    List<ClubData> sortedByDistance =
+                                        ClubDistanceCalculator
+                                            .sortClubsByDistance(
+                                      userLat: userLocation.latitude,
+                                      userLon: userLocation.longitude,
+                                      clubs: allClubs,
+                                    );
+
+                                    return sortedByDistance.map((club) {
+                                      return ListTile(
+                                        title: Text(club.name,
+                                            style: kTextStyleP1),
+                                        subtitle: Text(
+                                          ClubDistanceCalculator
+                                              .displayDistanceToClub(
+                                            userLat: userLocation.latitude,
+                                            userLon: userLocation.longitude,
+                                            club: club,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Provider.of<NightMapProvider>(context,
+                                                  listen: false)
+                                              .nightMapController
+                                              .move(LatLng(club.lat, club.lon),
+                                                  kCloseMapZoom);
+                                        },
+                                      );
+                                    }).toList();
+                                  }
+                                  try {
+                                    for (var club in allClubs) {
+                                      // TODO default errorhandeling
+                                      bool locationMatch =
+                                          ClubDataLocationFormatting
+                                              .danishCitiesAndAreas.entries
+                                              .any((entry) {
+                                        return entry.value.any((altName) =>
+                                            altName
+                                                .toLowerCase()
+                                                .contains(userInputLowerCase));
+                                      });
+
+                                      bool clubNameMatch = club.name
+                                          .toLowerCase()
+                                          .contains(userInputLowerCase);
+                                      bool clubTypeMatch = club.typeOfClub
+                                          .toLowerCase()
+                                          .contains(userInputLowerCase);
+                                      bool ageRestrictionMatch =
+                                          RegExp(r'^\d+\+$')
+                                                  .hasMatch(userInputLowerCase)
+                                              ? club.ageRestriction
+                                                      .toString() ==
+                                                  userInputLowerCase
+                                                      .replaceAll("+", "")
+                                                      .trim()
+                                              : club.ageRestriction
+                                                  .toString()
+                                                  .contains(userInputLowerCase);
+
+                                      bool isMatch = locationMatch ||
+                                          clubNameMatch ||
+                                          clubTypeMatch ||
+                                          ageRestrictionMatch;
+
+                                      bool isOpen =
+                                          ClubOpeningHoursFormatter.isClubOpen(
+                                              club);
+
+                                      // bool visitorsMatch = club.visitors != null && club.visitors.toString().contains(userInputLowerCase);
+                                      // bool ratingMatch = club.rating.toString().contains(userInputLowerCase); // TODO TOGGLE
+                                      // OfferType offerType; // Future
+
+                                      if (isMatch) {
+                                        debugPrint("Match found: ${club.name}");
+                                        if (isOpen) {
+                                          openClubs.add(club);
+                                        } else {
+                                          closedClubs.add(club);
+                                        }
+                                      }
+                                    }
+                                    List<ClubData> sortedClubs = [
+                                      ...openClubs,
+                                      ...closedClubs
+                                    ]..sort((a, b) {
+                                        final distanceA = ClubDistanceCalculator
+                                            .calculateDistance(
+                                          lat1: userLocation.latitude,
+                                          lon1: userLocation.longitude,
+                                          lat2: a.lat,
+                                          lon2: a.lon,
+                                        );
+                                        final distanceB = ClubDistanceCalculator
+                                            .calculateDistance(
+                                          lat1: userLocation.latitude,
+                                          lon1: userLocation.longitude,
+                                          lat2: b.lat,
+                                          lon2: b.lon,
+                                        );
+                                        return distanceA.compareTo(distanceB);
+                                      });
+
+                                    if (sortedClubs.isEmpty) {
+                                      return [
+                                        Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.search_off,
+                                                  size: 50, color: Colors.grey),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                "Ingen resultater fundet",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                "Du kan søge efter navn, lokation, type, aldersgrænse, åbningstider og distance",
+                                                style: TextStyle(fontSize: 14),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ];
+                                    }
+
+                                    return sortedClubs.map((club) {
+                                      return ListTile(
+                                        // TODO format
+                                        title: Text(club.name,
+                                            style: kTextStyleP1),
+                                        subtitle: Text(ClubDistanceCalculator
+                                            .displayDistanceToClub(
+                                                userLat: userLocation.latitude,
+                                                userLon: userLocation.longitude,
+                                                club: club)),
+                                        trailing: Text(ClubOpeningHoursFormatter
+                                            .displayClubOpeningHoursFormatted(
+                                                club)),
+
+                                        onTap: () {
+                                          Provider.of<NightMapProvider>(context,
+                                                  listen: false)
+                                              .nightMapController
+                                              .move(LatLng(club.lat, club.lon),
+                                                  kCloseMapZoom);
+                                          controller.closeView(controller.text.trim());
+                                          FocusManager.instance.primaryFocus?.unfocus();
+                                        },
+                                      );
+                                    }).toList();
+                                  } catch (e) {
+                                    print(
+                                        "Error filtering or sorting clubs: $e");
+                                    return [
+                                      ListTile(
+                                        title: Text("En fejl opstod",
+                                            style:
+                                                TextStyle(color: redAccent)),
+                                        subtitle: Text("Prøv igen senere."),
+                                      ),
+                                    ];
+                                  }
+                                },
+                              );
+                            },
+                          );
                         },
-                        child: const FaIcon(
-                          //   Delete this?!
-                          defaultDownArrow,
-                          color: primaryColor,
-                          size: 20.0,
-                        ),
                       ),
-                      const SizedBox(
-                        width: kSmallSpacerValue,
+                    ),
+                    const SizedBox(width: kNormalSpacerValue),
+                    GestureDetector(
+                      onTap: () {
+                        showAllTypesOfBars(context, userLocation);
+                      },
+                      child: const FaIcon(
+                        defaultDownArrow,
+                        color: primaryColor,
+                        size: 20.0,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: kSmallSpacerValue),
+                  ],
                 ),
               ),
 
@@ -229,10 +494,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 child: GestureDetector(
                   // Maybe close everyhting else when clicking map?
                   behavior: HitTestBehavior.translucent,
-                  // Detect taps on the map
                   onTap: () {
+                    // _closeSearchAndOverlay(); Close search TODO
+                    FocusManager.instance.primaryFocus?.unfocus();
                     // Unfocus the SearchField when tapping the map
                     FocusScope.of(context).unfocus();
+
                   },
                   child: NightMap(key: nightMapKey), // Your map widget
                 ),
@@ -240,6 +507,39 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             ],
           );
         });
+  }
+
+  void _showAllClubsIfPossible() {
+    final clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+
+    if (clubDataHelper.remainingClubsNotifier.value <= 0) {
+      // showAllClubWidget
+    } else {
+      _showLoadingIndicator;
+    }
+  }
+
+  void _showLoadingIndicator() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text("Loading clubs..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void showAllTypesOfBars(BuildContext context, LatLng userLocation) {

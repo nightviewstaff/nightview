@@ -67,15 +67,6 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
   }
 
-  void _initializeMarkers() {
-    final clubDataHelper =
-        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
-    print("${clubDataHelper.clubData.values} + !!!!!");
-    _markersNotifier.value = {
-      for (var club in clubDataHelper.clubMarkerData.values)
-        club.id: _buildClubMarker(club)
-    };
-  }
 
   void updateMarkers() { //TODO needs rework
     final toggledStates = BarTypeMapToggle.toggledStates;
