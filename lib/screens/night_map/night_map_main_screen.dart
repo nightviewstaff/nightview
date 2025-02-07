@@ -12,15 +12,17 @@ import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
+import 'package:nightview/screens/night_map/utility/custom_search_bar.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:searchfield/searchfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../utilities/club_data/club_name_formatter.dart';
@@ -35,10 +37,53 @@ class NightMapMainScreen extends StatefulWidget {
 }
 
 class _NightMapMainScreenState extends State<NightMapMainScreen> {
-  final searchController = TextEditingController();
   final GlobalKey<NightMapState> nightMapKey =
       GlobalKey<NightMapState>(); // Prop needs refac
   Map<String, bool> toggledClubTypeStates = {};
+
+  bool hasPermission = false;
+  bool isCheckingPermission = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkPermission();
+  }
+
+  Future<void> _checkPermission() async {
+    while (true) {
+      final status = await Permission.location.status;
+      if (status.isGranted) {
+        setState(() {
+          hasPermission = true;
+          isCheckingPermission = false;
+        });
+        break; // Stop checking when permission is granted
+      } else if (status.isPermanentlyDenied) {
+        setState(() {
+          hasPermission = false;
+          isCheckingPermission = true;
+        });
+        break; // Stop checking for permanently denied case
+      } else {
+        setState(() {
+          hasPermission = false;
+          isCheckingPermission = true;
+        });
+      }
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+
+  Future<void> _requestPermission() async {
+    final status = await Permission.location.request();
+    if (status.isGranted) {
+      setState(() {
+        hasPermission = true;
+        isCheckingPermission = false;
+      });
+    }
+  }
 
   Future<int> getUserCount() async {
     try {
@@ -49,109 +94,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       print(e);
       return 0;
     }
-  }
-
-  //TODO Remove searchfield when pressed another place.
-  //TODO Search for place.
-  List<SearchFieldListItem> getSearchSuggestions(
-      LatLng userLocation, String query) {
-    final clubDataHelper =
-        Provider.of<GlobalProvider>(context, listen: false).clubDataHelper;
-
-    print('QUERY: $query');
-    final sortedClubsByQuery = clubDataHelper.clubData.values.where((clubData) {
-      final clubName =
-          ClubNameFormatter.displayClubName(clubData).toLowerCase();
-      final clubLocation =
-          ClubNameFormatter.displayClubLocation(clubData).toLowerCase();
-      final searchQuery = query.toLowerCase();
-
-      return clubName.contains(searchQuery) ||
-          clubLocation.contains(searchQuery);
-    }).toList();
-
-    sortedClubsByQuery.sort((a, b) {
-      final distanceA = Geolocator.distanceBetween(
-        userLocation.latitude,
-        userLocation.longitude,
-        a.lat,
-        a.lon,
-      );
-      final distanceB = Geolocator.distanceBetween(
-        userLocation.latitude,
-        userLocation.longitude,
-        b.lat,
-        b.lon,
-      );
-      return distanceA.compareTo(distanceB); // Closest clubs first
-    });
-
-    return sortedClubsByQuery.map((clubData) {
-      final formattedClubName = ClubNameFormatter.displayClubName(clubData);
-      final formattedClubNameShort =
-          ClubNameFormatter.displayClubNameShort(clubData, 20);
-      final formattedClubLocation =
-          ClubNameFormatter.displayClubLocation(clubData);
-      final hasCustomLogo = clubData.logo != clubData.typeOfClubImg;
-      final formattedDistance = ClubDistanceCalculator.displayDistanceToClub(
-        userLat: userLocation.latitude,
-        userLon: userLocation.longitude,
-        club: clubData,
-      );
-
-      return SearchFieldListItem<ClubData>(
-        formattedClubName,
-        item: clubData,
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(clubData.logo),
-            radius: kBigSizeRadius,
-          ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                formattedClubNameShort,
-                style: kTextStyleP3,
-              ),
-              const SizedBox(height: 2.0), // Spacing between name and location
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      formattedClubLocation,
-                      style: kTextStyleP3.copyWith(color: primaryColor),
-                      overflow:
-                          TextOverflow.ellipsis, // Handle long text gracefully
-                    ),
-                  ),
-                  Text(
-                    formattedDistance,
-                    style: kTextStyleP3.copyWith(color: primaryColor),
-                  ),
-                ],
-              )
-            ],
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              hasCustomLogo
-                  ? CircleAvatar(
-                      backgroundImage:
-                          CachedNetworkImageProvider(clubData.typeOfClubImg),
-                      radius: 15.0,
-                    )
-                  : const SizedBox(
-                      width: 30, // Same width and height as CircleAvatar
-                      height: 30,
-                    ),
-            ],
-          ),
-        ),
-      );
-    }).toList();
   }
 
   double getDecimalValue({required int amount, required int fullAmount}) {
@@ -175,14 +117,15 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO Needs complete rework. Does too much
+
     return FutureBuilder<LatLng?>(
         future: LocationService.getUserLocation(),
         // Needed in order to call showalltypesbar + seach. Prop needs refac
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError || !snapshot.hasData) {
-            return Center(child: Text('N/A'));
+            return LocationPermissionAlwaysScreen();
           }
 
           final userLocation = snapshot.data!;
@@ -196,7 +139,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-
                     //TOP part
                     Text(
                       'Brugere i byen nu',
@@ -287,59 +229,23 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 ),
               ),
 
-              // Search field
               Padding(
                 padding: const EdgeInsets.all(kMainPadding),
                 child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
+                  behavior: HitTestBehavior.translucent, // ??? TODO
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    searchController.clear();
                   },
                   child: Row(
                     children: [
-                      Expanded(
-                        child: SearchField(
-                          controller: searchController,
-                          itemHeight: 60.0,
-                          suggestions: getSearchSuggestions(
-                              userLocation, searchController.text),
-                          searchInputDecoration: SearchInputDecoration(
-                            hintText: ' Søg efter steder eller områder',
-                            // TODO Color cursorColor: primaryColor
-                            searchStyle: kTextStyleP1,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 10.0),
-                            // Left!
-                            border: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: kMainStrokeWidth,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(kNormalSizeRadius),
-                              ),
-                            ),
-                            // TODO NEED PADDING BETWEEN TEXT AND ICON
-                            prefixIcon: const Icon(
-                              FontAwesomeIcons.magnifyingGlass,
-                              color: primaryColor,
-                              size: 20.0,
-                            ),
-                          ),
-                          onSuggestionTap: (value) {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            searchController.clear();
+                      // Expanded(
+                      //   child: CustomSearchBar(
+                      // onClubSelected: (position) {
+                      //   nightMapKey.currentState?.moveToPosition(position);
+                      // },
+                      // ),
+                      // ),
 
-                            Provider.of<NightMapProvider>(context, listen: false)
-                                .nightMapController
-                                .move(LatLng(value.item.lat, value.item.lon),
-                                    kCloseMapZoom);
-                            // ClubBottomSheet.showClubSheet(
-                            //     context: context, club: value.item);
-                          },
-                        ),
-                      ),
                       const SizedBox(
                         width: kNormalSpacerValue,
                       ),
@@ -456,7 +362,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       ..sort((a, b) => b.value.length.compareTo(a.value.length));
   }
 
-  List<ClubData> _sortClubsByDistance(List<ClubData> clubs, LatLng userLocation) {
+  List<ClubData> _sortClubsByDistance(
+      List<ClubData> clubs, LatLng userLocation) {
     clubs.sort((a, b) {
       final distanceA = Geolocator.distanceBetween(
         userLocation.latitude,
@@ -482,12 +389,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           clubType: type,
           onToggle: (isToggled) {},
           updateMarkers: () {
-            nightMapKey.currentState?.updateMarkers();
+            nightMapKey.currentState?.updateMarkers(); //TODO NEED REWORK
           },
         ),
         CircleAvatar(
           backgroundImage:
-          CachedNetworkImageProvider(clubs.first.typeOfClubImg),
+              CachedNetworkImageProvider(clubs.first.typeOfClubImg),
           radius: kBigSizeRadius,
         ),
         const SizedBox(width: kSmallPadding),

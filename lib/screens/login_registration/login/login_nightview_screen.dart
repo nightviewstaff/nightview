@@ -51,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 CustomTextField.buildTextField(
                   controller: mailPhoneInputController,
+                    keyboardType: TextInputType.emailAddress,
                     hintText: 'Mail',
                   onChanged: (value) {
                     inputIsFilled[0] = !(value.isEmpty);

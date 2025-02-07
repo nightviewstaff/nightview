@@ -130,7 +130,7 @@ class _LocationPermissionAlwaysScreen
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad altid';
+      return '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
     }
 
     if (Platform.isIOS) {
