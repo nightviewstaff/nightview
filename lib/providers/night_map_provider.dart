@@ -18,8 +18,14 @@ class NightMapProvider with ChangeNotifier {
   List<Marker> _markers = [];
 
   List<Marker> get markers => _markers;
+  Future<LatLng?> _lastKnownPosition =   LocationService.getUserLocation(); // initial
 
-  get lastKnownPosition => LocationService.getUserLocation(); //TODO store value and update when called
+  get lastKnownPosition => _lastKnownPosition; //TODO store value and update when called
+
+
+  void setLastknownPosition(LatLng pos){
+    _lastKnownPosition = pos as Future<LatLng?>;
+  }
 
   // void updateMarkers(List<Marker> newMarkers) { // TODO NEED REWORK
   //   _markers = newMarkers;
@@ -35,6 +41,7 @@ class NightMapProvider with ChangeNotifier {
   void moveToUserLocation(LatLng position) {
     nightMapController.move(position, nightMapController.camera.zoom);
   }
+
 
 
 

@@ -51,8 +51,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
     }
   }
 
-
-
   double getDecimalValue({required int amount, required int fullAmount}) {
     // TODO In utility
     double value = amount / fullAmount;
@@ -195,14 +193,14 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   },
                   child: Row(
                     children: [
-                      // Expanded(
-                      //   child: CustomSearchBar(
-                      // onClubSelected: (position) {
-                      //   nightMapKey.currentState?.moveToPosition(position);
-                      // },
-                      // ),
-                      // ),
+                      Expanded(
 
+                        child: CustomSearchBar(
+                          onClubSelected: (position) {
+                            nightMapKey.currentState?.moveToPosition(position);
+                          },
+                        ),
+                      ),
                       const SizedBox(
                         width: kNormalSpacerValue,
                       ),
@@ -427,5 +425,4 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       );
     }).toList();
   }
-
 }

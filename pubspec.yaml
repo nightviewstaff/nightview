@@ -61,7 +61,7 @@ dependencies:
   geolocator: ^13.0.1
   maps_toolkit: ^3.0.0
   location: ^7.0.1
-
+  flutter_typeahead: ^4.3.7
 
   card_swiper: ^3.0.1
   bottom_sheet: ^4.0.4 
