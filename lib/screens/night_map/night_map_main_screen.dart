@@ -13,7 +13,6 @@ import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/providers/search_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
 import 'package:nightview/screens/night_map/utility/custom_search_bar.dart';
@@ -208,26 +207,34 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         //TODO if clubdatalist contains too few display loader!
                         valueListenable: clubDataHelper.clubDataList,
                         builder: (context, allClubs, _) {
-                          if (allClubs.isEmpty) {
-                            return Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-
-                                color: secondaryColor,
-                              ),
-                            );
-                          }
+                          // if (allClubs.isEmpty) {
+                          //   return Center(
+                          //     child: CircularProgressIndicator(
+                          //       strokeWidth: 2,
+                          //
+                          //       color: secondaryColor,
+                          //     ),
+                          //   );
+                          // }
                           return ValueListenableBuilder<Set<String>>(
                             valueListenable: clubDataHelper.allClubTypes,
                             builder: (context, typeOfClub, _) {
                               return SearchAnchor(
-                                viewBackgroundColor: secondaryColor,
+                                viewBackgroundColor: black,
+                                isFullScreen: false,
+                                dividerColor: secondaryColor,
+                                keyboardType: TextInputType.text,
                                 viewElevation: 2,
-                                // viewConstraints:  ,
+                                viewConstraints:  BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 1, // 90%screen
+                                  maxHeight: MediaQuery.of(context).size.height * 0.45 // 45%screen
+                                ),
                                 builder: (BuildContext context,
                                     SearchController controller) {
+                                  // while(controller.isOpen){
+                                  //   controller.openView(); // TODO WHERE DO I PUT THIS
+                                  // }
                                   return SearchBar(
-                                    keyboardType: TextInputType.text,
                                     controller: controller,
                                     leading: Icon(Icons.search_sharp,
                                         color: primaryColor),
@@ -252,11 +259,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     onTap: () {
                                       controller.openView();
                                       // Somehow toggleview
-                                      if (allClubs.isEmpty || allClubs.length < clubDataHelper.remainingNearbyClubsNotifier.value) {
-                                       LoadingScreen(color: secondaryColor,);
-                                      }else{
+                                      // if (allClubs.isEmpty || allClubs.length < clubDataHelper.remainingNearbyClubsNotifier.value - 50) {
+                                      //  LoadingScreen(color: secondaryColor,);
+                                      // }else{
                                         //Build clubs TODO
-                                      }
+                                      // }
                                     },
                                     onTapOutside: (PointerDownEvent event) {
                                       controller.closeView(controller.text.trim()); // maybe store last search. TODO
@@ -269,11 +276,16 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                 },
                                 suggestionsBuilder: (BuildContext context,
                                     SearchController controller) {
-                                  if (allClubs.isEmpty) {
+                                  // while(controller.isOpen){
+                                  //   controller.openView(); // TODO WHERE DO I PUT THIS
+                                  // }
+                                  if (allClubs.isEmpty) { // TODO Needs to be able to opdate
+                                    //TODO There are 2 instances of view. I want 1 at all times, then sho and hide it. THE VIEW DOESNT UPDATE. IT SHOULD STAY ONE INSTANCE AND UPDATE REALTIME
                                     return [
+                                      LoadingScreen(color: secondaryColor,),// TODO Null error '_owneer !=null': is not true....
                                       ListTile(
                                         title: Text(
-                                          "Ingen klubber til rådighed",
+                                          "Henter klubber",
                                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                         ),
                                       )
@@ -323,6 +335,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                               .nightMapController
                                               .move(LatLng(club.lat, club.lon),
                                                   kCloseMapZoom);
+                                          controller.closeView(controller.text.trim());
+                                          controller.closeView(controller.text.trim());
                                         },
                                       );
                                     }).toList();
@@ -430,25 +444,65 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     }
 
                                     return sortedClubs.map((club) {
-                                      return ListTile(
-                                        // TODO format
-                                        title: Text(club.name,
-                                            style: kTextStyleP1),
-                                        subtitle: Text(ClubDistanceCalculator
-                                            .displayDistanceToClub(
-                                                userLat: userLocation.latitude,
-                                                userLon: userLocation.longitude,
-                                                club: club)),
-                                        trailing: Text(ClubOpeningHoursFormatter
-                                            .displayClubOpeningHoursFormatted(
-                                                club)),
+                                      String formattedClubName = ClubNameFormatter.formatClubName(club.name);
+                                      String formattedClubLocation = ClubNameFormatter.displayClubLocation(club);
+                                      String formattedDistance = ClubDistanceCalculator.displayDistanceToClub(
+                                        club: club,
+                                        userLat: userLocation.latitude,
+                                        userLon: userLocation.longitude,
+                                      );
 
+                                      bool hasCustomLogo = club.typeOfClubImg.isNotEmpty;
+
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                          backgroundImage: CachedNetworkImageProvider(club.logo),
+                                          radius: kBigSizeRadius,
+                                        ),
+                                        title: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              formattedClubName,
+                                              style: kTextStyleP3,
+                                            ),
+                                            const SizedBox(height: 2.0), // Spacing between name and location
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    formattedClubLocation,
+                                                    style: kTextStyleP3.copyWith(color: primaryColor),
+                                                    overflow: TextOverflow.ellipsis, // Handle long text gracefully
+                                                  ),
+                                                ),
+                                                Text(
+                                                  formattedDistance,
+                                                  style: kTextStyleP3.copyWith(color: primaryColor),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        trailing: Column(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            hasCustomLogo
+                                                ? CircleAvatar(
+                                              backgroundImage: CachedNetworkImageProvider(club.typeOfClubImg),
+                                              radius: 15.0,
+                                            )
+                                                : const SizedBox(
+                                              width: 30, // Same width and height as CircleAvatar
+                                              height: 30,
+                                            ),
+                                          ],
+                                        ),
                                         onTap: () {
-                                          Provider.of<NightMapProvider>(context,
-                                                  listen: false)
+                                          Provider.of<NightMapProvider>(context, listen: false)
                                               .nightMapController
-                                              .move(LatLng(club.lat, club.lon),
-                                                  kCloseMapZoom);
+                                              .move(LatLng(club.lat, club.lon), kCloseMapZoom);
                                           controller.closeView(controller.text.trim());
                                           FocusManager.instance.primaryFocus?.unfocus();
                                         },
@@ -484,7 +538,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         size: 20.0,
                       ),
                     ),
-                    const SizedBox(width: kSmallSpacerValue),
+                    const SizedBox(width: kNormalSpacerValue),
                   ],
                 ),
               ),
@@ -494,6 +548,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 child: GestureDetector(
                   // Maybe close everyhting else when clicking map?
                   behavior: HitTestBehavior.translucent,
+                  // controller.closeView// TODO
                   onTap: () {
                     // _closeSearchAndOverlay(); Close search TODO
                     FocusManager.instance.primaryFocus?.unfocus();
@@ -507,39 +562,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             ],
           );
         });
-  }
-
-  void _showAllClubsIfPossible() {
-    final clubDataHelper =
-        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
-
-    if (clubDataHelper.remainingClubsNotifier.value <= 0) {
-      // showAllClubWidget
-    } else {
-      _showLoadingIndicator;
-    }
-  }
-
-  void _showLoadingIndicator() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 16),
-                Text("Loading clubs..."),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void showAllTypesOfBars(BuildContext context, LatLng userLocation) {
@@ -592,10 +614,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: primaryColor),
+          CircularProgressIndicator(color: secondaryColor),
           const SizedBox(height: 16),
           Text(
-            'Henter alle klubber',
+            'Henter klubber',
             style: kTextStyleP1.copyWith(color: primaryColor),
           ),
         ],

@@ -1,162 +1,159 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
-import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/providers/search_provider.dart';
-import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
-import 'package:nightview/utilities/club_data/club_name_formatter.dart';
-import 'package:provider/provider.dart';
+import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
+import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
+import 'package:provider/provider.dart';
+import 'package:latlong2/latlong.dart';
 
-class CustomSearchBar extends StatefulWidget {
-  final Function(LatLng) onClubSelected;
+class CustomSearchBar extends StatelessWidget {
+  final LatLng userLocation;
+  final ValueNotifier<List<ClubData>> clubDataListNotifier;
+  final ValueNotifier<Set<String>> clubTypesNotifier;
 
-  const CustomSearchBar({required this.onClubSelected, Key? key})
-      : super(key: key);
-
-  @override
-  _CustomSearchBarState createState() => _CustomSearchBarState();
-}
-
-class _CustomSearchBarState extends State<CustomSearchBar> {
-  final TextEditingController _searchController = TextEditingController();
+  const CustomSearchBar({
+    Key? key,
+    required this.userLocation,
+    required this.clubDataListNotifier,
+    required this.clubTypesNotifier,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<NightMapProvider>(
-      builder: (context, nightMapProvider, _) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(),
-          child: TypeAheadField<ClubData>(
-            textFieldConfiguration: TextFieldConfiguration(
-              keyboardType: TextInputType.text,
+    return ValueListenableBuilder<List<ClubData>>(
+      valueListenable: clubDataListNotifier,
+      builder: (context, allClubs, _) {
+        return ValueListenableBuilder<Set<String>>(
+          valueListenable: clubTypesNotifier,
+          builder: (context, typeOfClub, _) {
+            return SearchAnchor(
+              viewBackgroundColor: secondaryColor,
+              viewElevation: 2,
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  keyboardType: TextInputType.text,
+                  controller: controller,
+                  leading: Icon(Icons.search_sharp, color: primaryColor),
+                  hintText: "Søg efter lokationer, områder eller andet",
+                  hintStyle: MaterialStateProperty.all(kTextStyleP2),
+                  backgroundColor: MaterialStateProperty.all(grey.shade800),
+                  shadowColor: MaterialStateProperty.all(secondaryColor),
+                  elevation: MaterialStateProperty.all(4),
+                  shape: MaterialStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  ),
+                );
+              },
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                final String userInputLowerCase = controller.text.toLowerCase().trim();
 
-              controller: _searchController,
-              style: kTextStyleP2.copyWith(color: primaryColor, fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                fillColor: grey[800],
-                hintText:
-                    'Søg efter lokationer, områder, aldersgrænser eller andet',
-                hintStyle: kTextStyleP3,
-                prefixIcon: Icon(Icons.search_sharp, color: primaryColor),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-              ),
-            ),
-            suggestionsCallback: (query) async {
-              final lastKnownPosition = await nightMapProvider.lastKnownPosition;
-              return context.read<SearchProvider>().filterClubs(
-                query,
-                lastKnownPosition?.toLatLng(),
-              );
-            },
-            itemBuilder: (context, ClubData club) {
-              return _ClubSearchResultTile(
-                club: club,
-                onTap: () {
-                  widget.onClubSelected(LatLng(club.lat, club.lon));
-                  _searchController.clear();
-                },
-                userLocation: (nightMapProvider.lastKnownPosition)?.toLatLng() ?? LatLng(0, 0),
-              );
-            },
-            onSuggestionSelected: (ClubData club) {
-              widget.onClubSelected(LatLng(club.lat, club.lon));
-              _searchController.clear();
-            },
-            noItemsFoundBuilder: (context) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('No results found', style: kTextStyleP3),
-            ),
-          ),
+                if (userInputLowerCase.isEmpty) {
+                  final sortedByDistance = ClubDistanceCalculator.sortClubsByDistance(
+                    userLat: userLocation.latitude,
+                    userLon: userLocation.longitude,
+                    clubs: allClubs,
+                  );
+                  return _buildSuggestions(sortedByDistance, context);
+                }
 
+                List<ClubData> openClubs = [];
+                List<ClubData> closedClubs = [];
+
+                for (var club in allClubs) {
+                  bool locationMatch = ClubDataLocationFormatting.danishCitiesAndAreas.entries
+                      .any((entry) => entry.value.any((altName) => altName.toLowerCase().contains(userInputLowerCase)));
+                  bool clubNameMatch = club.name.toLowerCase().contains(userInputLowerCase);
+                  bool clubTypeMatch = club.typeOfClub.toLowerCase().contains(userInputLowerCase);
+                  bool ageRestrictionMatch = RegExp(r'^\d+\+$').hasMatch(userInputLowerCase)
+                      ? club.ageRestriction.toString() == userInputLowerCase.replaceAll("+", "").trim()
+                      : club.ageRestriction.toString().contains(userInputLowerCase);
+
+                  bool isMatch = locationMatch || clubNameMatch || clubTypeMatch || ageRestrictionMatch;
+                  bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
+
+                  if (isMatch) {
+                    if (isOpen) {
+                      openClubs.add(club);
+                    } else {
+                      closedClubs.add(club);
+                    }
+                  }
+                }
+
+                final sortedClubs = [
+                  ...openClubs,
+                  ...closedClubs,
+                ]..sort((a, b) {
+                  final distanceA = ClubDistanceCalculator.calculateDistance(
+                    lat1: userLocation.latitude,
+                    lon1: userLocation.longitude,
+                    lat2: a.lat,
+                    lon2: a.lon,
+                  );
+                  final distanceB = ClubDistanceCalculator.calculateDistance(
+                    lat1: userLocation.latitude,
+                    lon1: userLocation.longitude,
+                    lat2: b.lat,
+                    lon2: b.lon,
+                  );
+                  return distanceA.compareTo(distanceB);
+                });
+
+                if (sortedClubs.isEmpty) {
+                  return _noResultsFound();
+                }
+
+                return _buildSuggestions(sortedClubs, context);
+              },
+            );
+          },
         );
       },
     );
   }
-}
 
-class _ClubSearchResultTile extends StatelessWidget {
-  final ClubData club;
-  final VoidCallback onTap;
-  final LatLng userLocation;
-
-  const _ClubSearchResultTile({
-    required this.club,
-    required this.onTap,
-    required this.userLocation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: _ClubLogo(club: club),
-      title: _buildClubTitle(),
-      trailing: _buildDistanceBadge(),
-      onTap: onTap,
-    );
+  List<Widget> _buildSuggestions(List<ClubData> clubs, BuildContext context) {
+    return clubs.map((club) {
+      return ListTile(
+        title: Text(club.name, style: kTextStyleP1),
+        subtitle: Text(ClubDistanceCalculator.displayDistanceToClub(
+          userLat: userLocation.latitude,
+          userLon: userLocation.longitude,
+          club: club,
+        )),
+        trailing: Text(ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club)),
+        onTap: () {
+          Provider.of<NightMapProvider>(context, listen: false)
+              .nightMapController
+              .move(LatLng(club.lat, club.lon), kCloseMapZoom);
+        },
+      );
+    }).toList();
   }
 
-  Widget _buildClubTitle() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          ClubNameFormatter.displayClubName(club),
-          style: kTextStyleP3,
-        ),
-        const SizedBox(height: 2.0),
-        Text(
-          ClubNameFormatter.displayClubLocation(club),
-          style: kTextStyleP3.copyWith(color: primaryColor),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDistanceBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.location_pin, size: 14, color: primaryColor),
-          const SizedBox(width: 4),
-          Text(
-            ClubDistanceCalculator.displayDistanceToClub(
-              userLat: userLocation.latitude,
-              userLon: userLocation.longitude,
-              club: club,
+  List<Widget> _noResultsFound() {
+    return [
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off, size: 50, color: Colors.grey),
+            const SizedBox(height: 10),
+            Text("Ingen resultater fundet", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              "Du kan søge efter navn, lokation, type, aldersgrænse, åbningstider og distance",
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
             ),
-            style: kTextStyleP3.copyWith(color: primaryColor),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
-}
-
-class _ClubLogo extends StatelessWidget {
-  final ClubData club;
-
-  const _ClubLogo({required this.club});
-
-  @override
-  Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 20,
-      backgroundImage: CachedNetworkImageProvider(club.logo),
-    );
+    ];
   }
 }
