@@ -94,6 +94,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   Widget build(BuildContext context) {
     // TODO Needs complete rework. Does too much
 
+
     return FutureBuilder<LatLng?>(
         future: LocationService.getUserLocation(),
         // Needed in order to call showalltypesbar + seach. Prop needs refac
@@ -299,6 +300,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     },
                                   );
                                 },
+
                                 suggestionsBuilder: (context, controller) {
                                   // Lowercase and trim the search input.
                                   String userInputLowerCase =
@@ -912,8 +914,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   }
 
   List<Widget> _buildClubListTiles(
+
       List<ClubData> clubs, BuildContext context, LatLng userLocation) {
     return clubs.map((club) {
+      final String clubOpeningHoursFormatted = ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club);
+
       return ListTile(
         leading: CircleAvatar(
           backgroundImage: CachedNetworkImageProvider(club.logo),
@@ -956,9 +961,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               ),
             ),
             Text(
-              ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club),
-              style: kTextStyleP3,
-            ),
+            clubOpeningHoursFormatted,
+            style: clubOpeningHoursFormatted.toLowerCase() == "lukket i dag."
+      ? kTextStyleP3.copyWith(color: redAccent)
+          : kTextStyleP3,
+      ),
           ],
         ),
         onTap: () {
@@ -966,6 +973,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           Provider.of<NightMapProvider>(context, listen: false)
               .nightMapController
               .move(LatLng(club.lat, club.lon), kCloseMapZoom);
+          ClubBottomSheet.showClubSheet(context: context, club: club);
         },
       );
     }).toList();

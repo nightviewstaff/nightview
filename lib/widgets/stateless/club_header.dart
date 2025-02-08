@@ -12,6 +12,7 @@ import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart'
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/stateful/favorite_club_button.dart';
 import 'package:nightview/widgets/stateless/distance_display_widget.dart';
+import 'package:nightview/widgets/stateless/misc/custom_popup_menu_button.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:nightview/widgets/stateful/rate_club.dart';
 import 'package:provider/provider.dart';
@@ -44,11 +45,8 @@ class ClubHeader extends StatelessWidget {
         ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club);
     final String currentAgeRestriction =
         ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
-    double percentOfCapacity =
+    final double percentOfCapacity =
         ClubCapacityCalculator.displayCalculatedPercentageOfCapacity(club);
-    if (openingHoursToday == "Lukket i dag") {
-      percentOfCapacity = 0;
-    }
     // final distance = ClubDistanceCalculator.displayDistanceToClub(
     //   club: club,
     // userLat: userLocation.latitude,
@@ -245,76 +243,11 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   Text(
                     openingHoursToday,
-                    style: kTextStyleP1,
+                    style: openingHoursToday.toLowerCase() == "lukket i dag." ? kTextStyleP1.copyWith(color: redAccent): kTextStyleP1,
                   ),
-                  PopupMenuButton<MapEntry<String, dynamic>>(
-                    icon: FaIcon(
-                      defaultDownArrow,
-                      color: white,
-                      size: 20,
-                    ),
-                    itemBuilder: (context) {
-                      // Print the club's name and opening hours for debugging
-                      print('${club.name} ${club.openingHours?.toString() ?? 'No opening hours available'}');
-
-                      // Filter and sort opening hours
-                      final filteredOpeningHours = club.openingHours?.entries
-                          .where((entry) {
-                        final hours = entry.value as Map<String, dynamic>?;
-
-                        // Keep only days with valid open and close times
-                        return hours != null && hours['open'] != null && hours['close'] != null;
-                      })
-                          .toList()
-                        ?..sort((a, b) {
-                        final indexA = _weekdayOrder.indexOf(a.key.toLowerCase());
-                        final indexB = _weekdayOrder.indexOf(b.key.toLowerCase());
-                        return indexA.compareTo(indexB);
-                      });
-
-                      // Handle cases where `filteredOpeningHours` is null or empty
-                      if (filteredOpeningHours == null || filteredOpeningHours.isEmpty) {
-                        return [
-                          PopupMenuItem(
-                            value: null,
-                            child: Text(
-                              'Ingen åbningstider', // "No opening hours" in Danish
-                              style: kTextStyleP1,
-                            ),
-                          ),
-                        ];
-                      }
-
-                      // Map filtered and sorted days to PopupMenuItems
-                      return filteredOpeningHours.map((entry) {
-                        final englishDay = entry.key; // The English key (e.g., "monday")
-                        final danishDay = _mapDayToDanish(englishDay); // Convert to Danish
-                        final hours = entry.value;
-                        final openTime = hours?['open'];
-                        final closeTime = hours?['close'];
-                        final ageRestriction = ClubAgeRestrictionFormatter.formatAgeRestrictionForSpecificDay(
-                          club,
-                          englishDay,
-                        );
-
-                        return PopupMenuItem(
-                          value: entry,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '$danishDay: $openTime - $closeTime',
-                                style: kTextStyleP1,
-                              ),
-                              Text(
-                                ageRestriction,
-                                style: kTextStyleP1.copyWith(color: primaryColor),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList();
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(right: kMainPadding),
+                    child: CustomPopupMenuButtonOpeningHours(club),
                   ),
                 ],
               ),
@@ -337,26 +270,3 @@ class ClubHeader extends StatelessWidget {
     );
   }
 }
-
-final List<String> _weekdayOrder = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
-String _mapDayToDanish(String englishDay) {
-  const dayMapping = {
-    'monday': 'mandag',
-    'tuesday': 'tirsdag',
-    'wednesday': 'onsdag',
-    'thursday': 'torsdag',
-    'friday': 'fredag',
-    'saturday': 'lørdag',
-    'sunday': 'søndag',
-  };
-  return dayMapping[englishDay.toLowerCase()] ?? englishDay; // Fallback to English if not found
-}
-

@@ -15,6 +15,7 @@ const kBigBottomSpacerValue = 240.0;
 
 const kSmallPadding = 4.0;
 const kMainPadding = 8.0;
+const kMediumPadding = 10.0;
 const kBigPadding = 16.0;
 const kBiggerPadding = 20.0;
 const kSwipeBottomPadding = 50.0;
