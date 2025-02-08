@@ -1,7 +1,25 @@
 class ClubDataLocationFormatting {
-  static final Map<String, List<String>> danishCitiesAndAreas = { //TODO ALL
-    "København": ["København", "Copenhagen", "KBH", "Koebenhavn"],
-    "Aarhus": ["Aarhus", "Århus", "Arhus"],
+  /// Map of the official city names to a list of synonyms.
+  static final Map<String, List<String>> danishCitiesAndAreas = {
+    "København": [
+      "København",
+      "Københav",
+      "Københa",
+      "Københ",
+      "Køben",
+      "Købe",
+      "Køb" "Copenhagen",
+      "copenhage",
+      "copenhag",
+      "copenha",
+      "copenh",
+      "copen",
+      "cope",
+      "cop" "kbh",
+      "Koebenhavn",
+      "Koeb",
+    ],
+    "Aarhus": ["Aarhus", "Århus", "Arhus", "århu", "årh", "år"],
     "Odense": ["Odense"],
     "Aalborg": ["Aalborg", "Ålborg"],
     "Frederiksberg": ["Frederiksberg"],
@@ -35,221 +53,244 @@ class ClubDataLocationFormatting {
     "Nyborg": ["Nyborg"],
   };
 
+  /// Instead of dozens of _isInCity functions, we define bounding boxes here.
+  /// The keys are the official city names.
+  static final Map<String, Map<String, double>> cityBoundingBoxes = {
+    "København": {
+      "minLat": 55.6,
+      "maxLat": 55.8,
+      "minLon": 12.4,
+      "maxLon": 12.7
+    },
+    "Aarhus": {"minLat": 56.1, "maxLat": 56.2, "minLon": 10.1, "maxLon": 10.3},
+    "Odense": {"minLat": 55.3, "maxLat": 55.5, "minLon": 10.3, "maxLon": 10.5},
+    "Aalborg": {"minLat": 57.0, "maxLat": 57.1, "minLon": 9.8, "maxLon": 10.0},
+    "Frederiksberg": {
+      "minLat": 55.66,
+      "maxLat": 55.68,
+      "minLon": 12.50,
+      "maxLon": 12.55
+    },
+    "Esbjerg": {
+      "minLat": 55.45,
+      "maxLat": 55.55,
+      "minLon": 8.40,
+      "maxLon": 8.50
+    },
+    "Randers": {
+      "minLat": 56.45,
+      "maxLat": 56.50,
+      "minLon": 10.00,
+      "maxLon": 10.10
+    },
+    "Kolding": {
+      "minLat": 55.48,
+      "maxLat": 55.54,
+      "minLon": 9.46,
+      "maxLon": 9.52
+    },
+    "Vejle": {"minLat": 55.70, "maxLat": 55.74, "minLon": 9.50, "maxLon": 9.56},
+    "Horsens": {
+      "minLat": 55.85,
+      "maxLat": 55.90,
+      "minLon": 9.80,
+      "maxLon": 10.00
+    },
+    "Herning": {
+      "minLat": 56.13,
+      "maxLat": 56.18,
+      "minLon": 8.95,
+      "maxLon": 9.05
+    },
+    "Roskilde": {
+      "minLat": 55.63,
+      "maxLat": 55.67,
+      "minLon": 12.07,
+      "maxLon": 12.13
+    },
+    "Silkeborg": {
+      "minLat": 56.17,
+      "maxLat": 56.22,
+      "minLon": 9.53,
+      "maxLon": 9.57
+    },
+    "Næstved": {
+      "minLat": 55.22,
+      "maxLat": 55.27,
+      "minLon": 11.75,
+      "maxLon": 11.82
+    },
+    "Fredericia": {
+      "minLat": 55.56,
+      "maxLat": 55.61,
+      "minLon": 9.74,
+      "maxLon": 9.80
+    },
+    "Helsingør": {
+      "minLat": 56.02,
+      "maxLat": 56.05,
+      "minLon": 12.60,
+      "maxLon": 12.63
+    },
+    "Viborg": {
+      "minLat": 56.45,
+      "maxLat": 56.50,
+      "minLon": 9.38,
+      "maxLon": 9.42
+    },
+    "Køge": {
+      "minLat": 55.45,
+      "maxLat": 55.50,
+      "minLon": 12.17,
+      "maxLon": 12.22
+    },
+    "Holstebro": {
+      "minLat": 56.36,
+      "maxLat": 56.41,
+      "minLon": 8.61,
+      "maxLon": 8.66
+    },
+    "Slagelse": {
+      "minLat": 55.40,
+      "maxLat": 55.45,
+      "minLon": 11.34,
+      "maxLon": 11.39
+    },
+    "Svendborg": {
+      "minLat": 55.05,
+      "maxLat": 55.10,
+      "minLon": 10.60,
+      "maxLon": 10.65
+    },
+    "Sønderborg": {
+      "minLat": 54.90,
+      "maxLat": 54.95,
+      "minLon": 9.75,
+      "maxLon": 9.80
+    },
+    "Hjørring": {
+      "minLat": 57.45,
+      "maxLat": 57.50,
+      "minLon": 9.90,
+      "maxLon": 10.00
+    },
+    "Holbæk": {
+      "minLat": 55.70,
+      "maxLat": 55.75,
+      "minLon": 11.63,
+      "maxLon": 11.67
+    },
+    "Frederikshavn": {
+      "minLat": 57.43,
+      "maxLat": 57.48,
+      "minLon": 10.50,
+      "maxLon": 10.55
+    },
+    "Haderslev": {
+      "minLat": 55.24,
+      "maxLat": 55.27,
+      "minLon": 9.47,
+      "maxLon": 9.52
+    },
+    "Skive": {"minLat": 56.34, "maxLat": 56.39, "minLon": 9.02, "maxLon": 9.08},
+    "Ringsted": {
+      "minLat": 55.44,
+      "maxLat": 55.48,
+      "minLon": 11.77,
+      "maxLon": 11.82
+    },
+    "Farum": {
+      "minLat": 55.80,
+      "maxLat": 55.85,
+      "minLon": 12.35,
+      "maxLon": 12.40
+    },
+    "Nykøbing Falster": {
+      "minLat": 54.76,
+      "maxLat": 54.80,
+      "minLon": 11.87,
+      "maxLon": 11.92
+    },
+    "Aabenraa": {
+      "minLat": 55.03,
+      "maxLat": 55.07,
+      "minLon": 9.42,
+      "maxLon": 9.47
+    },
+    "Kalundborg": {
+      "minLat": 55.66,
+      "maxLat": 55.70,
+      "minLon": 11.07,
+      "maxLon": 11.12
+    },
+    "Nyborg": {
+      "minLat": 55.32,
+      "maxLat": 55.36,
+      "minLon": 10.78,
+      "maxLon": 10.82
+    },
+  };
+
+  /// Returns the official city name if the given coordinates fall within one
   static String determineLocationFromCoordinates(double lat, double lon) {
-
-  //   for (var entry in danishCitiesAndAreas.entries) { //TODO
-  //     if (_isInCity(lat, lon, entry.key)) {
-  //       return entry.key; // Return official city name
-  //     }
-  //   }
-  //   return ""; // Default for unknown locations
-  // }
-
-    if (_isInCopenhagen(lat, lon)) {
-      return "København";
-    } else if (_isInAarhus(lat, lon)) {
-      return "Aarhus";
-    } else if (_isInOdense(lat, lon)) {
-      return "Odense";
-    } else if (_isInAalborg(lat, lon)) {
-      return "Aalborg";
-    } else if (_isInFrederiksberg(lat, lon)) {
-      return "Frederiksberg";
-    } else if (_isInEsbjerg(lat, lon)) {
-      return "Esbjerg";
-    } else if (_isInRanders(lat, lon)) {
-      return "Randers";
-    } else if (_isInKolding(lat, lon)) {
-      return "Kolding";
-    } else if (_isInVejle(lat, lon)) {
-      return "Vejle";
-    } else if (_isInHorsens(lat, lon)) {
-      return "Horsens";
-    } else if (_isInHerning(lat, lon)) {
-      return "Herning";
-    } else if (_isInRoskilde(lat, lon)) {
-      return "Roskilde";
-    } else if (_isInSilkeborg(lat, lon)) {
-      return "Silkeborg";
-    } else if (_isInNaestved(lat, lon)) {
-      return "Næstved";
-    } else if (_isInFredericia(lat, lon)) {
-      return "Fredericia";
-    } else if (_isInHelsingor(lat, lon)) {
-      return "Helsingør";
-    } else if (_isInViborg(lat, lon)) {
-      return "Viborg";
-    } else if (_isInKoge(lat, lon)) {
-      return "Køge";
-    } else if (_isInHolstebro(lat, lon)) {
-      return "Holstebro";
-    } else if (_isInSlagelse(lat, lon)) {
-      return "Slagelse";
-    } else if (_isInSvendborg(lat, lon)) {
-      return "Svendborg";
-    } else if (_isInSonderborg(lat, lon)) {
-      return "Sønderborg";
-    } else if (_isInHjorring(lat, lon)) {
-      return "Hjørring";
-    } else if (_isInHolbaek(lat, lon)) {
-      return "Holbæk";
-    } else if (_isInFrederikshavn(lat, lon)) {
-      return "Frederikshavn";
-    } else if (_isInHaderslev(lat, lon)) {
-      return "Haderslev";
-    } else if (_isInSkive(lat, lon)) {
-      return "Skive";
-    } else if (_isInRingsted(lat, lon)) {
-      return "Ringsted";
-    } else if (_isInFarum(lat, lon)) {
-      return "Farum";
-    } else if (_isInNykobingFalster(lat, lon)) {
-      return "Nykøbing Falster";
-    } else if (_isInAabenraa(lat, lon)) {
-      return "Aabenraa";
-    } else if (_isInKalundborg(lat, lon)) {
-      return "Kalundborg";
-    } else if (_isInNyborg(lat, lon)) {
-      return "Nyborg";
-    } else {
-      return ""; // Default for unknown or smaller locations
+    for (var entry in cityBoundingBoxes.entries) {
+      final bounds = entry.value;
+      if (lat >= bounds["minLat"]! &&
+          lat <= bounds["maxLat"]! &&
+          lon >= bounds["minLon"]! &&
+          lon <= bounds["maxLon"]!) {
+        return entry.key;
+      }
     }
-  } // Class could be improved.
-
-  static bool _isInCopenhagen(double lat, double lon) {
-    return lat >= 55.6 && lat <= 55.8 && lon >= 12.4 && lon <= 12.7; // 1,154k pop
+    return ""; // Unknown or smaller locations.
   }
 
-  static bool _isInAarhus(double lat, double lon) {
-    return lat >= 56.1 && lat <= 56.2 && lon >= 10.1 && lon <= 10.3; // 238k pop
+  /// Calculates the Levenshtein distance between two strings.
+  static int levenshtein(String s, String t) {
+    final int m = s.length;
+    final int n = t.length;
+    List<List<int>> d = List.generate(m + 1, (i) => List.filled(n + 1, 0));
+
+    for (int i = 0; i <= m; i++) {
+      d[i][0] = i;
+    }
+    for (int j = 0; j <= n; j++) {
+      d[0][j] = j;
+    }
+    for (int i = 1; i <= m; i++) {
+      for (int j = 1; j <= n; j++) {
+        int cost = s[i - 1] == t[j - 1] ? 0 : 1;
+        d[i][j] = [
+          d[i - 1][j] + 1,
+          d[i][j - 1] + 1,
+          d[i - 1][j - 1] + cost,
+        ].reduce((a, b) => a < b ? a : b);
+      }
+    }
+    return d[m][n];
   }
 
-  static bool _isInOdense(double lat, double lon) {
-    return lat >= 55.3 && lat <= 55.5 && lon >= 10.3 && lon <= 10.5; // 146k pop
+  /// Returns true if the Levenshtein distance between [a] and [b] is within [threshold].
+  static bool isFuzzyMatch(String a, String b, [int threshold = 1]) {
+    // TEST
+    return levenshtein(a, b) <= threshold;
   }
 
-  static bool _isInAalborg(double lat, double lon) {
-    return lat >= 57.0 && lat <= 57.1 && lon >= 9.8 && lon <= 10.0; // 122k pop
+  /// Normalizes a given location string to its canonical city name if possible.
+  /// For example, if a club’s location is "Copenhagen City Centre" and a synonym "copenhagen"
+  /// appears (or is a fuzzy match), this returns "København".
+  static String normalizeLocation(String location) {
+    final lowerLocation = location.toLowerCase();
+    for (var entry in danishCitiesAndAreas.entries) {
+      for (var alt in entry.value) {
+        String altLower = alt.toLowerCase();
+        // Check if the location contains the synonym or if they are a fuzzy match.
+        if (lowerLocation.contains(altLower) ||
+            isFuzzyMatch(lowerLocation, altLower)) {
+          return entry.key;
+        }
+      }
+    }
+    return location;
   }
-
-  static bool _isInFrederiksberg(double lat, double lon) {
-    return lat >= 55.66 && lat <= 55.68 && lon >= 12.50 && lon <= 12.55; // 95k pop
-  }
-
-  static bool _isInEsbjerg(double lat, double lon) {
-    return lat >= 55.45 && lat <= 55.55 && lon >= 8.40 && lon <= 8.50; // 72k pop
-  }
-
-  static bool _isInRanders(double lat, double lon) {
-    return lat >= 56.45 && lat <= 56.50 && lon >= 10.00 && lon <= 10.10; // 56k pop
-  }
-
-  static bool _isInKolding(double lat, double lon) {
-    return lat >= 55.48 && lat <= 55.54 && lon >= 9.46 && lon <= 9.52; // 55k pop
-  }
-
-  static bool _isInVejle(double lat, double lon) {
-    return lat >= 55.70 && lat <= 55.74 && lon >= 9.50 && lon <= 9.56; // 51k pop
-  }
-
-  static bool _isInHorsens(double lat, double lon) {
-    return lat >= 55.85 && lat <= 55.90 && lon >= 9.80 && lon <= 10.00; // 50k pop
-  }
-
-  static bool _isInHerning(double lat, double lon) {
-    return lat >= 56.13 && lat <= 56.18 && lon >= 8.95 && lon <= 9.05; // 45k pop
-  }
-
-  static bool _isInRoskilde(double lat, double lon) {
-    return lat >= 55.63 && lat <= 55.67 && lon >= 12.07 && lon <= 12.13; // 44k pop
-  }
-
-  static bool _isInSilkeborg(double lat, double lon) {
-    return lat >= 56.17 && lat <= 56.22 && lon >= 9.53 && lon <= 9.57; // 42k pop
-  }
-
-  static bool _isInNaestved(double lat, double lon) {
-    return lat >= 55.22 && lat <= 55.27 && lon >= 11.75 && lon <= 11.82; // 41k pop
-  }
-
-  static bool _isInFredericia(double lat, double lon) {
-    return lat >= 55.56 && lat <= 55.61 && lon >= 9.74 && lon <= 9.80; // 37k pop
-  }
-
-  static bool _isInHelsingor(double lat, double lon) {
-    return lat >= 56.02 && lat <= 56.05 && lon >= 12.60 && lon <= 12.63; // 35k pop
-  }
-
-  static bool _isInViborg(double lat, double lon) {
-    return lat >= 56.45 && lat <= 56.50 && lon >= 9.38 && lon <= 9.42; // 35k pop
-  }
-
-  static bool _isInKoge(double lat, double lon) {
-    return lat >= 55.45 && lat <= 55.50 && lon >= 12.17 && lon <= 12.22; // 34k pop
-  }
-
-  static bool _isInHolstebro(double lat, double lon) {
-    return lat >= 56.36 && lat <= 56.41 && lon >= 8.61 && lon <= 8.66; // 32k pop
-  }
-
-  static bool _isInSlagelse(double lat, double lon) {
-    return lat >= 55.40 && lat <= 55.45 && lon >= 11.34 && lon <= 11.39; // 32k pop
-  }
-
-  static bool _isInSvendborg(double lat, double lon) {
-    return lat >= 55.05 && lat <= 55.10 && lon >= 10.60 && lon <= 10.65; // 28k pop
-  }
-
-  static bool _isInSonderborg(double lat, double lon) {
-    return lat >= 54.90 && lat <= 54.95 && lon >= 9.75 && lon <= 9.80; // 27k pop
-  }
-
-  static bool _isInHjorring(double lat, double lon) {
-    return lat >= 57.45 && lat <= 57.50 && lon >= 9.90 && lon <= 10.00; // 25k pop
-  }
-
-  static bool _isInHolbaek(double lat, double lon) {
-    return lat >= 55.70 && lat <= 55.75 && lon >= 11.63 && lon <= 11.67; // 24k pop
-  }
-
-  static bool _isInFrederikshavn(double lat, double lon) {
-    return lat >= 57.43 && lat <= 57.48 && lon >= 10.50 && lon <= 10.55; // 24k pop
-  }
-
-  static bool _isInHaderslev(double lat, double lon) {
-    return lat >= 55.24 && lat <= 55.27 && lon >= 9.47 && lon <= 9.52; // 21k pop
-  }
-
-  static bool _isInSkive(double lat, double lon) {
-    return lat >= 56.34 && lat <= 56.39 && lon >= 9.02 && lon <= 9.08; // 21k pop
-  }
-
-  static bool _isInRingsted(double lat, double lon) {
-    return lat >= 55.44 && lat <= 55.48 && lon >= 11.77 && lon <= 11.82; // 20k pop
-  }
-
-  static bool _isInFarum(double lat, double lon) {
-    return lat >= 55.80 && lat <= 55.85 && lon >= 12.35 && lon <= 12.40; // 18k pop
-  }
-
-  static bool _isInNykobingFalster(double lat, double lon) {
-    return lat >= 54.76 && lat <= 54.80 && lon >= 11.87 && lon <= 11.92; // 17k pop
-  }
-
-  static bool _isInAabenraa(double lat, double lon) {
-    return lat >= 55.03 && lat <= 55.07 && lon >= 9.42 && lon <= 9.47; // 16k pop
-  }
-
-  static bool _isInKalundborg(double lat, double lon) {
-    return lat >= 55.66 && lat <= 55.70 && lon >= 11.07 && lon <= 11.12; // 16k pop
-  }
-
-  static bool _isInNyborg(double lat, double lon) {
-    return lat >= 55.32 && lat <= 55.36 && lon >= 10.78 && lon <= 10.82; // 16k pop
-  }
-
-
-
-
-
 }

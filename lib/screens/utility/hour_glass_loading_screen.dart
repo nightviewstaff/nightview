@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:nightview/constants/colors.dart';
 
-class LoadingScreen extends StatelessWidget {
+class HourGlassLoadingScreen extends StatelessWidget {
   final Color color;
   final double size;
   final double strokeWidth;
 
-  const LoadingScreen({
+  const HourGlassLoadingScreen({
     super.key,
-    required this.color,
+    this.color = primaryColor,
     this.size = 150.0,
     this.strokeWidth = 2.0,
   });

@@ -17,8 +17,8 @@ class ClubBottomSheet {
       context: context,
       initHeight: 0.40,
       // maybe more?
-      minHeight: 0,
-      maxHeight: 1,
+      minHeight: 0.41,
+      maxHeight: 0.82,
       // club.offerType == OfferType.none ? 0.3 : 1,
       headerHeight: 315,
       isSafeArea: false,

@@ -169,7 +169,7 @@ class ClubHeader extends StatelessWidget {
                       );
                     },
                     child: CircularPercentIndicator(
-                      radius: kBiggerSizeRadius,
+                      radius:kBiggerSizeRadius,
                       // radius:20.0,
                       lineWidth: 5.0,
                       // lineWidth: 3.0,
@@ -178,19 +178,13 @@ class ClubHeader extends StatelessWidget {
                       center: RichText(
                         text: TextSpan(
                           children: [
-                            TextSpan( // TODO
-                              text: Provider.of<GlobalProvider>(context,
-                                      listen: true)
-                                  .partyCount
-                                  .toString(), // Dynamically fetch partyCount
-                              style: kTextStyleH3.copyWith(
-                                  color:
-                                      primaryColor), // Style for the main number
-                            ),
-                            // (percentOfCapacity * 100).toStringAsFixed(0),                            // style: kTextStyleH3.copyWith(color: primaryColor),
-                            // style: kTextStyleP1.copyWith(color: primaryColor),
                             TextSpan(
-                              // text: '%',
+                              text: (percentOfCapacity * 100).toStringAsFixed(0),
+                              style: kTextStyleH3.copyWith(color: primaryColor),
+                              // style: kTextStyleP1.copyWith(color: primaryColor),
+                            ),
+                            TextSpan(
+                              text: '%',
                               style: kTextStyleH3.copyWith(color: white),
                               // style: kTextStyleP1.copyWith(color: white),
                             ),

@@ -90,6 +90,11 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         visitors: club.visitors,
         onTap: () {
           // TODO better visual when clickiung at some point
+          Provider.of<NightMapProvider>(context,
+              listen: false)
+              .nightMapController
+              .move(LatLng(club.lat, club.lon),
+              kSemiCloseMapZoom);
           ClubBottomSheet.showClubSheet(context: context, club: club);
         },
       ),

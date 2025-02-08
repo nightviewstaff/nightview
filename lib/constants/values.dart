@@ -27,6 +27,7 @@ const kBottomSheetDownArrowSize = 50.0;
 const kSliderHeight = 100.0;
 const kFarMapZoom = 15.0;
 const kCloseMapZoom = 18.0;
+const kSemiCloseMapZoom = 17.0;
 const kMaxMapZoom = 18.4;
 const kNewDayHour = 8;
 
