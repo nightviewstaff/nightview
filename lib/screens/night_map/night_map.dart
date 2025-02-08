@@ -12,6 +12,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:nightview/widgets/stateless/club_marker.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +70,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   }
 
 
-  void updateMarkers() { //TODO needs rework
+  void updateMarkers() { //TODO needs done soon. Should keep track of changing openingclosing state of clubs on map. IF SOON OPEN SECONDARYCOLOR! + hiding/showing when toggling
     final toggledStates = BarTypeMapToggle.toggledStates;
     // final clubDataHelper =
         // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
@@ -82,12 +83,15 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
 
   Marker _buildClubMarker(ClubData club) {
     // TODO find good place for this (other class)
+    bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
+
     return Marker(
       point: LatLng(club.lat, club.lon),
       width: 100.0,
       height: 100.0,
       child: ClubMarker(
         logo: CachedNetworkImageProvider(club.logo),
+        borderColor: isOpen ? Colors.green : Colors.red, // TODO color not working
         visitors: club.visitors,
         onTap: () {
           // TODO better visual when clickiung at some point

@@ -159,11 +159,23 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   // Logo
                   Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(club.logo),
-                        radius: kBiggerSizeRadius,
+                    children: [Container(
+                      width: kBiggerSizeRadius * 2, // Ensure correct size
+                      height: kBiggerSizeRadius * 2,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: ClubOpeningHoursFormatter.isClubOpen(club)
+                              ? primaryColor
+                              : redAccent,
+                          width: 3.0, // Border thickness
+                        ),
+                        image: DecorationImage(
+                          image: CachedNetworkImageProvider(club.logo),
+                          fit: BoxFit.cover, // Ensures the image scales correctly
+                        ),
                       ),
+                    ),
                       const SizedBox(width: kSmallSpacerValue), // Space between
                       const FavoriteClubButton(),
                     ],
