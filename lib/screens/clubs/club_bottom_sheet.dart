@@ -12,6 +12,8 @@ import 'package:nightview/widgets/stateless/club_header.dart';
 class ClubBottomSheet {
   static void showClubSheet(
       {required BuildContext context, required ClubData club}) {
+
+
     // TODO Move to seperate class
     showStickyFlexibleBottomSheet(
       context: context,

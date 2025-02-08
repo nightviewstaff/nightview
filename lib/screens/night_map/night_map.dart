@@ -8,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
@@ -90,6 +91,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         visitors: club.visitors,
         onTap: () {
           // TODO better visual when clickiung at some point
+          Provider.of<GlobalProvider>(context, listen: false).setChosenClub(club);
           ClubBottomSheet.showClubSheet(context: context, club: club);
         },
       ),

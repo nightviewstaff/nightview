@@ -16,9 +16,13 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
-      provider.setChosenClubFavoriteLocal(provider.chosenClubFavorite);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      GlobalProvider provider =
+          Provider.of<GlobalProvider>(context, listen: false);
+
+      bool isFavorite =
+          await provider.getChosenClubFavorite(); // ✅ Await the async function
+      provider.setChosenClubFavoriteLocal(isFavorite); // ✅ Update state safely
     });
   }
 
@@ -26,7 +30,8 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
+        GlobalProvider provider =
+            Provider.of<GlobalProvider>(context, listen: false);
 
         String? userId = provider.userDataHelper.currentUserId;
         String clubId = provider.chosenClub.id;
@@ -47,8 +52,11 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
         bool isFavorite = provider.chosenClubFavoriteLocal;
         if (isFavorite) {
           // Remove favorite club
-          provider.clubDataHelper.removeFavoriteClub(clubId, userId);
-          provider.setChosenClubFavoriteLocal(false);
+          bool doRemove = await _showRemoveConfirmationDialog(context);
+          if (doRemove) {
+            provider.clubDataHelper.removeFavoriteClub(clubId, userId);
+            provider.setChosenClubFavoriteLocal(false);
+          }
         } else {
           // Add favorite club
           bool doFavorite = await _showConfirmationDialog(context);
@@ -106,5 +114,47 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       ),
     );
     return doFavorite;
+  }
+
+  Future<bool> _showRemoveConfirmationDialog(BuildContext context) async {
+    bool doRemove = false;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Fjern favorit',
+          style: TextStyle(color: redAccent),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            'Er du sikker på, at du vil fjerne denne klub fra dine favoritter?',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              doRemove = false;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Fortryd',
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              doRemove = true;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Fjern',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+    return doRemove;
   }
 }

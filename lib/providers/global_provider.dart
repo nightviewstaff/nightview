@@ -1,6 +1,7 @@
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
@@ -115,20 +116,27 @@ class GlobalProvider extends ChangeNotifier {
 
   List<ImageProvider> get friendPbs => _friendPbs;
 
-  bool get chosenClubFavorite {
+  Future<bool> getChosenClubFavorite() async {
     String? userId = userDataHelper.currentUserId;
-    String clubId = chosenClub.id;
-    List<dynamic> favoritesList;
+    if (userId == null || _chosenClub == null) return false;
+
+    String clubId = _chosenClub!.id;
 
     try {
-      favoritesList = clubDataHelper.clubData[clubId]!.favorites;
+      DocumentSnapshot clubDoc =
+      await FirebaseFirestore.instance.collection('club_data').doc(clubId).get();
+
+      if (clubDoc.exists) {
+        List<dynamic> favoritesList = clubDoc['favorites'] ?? [];
+        return favoritesList.contains(userId);
+      }
     } catch (e) {
-      print(e);
-      return false;
+      print("Error fetching favorite status: $e");
     }
 
-    return favoritesList.contains(userId);
+    return false;
   }
+
 
   Color get partyStatusColor {
     switch (_partyStatusLocal) {

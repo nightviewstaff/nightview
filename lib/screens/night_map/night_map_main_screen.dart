@@ -518,6 +518,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                                 kCloseMapZoom);
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
+                                        Provider.of<GlobalProvider>(context, listen: false).setChosenClub(club);
                                         ClubBottomSheet.showClubSheet(
                                             context: context, club: club);
                                       },
@@ -973,6 +974,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           Provider.of<NightMapProvider>(context, listen: false)
               .nightMapController
               .move(LatLng(club.lat, club.lon), kCloseMapZoom);
+          Provider.of<GlobalProvider>(context, listen: false).setChosenClub(club);
           ClubBottomSheet.showClubSheet(context: context, club: club);
         },
       );
