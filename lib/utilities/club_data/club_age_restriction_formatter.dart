@@ -3,22 +3,22 @@ import '../../models/clubs/club_data.dart';
 
 class ClubAgeRestrictionFormatter {
   static String displayClubAgeRestrictionFormatted(ClubData club) {
-    return _formatAgeRestriction(club);
+    return formatAgeRestriction(club);
   }
 
-  static String displayClubAgeRestrictionFormattedShort(ClubData club) {
-    final ageRestriction = _formatAgeRestriction(club);
-    return ageRestriction == 'Aldersgrænse ikke oplyst.' ? 'N/A' : ageRestriction;
+  static String displayClubAgeRestrictionFormattedShort(ClubData club) { // Never used
+    final ageRestriction = formatAgeRestriction(club);
+    return ageRestriction == 'Aldersgrænse ikke oplyst.' ? '??+' : ageRestriction;
   }
 
   static String displayClubAgeRestrictionFormattedOnlyAge(ClubData club) {
-    final ageRestriction = _formatAgeRestriction(club);
+    final ageRestriction = formatAgeRestriction(club);
     return ageRestriction == 'Aldersgrænse ikke oplyst.' ? '' : ageRestriction;
   }
 
-  static String _formatAgeRestriction(ClubData club) {
+  static String formatAgeRestriction(ClubData club) {
     final String currentWeekday = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    final Map<String, dynamic>? openingHoursToday = club.openingHours[currentWeekday];
+    final Map<String, dynamic>? openingHoursToday = club.openingHours?[currentWeekday];
 
 
     final int currentAgeRestriction = (openingHoursToday?['ageRestriction'] as int?) ?? club.ageRestriction;
@@ -27,4 +27,16 @@ class ClubAgeRestrictionFormatter {
         ? 'Aldersgrænse ikke oplyst.'
         : '$currentAgeRestriction+';
   }
+
+  static String formatAgeRestrictionForSpecificDay(
+      ClubData club, String weekday) {
+    final Map<String, dynamic>? openingHoursForSpecificDay = club.openingHours?[weekday.toLowerCase()];
+    final int ageRestriction =
+        (openingHoursForSpecificDay?['ageRestriction'] as int?) ?? club.ageRestriction;
+
+    return ageRestriction <= 17
+        ? '??+'
+        : '$ageRestriction+';
+  }
+
 }

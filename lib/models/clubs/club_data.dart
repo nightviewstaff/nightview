@@ -16,7 +16,7 @@ class ClubData {
   final double lat;
   final double lon;
 
-  final Map<String, Map<String, dynamic>> openingHours; // can support day-specific ageRestriction
+  final Map<String, Map<String, dynamic>?>? openingHours; // can support day-specific ageRestriction
 
   final List<dynamic> favorites;
   final List<dynamic> corners;

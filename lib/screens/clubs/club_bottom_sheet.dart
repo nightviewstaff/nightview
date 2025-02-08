@@ -37,7 +37,7 @@ class ClubBottomSheet {
                 Center(
                   child: Text(
                     '${ClubNameFormatter.displayClubName(club)} har intet tilbud lige nu',
-                    style: kTextStyleP1, // Add your desired text style
+                    style: kTextStyleP3, // Add your desired text style
                   ),
                 )
               ]

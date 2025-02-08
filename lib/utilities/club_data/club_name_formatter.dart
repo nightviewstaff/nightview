@@ -15,6 +15,10 @@ class ClubNameFormatter {
     return formatClubNameShort(club.name, maxLength);
   }
 
+  static String displayClubNameClubHeader(ClubData club) {
+    return formatClubName(club.name);
+  }
+
 
   // static Text displayClubNameText(ClubData club){
   // }

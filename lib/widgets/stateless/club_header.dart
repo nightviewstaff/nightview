@@ -44,8 +44,11 @@ class ClubHeader extends StatelessWidget {
         ClubOpeningHoursFormatter.displayClubOpeningHoursFormatted(club);
     final String currentAgeRestriction =
         ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
-    final double percentOfCapacity =
+    double percentOfCapacity =
         ClubCapacityCalculator.displayCalculatedPercentageOfCapacity(club);
+    if (openingHoursToday == "Lukket i dag") {
+      percentOfCapacity = 0;
+    }
     // final distance = ClubDistanceCalculator.displayDistanceToClub(
     //   club: club,
     // userLat: userLocation.latitude,
@@ -115,47 +118,55 @@ class ClubHeader extends StatelessWidget {
                 ],
               ),
             ),
+            // Club name
             Padding(
-              padding: EdgeInsets.only(top: 0),
-              // EdgeInsets.symmetric(vertical: kSmallSpacerValue),
+              padding: EdgeInsets.symmetric(
+                horizontal: kSmallPadding,
+              ),
+              // vertical: kMainPadding),
               child: Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    // Stroked text as border.
-                    Text(
-                      formattedClubName,
-                      // TODO Move text just a bit further up
-                      style: kTextStyleH1.copyWith(
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 0.2
-                          ..color = white,
+                child: FittedBox(
+                  fit: BoxFit
+                      .scaleDown, // Prevents text overflow by scaling down
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      // Stroked text as border.
+                      Text(
+                        formattedClubName,
+                        style: kTextStyleH1.copyWith(
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 0.2
+                            ..color = white,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    // Solid text as fill.
-                    Text(
-                      formattedClubName,
-                      style: kTextStyleH1.copyWith(color: primaryColor),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                      // Solid text as fill.
+                      Text(
+                        formattedClubName,
+                        style: kTextStyleH1.copyWith(color: primaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Logo
                   Row(
                     children: [
                       CircleAvatar(
                         backgroundImage: CachedNetworkImageProvider(club.logo),
                         radius: kBiggerSizeRadius,
                       ),
-                      const SizedBox(width: kSmallSpacerValue),                      // Space between
+                      const SizedBox(width: kSmallSpacerValue), // Space between
                       const FavoriteClubButton(),
                     ],
                   ),
@@ -168,8 +179,10 @@ class ClubHeader extends StatelessWidget {
                         textStyle: kTextStyleP1,
                       );
                     },
+
+                    // Capavity
                     child: CircularPercentIndicator(
-                      radius:kBiggerSizeRadius,
+                      radius: kBiggerSizeRadius,
                       // radius:20.0,
                       lineWidth: 5.0,
                       // lineWidth: 3.0,
@@ -179,7 +192,8 @@ class ClubHeader extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: (percentOfCapacity * 100).toStringAsFixed(0),
+                              text:
+                                  (percentOfCapacity * 100).toStringAsFixed(0),
                               style: kTextStyleH3.copyWith(color: primaryColor),
                               // style: kTextStyleP1.copyWith(color: primaryColor),
                             ),
@@ -240,31 +254,61 @@ class ClubHeader extends StatelessWidget {
                       size: 20,
                     ),
                     itemBuilder: (context) {
-                      //TODO Refactor
-                      return club.openingHours.entries.where((entry) {
+                      // Print the club's name and opening hours for debugging
+                      print('${club.name} ${club.openingHours?.toString() ?? 'No opening hours available'}');
+
+                      // Filter and sort opening hours
+                      final filteredOpeningHours = club.openingHours?.entries
+                          .where((entry) {
                         final hours = entry.value as Map<String, dynamic>?;
-                        return hours != null &&
-                            hours.isNotEmpty; // Skip if closed
-                      }).map((entry) {
+
+                        // Keep only days with valid open and close times
+                        return hours != null && hours['open'] != null && hours['close'] != null;
+                      })
+                          .toList()
+                        ?..sort((a, b) {
+                        final indexA = _weekdayOrder.indexOf(a.key.toLowerCase());
+                        final indexB = _weekdayOrder.indexOf(b.key.toLowerCase());
+                        return indexA.compareTo(indexB);
+                      });
+
+                      // Handle cases where `filteredOpeningHours` is null or empty
+                      if (filteredOpeningHours == null || filteredOpeningHours.isEmpty) {
+                        return [
+                          PopupMenuItem(
+                            value: null,
+                            child: Text(
+                              'Ingen åbningstider', // "No opening hours" in Danish
+                              style: kTextStyleP1,
+                            ),
+                          ),
+                        ];
+                      }
+
+                      // Map filtered and sorted days to PopupMenuItems
+                      return filteredOpeningHours.map((entry) {
+                        final englishDay = entry.key; // The English key (e.g., "monday")
+                        final danishDay = _mapDayToDanish(englishDay); // Convert to Danish
                         final hours = entry.value;
-                        final openTime = hours['open'] ?? '00:00';
-                        final closeTime = hours['close'] ?? '00:00';
-                        final currentAgeRestriction =
-                            ClubAgeRestrictionFormatter
-                                .displayClubAgeRestrictionFormattedShort(club);
+                        final openTime = hours?['open'];
+                        final closeTime = hours?['close'];
+                        final ageRestriction = ClubAgeRestrictionFormatter.formatAgeRestrictionForSpecificDay(
+                          club,
+                          englishDay,
+                        );
+
                         return PopupMenuItem(
                           value: entry,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${entry.key[0].toUpperCase()}${entry.key.substring(1)}: $openTime - $closeTime',
+                                '$danishDay: $openTime - $closeTime',
                                 style: kTextStyleP1,
                               ),
                               Text(
-                                currentAgeRestriction,
-                                style:
-                                    kTextStyleP1.copyWith(color: primaryColor),
+                                ageRestriction,
+                                style: kTextStyleP1.copyWith(color: primaryColor),
                               ),
                             ],
                           ),
@@ -293,3 +337,26 @@ class ClubHeader extends StatelessWidget {
     );
   }
 }
+
+final List<String> _weekdayOrder = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
+String _mapDayToDanish(String englishDay) {
+  const dayMapping = {
+    'monday': 'mandag',
+    'tuesday': 'tirsdag',
+    'wednesday': 'onsdag',
+    'thursday': 'torsdag',
+    'friday': 'fredag',
+    'saturday': 'lørdag',
+    'sunday': 'søndag',
+  };
+  return dayMapping[englishDay.toLowerCase()] ?? englishDay; // Fallback to English if not found
+}
+

@@ -91,7 +91,7 @@ class ClubDataHelper with ChangeNotifier {
       if (remainingClubsNotifier.value <= 0) {
         clubDataList.value = clubData.values.toList(); // Update with all clubs
         notifyListeners();
-        print('!!!!! $clubDataList');
+        print('!!!!! ${clubDataList.toString()}');
       }
     });
 
@@ -151,14 +151,18 @@ class ClubDataHelper with ChangeNotifier {
       // Parse opening hours
       final openingHours =
           (data['opening_hours'] as Map<String, dynamic>?)?.map((day, hours) {
-                return MapEntry(day, {
-                  'open': hours?['open']?.toString() ?? '20:00',
-                  'close': hours?['close']?.toString() ?? '02:00',
-                  'ageRestriction':
-                      hours?['ageRestriction'] ?? data['age_restriction'] ?? 0,
-                });
-              }) ??
-              {};
+            // If `hours` is null or empty, return null to represent a closed day
+            if (hours == null || hours.isEmpty) {
+              return MapEntry(day, null);
+            }
+
+            return MapEntry(day, {
+              'open': hours['open']?.toString(),
+              'close': hours['close']?.toString(),
+              'ageRestriction': hours['ageRestriction'] ?? data['age_restriction'] ?? 0,
+            });
+          }) ?? {};
+
 
       // Fetch typeOfClub image URL
       final typeOfClubImageUrl = await _fetchStorageUrl(
