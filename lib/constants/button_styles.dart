@@ -18,12 +18,12 @@ const kTextFieldLookalikeButtonStyle = ButtonStyle(
   ),
   side: WidgetStatePropertyAll(
     BorderSide(
-      color: Colors.white,
+      color: white,
       width: kMainStrokeWidth,
     ),
   ),
-  backgroundColor: WidgetStatePropertyAll(Colors.black),
-  foregroundColor: WidgetStatePropertyAll(Colors.white),
+  backgroundColor: WidgetStatePropertyAll(black),
+  foregroundColor: WidgetStatePropertyAll(white),
   fixedSize: WidgetStatePropertyAll(
     Size(double.maxFinite, 60.0),
   ),
@@ -38,10 +38,10 @@ const kTransparentButtonStyle = ButtonStyle(
     ),
   ),
   side: WidgetStatePropertyAll(
-    BorderSide(color: Colors.white, width: kMainStrokeWidth),
+    BorderSide(color: white, width: kMainStrokeWidth),
   ),
-  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-  foregroundColor: WidgetStatePropertyAll(Colors.white),
+  backgroundColor: WidgetStatePropertyAll(transparent),
+  foregroundColor: WidgetStatePropertyAll(white),
 );
 
 ButtonStyle kFilledButtonStyle = ButtonStyle(
@@ -54,9 +54,9 @@ ButtonStyle kFilledButtonStyle = ButtonStyle(
   ),
   backgroundColor: WidgetStateProperty.resolveWith((states) {
     if (states.contains(WidgetState.disabled)) {
-      return Colors.grey;
+      return grey;
     }
-    return primaryColor;
+    return nightViewGreen;
   }),
-  foregroundColor: WidgetStatePropertyAll(Colors.white),
+  foregroundColor: WidgetStatePropertyAll(white),
 );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
 
 class BarTypeMapToggle extends StatefulWidget {
@@ -85,11 +86,10 @@ class _BarTypeMapToggleState extends State<BarTypeMapToggle> {
           Icon(
             isToggled
                 ?
-            FontAwesomeIcons.toggleOn // Icon for toggled state
+            defaultToggleOnIcon // Icon for toggled state
                 :
-            FontAwesomeIcons.toggleOn, // not working atm TODO
-            // FontAwesomeIcons.toggleOff,
-            color: isToggled ? primaryColor :primaryColor,
+            defaultToggleOffIcon, // not working atm TODO
+            color: isToggled ? nightViewGreen :nightViewGreen,
             // redAccent, // not working atm TOdo
             size: 30, // Icon size
           ),

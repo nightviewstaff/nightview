@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -61,8 +62,8 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
               child: Row(
                 children: [
                   FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: primaryColor,
+                    defaultMagnifyingGlassIcon,
+                    color: nightViewGreen,
                     size: 35.0,
                   ),
                   SizedBox(
@@ -74,7 +75,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                         hintText: 'Skriv navn',
                       ),
                       textCapitalization: TextCapitalization.words,
-                      cursorColor: primaryColor,
+                      cursorColor: nightViewGreen,
                       onChanged: (String input) {
                         Provider.of<SearchFriendsHelper>(context, listen: false)
                             .updateSearch(context, input);
@@ -111,7 +112,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                       ),
                       trailing: IconButton(
                         icon: FaIcon(
-                          FontAwesomeIcons.userPlus,
+                          defaultUserPlusIcon,
                         ),
                         onPressed: () {
                           FriendRequestHelper.sendFriendRequest(user.id);

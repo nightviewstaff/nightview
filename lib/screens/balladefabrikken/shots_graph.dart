@@ -31,7 +31,7 @@ class ShotsGraph extends StatelessWidget {
           ),
           Container(
             height: sepperatorWidth,
-            color: Colors.white,
+            color: white,
           ),
           Expanded(
             flex: maxPoints - points,
@@ -41,7 +41,7 @@ class ShotsGraph extends StatelessWidget {
               children: [
                 Container(
                   width: columnWidth,
-                  color: Colors.grey,
+                  color: grey,
                 ),
                 Visibility(
                   visible: points <= 5,
@@ -60,7 +60,7 @@ class ShotsGraph extends StatelessWidget {
             visible: points < 10,
             child: Container(
               height: sepperatorWidth,
-              color: Colors.white,
+              color: white,
             ),
           ),
           Expanded(
@@ -71,7 +71,7 @@ class ShotsGraph extends StatelessWidget {
               children: [
                 Container(
                   width: columnWidth,
-                  color: primaryColor,
+                  color: nightViewGreen,
                 ),
                 Visibility(
                   visible: points > 5 && points < 10,

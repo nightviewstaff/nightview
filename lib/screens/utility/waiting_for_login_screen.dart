@@ -55,7 +55,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
                   child: Text(
                     'OK',
                     style: TextStyle(
-                      color: primaryColor,
+                      color: nightViewGreen,
                     ),
                   ),
                 ),
@@ -75,7 +75,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
       body: SafeArea(
         child: Center(
           child: SpinKitPouringHourGlass(
-            color: primaryColor,
+            color: nightViewGreen,
             size: 150.0,
             strokeWidth: 2.0,
           ),

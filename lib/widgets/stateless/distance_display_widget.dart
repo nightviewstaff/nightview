@@ -21,13 +21,13 @@ class DistanceDisplayWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0), // Add padding
         child: FutureBuilder<LatLng?>(
-          future: LocationService.getUserLocation(),
+          future: LocationService.getUserLocation(), //TODO If usLocation already has come then dont fetch for a minute or so.
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text(
                 'Udregner...',
                 style: TextStyle(
-                  color: primaryColor,
+                  color: nightViewGreen,
                   fontSize: 16.0,
                 ),
               );
@@ -69,7 +69,7 @@ class DistanceDisplayWidget extends StatelessWidget {
                     userLat: userLocation.latitude,
                   ),
                   style: TextStyle(
-                    color: primaryColor,
+                    color: nightViewGreen,
                     fontSize: 16.0,
                     fontWeight: FontWeight.bold,
                     decoration:

@@ -54,9 +54,9 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
     if (filteredOpeningHours == null || filteredOpeningHours.isEmpty) {
       return PopupMenuButton(
         icon: Icon(
-          defaultDownArrow,
+          defaultChevronDownIcon,
           size: 15,
-          color: primaryColor,
+          color: nightViewGreen,
         ),
         itemBuilder: (context) => [
           PopupMenuItem(
@@ -73,9 +73,9 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
     // Build PopupMenuButton
     return PopupMenuButton<MapEntry<String, dynamic>>(
       icon: Icon(
-        defaultDownArrow,
+        defaultChevronDownIcon,
         size: 15,
-        color: primaryColor,
+        color: nightViewGreen,
       ),
       itemBuilder: (context) {
         return filteredOpeningHours.map((entry) {

@@ -143,7 +143,7 @@ class GlobalProvider extends ChangeNotifier {
       case PartyStatus.unsure:
         return grey;
       case PartyStatus.yes:
-        return primaryColor;
+        return nightViewGreen;
       case PartyStatus.no:
         return redAccent;
     }

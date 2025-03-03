@@ -52,7 +52,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                           text: 'Log ind',
                           type: LoginRegistrationButtonType.transparent,
                           textStyle:
-                              kTextStyleH3ToP1.copyWith(color: primaryColor),
+                              kTextStyleH3ToP1.copyWith(color: nightViewGreen),
                           onPressed: () {
                             Navigator.of(context).pushNamed(LoginScreen.id);
                           },
@@ -66,7 +66,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                         child: LoginRegistrationButton(
                           text: 'Opret NightView profil',
                           type: LoginRegistrationButtonType.transparent,
-                          filledColor: primaryColor,
+                          filledColor: nightViewGreen,
                           onPressed: () {
                             Navigator.of(context)
                                 .pushNamed(CreateAccountScreenOnePersonal.id);
@@ -80,7 +80,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                             icon: defaultGoogleIcon,
                             text: 'Opret med Google',
                             type: LoginRegistrationButtonType.transparent,
-                            filledColor: primaryColor,
+                            filledColor: nightViewGreen,
                             onPressed: () async {
                               await GoogleSignInHelper.handleGoogleSignIn(context);
 

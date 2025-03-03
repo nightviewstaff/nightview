@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -123,7 +124,7 @@ class SwipeCardContent extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(kMainBorderRadius),
                   border: Border.all(
-                    color: primaryColor,
+                    color: nightViewGreen,
                     width: 1,
                   ),
                 ),
@@ -158,7 +159,7 @@ class SwipeCardContent extends StatelessWidget {
                       children: [
                         Container(
                           child: IconWithText(
-                            icon: FontAwesomeIcons.xmark,
+                            icon: defaultXMarkIcon,
                             text: 'Ikke i dag',
                             onTap: () {
                               Provider.of<GlobalProvider>(context,
@@ -169,9 +170,9 @@ class SwipeCardContent extends StatelessWidget {
                           ),
                         ),
                         IconWithText(
-                          icon: FontAwesomeIcons.solidHeart,
+                          icon: defaultSolidHeartIcon,
                           text: 'Jeg er frisk!',
-                          iconColor: primaryColor,
+                          iconColor: nightViewGreen,
                           showCircle: false,
                           onTap: () {
                             Provider.of<GlobalProvider>(context, listen: false)

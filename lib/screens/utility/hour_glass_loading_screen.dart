@@ -9,7 +9,7 @@ class HourGlassLoadingScreen extends StatelessWidget {
 
   const HourGlassLoadingScreen({
     super.key,
-    this.color = primaryColor,
+    this.color = nightViewGreen,
     this.size = 150.0,
     this.strokeWidth = 2.0,
   });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -68,9 +69,9 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       },
       child: FaIcon(
         Provider.of<GlobalProvider>(context).chosenClubFavoriteLocal
-            ? FontAwesomeIcons.solidStar
-            : FontAwesomeIcons.star,
-        color: primaryColor,
+            ? defaultSolidStarIcon
+            : defaultStarIcon,
+        color: nightViewGreen,
       ),
     );
   }
@@ -83,7 +84,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       builder: (context) => AlertDialog(
         title: Text(
           'Tilføj favorit',
-          style: TextStyle(color: primaryColor),
+          style: TextStyle(color: nightViewGreen),
         ),
         content: SingleChildScrollView(
           child: Text(
@@ -107,7 +108,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
             },
             child: Text(
               'Fortsæt',
-              style: TextStyle(color: primaryColor),
+              style: TextStyle(color: nightViewGreen),
             ),
           ),
         ],
@@ -139,7 +140,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
             },
             child: Text(
               'Fortryd',
-              style: TextStyle(color: primaryColor),
+              style: TextStyle(color: nightViewGreen),
             ),
           ),
           TextButton(

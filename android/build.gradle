@@ -1,49 +1,103 @@
-buildscript {
-    ext.kotlin_version = '2.0.21'
-    ext {
-        compileSdkVersion = 34
-        targetSdkVersion  = 34
-        minimumSdkVersion = 23
-        appCompatVersion  = "1.4.2"
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.gms.google-services'
+}
 
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.15'
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode', '231206') // This shit is fucking??
+def flutterVersionName = localProperties.getProperty('flutter.versionName', '1.1')
+
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    namespace "com.nightview.nightview"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId = "com.nightview.nightview"
+        minSdkVersion 23
+        targetSdkVersion 34
+        versionCode 231322 // INCREMENT HERE WHEN UPDATE
+        versionName flutterVersionName
     }
-    subprojects { // Needed in order to avoid project config error
-        afterEvaluate { project ->
-            if (project.hasProperty('android')) {
-                project.android {
-                    if (namespace == null) {
-                        namespace project.group
-                    }
-                }
-            }
+
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures{
+        buildConfig = true
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'upload'
+            keyPassword 'nightviewKey'
+            storeFile file('C:\\Users\\Magne\\Desktop\\NV ENV\\upload-keystore.jks')
+            storePassword 'nightviewKey'
+        }
+        debug {
+            keyAlias 'upload'
+            keyPassword 'nightviewKey'
+            storeFile file('C:\\Users\\Magne\\Desktop\\NV ENV\\upload-keystore.jks')
+            storePassword 'nightviewKey'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }
 
-rootProject.buildDir = '../build'
-subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(':app')
+flutter {
+    source '../..'
 }
 
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    implementation 'androidx.core:core-ktx:1.9.0'
+
+    implementation platform('com.google.firebase:firebase-bom:33.8.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Authentication with Credential Manager
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation "androidx.credentials:credentials:1.2.2"
+    implementation "androidx.credentials:credentials-play-services-auth:1.2.2"
+    implementation "com.google.android.libraries.identity.googleid:googleid:1.1.1"
+
 }

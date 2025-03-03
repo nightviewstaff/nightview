@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -91,7 +92,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       height: 100.0,
       child: ClubMarker(
         logo: CachedNetworkImageProvider(club.logo),
-        borderColor: isOpen ? Colors.green : Colors.red, // TODO color not working
+        borderColor: isOpen ? nightViewGreen : redAccent, // TODO color not working
         visitors: club.visitors,
         onTap: () {
           // TODO better visual when clickiung at some point

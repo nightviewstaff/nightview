@@ -129,7 +129,7 @@ class _LocationPermissionCheckerScreenState
       body: SafeArea(
         child: Center(
           child: SpinKitPouringHourGlass(
-            color: primaryColor,
+            color: nightViewGreen,
             size: 150.0,
             strokeWidth: 2.0,
           ),

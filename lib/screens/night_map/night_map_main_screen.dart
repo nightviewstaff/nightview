@@ -141,7 +141,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                   child: Text(
                                     provider.partyCount.toString(),
                                     style: kTextStyleH3.copyWith(
-                                        color: primaryColor),
+                                        color: nightViewGreen),
                                   ),
                                 ),
                               ),
@@ -182,7 +182,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           text: (percentValue * 100)
                                               .toStringAsFixed(0),
                                           style: kTextStyleH3.copyWith(
-                                            color: primaryColor,
+                                            color: nightViewGreen,
                                             fontSize: 15.0,
                                           ),
                                         ),
@@ -194,7 +194,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                       ],
                                     ),
                                   ),
-                                  progressColor: secondaryColor,
+                                  progressColor: nightViewPurple,
                                   backgroundColor: white,
                                 );
                               },
@@ -222,7 +222,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                               // TODO different in future.
                               child: CircularProgressIndicator(
                                 strokeWidth: 1,
-                                color: secondaryColor,
+                                color: nightViewPurple,
                               ),
                             );
                           }
@@ -239,10 +239,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                       return IconButton(
                                         icon: FaIcon(
                                           isToggled
-                                              ? FontAwesomeIcons.doorOpen
-                                              : FontAwesomeIcons.doorClosed,
+                                              ? defaultDoorOpenIcon
+                                              : defaultDoorClosedIcon,
                                           color: isToggled
-                                              ? primaryColor
+                                              ? nightViewGreen
                                               : redAccent,
                                         ),
                                         onPressed: () {
@@ -258,7 +258,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                 ],
                                 viewBackgroundColor: black,
                                 isFullScreen: false,
-                                dividerColor: primaryColor,
+                                dividerColor: nightViewGreen,
                                 keyboardType: TextInputType.text,
                                 viewElevation: 2,
                                 viewConstraints: BoxConstraints(
@@ -274,7 +274,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                   return SearchBar(
                                     controller: controller,
                                     leading: Icon(Icons.search_sharp,
-                                        color: primaryColor),
+                                        color: nightViewGreen),
                                     hintText:
                                         "Søg efter lokationer, områder eller andet",
                                     hintStyle:
@@ -282,7 +282,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     backgroundColor: MaterialStateProperty.all(
                                         grey.shade800),
                                     shadowColor: MaterialStateProperty.all(
-                                        secondaryColor),
+                                        nightViewPurple),
                                     elevation: MaterialStateProperty.all(4),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
@@ -303,7 +303,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                                       .value -
                                                   50) {
                                         HourGlassLoadingScreen(
-                                          color: secondaryColor,
+                                          color: nightViewPurple,
                                         );
                                       }
                                       // else{
@@ -500,7 +500,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           border: Border.all(
                                             color: ClubOpeningHoursFormatter
                                                     .isClubOpen(club) //TODO secondaryColor if opening soon.
-                                                ? primaryColor
+                                                ? nightViewGreen
                                                 : redAccent,
                                             width: 3.0, // Outline thickness
                                           ),
@@ -528,7 +528,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                                 child: Text(
                                                   formattedClubLocation,
                                                   style: kTextStyleP3.copyWith(
-                                                      color: primaryColor),
+                                                      color: nightViewGreen),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -537,7 +537,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                                 //TODO position at top
                                                 formattedDistance,
                                                 style: kTextStyleP3.copyWith(
-                                                    color: primaryColor),
+                                                    color: nightViewGreen),
                                               ),
                                             ],
                                           )
@@ -584,8 +584,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                         showAllTypesOfBars(context, userLocation);
                       },
                       child: const FaIcon(
-                        defaultDownArrow,
-                        color: primaryColor,
+                        defaultChevronDownIcon,
+                        color: nightViewGreen,
                         size: 20.0,
                       ),
                     ),
@@ -664,11 +664,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: secondaryColor),
+          CircularProgressIndicator(color: nightViewPurple),
           const SizedBox(height: 16),
           Text(
             'Henter lokationer',
-            style: kTextStyleP1.copyWith(color: primaryColor),
+            style: kTextStyleP1.copyWith(color: nightViewGreen),
           ),
         ],
       ),
@@ -727,7 +727,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
         const SizedBox(width: kSmallPadding),
         Text(
           ClubTypeFormatter.formatClubType(type),
-          style: kTextStyleH4.copyWith(color: primaryColor),
+          style: kTextStyleH4.copyWith(color: nightViewGreen),
         ),
         const Spacer(),
         Text(
@@ -752,7 +752,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             shape: BoxShape.circle,
             border: Border.all(
               color: ClubOpeningHoursFormatter.isClubOpen(club)
-                  ? primaryColor
+                  ? nightViewGreen
                   : redAccent,
               width: 3.0, // Outline thickness
             ),
@@ -776,7 +776,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             Text(
               ClubAgeRestrictionFormatter
                   .displayClubAgeRestrictionFormattedOnlyAge(club),
-              style: kTextStyleP2.copyWith(color: primaryColor),
+              style: kTextStyleP2.copyWith(color: nightViewGreen),
             ),
             const SizedBox(width: kSmallPadding),
             Text(
@@ -785,7 +785,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 userLat: userLocation.latitude,
                 userLon: userLocation.longitude,
               ),
-              style: kTextStyleP2.copyWith(color: primaryColor),
+              style: kTextStyleP2.copyWith(color: nightViewGreen),
             ),
           ],
         ),
@@ -795,7 +795,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             Expanded(
               child: Text(
                 ClubNameFormatter.displayClubLocation(club),
-                style: kTextStyleP3.copyWith(color: primaryColor),
+                style: kTextStyleP3.copyWith(color: nightViewGreen),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

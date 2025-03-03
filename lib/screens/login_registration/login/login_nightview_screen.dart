@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 'Okay',
                                 style: TextStyle(
-                                  color: primaryColor,
+                                  color: nightViewGreen,
                                 ),
                               ),
                             )

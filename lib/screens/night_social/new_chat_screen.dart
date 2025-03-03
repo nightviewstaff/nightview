@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -65,8 +66,8 @@ class _NewChatScreenState extends State<NewChatScreen> {
               child: Row(
                 children: [
                   FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: primaryColor,
+                    defaultMagnifyingGlassIcon,
+                    color: nightViewGreen,
                     size: 35.0,
                   ),
                   SizedBox(
@@ -78,7 +79,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                         hintText: 'Hvem vil du chatte med?',
                       ),
                       textCapitalization: TextCapitalization.words,
-                      cursorColor: primaryColor,
+                      cursorColor: nightViewGreen,
                       onChanged: (String input) {
                         Provider.of<SearchNewChatHelper>(context, listen: false).updateSearch(input);
                       },

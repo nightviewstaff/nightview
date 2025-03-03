@@ -36,13 +36,13 @@ class LoginRegistrationConfirmButton extends StatelessWidget {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: enabled ? primaryColor : Colors.grey,
+                  color: enabled ? nightViewGreen : Colors.grey,
                   width: kMainStrokeWidth,
                 ),
               ),
               child: Icon(
                 Icons.keyboard_arrow_right,
-                color: enabled ? primaryColor : Colors.grey,
+                color: enabled ? nightViewGreen : Colors.grey,
                 weight: kMainStrokeWidth,
                 size: 40.0,
               ),

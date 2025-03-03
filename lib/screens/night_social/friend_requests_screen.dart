@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/users/friend_request.dart';
@@ -64,7 +65,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
           children: [
             Container(
               padding: EdgeInsets.all(kBigPadding),
-              color: Colors.black,
+              color: black,
               width: double.maxFinite,
               child: Text(
                 'Venneanmodninger',
@@ -76,7 +77,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
                   Provider.of<GlobalProvider>(context).friendRequestsLoaded,
               replacement: Expanded(
                 child: SpinKitPouringHourGlass(
-                  color: primaryColor,
+                  color: nightViewGreen,
                   size: 150.0,
                   strokeWidth: 2.0,
                 ),
@@ -103,7 +104,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
                               BorderRadius.circular(kMainBorderRadius),
                           side: BorderSide(
                             width: kMainStrokeWidth,
-                            color: Colors.white,
+                            color: white,
                           ),
                         ),
                         leading: CircleAvatar(
@@ -132,8 +133,8 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
                                 FriendsHelper.addFriend(request.fromId);
                               },
                               icon: FaIcon(
-                                FontAwesomeIcons.check,
-                                color: primaryColor,
+                                defaultCheckIcon,
+                                color: nightViewGreen,
                               ),
                             ),
                             IconButton(
@@ -143,8 +144,8 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
                                     .then((value) => fetchRequests());
                               },
                               icon: FaIcon(
-                                FontAwesomeIcons.x,
-                                color: Colors.redAccent,
+                                defaultXIcon,
+                                color: redAccent,
                               ),
                             )
                           ],

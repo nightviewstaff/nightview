@@ -23,7 +23,7 @@ class ClubMarker extends StatelessWidget {
             visible: backgroundLocationEnabled,
             child: Container(
               decoration: BoxDecoration(
-                color: primaryColor,
+                color: nightViewGreen,
                 borderRadius: BorderRadius.all(
                   Radius.circular(kSubtleBorderRadius),
                 ),

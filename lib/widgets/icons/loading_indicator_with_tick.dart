@@ -56,7 +56,7 @@ class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
                 child: CircularProgressIndicator(
                   strokeWidth: 2, // ✅ Thin indicator
                   valueColor: AlwaysStoppedAnimation<Color>(
-                      secondaryColor), // ✅ Subtle color
+                      nightViewPurple), // ✅ Subtle color
                 ),
               ),
             ),
@@ -89,7 +89,7 @@ class _LoadingIndicatorWithTickState extends State<LoadingIndicatorWithTick> {
               child: const Icon(
                 Icons.check_sharp, // ✅ Small tick icon
                 size: 10,
-                color: primaryColor,
+                color: nightViewGreen,
               ),
             ),
           ),

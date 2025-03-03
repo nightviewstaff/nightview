@@ -29,7 +29,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       builder: (context) => AlertDialog(
         title: Text(
           'Indløsning succesfuld!',
-          style: TextStyle(color: primaryColor),
+          style: TextStyle(color: nightViewGreen),
         ),
         content: SingleChildScrollView(
           child: Text('Du indløste ${shotsRedeemed < 10 ? '$shotsRedeemed ${shotsRedeemed == 1 ? 'shot' : 'shots'}' : '1 flaske'}'),
@@ -41,7 +41,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
             },
             child: Text(
               'OK',
-              style: TextStyle(color: primaryColor),
+              style: TextStyle(color: nightViewGreen),
             ),
           ),
         ],
@@ -56,7 +56,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       builder: (context) => AlertDialog(
         title: Text(
           'Indløsning mislykkedes',
-          style: TextStyle(color: Colors.redAccent),
+          style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text('Der skete en fejl ved indløsning af shots.\nPrøv igen senere.'),
@@ -68,7 +68,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
             },
             child: Text(
               'OK',
-              style: TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: redAccent),
             ),
           ),
         ],
@@ -100,7 +100,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                           Radius.circular(kMainBorderRadius),
                         ),
                         border: Border.all(
-                          color: Colors.white,
+                          color: white,
                           width: kFocussedStrokeWidth,
                         ),
                       ),
@@ -124,9 +124,9 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
               SliderButton(
                 width: MediaQuery.of(context).size.width * 0.8,
                 height: kSliderHeight,
-                backgroundColor: Colors.white.withAlpha(0x44),
-                baseColor: primaryColor,
-                buttonColor: primaryColor,
+                backgroundColor: white.withAlpha(0x44),
+                baseColor: nightViewGreen,
+                buttonColor: nightViewGreen,
                 vibrationFlag: true,
                 label: Text(
                   '            Indløs',
@@ -134,7 +134,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                 ),
                 alignLabel: Alignment.centerLeft,
                 icon: FaIcon(
-                  defaultDownArrow,
+                  defaultChevronDownIcon,
                   //color: Colors.black,
                   size: kSliderHeight * 0.5,
                 ),
@@ -170,7 +170,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                           );
                         } else {
                           return SpinKitPouringHourGlass(
-                            color: primaryColor,
+                            color: nightViewGreen,
                           );
                         }
                       },

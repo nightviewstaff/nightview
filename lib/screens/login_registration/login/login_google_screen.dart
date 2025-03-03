@@ -85,7 +85,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                       child: Theme(
                         data: Theme.of(context).copyWith(
                           textTheme: TextTheme(
-                            titleMedium: TextStyle(color: primaryColor),
+                            titleMedium: TextStyle(color: nightViewGreen),
                           ),
                         ),
                         child: PhoneCountryCodeDropdownButton(
@@ -264,7 +264,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                     ? grey
                     : isTooYoung
                         ? redAccent
-                        : primaryColor,
+                        : nightViewGreen,
                 fontSize: defaultFontSize,
                 fontWeight: FontWeight
                     .w600 // Make sure that this always is the same box as the others.

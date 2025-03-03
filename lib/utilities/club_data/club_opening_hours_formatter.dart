@@ -2,12 +2,12 @@ import 'package:intl/intl.dart';
 import '../../models/clubs/club_data.dart';
 
 class ClubOpeningHoursFormatter {
-  // TODO SOME CLOSETIME IS "luk" Take care.
+  // TODO SOME CLOSETIMES IS "luk" Take care.
   /// For testing you can override this value.
   static DateTime? now;
   static final String closedTodayString = "Lukket i dag.";
 
-  // static final String closedUnknownOpening = "Ukendt Lukkettid i dag.";
+  // static final String closedUnknownOpening = "Ukendt Lukketid i dag.";
 
   /// Use the overridden time if provided; otherwise, use DateTime.now().
   static DateTime get _now => now ?? DateTime.now();
@@ -60,6 +60,7 @@ class ClubOpeningHoursFormatter {
             ? closeToday
             : closeToday.add(const Duration(days: 1));
 
+        // Club is open
         if (_now.isAfter(openToday) && _now.isBefore(actualCloseToday)) {
           currentOpen = openToday;
           currentClose = actualCloseToday;
@@ -75,10 +76,8 @@ class ClubOpeningHoursFormatter {
         yesterdayHours['close'] != null) {
       // Use yesterday’s date as the base.
       final DateTime yesterday = _now.subtract(const Duration(days: 1));
-      final DateTime? openYesterday =
-          _parseTime(yesterdayHours['open'], yesterday);
-      final DateTime? closeYesterday =
-          _parseTime(yesterdayHours['close'], yesterday);
+      final DateTime? openYesterday =         _parseTime(yesterdayHours['open'], yesterday);
+      final DateTime? closeYesterday =          _parseTime(yesterdayHours['close'], yesterday);
       if (openYesterday != null && closeYesterday != null) {
         final DateTime actualCloseYesterday =
             closeYesterday.isAfter(openYesterday)
@@ -115,7 +114,7 @@ class ClubOpeningHoursFormatter {
         // For example, 90 minutes becomes 1.5 hours.
         final double remainingHours = totalMinutes / 60.0;
         // Format to one decimal place (so 30 minutes becomes 0.5)
-        final String formattedHours = remainingHours.toStringAsFixed(1);
+        final String formattedHours = remainingHours.toStringAsFixed(1); // TODO Need new look
         // Choose singular/plural based on the numeric value (you may adjust this as needed)
         final String hourText = (remainingHours == 1.0) ? 'time' : 'timer';
         return "Åben $formattedHours $hourText endnu.";
@@ -148,6 +147,7 @@ class ClubOpeningHoursFormatter {
 
   /// Checks that the time string is in the "HH:mm" format.
   static bool _isTimeValid(String time) {
+    // TODO convert to format so is valid if not when coming here.
     return RegExp(r'^\d{1,2}:\d{2}$').hasMatch(time);
   }
 

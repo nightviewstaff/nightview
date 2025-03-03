@@ -15,7 +15,7 @@ class IconWithText extends StatelessWidget {
     super.key,
     required this.icon,
     required this.text,
-    this.iconColor = primaryColor,
+    this.iconColor = nightViewGreen,
     this.textColor = white,
     this.onTap,
     this.showCircle = true, // Defaults to showing a black circle

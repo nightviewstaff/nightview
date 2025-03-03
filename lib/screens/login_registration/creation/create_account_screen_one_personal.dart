@@ -231,7 +231,7 @@ class _CreateAccountScreenOnePersonalState
                     ? grey
                     : isTooYoung
                         ? redAccent
-                        : primaryColor,
+                        : nightViewGreen,
                 fontSize: defaultFontSize,
                 fontWeight: FontWeight
                     .w600 // Make sure that this always is the same box as the others.

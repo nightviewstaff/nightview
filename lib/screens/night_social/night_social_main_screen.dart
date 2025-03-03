@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/users/chat_data.dart';
@@ -15,7 +17,6 @@ import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../../constants/colors.dart';
 
 class NightSocialMainScreen extends StatefulWidget {
   static const id = 'night_social_main_screen';
@@ -75,7 +76,7 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
                       Navigator.of(context).pushNamed(NewChatScreen.id);
                     },
                     icon: FaIcon(
-                      FontAwesomeIcons.penToSquare,
+                      defaultPenToSquareIcon,
                     ),
                   ),
                   IconButton(
@@ -83,7 +84,7 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
                       Navigator.of(context).pushNamed(FindNewFriendsScreen.id);
                     },
                     icon: FaIcon(
-                      FontAwesomeIcons.userPlus,
+                      defaultUserPlusIcon,
                     ),
                   ),
                 ],
@@ -107,7 +108,7 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
                     'Nye venneanmodninger',
                     style: kTextStyleH3,
                   ),
-                  FaIcon(FontAwesomeIcons.arrowRight),
+                  FaIcon(defaultArrowRightIcon),
                 ],
               ),
             ),

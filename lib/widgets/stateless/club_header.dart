@@ -99,7 +99,7 @@ class ClubHeader extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 vertical: kSmallSpacerValue),
                             child: FaIcon(
-                              defaultDownArrow,
+                              defaultChevronDownIcon,
                               size: kBiggerSizeRadius,
                             ),
                           ),
@@ -143,7 +143,7 @@ class ClubHeader extends StatelessWidget {
                       // Solid text as fill.
                       Text(
                         formattedClubName,
-                        style: kTextStyleH1.copyWith(color: primaryColor),
+                        style: kTextStyleH1.copyWith(color: nightViewGreen),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -166,7 +166,7 @@ class ClubHeader extends StatelessWidget {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: ClubOpeningHoursFormatter.isClubOpen(club)
-                              ? primaryColor
+                              ? nightViewGreen
                               : redAccent,
                           width: 3.0, // Border thickness
                         ),
@@ -204,7 +204,7 @@ class ClubHeader extends StatelessWidget {
                             TextSpan(
                               text:
                                   (percentOfCapacity * 100).toStringAsFixed(0),
-                              style: kTextStyleH3.copyWith(color: primaryColor),
+                              style: kTextStyleH3.copyWith(color: nightViewGreen),
                               // style: kTextStyleP1.copyWith(color: primaryColor),
                             ),
                             TextSpan(
@@ -215,7 +215,7 @@ class ClubHeader extends StatelessWidget {
                           ],
                         ),
                       ),
-                      progressColor: secondaryColor,
+                      progressColor: nightViewPurple,
                       backgroundColor: white,
                     ),
                   )
@@ -229,7 +229,7 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   Text(
                     currentAgeRestriction,
-                    style: kTextStyleP1.copyWith(color: primaryColor),
+                    style: kTextStyleP1.copyWith(color: nightViewGreen),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),

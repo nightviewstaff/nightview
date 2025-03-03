@@ -20,8 +20,8 @@ class MainBottomNavigationBar extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         BottomNavigationBar(
-          selectedItemColor: primaryColor,
-          unselectedItemColor: secondaryColor,
+          selectedItemColor: nightViewGreen,
+          unselectedItemColor: nightViewPurple,
           currentIndex: Provider
               .of<MainNavigationProvider>(context)
               .currentScreenIndex,
@@ -83,7 +83,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2, // ✅ Thin indicator
-                        valueColor: AlwaysStoppedAnimation<Color>(secondaryColor), // ✅ Subtle color
+                        valueColor: AlwaysStoppedAnimation<Color>(nightViewPurple), // ✅ Subtle color
                       ),
                     ),
                     Text(

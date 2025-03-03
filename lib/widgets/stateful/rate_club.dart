@@ -49,7 +49,7 @@ class _RateClubState extends State<RateClub>
 
     // Define color animation
     _colorAnimation =
-        ColorTween(begin: secondaryColor, end: primaryColor).animate(
+        ColorTween(begin: nightViewPurple, end: nightViewGreen).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
@@ -138,7 +138,7 @@ class _RateClubState extends State<RateClub>
           content: Text(
               'Vil du give $clubName en bedømmelse på $rating/5 stjerner?'),
           backgroundColor: black,
-          titleTextStyle: TextStyle(color: primaryColor, fontSize: 20),
+          titleTextStyle: TextStyle(color: nightViewGreen, fontSize: 20),
           contentTextStyle: TextStyle(color: white),
           actions: <Widget>[
             TextButton(
@@ -151,7 +151,7 @@ class _RateClubState extends State<RateClub>
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text('Fortsæt', style: TextStyle(color: primaryColor)),
+              child: Text('Fortsæt', style: TextStyle(color: nightViewGreen)),
             ),
           ],
         );
@@ -249,7 +249,7 @@ class _RateClubState extends State<RateClub>
                   ),
                   Icon(
                     index < clubRating ? Icons.star : Icons.star_border,
-                    color: index < clubRating ? secondaryColor : primaryColor,
+                    color: index < clubRating ? nightViewPurple : nightViewGreen,
                     size: 35,
                   ),
                 ],

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:searchfield/searchfield.dart';
 
 const kMainInputDecoration = InputDecoration(
   enabledBorder: OutlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.white,
+      color: white,
       width: kMainStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
@@ -14,7 +15,7 @@ const kMainInputDecoration = InputDecoration(
   ),
   focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.white,
+      color: white,
       width: kFocussedStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
@@ -23,7 +24,7 @@ const kMainInputDecoration = InputDecoration(
   ),
   errorBorder: OutlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.redAccent,
+      color: redAccent,
       width: kMainStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
@@ -32,7 +33,7 @@ const kMainInputDecoration = InputDecoration(
   ),
   focusedErrorBorder: OutlineInputBorder(
     borderSide: BorderSide(
-      color: Colors.redAccent,
+      color: redAccent,
       width: kFocussedStrokeWidth,
     ),
     borderRadius: BorderRadius.all(

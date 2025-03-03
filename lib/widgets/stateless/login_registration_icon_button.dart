@@ -17,7 +17,7 @@ class LoginRegistrationIconButton extends StatelessWidget {
     required this.icon,
     this.onPressed,
     this.backgroundColor = Colors.transparent,
-    this.iconColor = primaryColor,
+    this.iconColor = nightViewGreen,
     this.textColor = white,
   });
 

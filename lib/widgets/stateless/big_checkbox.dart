@@ -14,9 +14,9 @@ class BigCheckbox extends StatelessWidget {
     return Transform.scale(
       scale: 2.0,
       child: Checkbox(
-        checkColor: secondaryColor,
+        checkColor: nightViewPurple,
         value: value,
-        fillColor: WidgetStatePropertyAll(Colors.transparent),
+        fillColor: WidgetStatePropertyAll(transparent),
         side: WidgetStateBorderSide.resolveWith(
               (states) => BorderSide(
             color: white,

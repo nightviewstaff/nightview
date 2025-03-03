@@ -44,7 +44,6 @@ import 'package:provider/provider.dart';
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
-import 'services/firestore/add_club.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 void main() async {
@@ -67,7 +66,6 @@ void main() async {
   Initializator initializator = Initializator(); // Rename
   initializator.initializeNeededTasks();
 
-  AddClub addClub = AddClub();
   // addClub.addSpecificClub122(); // To add each new club manually.
   // addClub.addSpecificClub123(); // To add each new club manually.
   // addClub.addSpecificClub124(); // To add each new club manually.

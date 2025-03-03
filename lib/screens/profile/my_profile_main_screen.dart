@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/misc/biography_helper.dart';
@@ -102,7 +103,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
           children: [
             Container(
               padding: EdgeInsets.all(kMainPadding),
-              color: Colors.black,
+              color: black,
               child: Row(
                 children: [
                   Expanded(
@@ -110,7 +111,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(kMainBorderRadius),
                         border: Border.all(
-                          color: primaryColor,
+                          color: nightViewGreen,
                           width: kMainStrokeWidth,
                         ),
                       ),
@@ -121,7 +122,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           ),
                           Text('Biografi', style: kTextStyleH4),
                           Divider(
-                            color: primaryColor,
+                            color: nightViewGreen,
                             thickness: kMainStrokeWidth,
                           ),
                           Padding(
@@ -136,7 +137,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               maxLines: 6,
                               maxLength: 80,
                               textCapitalization: TextCapitalization.sentences,
-                              cursorColor: primaryColor,
+                              cursorColor: nightViewGreen,
                               decoration: InputDecoration.collapsed(
                                   hintText: 'Skriv her',
                                   hintStyle: kTextStyleP1),
@@ -169,9 +170,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               SnackBar(
                                 content: Text(
                                   'Profilbillede opdateret',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: white),
                                 ),
-                                backgroundColor: Colors.black,
+                                backgroundColor: black,
                               ),
                             );
                             String? currentUserId = Provider.of<GlobalProvider>(
@@ -184,9 +185,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 SnackBar(
                                   content: Text(
                                     'Der skete en fejl under indlæsning af profilbillede',
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: white),
                                   ),
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: black,
                                 ),
                               );
                               return;
@@ -201,19 +202,19 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               SnackBar(
                                 content: Text(
                                   'Der skete en fejl under ændring af profilbillede',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: white),
                                 ),
-                                backgroundColor: Colors.black,
+                                backgroundColor: black,
                               ),
                             );
                           }
                         },
                         style: FilledButton.styleFrom(
-                          side: BorderSide(color: primaryColor, width: 2.0),
+                          side: BorderSide(color: nightViewGreen, width: 2.0),
                           // Outline color and width
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: transparent,
                           // Transparent background
-                          foregroundColor: primaryColor, // Text and icon color
+                          foregroundColor: nightViewGreen, // Text and icon color
                         ),
                         child: Text(
                           'Skift billede',
@@ -239,7 +240,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                     'Biografi opdateret',
                                     style: kTextStyleP1,
                                   ),
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: black,
                                 ),
                               );
                             } else {
@@ -247,19 +248,19 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 SnackBar(
                                   content: Text(
                                     'Der skete en fejl under opdatering af biografi',
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: white),
                                   ),
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: black,
                                 ),
                               );
                             }
                           },
                           style: FilledButton.styleFrom(
-                            side: BorderSide(color: primaryColor, width: 2.0),
+                            side: BorderSide(color: nightViewGreen, width: 2.0),
                             // Outline color and width
-                            backgroundColor: Colors.transparent,
+                            backgroundColor: transparent,
                             // Transparent background
-                            foregroundColor: Colors.blue, // Text and icon color
+                            foregroundColor: blue, // Text and icon color
                           ),
                           child: Text(
                             'Gem',
@@ -285,8 +286,8 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                     onPressed: () {
                       Navigator.of(context).pushNamed(FindNewFriendsScreen.id);
                     },
-                    icon: FaIcon(FontAwesomeIcons.userPlus),
-                    color: primaryColor,
+                    icon: FaIcon(defaultUserPlusIcon),
+                    color: nightViewGreen,
                   ),
                 ],
               ),
@@ -296,7 +297,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
               replacement: Expanded(
                 child: SpinKitPouringHourGlass(
                   // TODO Make variable
-                  color: primaryColor,
+                  color: nightViewGreen,
                   size: 150.0,
                   strokeWidth: 2.0,
                 ),
@@ -320,7 +321,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               BorderRadius.circular(kMainBorderRadius),
                           side: BorderSide(
                             width: kMainStrokeWidth,
-                            color: primaryColor,
+                            color: nightViewGreen,
                           ),
                         ),
                         leading: CircleAvatar(

@@ -15,7 +15,7 @@ const kTextStyleH1 = TextStyle(
 const kTextStyleH1SColor = TextStyle(
   fontSize: 36.0,
   fontWeight: FontWeight.w800,
-  color: secondaryColor,
+  color: nightViewPurple,
 );
 
 //TODO Need more h4,5,6 etc
@@ -65,7 +65,7 @@ const kTextStyleP4 = TextStyle(
 
 final TextStyle linkTextStyle = TextStyle(
   fontSize: 18,
-  color: primaryColor,
+  color: nightViewGreen,
   decoration: TextDecoration.underline, // Underlined text
 );
 
@@ -118,42 +118,42 @@ const kTextStyleSwipeH1 = TextStyle(
     Shadow(
       offset: Offset(-2, -2), // Top-left
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(2, -2), // Top-right
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(-2, 2), // Bottom-left
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(2, 2), // Bottom-right
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(0, -3), // Top-center
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(0, 3), // Bottom-center
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(-3, 0), // Center-left
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
     Shadow(
       offset: Offset(3, 0), // Center-right
       blurRadius: 0,
-      color: primaryColor,
+      color: nightViewGreen,
     ),
   ],
 );

@@ -51,7 +51,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
               children: [
                 ListTile(
                   leading: FaIcon(
-                    FontAwesomeIcons.arrowRight, // MAKE Variable
+                    defaultArrowRightIcon,
                   ),
                   onTap: () {
                     Navigator.of(context).pop(); // Action for ListTile tap
@@ -65,7 +65,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                           ? defaultLocationDot
                           : defaultLocationDotLocked,
                       color: 1>2 // Same
-                          ? primaryColor
+                          ? nightViewGreen
                           : grey,
                       grade: 15.0,
                     ),
@@ -101,7 +101,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 ListTile(
                   title: Text('Skift status'),
                   leading: FaIcon(
-                    FontAwesomeIcons.solidCircleDot,
+                    defaultSolidCircleDotIcon,
                     color:
                         Provider.of<GlobalProvider>(context).partyStatusColor,
                   ),
@@ -119,7 +119,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 ListTile(
                   title: Text('Privatlivspolitik'),
                   leading: FaIcon(
-                    FontAwesomeIcons.lock,
+                    defaultLockIcon,
                   ),
                   onTap: () {
                     launchUrl(
@@ -129,7 +129,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 ListTile(
                   title: Text('Slet bruger'),
                   leading: FaIcon(
-                    FontAwesomeIcons.userSlash,
+                    defaultUserSlashIcon,
                   ),
                   onTap: () async {
                     await showDialog(
@@ -146,7 +146,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                             },
                             child: Text(
                               'Nej',
-                              style: TextStyle(color: primaryColor),
+                              style: TextStyle(color: nightViewGreen),
                             ),
                           ),
                           TextButton(
@@ -178,7 +178,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                         },
                                         child: Text(
                                           'OK',
-                                          style: TextStyle(color: primaryColor),
+                                          style: TextStyle(color: nightViewGreen),
                                         ),
                                       )
                                     ],
@@ -199,7 +199,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 ListTile(
                   title: Text('Log af'),
                   leading: FaIcon(
-                    FontAwesomeIcons.rightFromBracket,
+                    defaultRightFromBracketIcon,
                   ),
                   onTap: () async {
                     await Provider.of<GlobalProvider>(context, listen: false)

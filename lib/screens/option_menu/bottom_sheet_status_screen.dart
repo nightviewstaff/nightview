@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // TODO Remove all imports and make them uniqe values in constatnt
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +20,8 @@ class BottomSheetStatusScreen extends StatelessWidget {
             ListTile(
               title: Text('Skal i byen i aften'),
               leading: FaIcon(
-                FontAwesomeIcons.solidCircleDot,
-                color: primaryColor,
+                defaultSolidCircleDotIcon,
+                color: nightViewGreen,
               ),
               onTap: () {
                 Provider.of<GlobalProvider>(context, listen: false)
@@ -34,7 +35,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
             ListTile(
               title: Text('Skal ikke i byen i aften'),
               leading: FaIcon(
-                FontAwesomeIcons.solidCircleDot,
+                defaultSolidCircleDotIcon,
                 color: redAccent,
               ),
               onTap: () {
@@ -49,7 +50,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
             ListTile(
               title: Text('Usikker'),
               leading: FaIcon(
-                FontAwesomeIcons.solidCircleDot,
+                defaultSolidCircleDotIcon,
                 color: grey,
               ),
               onTap: () {

@@ -22,11 +22,11 @@ class CustomTextField {
       decoration: kMainInputDecoration.copyWith(
         hintText: controller!.text.isEmpty ? hintText : null,
         hintStyle: TextStyle(
-          color: controller.text.isNotEmpty ? primaryColor : grey,
+          color: controller.text.isNotEmpty ? nightViewGreen : grey,
         ),
       ),
       style: TextStyle(
-        color: controller.text.isNotEmpty ? primaryColor : grey,
+        color: controller.text.isNotEmpty ? nightViewGreen : grey,
         fontSize: defaultFontSize,
         fontWeight: FontWeight.w600,
       ),

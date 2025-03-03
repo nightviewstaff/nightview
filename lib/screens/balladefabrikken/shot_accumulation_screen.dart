@@ -61,7 +61,7 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                                 },
                                 child: Text(
                                   'Okay',
-                                  style: TextStyle(color: primaryColor),
+                                  style: TextStyle(color: nightViewGreen),
                                 ),
                               ),
                             ],
@@ -77,7 +77,7 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
             Padding(
               padding: const EdgeInsets.all(kMainPadding),
               child: Divider(
-                color: Colors.white,
+                color: white,
                 thickness: kMainStrokeWidth,
               ),
             ),
@@ -105,8 +105,8 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                 value: Provider.of<BalladefabrikkenProvider>(context).redemtionCount.roundToDouble(),
                 min: 0,
                 max: 10,
-                activeColor: primaryColor,
-                inactiveColor: Colors.grey,
+                activeColor: nightViewGreen,
+                inactiveColor: grey,
               ),
             ),
             Padding(

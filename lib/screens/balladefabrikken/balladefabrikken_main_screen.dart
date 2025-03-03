@@ -45,9 +45,9 @@ class _BalladefabrikkenMainScreenState
           SnackBar(
             content: Text(
               'Der skete en fejl under indlæsning af nye referencer',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: white),
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: black,
           ),
         );
       } else if (newRedemtions > 0) {
@@ -61,9 +61,9 @@ class _BalladefabrikkenMainScreenState
           SnackBar(
             content: Text(
               msg,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: white),
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: black,
           ),
         );
       }
@@ -82,9 +82,9 @@ class _BalladefabrikkenMainScreenState
           SnackBar(
             content: Text(
               'Kunne ikke indlæse optjente point',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: white),
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: black,
           ),
         );
       }
@@ -265,7 +265,7 @@ class _BalladefabrikkenMainScreenState
                             text: 'NightView', // Styled text
                             style: kTextStyleH2.copyWith(
                               color:
-                                  primaryColor, // Change to your desired color
+                                  nightViewGreen, // Change to your desired color
                             ),
                           ),
                           TextSpan(
@@ -292,7 +292,7 @@ class _BalladefabrikkenMainScreenState
                                   text:
                                       '${Provider.of<BalladefabrikkenProvider>(context).points}', // Points amount
                                   style: kTextStyleH3.copyWith(
-                                    color: primaryColor,
+                                    color: nightViewGreen,
                                     // Desired color for the points
                                     fontWeight: FontWeight
                                         .bold, // Optional: Make it bold
@@ -401,9 +401,9 @@ class _BalladefabrikkenMainScreenState
                                       SnackBar(
                                         content: Text(
                                           'Delekode blev ikke uploadet til skyen. Prøv igen.',
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(color: white),
                                         ),
-                                        backgroundColor: Colors.black,
+                                        backgroundColor: black,
                                       ),
                                     );
                                     return;
@@ -413,9 +413,9 @@ class _BalladefabrikkenMainScreenState
                                     SnackBar(
                                       content: Text(
                                         'Der skete en fejl under åbning af SMS-applikation',
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: white),
                                       ),
-                                      backgroundColor: Colors.black,
+                                      backgroundColor: black,
                                     ),
                                   );
                                 }
@@ -494,7 +494,7 @@ class _BalladefabrikkenMainScreenState
                           );
                         }
                       } else {
-                        return SpinKitPouringHourGlass(color: primaryColor);
+                        return SpinKitPouringHourGlass(color: nightViewGreen);
                       }
                     },
                   ),

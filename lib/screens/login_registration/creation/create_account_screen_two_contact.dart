@@ -78,7 +78,7 @@ class _CreateAccountScreenTwoContactState
                       child: Theme(
                         data: Theme.of(context).copyWith(
                           textTheme: TextTheme(
-                            titleMedium: TextStyle(color: primaryColor),
+                            titleMedium: TextStyle(color: nightViewGreen),
                           ),
                         ),
                         child: PhoneCountryCodeDropdownButton(

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -89,7 +90,7 @@ class _NightSocialConversationScreenState
                   borderRadius: BorderRadius.circular(kMainBorderRadius),
                   border: Border.all(
                     width: kMainStrokeWidth,
-                    color: Colors.white,
+                    color: white,
                   ),
                 ),
                 child: Row(
@@ -146,7 +147,7 @@ class _NightSocialConversationScreenState
                               child: Text(
                                 message.getReadableTimestamp(),
                                 style: kTextStyleP2.copyWith(
-                                  color: Colors.grey,
+                                  color: grey,
                                 ),
                               ),
                             ),
@@ -170,14 +171,14 @@ class _NightSocialConversationScreenState
                                   ),
                                   border: Border.all(
                                     width: kMainStrokeWidth,
-                                    color: bySelf ? primaryColor : Colors.white,
+                                    color: bySelf ? nightViewGreen : white,
                                   ),
                                 ),
                                 child: Text(
                                   message.message,
                                   softWrap: true,
                                   style: kTextStyleP1.copyWith(
-                                    color: bySelf ? primaryColor : Colors.white,
+                                    color: bySelf ? nightViewGreen : white,
                                   ),
                                 ),
                               ),
@@ -200,7 +201,7 @@ class _NightSocialConversationScreenState
                             decoration: kMainInputDecoration.copyWith(
                               hintText: 'Aa',
                             ),
-                            cursorColor: primaryColor,
+                            cursorColor: nightViewGreen,
                             textCapitalization: TextCapitalization.sentences,
                           ),
                         ),
@@ -231,16 +232,16 @@ class _NightSocialConversationScreenState
                                 SnackBar(
                                   content: Text(
                                     'Kunne ikke sende besked',
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: white),
                                   ),
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: black,
                                 ),
                               );
                             }
                           },
                           child: FaIcon(
-                            FontAwesomeIcons.solidPaperPlane,
-                            color: primaryColor,
+                            defaultSolidPaperPlaneIcon,
+                            color: nightViewGreen,
                           ),
                         )
                       ],
