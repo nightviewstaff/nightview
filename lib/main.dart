@@ -1,3 +1,5 @@
+// import 'services/firestore/add_club.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,25 +18,24 @@ import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.
 import 'package:nightview/screens/balladefabrikken/shot_accumulation_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_redemption_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
-import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_service_screen.dart';
-import 'package:nightview/screens/login_registration/login/login_google_screen.dart';
-import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
+import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
-import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
-import 'package:nightview/screens/login_registration/todo/registration_confirmation_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
+import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
+import 'package:nightview/screens/login_registration/login/login_google_screen.dart';
+import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
+import 'package:nightview/screens/login_registration/todo/registration_confirmation_screen.dart';
 import 'package:nightview/screens/main_screen.dart';
-import 'package:nightview/screens/night_social/new_chat_screen.dart';
-import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/night_social/friend_requests_screen.dart';
+import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
-
+import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 // import 'package:nightview/screens/preferences/preferences_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_main_screen.dart';
@@ -44,8 +45,6 @@ import 'package:provider/provider.dart';
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
-import 'services/firestore/add_club.dart';
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +66,7 @@ void main() async {
   Initializator initializator = Initializator(); // Rename
   initializator.initializeNeededTasks();
 
-  AddClub addClub = AddClub();
+  // AddClub addClub = AddClub();
   // addClub.addSpecificClub122(); // To add each new club manually.
   // addClub.addSpecificClub123(); // To add each new club manually.
   // addClub.addSpecificClub124(); // To add each new club manually.
