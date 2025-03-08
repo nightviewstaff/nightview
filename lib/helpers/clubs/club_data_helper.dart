@@ -246,7 +246,7 @@ class ClubDataHelper with ChangeNotifier {
     try {
       return await _storageRef.child(path).getDownloadURL();
     } catch (e) {
-      print('Error fetching Logo for $path. Using fallback.');
+      print('Error fetching Logo for $path. Displaying typeOfClubLogo.');
       return fallback;
     }
   }
