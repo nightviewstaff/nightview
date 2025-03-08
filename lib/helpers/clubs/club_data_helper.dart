@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
 
@@ -45,57 +47,53 @@ class ClubDataHelper with ChangeNotifier {
   }
 
   Future<void> loadInitialClubs() async {
-    final positionFuture = Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    final snapshotFuture = _firestore.collection('club_data').get();
+    try {
+      final positionFuture = LocationService.getUserLocation();
+      final snapshotFuture = _firestore.collection('club_data').get();
+      final results = await Future.wait([positionFuture, snapshotFuture]);
+      final userPosition = results[0] as LatLng?;
+      final snapshot = results[1] as QuerySnapshot<Map<String, dynamic>>;
 
-    final results = await Future.wait([positionFuture, snapshotFuture]);
-    final userPosition = results[0] as Position;
-    final snapshot = results[1] as QuerySnapshot<Map<String, dynamic>>;
+      remainingClubsNotifier.value = snapshot.docs.length;
+      totalAmountOfClubs = snapshot.docs.length;
 
-    remainingClubsNotifier.value = snapshot.docs.length;
-    totalAmountOfClubs = snapshot.docs.length;
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
 
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final lat = data['lat'];
+        final lon = data['lon'];
 
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
-      final lat = data['lat'];
-      final lon = data['lon'];
+        final distance = Geolocator.distanceBetween(
+          userPosition?.latitude ?? 0,
+          userPosition?.longitude ?? 0,
+          lat,
+          lon,
+        );
 
-      final distance = Geolocator.distanceBetween(
-        userPosition.latitude,
-        userPosition.longitude,
-        lat,
-        lon,
-      );
-
-      if (distance <= 50000) {
-        nearbyClubs.add(doc);
-      } else {
-        remainingClubs.add(doc);
+        if (distance <= 50000) {
+          nearbyClubs.add(doc);
+        } else {
+          remainingClubs.add(doc);
+        }
       }
+
+      // Step 1: Process nearby clubs immediately
+      remainingNearbyClubsNotifier.value = nearbyClubs.length;
+      await _processClubsInBatches(nearbyClubs);
+      print('!!!!! $clubDataList');
+      remainingClubsNotifier.addListener(() {
+        if (remainingClubsNotifier.value <= 0) {
+          clubDataList.value =
+              clubData.values.toList(); // Update with all clubs
+          notifyListeners();
+          print('!!!!! ${clubDataList.toString()}');
+        }
+      });
+    } catch (e) {
+      print('❌ Error loading initial clubs: $e');
     }
-
-    // Step 1: Process nearby clubs immediately
-    remainingNearbyClubsNotifier.value = nearbyClubs.length;
-    await _processClubsInBatches(nearbyClubs);
-
-    // Step 2: Lazy load remaining clubs in the background
-    Future.microtask(() => _processClubsInBatches(remainingClubs));
-
-    // Step 3: Listen for remaining clubs count and update when done
-    remainingClubsNotifier.addListener(() {
-      if (remainingClubsNotifier.value <= 0) {
-        clubDataList.value = clubData.values.toList(); // Update with all clubs
-        notifyListeners();
-        print('!!!!! ${clubDataList.toString()}');
-      }
-    });
-
-    notifyListeners();
   }
 
   Future<void> _processClubsInBatches(
@@ -125,6 +123,7 @@ class ClubDataHelper with ChangeNotifier {
         }
       }));
     }
+
     stopwatch.stop();
     print('Total time: ${stopwatch.elapsed}'); // Test
   }
@@ -151,18 +150,19 @@ class ClubDataHelper with ChangeNotifier {
       // Parse opening hours
       final openingHours =
           (data['opening_hours'] as Map<String, dynamic>?)?.map((day, hours) {
-            // If `hours` is null or empty, return null to represent a closed day
-            if (hours == null || hours.isEmpty) {
-              return MapEntry(day, null);
-            }
+                // If `hours` is null or empty, return null to represent a closed day
+                if (hours == null || hours.isEmpty) {
+                  return MapEntry(day, null);
+                }
 
-            return MapEntry(day, {
-              'open': hours['open']?.toString(),
-              'close': hours['close']?.toString(),
-              'ageRestriction': hours['ageRestriction'] ?? data['age_restriction'] ?? 0,
-            });
-          }) ?? {};
-
+                return MapEntry(day, {
+                  'open': hours['open']?.toString(),
+                  'close': hours['close']?.toString(),
+                  'ageRestriction':
+                      hours['ageRestriction'] ?? data['age_restriction'] ?? 0,
+                });
+              }) ??
+              {};
 
       // Fetch typeOfClub image URL
       final typeOfClubImageUrl = await _fetchStorageUrl(

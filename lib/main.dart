@@ -1,5 +1,3 @@
-// import 'services/firestore/add_club.dart';
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +34,6 @@ import 'package:nightview/screens/night_social/friend_requests_screen.dart';
 import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
-// import 'package:nightview/screens/preferences/preferences_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_main_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
@@ -56,85 +53,14 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // final notificationManager = NotificationManager();
-  // await notificationManager.initLocalNotifications();
-  // notificationManager.scheduleWeeklyNotifications();
-
-  // FirestoreUpdater firestoreUpdater = FirestoreUpdater();
-  // firestoreUpdater.updateFirestoreData(); // Updates Firestore.
-
-  Initializator initializator = Initializator(); // Rename
+  Initializator initializator = Initializator();
   initializator.initializeNeededTasks();
 
-  // AddClub addClub = AddClub();
-  // addClub.addSpecificClub122(); // To add each new club manually.
-  // addClub.addSpecificClub123(); // To add each new club manually.
-  // addClub.addSpecificClub124(); // To add each new club manually.
-  // addClub.addSpecificClub125(); // To add each new club manually.
-  // addClub.addSpecificClub126(); // To add each new club manually.
-  // addClub.addSpecificClub127(); // To add each new club manually.
-  // addClub.addSpecificClub128(); // To add each new club manually.
-  // addClub.addSpecificClub129(); // To add each new club manually.
-  // addClub.addSpecificClub130(); // To add each new club manually.
-  // addClub.addSpecificClub131(); // To add each new club manually.
-
-  // NotificationService().showNotification();
-  // await FMTC.instance('mapCache').manage.createAsync();
-
-  runApp(NightViewApp());
+  runApp(const NightViewApp());
 }
 
-class NightViewApp extends StatefulWidget {
+class NightViewApp extends StatelessWidget {
   const NightViewApp({super.key});
-
-  @override
-  State<NightViewApp> createState() => _NightViewAppState();
-}
-
-class _NightViewAppState extends State<NightViewApp> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initAppTrackingTransparency();
-    });
-  }
-
-  Future<void> _initAppTrackingTransparency() async {
-    // IOS needs to b moved TODO
-    // Ensure tracking authorization is requested properly
-    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
-
-    if (status == TrackingStatus.notDetermined) {
-      // Show custom explainer dialog
-      await _showCustomTrackingDialog();
-      // Delay slightly before showing the system dialog
-      await Future.delayed(const Duration(milliseconds: 1000));
-      // Request tracking authorization
-      await AppTrackingTransparency.requestTrackingAuthorization();
-    }
-  }
-
-  Future<void> _showCustomTrackingDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Location tracking'),
-          content: const Text(
-            'We use your location data to improve the app for you and others.'
-            'You can opt out at any time in your device settings.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +70,7 @@ class _NightViewAppState extends State<NightViewApp> {
           create: (_) => NightMapProvider(),
         ),
         ChangeNotifierProvider<GlobalProvider>(
-          create: (_) => GlobalProvider(), // When is an instance created?
+          create: (_) => GlobalProvider(),
         ),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
@@ -178,14 +104,11 @@ class _NightViewAppState extends State<NightViewApp> {
           ),
         ),
         initialRoute: WaitingForLoginScreen.id,
-        // SwipeMainScreen.id, // TEST swipescreen
         routes: {
           LoginScreen.id: (context) => const LoginScreen(),
           LoginOrCreateAccountScreen.id: (context) =>
               const LoginOrCreateAccountScreen(),
-
           LoginGoogleScreen.id: (context) => const LoginGoogleScreen(),
-
           CreateAccountScreenTwoContact.id: (context) =>
               const CreateAccountScreenTwoContact(),
           RegistrationConfirmationScreen.id: (context) =>
@@ -199,7 +122,6 @@ class _NightViewAppState extends State<NightViewApp> {
               const NightSocialConversationScreen(),
           MainScreen.id: (context) => const MainScreen(),
           PreferencesMainScreen.id: (context) => const PreferencesMainScreen(),
-          // NUserd
           SwipeMainScreen.id: (context) => const SwipeMainScreen(),
           WaitingForLoginScreen.id: (context) => const WaitingForLoginScreen(),
           NightMapMainOfferScreen.id: (context) =>

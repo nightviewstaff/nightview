@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -16,7 +16,6 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
-import 'package:nightview/screens/night_map/search_bar_TODO/custom_search_bar.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
@@ -26,7 +25,6 @@ import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../utilities/club_data/club_name_formatter.dart';
 
@@ -53,10 +51,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   @override
   void initState() {
     super.initState();
-    clubDataHelper = Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
     _searchController = SearchController();
   }
-
 
   @override
   void dispose() {
@@ -249,8 +247,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           // Toggle the state.
                                           _toggleNotifier.value =
                                               !_toggleNotifier.value;
-                                         _searchController.text = " "; //TODO Best way to refresh for now.
-                                         _searchController.text = "";
+                                          _searchController.text =
+                                              " "; //TODO Best way to refresh for now.
+                                          _searchController.text = "";
                                         },
                                       );
                                     },
@@ -278,13 +277,13 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     hintText:
                                         "Søg efter lokationer, områder eller andet",
                                     hintStyle:
-                                        MaterialStateProperty.all(kTextStyleP2),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        grey.shade800),
-                                    shadowColor: MaterialStateProperty.all(
-                                        secondaryColor),
-                                    elevation: MaterialStateProperty.all(4),
-                                    shape: MaterialStateProperty.all(
+                                        WidgetStateProperty.all(kTextStyleP2),
+                                    backgroundColor:
+                                        WidgetStateProperty.all(grey.shade800),
+                                    shadowColor:
+                                        WidgetStateProperty.all(secondaryColor),
+                                    elevation: WidgetStateProperty.all(4),
+                                    shape: WidgetStateProperty.all(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
@@ -499,7 +498,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           // Ensure the outline is circular
                                           border: Border.all(
                                             color: ClubOpeningHoursFormatter
-                                                    .isClubOpen(club) //TODO secondaryColor if opening soon.
+                                                    .isClubOpen(
+                                                        club) //TODO secondaryColor if opening soon.
                                                 ? primaryColor
                                                 : redAccent,
                                             width: 3.0, // Outline thickness
@@ -762,7 +762,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             ),
           ),
         ),
-
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
