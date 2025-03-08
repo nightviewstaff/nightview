@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';
+import 'package:nightview/screens/night_map/night_map_main_screen.dart';
+import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 import 'package:nightview/screens/option_menu/side_sheet_main_screen.dart';
-import 'package:nightview/widgets/main_bottom_navigation_bar.dart';
+import 'package:nightview/widgets/stateless/main_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -19,19 +21,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   @override
   void initState() {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-
       String? currentUserId;
       do {
-        currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
-        await Future.delayed(Duration(milliseconds: 100));
+        currentUserId = Provider.of<GlobalProvider>(context, listen: false)
+            .userDataHelper
+            .currentUserId;
+        await Future.delayed(Duration(milliseconds: 10));
       } while (currentUserId == null);
-      String? pbUrl = await ProfilePictureHelper.getProfilePicture(currentUserId);
-      Provider.of<GlobalProvider>(context, listen: false).setProfilePicture(pbUrl);
+      String? pbUrl =
+          await ProfilePictureHelper.getProfilePicture(currentUserId);
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setProfilePicture(pbUrl);
     });
 
     super.initState();
@@ -39,6 +42,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final navigationProvider = Provider.of<MainNavigationProvider>(context);
+
+    print('currentScreenIndex: ${navigationProvider.currentScreenIndex}');
+    print(
+        'currentUserId: ${Provider.of<GlobalProvider>(context).userDataHelper.currentUserId}');
+
     return Scaffold(
       appBar: AppBar(
         // title: Text(Provider.of<MainNavigationProvider>(context)
@@ -77,14 +86,20 @@ class _MainScreenState extends State<MainScreen> {
                 padding: const EdgeInsets.only(right: kSmallSpacerValue),
                 child: CircleAvatar(
                   backgroundImage:
-                      Provider.of<GlobalProvider>(context).profilePicture,
+                      context.watch<GlobalProvider>().profilePicture,
                 ),
               ),
             ),
           ),
         ],
       ),
-      body: Provider.of<MainNavigationProvider>(context).currentScreen,
+      body: IndexedStack(
+        index: navigationProvider.currentScreenIndex,
+        children: [
+          const NightMapMainScreen(),
+          NightSocialMainScreen(),
+        ],
+      ),
       bottomNavigationBar: MainBottomNavigationBar(),
     );
   }

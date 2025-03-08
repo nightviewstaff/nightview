@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/widgets/login_registration_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionAlwaysScreen extends StatefulWidget {
@@ -28,11 +28,13 @@ class _LocationPermissionAlwaysScreen
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GlobalProvider>(context, listen: false)
+      Provider.of<NightMapProvider>(context, listen: false)
           .locationHelper
           .requestLocationPermission();
 
-      checkPermission();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        checkPermission();
+      });
     });
   }
 
@@ -52,16 +54,15 @@ class _LocationPermissionAlwaysScreen
     }
   }
 
-  void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
-        .locationHelper
-        .hasPermissionAlways
-        .then((hasPermission) {
-      if (hasPermission) {
-        Navigator.of(context)
-            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
-      }
-    });
+  Future<void> checkPermission() async {
+    bool hasPermission = await Provider.of<NightMapProvider>(context, listen: false)
+    .locationHelper
+    .requestLocationPermission();
+
+    if(hasPermission){
+      Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+    }
+
   }
 
   @override
@@ -94,7 +95,7 @@ class _LocationPermissionAlwaysScreen
             text: buttonText,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
-              Provider.of<GlobalProvider>(context, listen: false)
+              Provider.of<NightMapProvider>(context, listen: false)
                   .locationHelper
                   .openAppSettings();
             },
@@ -129,7 +130,7 @@ class _LocationPermissionAlwaysScreen
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad altid';
+      return '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
     }
 
     if (Platform.isIOS) {

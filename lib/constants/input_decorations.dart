@@ -8,7 +8,7 @@ const kMainInputDecoration = InputDecoration(
       width: kMainStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
-      Radius.circular(20.0),
+      Radius.circular(kNormalSizeRadius),
     ),
   ),
   focusedBorder: OutlineInputBorder(
@@ -17,7 +17,7 @@ const kMainInputDecoration = InputDecoration(
       width: kFocussedStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
-      Radius.circular(20.0),
+      Radius.circular(kNormalSizeRadius),
     ),
   ),
   errorBorder: OutlineInputBorder(
@@ -26,7 +26,7 @@ const kMainInputDecoration = InputDecoration(
       width: kMainStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
-      Radius.circular(20.0),
+      Radius.circular(kNormalSizeRadius),
     ),
   ),
   focusedErrorBorder: OutlineInputBorder(
@@ -35,11 +35,7 @@ const kMainInputDecoration = InputDecoration(
       width: kFocussedStrokeWidth,
     ),
     borderRadius: BorderRadius.all(
-      Radius.circular(20.0),
+      Radius.circular(kNormalSizeRadius),
     ),
   ),
-);
-
-const kSearchInputDecoration = InputDecoration(
-  border: InputBorder.none,
 );

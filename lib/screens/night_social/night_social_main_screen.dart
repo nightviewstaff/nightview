@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/chat_data.dart';
-import 'package:nightview/models/chat_subscriber.dart';
-import 'package:nightview/models/friend_request_helper.dart';
+import 'package:nightview/models/users/chat_data.dart';
+import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
+import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/night_social/friend_requests_screen.dart';
@@ -31,12 +31,13 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false).subscribeToUsersChats(context);
       checkPending();
     });
+Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
 
-    super.initState();
   }
 
   @override

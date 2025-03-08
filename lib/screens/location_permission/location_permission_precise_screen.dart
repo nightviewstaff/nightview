@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/widgets/login_registration_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionPreciseScreen extends StatefulWidget {
@@ -48,7 +48,7 @@ class _LocationPermissionPreciseScreenState
   }
 
   void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
+    Provider.of<NightMapProvider>(context, listen: false)
         .locationHelper
         .hasPermissionPrecise
         .then((hasPermission) async {
@@ -89,7 +89,7 @@ class _LocationPermissionPreciseScreenState
             text: buttonText,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
-              Provider.of<GlobalProvider>(context, listen: false)
+              Provider.of<NightMapProvider>(context, listen: false)
                   .locationHelper
                   .openAppSettings();
             },

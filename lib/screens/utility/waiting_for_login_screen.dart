@@ -1,17 +1,16 @@
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/screens/login_registration/login_registration_option_screen.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WaitingForLoginScreen extends StatefulWidget {
   static const id = 'waiting_for_login_screen';
-
   const WaitingForLoginScreen({super.key});
-
   @override
   State<WaitingForLoginScreen> createState() => _WaitingForLoginScreenState();
 }
@@ -20,24 +19,72 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? mail = prefs.getString('mail');
-      String? password = prefs.getString('password');
+      // First check app tracking transparency
+      await _initAppTrackingTransparency();
 
-      if (mail == null || password == null) {
+      // Then proceed with the login flow
+      await _checkLoginStatus();
+    });
+  }
+
+  Future<void> _initAppTrackingTransparency() async {
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+
+    if (status == TrackingStatus.notDetermined) {
+      // Show custom explainer dialog
+      await _showCustomTrackingDialog();
+      // Delay slightly before showing the system dialog
+      await Future.delayed(const Duration(milliseconds: 1000));
+      // Request tracking authorization
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
+
+  Future<void> _showCustomTrackingDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Location tracking'),
+          content: const Text(
+            'We use your location data to improve the app for you and others. '
+            'You can opt out at any time in your device settings.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? mail = prefs.getString('mail');
+    String? password = prefs.getString('password');
+
+    if (mail == null || password == null) {
+      if (mounted) {
         Navigator.of(context)
-            .pushReplacementNamed(LoginRegistrationOptionScreen.id);
-      } else {
-        bool loginSucces = await Provider.of<GlobalProvider>(context, listen: false)
-            .userDataHelper
-            .loginUser(mail: mail, password: password);
+            .pushReplacementNamed(LoginOrCreateAccountScreen.id);
+      }
+    } else {
+      bool loginSuccess =
+          await Provider.of<GlobalProvider>(context, listen: false)
+              .userDataHelper
+              .loginUser(mail: mail, password: password);
 
-        if (loginSucces) {
+      if (loginSuccess) {
+        if (mounted) {
           Navigator.of(context)
               .pushReplacementNamed(LocationPermissionCheckerScreen.id);
-        } else {
+        }
+      } else {
+        if (mounted) {
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -63,10 +110,10 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
             ),
           );
           Navigator.of(context)
-              .pushReplacementNamed(LoginRegistrationOptionScreen.id);
+              .pushReplacementNamed(LoginOrCreateAccountScreen.id);
         }
       }
-    });
+    }
   }
 
   @override

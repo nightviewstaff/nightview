@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 
 class LoginRegistrationProvider extends ChangeNotifier {
-
   bool _stayLoggedIn = true;
   CountryCode _countryCode = CountryCode.dk;
   bool _canContinue = false;
@@ -18,15 +17,23 @@ class LoginRegistrationProvider extends ChangeNotifier {
   String? _password;
 
   bool get stayLoggedIn => _stayLoggedIn;
+
   CountryCode get countryCode => _countryCode;
+
   bool get canContinue => _canContinue;
+
   String get verificationCode => _verificationCode;
 
   String get firstName => _firstName!;
+
   String get lastName => _lastName!;
+
   DateTime get birthDate => _birthDate;
+
   String get mail => _mail!;
+
   String get phone => _phone!;
+
   String get password => _password!;
 
   void toggleStayLogin() {
@@ -46,11 +53,9 @@ class LoginRegistrationProvider extends ChangeNotifier {
 
   void generateRandomVerificationCode() {
     _verificationCode = Random().nextInt(10000).toString().padLeft(4, '0');
+    print('CODE : $_verificationCode'); // TEST
     notifyListeners();
   }
-
-
-
 
   void setFirstName(String newValue) {
     _firstName = newValue;
@@ -81,5 +86,4 @@ class LoginRegistrationProvider extends ChangeNotifier {
     _password = newValue;
     notifyListeners();
   }
-
 }

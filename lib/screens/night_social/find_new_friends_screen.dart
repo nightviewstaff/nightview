@@ -4,9 +4,9 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/friend_request_helper.dart';
-import 'package:nightview/models/search_friends_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
+import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,8 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
 
   ImageProvider getPb(int index) {
     try {
-      return Provider.of<SearchFriendsHelper>(context, listen: false).searchedUserPbs[index];
+      return Provider.of<SearchFriendsHelper>(context, listen: false)
+          .searchedUserPbs[index];
     } catch (e) {
       return AssetImage('images/user_pb.jpg');
     }
@@ -70,9 +71,6 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                   ),
                   Expanded(
                     child: TextField(
-                      decoration: kSearchInputDecoration.copyWith(
-                        hintText: 'Skriv navn',
-                      ),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
                       onChanged: (String input) {
@@ -91,8 +89,10 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                         .searchedUsers[index];
                     return ListTile(
                       onTap: () {
-                        Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(user);
-                        Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
+                        Provider.of<GlobalProvider>(context, listen: false)
+                            .setChosenProfile(user);
+                        Navigator.of(context)
+                            .pushNamed(OtherProfileMainScreen.id);
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius:
@@ -115,7 +115,9 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                         ),
                         onPressed: () {
                           FriendRequestHelper.sendFriendRequest(user.id);
-                          Provider.of<SearchFriendsHelper>(context, listen: false).removeFromSearch(index);
+                          Provider.of<SearchFriendsHelper>(context,
+                                  listen: false)
+                              .removeFromSearch(index);
                         },
                       ),
                     );

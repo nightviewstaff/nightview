@@ -1,16 +1,18 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/biography_helper.dart';
-import 'package:nightview/models/friend_request_helper.dart';
-import 'package:nightview/models/friends_helper.dart';
-import 'package:nightview/models/location_data.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/misc/biography_helper.dart';
+import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/models/users/location_data.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:provider/provider.dart';
 
 class OtherProfileMainScreen extends StatefulWidget {
@@ -40,7 +42,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
       }
 
       biographyController.text = await BiographyHelper.getBiography(userId!) ?? '';
-      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!).then((url) => url == null ? null : NetworkImage(url));
+      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!).then((url) => url == null ? null : CachedNetworkImageProvider(url));
       setState(() {});
 
       await checkFriendButton();
@@ -70,7 +72,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           checkFriendButton();
         },
         style: kFilledButtonStyle.copyWith(
-          backgroundColor: MaterialStatePropertyAll(Colors.redAccent),
+          backgroundColor: WidgetStatePropertyAll(Colors.redAccent),
         ),
         child: Padding(
           padding: EdgeInsets.all(kMainPadding),
@@ -79,7 +81,8 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             children: [
               Text(
                 'Fjern ven',
-                style: kTextStyleH2,
+                style: kTextStyleH4
+                ,
               ),
               FaIcon(FontAwesomeIcons.userMinus),
             ],
@@ -115,6 +118,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
     } else if (locationData.private) {
       text = 'Denne person deler ikke sin lokation';
     } else {
+      // Add check for more than 100 days ago
       String? clubName = Provider.of<GlobalProvider>(context, listen: false).clubDataHelper.clubData[locationData.clubId]?.name;
       if (clubName == null) {
         text = 'Kunne ikke finde seneste lokation';
@@ -159,7 +163,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(kMainBorderRadius),
                         border: Border.all(
-                          color: Colors.white,
+                          color: primaryColor,
                           width: kMainStrokeWidth,
                         ),
                       ),
@@ -173,7 +177,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             style: kTextStyleH3,
                           ),
                           Divider(
-                            color: Colors.white,
+                            color: primaryColor,
                             thickness: kMainStrokeWidth,
                           ),
                           Padding(
@@ -204,14 +208,14 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                       ),
                       Visibility(
                         visible: isFriend,
-                        child: FilledButton(
+                        child: FilledButton( // Change color
                           onPressed: () async {
                             UserData? user = Provider.of<GlobalProvider>(context, listen: false).chosenProfile;
                             if (user == null) {
                               return;
                             }
                             LocationData? lastLocation =
-                                await Provider.of<GlobalProvider>(context, listen: false).locationHelper.getLastPositionOfUser(user.id);
+                                await Provider.of<NightMapProvider>(context, listen: false).locationHelper.getLastPositionOfUser(user.id);
                             await showDialog(
                               context: context,
                               barrierDismissible: false,
@@ -223,7 +227,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             children: [
                               Text(
                                 'Find',
-                                style: kTextStyleH3,
+                                style: kTextStyleP1,
                               ),
                               SizedBox(
                                 width: kSmallSpacerValue,

@@ -1,13 +1,13 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/location_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/misc/location_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
@@ -34,7 +34,7 @@ class _LocationPermissionCheckerScreenState
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       LocationHelper locationHelper =
-          Provider.of<GlobalProvider>(context, listen: false).locationHelper;
+          Provider.of<NightMapProvider>(context, listen: false).locationHelper;
 
       if (backgroundLocationEnabled) {
         // Opt out not implemented
@@ -49,7 +49,7 @@ class _LocationPermissionCheckerScreenState
                 if (!Provider
                     .of<GlobalProvider>(context, listen: false)
                     .locationOptOut) {
-                  await locationHelper.activateBackgroundLocation();
+                  // await locationHelper.activateBackgroundLocation();
                   locationHelper.startLocationService();
                 }
                 UserData? currentUserData;
@@ -79,8 +79,8 @@ class _LocationPermissionCheckerScreenState
           if (await locationHelper.serviceEnabled) {
             if (await locationHelper.hasPermissionWhileInUse) {
               if (await locationHelper.hasPermissionPrecise) {
-                await locationHelper.activateBackgroundLocation();
-                locationHelper.startBackgroundLocationService();
+                // await locationHelper.activateBackgroundLocation();
+                // locationHelper.startBackgroundLocationService();
                 UserData? currentUserData;
                 do {
                   currentUserData = Provider

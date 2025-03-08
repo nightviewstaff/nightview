@@ -1,15 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/biography_helper.dart';
-import 'package:nightview/models/friends_helper.dart';
-import 'package:nightview/models/profile_picture_helper.dart';
-import 'package:nightview/models/user_data.dart';
+import 'package:nightview/helpers/users/misc/biography_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
@@ -25,19 +23,20 @@ class MyProfileMainScreen extends StatefulWidget {
 }
 
 class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
-
   final TextEditingController biographyController = TextEditingController();
 
   @override
   void initState() {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-
-      String? currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+      String? currentUserId =
+          Provider.of<GlobalProvider>(context, listen: false)
+              .userDataHelper
+              .currentUserId;
       if (currentUserId == null) {
         biographyController.text = "";
       }
-      biographyController.text = await BiographyHelper.getBiography(currentUserId!) ?? "";
+      biographyController.text =
+          await BiographyHelper.getBiography(currentUserId!) ?? "";
 
       List<String> friendIds = await FriendsHelper.getAllFriendIds();
       List<UserData> friends = List.empty(growable: true);
@@ -52,7 +51,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
       }
 
       Provider.of<GlobalProvider>(context, listen: false).setFriends(friends);
-      
+
       Provider.of<GlobalProvider>(context, listen: false).clearFriendPbs();
       for (String id in friendIds) {
         String? url = await ProfilePictureHelper.getProfilePicture(id);
@@ -67,12 +66,13 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
   void dispose() {
     super.dispose();
   }
-  
+
   ImageProvider getPb(int index) {
     try {
-      return Provider.of<GlobalProvider>(context, listen: false).friendPbs[index];
+      return Provider.of<GlobalProvider>(context, listen: false)
+          .friendPbs[index];
     } catch (e) {
-      return const AssetImage('images/user_pb.jpg');
+      return const AssetImage('images/user_pb.jpg'); // make variable
     }
   }
 
@@ -80,7 +80,22 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profil'),
+        title: const Text('Profil'),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 18.0),
+            // Todo figure out the diff and make some sort of variable / system
+            child: GestureDetector(
+              onTap: () {
+                // TODO: Handle profile picture click
+              },
+              child: CircleAvatar(
+                backgroundImage: const AssetImage('images/flags/dk.png'),
+                radius: 15.0,
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -95,7 +110,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(kMainBorderRadius),
                         border: Border.all(
-                          color: Colors.white,
+                          color: primaryColor,
                           width: kMainStrokeWidth,
                         ),
                       ),
@@ -104,12 +119,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           SizedBox(
                             height: kSmallSpacerValue,
                           ),
-                          Text(
-                            'Biografi',
-                            style: kTextStyleH3,
-                          ),
+                          Text('Biografi', style: kTextStyleH4),
                           Divider(
-                            color: Colors.white,
+                            color: primaryColor,
                             thickness: kMainStrokeWidth,
                           ),
                           Padding(
@@ -121,13 +133,14 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                     .setBiographyChanged(true);
                               },
                               controller: biographyController,
-                              maxLines: 8,
-                              maxLength: 100,
+                              maxLines: 6,
+                              maxLength: 80,
                               textCapitalization: TextCapitalization.sentences,
                               cursorColor: primaryColor,
                               decoration: InputDecoration.collapsed(
-                                hintText: 'Skriv her',
-                              ),
+                                  hintText: 'Skriv her',
+                                  hintStyle: kTextStyleP1),
+                              style: kTextStyleP1,
                             ),
                           ),
                         ],
@@ -141,8 +154,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        backgroundImage: Provider.of<GlobalProvider>(context).profilePicture,
-                        radius: 60.0,
+                        backgroundImage:
+                            Provider.of<GlobalProvider>(context).profilePicture,
+                        radius: 70.0,
                       ),
                       SizedBox(
                         height: kNormalSpacerValue,
@@ -160,7 +174,11 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 backgroundColor: Colors.black,
                               ),
                             );
-                            String? currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+                            String? currentUserId = Provider.of<GlobalProvider>(
+                                    context,
+                                    listen: false)
+                                .userDataHelper
+                                .currentUserId;
                             if (currentUserId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -173,8 +191,11 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               );
                               return;
                             }
-                            String? pbUrl = await ProfilePictureHelper.getProfilePicture(currentUserId);
-                            Provider.of<GlobalProvider>(context, listen: false).setProfilePicture(pbUrl);
+                            String? pbUrl =
+                                await ProfilePictureHelper.getProfilePicture(
+                                    currentUserId);
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setProfilePicture(pbUrl);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -187,10 +208,16 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                             );
                           }
                         },
-                        style: kTransparentButtonStyle,
+                        style: FilledButton.styleFrom(
+                          side: BorderSide(color: primaryColor, width: 2.0),
+                          // Outline color and width
+                          backgroundColor: Colors.transparent,
+                          // Transparent background
+                          foregroundColor: primaryColor, // Text and icon color
+                        ),
                         child: Text(
-                          'Skift PB',
-                          style: kTextStyleH3,
+                          'Skift billede',
+                          style: kTextStyleP1,
                         ),
                       ),
                       SizedBox(
@@ -201,16 +228,16 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                             .biographyChanged,
                         child: FilledButton(
                           onPressed: () async {
-
-                            if (await BiographyHelper.setBiography(biographyController.text)) {
-
-                              Provider.of<GlobalProvider>(context, listen: false)
+                            if (await BiographyHelper.setBiography(
+                                biographyController.text)) {
+                              Provider.of<GlobalProvider>(context,
+                                      listen: false)
                                   .setBiographyChanged(false);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     'Biografi opdateret',
-                                    style: TextStyle(color: Colors.white),
+                                    style: kTextStyleP1,
                                   ),
                                   backgroundColor: Colors.black,
                                 ),
@@ -227,10 +254,16 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               );
                             }
                           },
-                          style: kTransparentButtonStyle,
+                          style: FilledButton.styleFrom(
+                            side: BorderSide(color: primaryColor, width: 2.0),
+                            // Outline color and width
+                            backgroundColor: Colors.transparent,
+                            // Transparent background
+                            foregroundColor: Colors.blue, // Text and icon color
+                          ),
                           child: Text(
                             'Gem',
-                            style: kTextStyleH3,
+                            style: kTextStyleP1,
                           ),
                         ),
                       ),
@@ -246,13 +279,14 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                 children: [
                   Text(
                     'Venner',
-                    style: kTextStyleH1,
+                    style: kTextStyleH2,
                   ),
                   IconButton(
                     onPressed: () {
                       Navigator.of(context).pushNamed(FindNewFriendsScreen.id);
                     },
                     icon: FaIcon(FontAwesomeIcons.userPlus),
+                    color: primaryColor,
                   ),
                 ],
               ),
@@ -261,6 +295,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
               visible: Provider.of<GlobalProvider>(context).friends.isNotEmpty,
               replacement: Expanded(
                 child: SpinKitPouringHourGlass(
+                  // TODO Make variable
                   color: primaryColor,
                   size: 150.0,
                   strokeWidth: 2.0,
@@ -275,15 +310,17 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
 
                       return ListTile(
                         onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(user);
-                          Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(user);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(kMainBorderRadius),
                           side: BorderSide(
                             width: kMainStrokeWidth,
-                            color: Colors.white,
+                            color: primaryColor,
                           ),
                         ),
                         leading: CircleAvatar(
@@ -292,6 +329,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                         title: Text(
                           '${user.firstName} ${user.lastName}',
                           overflow: TextOverflow.ellipsis,
+                          style: kTextStyleP1,
                         ),
                       );
                     },

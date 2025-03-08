@@ -1,165 +1,146 @@
 import 'dart:async';
 
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/club_data.dart';
-import 'package:nightview/models/club_data_helper.dart';
+import 'package:nightview/helpers/clubs/club_data_helper.dart';
+import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/custom_marker_layer.dart';
-import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
-import 'package:nightview/widgets/club_header.dart';
-import 'package:nightview/widgets/club_marker.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
+import 'package:nightview/widgets/icons/bar_type_toggle.dart';
+import 'package:nightview/widgets/stateless/club_marker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../models/user_data.dart';
 
 class NightMap extends StatefulWidget {
   const NightMap({super.key});
 
   @override
-  State<NightMap> createState() => _NightMapState();
+  State<NightMap> createState() => NightMapState();
 }
 
-class _NightMapState extends State<NightMap> {
+class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true; // ✅ Keeps it alive when switching tabs
+
   ClubDataHelper clubDataHelper = ClubDataHelper();
-  Map<String, Marker> markers = {};
-  Map<String, Marker> friendMarkers = {};
-  StreamSubscription? _friendLocationSubscription;
+
+  // Map<String, Marker> friendMarkers = {};
+  final Map<String, Marker> _markers = {};
+  final ValueNotifier<int> _updateTrigger =
+      ValueNotifier(0); // Simple update trigger
+  StreamSubscription<ClubData>? _clubStreamSub;
+
+  final ValueNotifier<Map<String, Marker>> _markersNotifier = ValueNotifier({});
+  // final ValueNotifier<Map<String, Marker>> _friendMarkersNotifier =      ValueNotifier({});
+  // StreamSubscription? _friendLocationSubscription; // what is this?
 
   @override
   void initState() {
+    // How often is init called?
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final helper = context.read<NightMapProvider>().clubDataHelper;
+      // helper.loadInitialClubs();
+      _clubStreamSub = helper.initialClubStream.listen(_addMarker);
+      _initializeUserLocation();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider
-          .of<GlobalProvider>(context, listen: false)
-          .locationHelper
-          .getCurrentPosition()
-          .then((position) {
-        Provider
-            .of<GlobalProvider>(context, listen: false)
-            .nightMapController
-            .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
-      });
-
-      // _listenToFriendLocations(); Not needed now
+      // _initializeMarkers();
     });
+  }
+
+  void _addMarker(ClubData club) {
+    _markers[club.id] = _buildClubMarker(club);
+    _updateTrigger.value++; // Trigger UI update
+  }
+
+  void _initializeUserLocation() async {
+    final position = await Provider.of<NightMapProvider>(context, listen: false)
+        .locationHelper
+        .getCurrentPosition();
+
+    Provider.of<NightMapProvider>(context, listen: false)
+        .nightMapController
+        .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
+  }
+
+  void updateMarkers() {
+    //TODO needs done soon. Should keep track of changing openingclosing state of clubs on map. IF SOON OPEN SECONDARYCOLOR! + hiding/showing when toggling
+    final toggledStates = BarTypeMapToggle.toggledStates;
+    // final clubDataHelper =
+    // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    // _markersNotifier.value = {
+    // for (var club in clubDataHelper.clubData.values)
+    //   if (toggledStates[club.typeOfClub] ?? true)
+    //     club.id: _buildClubMarker(club)
+    // };
+  }
+
+  Marker _buildClubMarker(ClubData club) {
+    // TODO find good place for this (other class)
+    bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
+
+    return Marker(
+      point: LatLng(club.lat, club.lon),
+      width: 100.0,
+      height: 100.0,
+      child: ClubMarker(
+        logo: CachedNetworkImageProvider(club.logo),
+        borderColor:
+            isOpen ? Colors.green : Colors.red, // TODO color not working
+        visitors: club.visitors,
+        onTap: () {
+          // TODO better visual when clickiung at some point
+          Provider.of<GlobalProvider>(context, listen: false)
+              .setChosenClub(club);
+          ClubBottomSheet.showClubSheet(context: context, club: club);
+        },
+      ),
+    );
   }
 
   @override
   void dispose() {
-    _friendLocationSubscription?.cancel();
+    //TODO who calls dispose and what does it do?    // _friendLocationSubscription?.cancel();    // _friendMarkersNotifier.dispose();
+    _clubStreamSub?.cancel();
+    _markersNotifier.dispose();
     super.dispose();
-  }
-
-  void _listenToFriendLocations() async {
-    final _firestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-
-    if (_auth.currentUser == null) {
-      return;
-    }
-
-    String userId = _auth.currentUser!.uid;
-    _friendLocationSubscription = _firestore
-        .collection('friends')
-        .doc(userId)
-        .snapshots()
-        .listen((snapshot) async {
-      if (snapshot.exists) {
-        Map<String, dynamic> data = snapshot.data()!;
-        List<String> friendIds = data.keys.where((k) => data[k] == true)
-            .toList();
-
-        List<UserData> friendsData = [];
-        for (String friendId in friendIds) {
-          DocumentSnapshot<Map<String, dynamic>> friendSnapshot =
-          await _firestore.collection('user_data').doc(friendId).get();
-          if (friendSnapshot.exists) {
-            friendsData.add(UserData.fromMap(friendSnapshot.data()!));
-          }
-        }
-
-        setState(() {
-          friendMarkers = {
-            for (var friend in friendsData)
-              friend.id: Marker(
-                point: LatLng(friend.lastPositionLat, friend.lastPositionLon),
-                width: 80.0,
-                height: 100.0,
-                builder: (context) =>
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(friend.firstName,
-                          style: TextStyle(color: secondaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.0,
-                          ),
-                        ),
-                        Icon(
-                          Icons.person_pin_circle,
-                          color: primaryColor,
-                          size: 40.0,
-                        ),
-                      ],
-                    ),)
-          };
-        });
-      }
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    Provider
-        .of<GlobalProvider>(context)
-        .clubDataHelper
-        .clubData
-        .forEach((id, club) {
-      markers[id] = Marker(
-        point: LatLng(club.lat, club.lon),
-        width: 100.0,
-        height: 100.0,
-        builder: (context) =>
-            ClubMarker(
-              logo: CachedNetworkImageProvider(club.logo),
-              visitors: club.visitors,
-              onTap: () {
-                Provider.of<GlobalProvider>(context, listen: false)
-                    .setChosenClub(club);
-                showClubSheet(club: club);
-              },
-            ),
-      );
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAlive
+    final nightMapProvider =
+        Provider.of<NightMapProvider>(context, listen: false);
+
+    print('Building NightMap');
     return FlutterMap(
-      mapController: Provider
-          .of<GlobalProvider>(context)
-          .nightMapController,
+      mapController: nightMapProvider.nightMapController,
       options: MapOptions(
-        center: LatLng(56.15607303880937, 10.208507572938238),
-        zoom: kFarMapZoom,
-        maxZoom: kMaxMapZoom,
+        initialCenter: LatLng(55.6761, 12.5683), // Copenhagen coordinates
+        initialZoom: kFarMapZoom, // Adjust the zoom level as needed
       ),
-      nonRotatedChildren: [
+      children: [
+        TileLayer(
+          urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.nightview.nightview',
+          // tileProvider:
+        ),
+        CurrentLocationLayer(),
+        ValueListenableBuilder<int>(
+          valueListenable: _updateTrigger,
+          builder: (context, _, __) {
+            return CustomMarkerLayer(
+              markers: _markers.values.toList(),
+            );
+          },
+        ),
         RichAttributionWidget(
           attributions: [
             TextSourceAttribution(
@@ -167,80 +148,18 @@ class _NightMapState extends State<NightMap> {
               onTap: () {
                 launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
               },
-            )
+            ),
           ],
-        ),
-      ],
-      children: [
-        TileLayer(
-          urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.nightview.nightview',
-        ),
-        CurrentLocationLayer(),
-        CustomMarkerLayer(
-          rotate: true,
-          markers: [...markers.values, ...friendMarkers.values],
         ),
       ],
     );
   }
 
-  void showClubSheet({required ClubData club}) {
-    showStickyFlexibleBottomSheet(
-      context: context,
-      initHeight: 0.35,
-      // maybe more?
-      minHeight: 0,
-      maxHeight: 1,
-      // club.offerType == OfferType.none ? 0.3 : 1,
-      headerHeight: 315,
-      isSafeArea: false,
-      bottomSheetColor: Colors.transparent,
-      decoration: BoxDecoration(
-        color: Colors.black,
-      ),
-      headerBuilder: (context, offset) =>
-          ClubHeader(
-            club: club,
-          ),
-      bodyBuilder: (context, offset) =>
-          SliverChildListDelegate(
-            club.offerType == OfferType.none
-                ? []
-                : [
-              Container(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  'Hovedtilbud',
-                  style: kTextStyleH1,
-                ),
-              ),
-              SizedBox(
-                height: kNormalSpacerValue,
-              ),
-              GestureDetector(
-                onTap: () {
-                  if (club.offerType == OfferType.redeemable) {
-                    Navigator.of(context)
-                        .pushNamed(NightMapMainOfferScreen.id);
-                  }
-                },
-                child: AspectRatio(
-                  aspectRatio: 1.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(club.mainOfferImg!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    alignment: Alignment.bottomRight,
-                    padding: EdgeInsets.all(kMainPadding),
-                  ),
-                ),
-              ),
-            ],
-          ),
-    );
+  void moveToPosition(LatLng position) {
+    Provider.of<NightMapProvider>(context, listen: false)
+        .nightMapController
+        .move(
+            LatLng(position.latitude, position.longitude), // TODO
+            kCloseMapZoom);
   }
 }

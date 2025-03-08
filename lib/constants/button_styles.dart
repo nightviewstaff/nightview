@@ -3,7 +3,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
 
 const kLoginRegistrationButtonStyle = ButtonStyle(
-  shape: MaterialStatePropertyAll(
+  shape: WidgetStatePropertyAll(
     RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(kMainBorderRadius)),
     ),
@@ -11,52 +11,52 @@ const kLoginRegistrationButtonStyle = ButtonStyle(
 );
 
 const kTextFieldLookalikeButtonStyle = ButtonStyle(
-  shape: MaterialStatePropertyAll(
+  shape: WidgetStatePropertyAll(
     RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(kMainBorderRadius)),
     ),
   ),
-  side: MaterialStatePropertyAll(
+  side: WidgetStatePropertyAll(
     BorderSide(
       color: Colors.white,
       width: kMainStrokeWidth,
     ),
   ),
-  backgroundColor: MaterialStatePropertyAll(Colors.black),
-  foregroundColor: MaterialStatePropertyAll(Colors.white),
-  fixedSize: MaterialStatePropertyAll(
+  backgroundColor: WidgetStatePropertyAll(Colors.black),
+  foregroundColor: WidgetStatePropertyAll(Colors.white),
+  fixedSize: WidgetStatePropertyAll(
     Size(double.maxFinite, 60.0),
   ),
 );
 
 const kTransparentButtonStyle = ButtonStyle(
-  shape: MaterialStatePropertyAll(
+  shape: WidgetStatePropertyAll(
     RoundedRectangleBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(kMainBorderRadius),
       ),
     ),
   ),
-  side: MaterialStatePropertyAll(
+  side: WidgetStatePropertyAll(
     BorderSide(color: Colors.white, width: kMainStrokeWidth),
   ),
-  backgroundColor: MaterialStatePropertyAll(Colors.transparent),
-  foregroundColor: MaterialStatePropertyAll(Colors.white),
+  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+  foregroundColor: WidgetStatePropertyAll(Colors.white),
 );
 
 ButtonStyle kFilledButtonStyle = ButtonStyle(
-  shape: MaterialStatePropertyAll(
+  shape: WidgetStatePropertyAll(
     RoundedRectangleBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(kMainBorderRadius),
       ),
     ),
   ),
-  backgroundColor: MaterialStateProperty.resolveWith((states) {
-    if (states.contains(MaterialState.disabled)) {
+  backgroundColor: WidgetStateProperty.resolveWith((states) {
+    if (states.contains(WidgetState.disabled)) {
       return Colors.grey;
     }
     return primaryColor;
   }),
-  foregroundColor: MaterialStatePropertyAll(Colors.white),
+  foregroundColor: WidgetStatePropertyAll(Colors.white),
 );

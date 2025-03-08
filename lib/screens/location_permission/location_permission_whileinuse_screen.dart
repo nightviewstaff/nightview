@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/widgets/login_registration_button.dart';
-import 'package:nightview/widgets/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionWhileInUseScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _LocationPermissionWhileInUseScreen
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GlobalProvider>(context, listen: false)
+      Provider.of<NightMapProvider>(context, listen: false)
           .locationHelper
           .requestLocationPermission();
 
@@ -54,7 +54,7 @@ class _LocationPermissionWhileInUseScreen
   }
 
   void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
+    Provider.of<NightMapProvider>(context, listen: false)
         .locationHelper
         .hasPermissionWhileInUse
         .then((hasPermission) {
@@ -95,7 +95,7 @@ class _LocationPermissionWhileInUseScreen
             text: buttonText,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
-              Provider.of<GlobalProvider>(context, listen: false)
+              Provider.of<NightMapProvider>(context, listen: false)
                   .locationHelper
                   .openAppSettings();
             },
@@ -106,7 +106,7 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get buttonText {
-    // KAN KUN VÆRE IOS
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
       return 'Åbn app-indstillinger';
@@ -120,7 +120,7 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get guideText {
-    // KAN KUN VÆRE IOS
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
       return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad kun, mens appen er i brug';

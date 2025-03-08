@@ -48,7 +48,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: kMainPadding),
                     child: Text(
-                      '${points} gratis shots',
+                      '$points gratis shots',
                       style: kTextStyleH2,
                     ),
                   ),
@@ -78,7 +78,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: kMainPadding),
                     child: Text(
-                      '${points} shots',
+                      '$points shots',
                       style: kTextStyleH2,
                     ),
                   ),

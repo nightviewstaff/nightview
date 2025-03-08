@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/models/custom_data_helper.dart';
-import 'package:nightview/models/referral_points_helper.dart';
+import 'package:nightview/helpers/misc/custom_data_helper.dart';
+import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:slider_button/slider_button.dart';
@@ -81,7 +82,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(kCardPadding),
+          padding: EdgeInsets.all(kBiggerPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -109,7 +110,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(kMainPadding),
                         child: Text(
-                          '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske'}',
+                          Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske',
                           style: kTextStyleH2,
                         ),
                       ),
@@ -133,7 +134,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                 ),
                 alignLabel: Alignment.centerLeft,
                 icon: FaIcon(
-                  FontAwesomeIcons.chevronRight,
+                  defaultDownArrow,
                   //color: Colors.black,
                   size: kSliderHeight * 0.5,
                 ),
@@ -149,6 +150,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                     await showErrorDialog();
                   }
                   Navigator.of(context).pop();
+                  return null;
                 },
               ),
               SizedBox(
