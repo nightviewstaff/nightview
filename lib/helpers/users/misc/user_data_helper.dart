@@ -1,17 +1,11 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
-
 import 'package:nightview/models/users/user_data.dart';
-import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/widgets/stateless/complete_profile_screen.dart';
 
-class UserDataHelper { // Needs refac
+class UserDataHelper {
+  // Needs refac
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
@@ -229,69 +223,4 @@ class UserDataHelper { // Needs refac
       return 0; // Return 0 or handle the error as needed
     }
   }
-
-  Future<void> _handleGoogleSignIn(BuildContext context) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
-
-    if (Platform.isIOS || Platform.isMacOS) {
-      googleSignIn = GoogleSignIn(
-        clientId: "YOUR_CLIENT_ID.apps.googleusercontent.com",
-        scopes: ['email'],
-      );
-    }
-
-    try {
-      final GoogleSignInAccount? googleAccount = await googleSignIn.signIn();
-
-      if (googleAccount != null) {
-        // Create an instance of UserDataHelper
-        final userDataHelper = UserDataHelper();
-
-        // await _uploadProfilePicture(googleAccount.photoUrl); //TODO
-
-        // Extract the user's information
-        final firstName = googleAccount.displayName?.split(' ').first ?? "";
-        final lastName = googleAccount.displayName?.split(' ').last ?? "";
-        final mail = googleAccount.email;
-
-        final doesUserExist = userDataHelper.doesMailExist(mail: mail);
-        if (!doesUserExist) {
-          // Redirect to a profile completion screen if additional data is needed
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => CompleteProfileScreen(
-                firstName: firstName,
-                lastName: lastName,
-                mail: mail,
-                onProfileComplete: (phone, birthdateDay, birthdateMonth, birthdateYear) async {
-                  // Upload user data to Firestore
-                  final uploadSuccess = await userDataHelper.uploadUserData(
-                    firstName: firstName,
-                    lastName: lastName,
-                    mail: mail,
-                    phone: phone,
-                    birthdateDay: birthdateDay,
-                    birthdateMonth: birthdateMonth,
-                    birthdateYear: birthdateYear,
-                  );
-
-                  if (uploadSuccess) {
-                    // Navigate to the next screen if upload is successful
-                    Navigator.of(context).pushNamed(LocationPermissionCheckerScreen.id);
-                  } else {
-                    print("Failed to upload user data.");
-                  }
-                },
-              ),
-            ),
-          );
-        }Navigator.of(context).pushNamed(LocationPermissionCheckerScreen.id); //TODO
-      }
-    } catch (error) {
-      print('Google Sign-In failed: $error');
-//TODO Sho erro
-    }
-  }
-
-
 }
