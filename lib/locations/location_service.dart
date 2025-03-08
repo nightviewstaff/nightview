@@ -4,7 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class LocationService {
-  static Future<LatLng?> getUserLocation() async {
+  static Future<LatLng> getUserLocation() async {
+    // return LatLng(55.6761, 12.5683);
     try {
       // Step 1: Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();

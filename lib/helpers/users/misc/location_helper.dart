@@ -1,14 +1,18 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
 import 'package:maps_toolkit/maps_toolkit.dart' as mt;
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/users/location_data.dart';
 import 'package:nightview/models/users/user_data.dart';
 
-class LocationHelper { // Needs refac
+class LocationHelper {
+  // Needs refac
   LocationPermission _permission = LocationPermission.unableToDetermine;
   LocationAccuracyStatus _accuracy = LocationAccuracyStatus.precise;
   bool _serviceEnabled = false;
@@ -63,9 +67,8 @@ class LocationHelper { // Needs refac
     return _accuracy == LocationAccuracyStatus.precise;
   }
 
-  Future<Position> getCurrentPosition() async {
-    return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+  Future<LatLng> getCurrentPosition() async {
+    return LocationService.getUserLocation();
   }
 
   // Future<void> activateBackgroundLocation() async {
@@ -81,13 +84,13 @@ class LocationHelper { // Needs refac
   //
   //   locationService.onLocationChanged.listen((loc.LocationData location) {
   //     DateTime threshold = DateTime.now().subtract(Duration(minutes: 15));
-      DateTime threshold = DateTime.now().subtract(Duration(seconds: 20));
-      //
-      // if (threshold.isAfter(lastUpdate)) {
-      //   lastUpdate = DateTime.now();
-      //   onPositionUpdate(location);
-      // }
-    // });
+  DateTime threshold = DateTime.now().subtract(Duration(seconds: 20));
+  //
+  // if (threshold.isAfter(lastUpdate)) {
+  //   lastUpdate = DateTime.now();
+  //   onPositionUpdate(location);
+  // }
+  // });
   // }
 
   Future<void> startLocationService() async {

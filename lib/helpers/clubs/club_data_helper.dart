@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/helpers/misc/firebase_storage_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
@@ -59,12 +60,22 @@ class ClubDataHelper with ChangeNotifier {
 
       List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
       List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
-
+      clubDataList.value = (snapshot.docs
+          .map((doc) {
+            final club = _processClub(doc);
+            if (club != null) {
+              clubData[club.id] = club;
+              remainingClubsNotifier.value--;
+              allClubTypes.value.add(club.typeOfClub);
+              return club;
+            }
+          })
+          .whereType<ClubData>()
+          .toList());
       for (var doc in snapshot.docs) {
         final data = doc.data();
         final lat = data['lat'];
         final lon = data['lon'];
-
         final distance = Geolocator.distanceBetween(
           userPosition?.latitude ?? 0,
           userPosition?.longitude ?? 0,
@@ -82,7 +93,6 @@ class ClubDataHelper with ChangeNotifier {
       // Step 1: Process nearby clubs immediately
       remainingNearbyClubsNotifier.value = nearbyClubs.length;
       await _processClubsInBatches(nearbyClubs);
-      print('!!!!! $clubDataList');
       remainingClubsNotifier.addListener(() {
         if (remainingClubsNotifier.value <= 0) {
           clubDataList.value =
@@ -104,7 +114,7 @@ class ClubDataHelper with ChangeNotifier {
     for (int i = 0; i < clubs.length; i += batchSize) {
       final batch = clubs.skip(i).take(batchSize).toList();
       await Future.wait(batch.map((doc) async {
-        final club = await _processClub(doc);
+        final club = _processClub(doc);
         if (club != null) {
           clubData[club.id] = club;
           _initialLoadController.add(club);
@@ -128,8 +138,7 @@ class ClubDataHelper with ChangeNotifier {
     print('Total time: ${stopwatch.elapsed}'); // Test
   }
 
-  Future<ClubData?> _processClub(
-      QueryDocumentSnapshot<Map<String, dynamic>> club) async {
+  ClubData? _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) {
     try {
       final data = club.data();
 
@@ -164,27 +173,21 @@ class ClubDataHelper with ChangeNotifier {
               }) ??
               {};
 
-      // Fetch typeOfClub image URL
-      final typeOfClubImageUrl = await _fetchStorageUrl(
-        '/nightview_images/club_type_images/${data['type_of_club']}_icon.png',
-        fallback: "null",
-      );
-
-      // Prepare parallel network requests with fallback for the logo
-      final fetchUrls = [
+      final urls = [
         (data['logo'] != 'default_logo.png')
-            ? _fetchStorageUrl('club_logos/${data['logo']}',
-                fallback: typeOfClubImageUrl)
-            : Future.value(typeOfClubImageUrl),
+            ? FirebaseStorageHelper.fetchStorageUrl(
+                'club_logos/${data['logo']}',
+              )
+            : fallbackImage(data['type_of_club']),
         (stringToOfferType(data['offer_type'] ?? '') != OfferType.none)
-            ? _fetchStorageUrl('main_offers/${data['main_offer_img']}',
-                fallback: '')
-            : Future.value(null),
+            ? FirebaseStorageHelper.fetchStorageUrl(
+                'main_offers/${data['main_offer_img']}',
+              )
+            : ""
       ];
 
       // Fetch all URLs concurrently
-      final urls = await Future.wait(fetchUrls);
-      final logoUrl = urls[0] as String;
+      final logoUrl = urls[0];
       final mainOfferImgUrl = urls[1];
 
       // Parse corners
@@ -208,7 +211,7 @@ class ClubDataHelper with ChangeNotifier {
             OfferType.none,
         mainOfferImg: mainOfferImgUrl,
         ageRestriction: data['age_restriction'] ?? 0,
-        typeOfClubImg: typeOfClubImageUrl,
+        typeOfClubImg: fallbackImage(data['type_of_club']),
         typeOfClub: data['type_of_club'] ?? '',
         rating: data['rating'] ?? 0.0,
         openingHours: openingHours,
@@ -223,14 +226,9 @@ class ClubDataHelper with ChangeNotifier {
   }
 
 // Helper function to fetch URLs with a fallback
-  Future<String> _fetchStorageUrl(String path,
-      {required String fallback}) async {
-    try {
-      return await _storageRef.child(path).getDownloadURL();
-    } catch (e) {
-      print('⚠️ Error fetching storage URL for $path: $e. Returning fallback.');
-      return fallback;
-    }
+  String fallbackImage(String typeOfClub) {
+    return FirebaseStorageHelper.fetchStorageUrl(
+        'nightview_images/club_type_images/${typeOfClub}_icon.png');
   }
 
   void setFavoriteClub(String clubId, String userId) async {
