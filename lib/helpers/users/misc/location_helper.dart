@@ -1,9 +1,12 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart' as loc;
 import 'package:maps_toolkit/maps_toolkit.dart' as mt;
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/models/users/location_data.dart';
 import 'package:nightview/models/users/user_data.dart';
@@ -64,9 +67,8 @@ class LocationHelper {
     return _accuracy == LocationAccuracyStatus.precise;
   }
 
-  Future<Position> getCurrentPosition() async {
-    return Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+  Future<LatLng> getCurrentPosition() async {
+    return LocationService.getUserLocation();
   }
 
   // Future<void> activateBackgroundLocation() async {
@@ -101,8 +103,6 @@ class LocationHelper {
         print('Could not get location');
       }
     });
-
-    return; // Ensures the function doesn't "complete normally" without returning a value
   }
 
   // Future<loc.LocationData> getBackgroundLocation() async {

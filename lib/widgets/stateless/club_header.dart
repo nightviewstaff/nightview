@@ -22,18 +22,11 @@ import '../../utilities/club_data/club_name_formatter.dart';
 import '../../utilities/messages/custom_modal_message.dart';
 
 class ClubHeader extends StatelessWidget {
-  // TODO rework so the header fits without problems on all screens.
-
   final ClubData club;
-
-  // final LatLng userLocation;
-
-  // final GlobalKey _circleAvatarKey = GlobalKey(); For popup
 
   const ClubHeader({
     super.key,
     required this.club,
-    // required this.userLocation,
   });
 
   @override
@@ -47,11 +40,6 @@ class ClubHeader extends StatelessWidget {
         ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
     final double percentOfCapacity =
         ClubCapacityCalculator.displayCalculatedPercentageOfCapacity(club);
-    // final distance = ClubDistanceCalculator.displayDistanceToClub(
-    //   club: club,
-    // userLat: userLocation.latitude,
-    // userLon: userLocation.longitude,
-    // );
 
     return SafeArea(
       child: Container(
@@ -69,7 +57,6 @@ class ClubHeader extends StatelessWidget {
                     alignment: Alignment.topLeft,
                     child: GestureDetector(
                       onTap: () {
-                        // _showPopup(context); TODO future release for cleaner message.
                         CustomModalMessage.showCustomBottomSheetOneSecond(
                           context: context,
                           message: formattedClubType,
@@ -79,7 +66,6 @@ class ClubHeader extends StatelessWidget {
                       child: CircleAvatar(
                         backgroundImage:
                             CachedNetworkImageProvider(club.typeOfClubImg),
-                        // Todo white outline on pic
                         radius: kNormalSizeRadius,
                       ),
                     ),
@@ -107,8 +93,6 @@ class ClubHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // TODO rutevejlednign her.
-                  //TODO cache distance
                   Align(
                     alignment: Alignment.topRight,
                     child: DistanceDisplayWidget(club: club),
@@ -121,15 +105,12 @@ class ClubHeader extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                 horizontal: kSmallPadding,
               ),
-              // vertical: kMainPadding),
               child: Center(
                 child: FittedBox(
-                  fit: BoxFit
-                      .scaleDown, // Prevents text overflow by scaling down
+                  fit: BoxFit.scaleDown,
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      // Stroked text as border.
                       Text(
                         formattedClubName,
                         style: kTextStyleH1.copyWith(
@@ -140,7 +121,6 @@ class ClubHeader extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      // Solid text as fill.
                       Text(
                         formattedClubName,
                         style: kTextStyleH1.copyWith(color: primaryColor),
@@ -151,7 +131,6 @@ class ClubHeader extends StatelessWidget {
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
               child: Row(
@@ -161,7 +140,7 @@ class ClubHeader extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        width: kBiggerSizeRadius * 2, // Ensure correct size
+                        width: kBiggerSizeRadius * 2,
                         height: kBiggerSizeRadius * 2,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -169,16 +148,27 @@ class ClubHeader extends StatelessWidget {
                             color: ClubOpeningHoursFormatter.isClubOpen(club)
                                 ? primaryColor
                                 : redAccent,
-                            width: 3.0, // Border thickness
+                            width: 3.0,
                           ),
-                          image: DecorationImage(
-                            image: CachedNetworkImageProvider(club.logo),
-                            fit: BoxFit
-                                .cover, // Ensures the image scales correctly
+                        ),
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: club.logo,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                CachedNetworkImage(
+                              imageUrl: club.typeOfClubImg,
+                              placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            ),
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      const SizedBox(width: kSmallSpacerValue), // Space between
+                      const SizedBox(width: kSmallSpacerValue),
                       const FavoriteClubButton(),
                     ],
                   ),
@@ -191,14 +181,9 @@ class ClubHeader extends StatelessWidget {
                         textStyle: kTextStyleP1,
                       );
                     },
-
-                    // Capavity
                     child: CircularPercentIndicator(
                       radius: kBiggerSizeRadius,
-                      // radius:20.0,
                       lineWidth: 5.0,
-                      // lineWidth: 3.0,
-                      // padding-right: 10
                       percent: percentOfCapacity,
                       center: RichText(
                         text: TextSpan(
@@ -207,12 +192,10 @@ class ClubHeader extends StatelessWidget {
                               text:
                                   (percentOfCapacity * 100).toStringAsFixed(0),
                               style: kTextStyleH3.copyWith(color: primaryColor),
-                              // style: kTextStyleP1.copyWith(color: primaryColor),
                             ),
                             TextSpan(
                               text: '%',
                               style: kTextStyleH3.copyWith(color: white),
-                              // style: kTextStyleP1.copyWith(color: white),
                             ),
                           ],
                         ),
@@ -220,7 +203,7 @@ class ClubHeader extends StatelessWidget {
                       progressColor: secondaryColor,
                       backgroundColor: white,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -235,16 +218,9 @@ class ClubHeader extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
-                    // Adds a tiny bit of space
                     child: Text(
-                      // Provider.of<GlobalProvider>(context, listen: true)
-                      //             .partyCount ==
-                      //         1
-                      //     ? 'Nightview bruger'
-                      //     : 'Nightview brugere',
-                      // Conditional text based on partyCount
                       "Kapacitet",
-                      style: kTextStyleP1, // Apply the desired text style
+                      style: kTextStyleP1,
                     ),
                   ),
                 ],
@@ -272,7 +248,6 @@ class ClubHeader extends StatelessWidget {
               width: kSmallSpacerValue,
             ),
             RateClub(clubId: club.id),
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: kMainPadding),
               child: Divider(
@@ -281,7 +256,6 @@ class ClubHeader extends StatelessWidget {
                 thickness: kMainStrokeWidth,
               ),
             ),
-            //TODO
           ],
         ),
       ),

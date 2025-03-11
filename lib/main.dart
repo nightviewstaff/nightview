@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/firebase_options.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
@@ -8,6 +9,7 @@ import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
 import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/language_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
@@ -38,10 +40,12 @@ import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_main_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; // Add this
 
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
+import ''; // Your AppLocalizations file
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,61 +95,86 @@ class NightViewApp extends StatelessWidget {
           create: (_) => BalladefabrikkenProvider(),
         ),
         ChangeNotifierProvider(create: (_) => ClubDataHelper()),
-      ],
-      child: MaterialApp(
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: black,
-          appBarTheme: AppBarTheme(
-            color: black,
-          ),
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: black,
-            showUnselectedLabels: false,
-          ),
+        ChangeNotifierProvider<LanguageProvider>(
+          // Add LanguageProvider
+          create: (_) => LanguageProvider(),
         ),
-        initialRoute: WaitingForLoginScreen.id,
-        routes: {
-          LoginScreen.id: (context) => const LoginScreen(),
-          LoginOrCreateAccountScreen.id: (context) =>
-              const LoginOrCreateAccountScreen(),
-          LoginGoogleScreen.id: (context) => const LoginGoogleScreen(),
-          CreateAccountScreenTwoContact.id: (context) =>
-              const CreateAccountScreenTwoContact(),
-          RegistrationConfirmationScreen.id: (context) =>
-              const RegistrationConfirmationScreen(),
-          CreateAccountScreenOnePersonal.id: (context) =>
-              const CreateAccountScreenOnePersonal(),
-          CreateAccountScreenThreePassword.id: (context) =>
-              const CreateAccountScreenThreePassword(),
-          MyProfileMainScreen.id: (context) => const MyProfileMainScreen(),
-          NightSocialConversationScreen.id: (context) =>
-              const NightSocialConversationScreen(),
-          MainScreen.id: (context) => const MainScreen(),
-          PreferencesMainScreen.id: (context) => const PreferencesMainScreen(),
-          SwipeMainScreen.id: (context) => const SwipeMainScreen(),
-          WaitingForLoginScreen.id: (context) => const WaitingForLoginScreen(),
-          NightMapMainOfferScreen.id: (context) =>
-              const NightMapMainOfferScreen(),
-          LocationPermissionWhileInUseScreen.id: (context) =>
-              const LocationPermissionWhileInUseScreen(),
-          LocationPermissionAlwaysScreen.id: (context) =>
-              const LocationPermissionAlwaysScreen(),
-          LocationPermissionPreciseScreen.id: (context) =>
-              const LocationPermissionPreciseScreen(),
-          LocationPermissionServiceScreen.id: (context) =>
-              const LocationPermissionServiceScreen(),
-          LocationPermissionCheckerScreen.id: (context) =>
-              const LocationPermissionCheckerScreen(),
-          FriendRequestsScreen.id: (context) => const FriendRequestsScreen(),
-          FindNewFriendsScreen.id: (context) => const FindNewFriendsScreen(),
-          OtherProfileMainScreen.id: (context) =>
-              const OtherProfileMainScreen(),
-          NewChatScreen.id: (context) => const NewChatScreen(),
-          BalladefabrikkenMainScreen.id: (context) =>
-              const BalladefabrikkenMainScreen(),
-          ShotAccumulationScreen.id: (context) =>
-              const ShotAccumulationScreen(),
-          ShotRedemtionScreen.id: (context) => const ShotRedemtionScreen(),
+      ],
+      child: Consumer<LanguageProvider>(
+        // Wrap MaterialApp with Consumer for language updates
+        builder: (context, languageProvider, child) {
+          return MaterialApp(
+            locale: languageProvider.locale, // Use selected locale
+            supportedLocales: const [
+              Locale('en'), // English
+              Locale('da'), // Danish
+              //TODO Add more languages as needed.
+            ],
+            localizationsDelegates: const [
+              AppLocalizations.delegate, // Your custom delegate
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            theme: ThemeData.dark().copyWith(
+              scaffoldBackgroundColor: black,
+              appBarTheme: const AppBarTheme(
+                color: black,
+              ),
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: black,
+                showUnselectedLabels: false,
+              ),
+            ),
+            initialRoute: WaitingForLoginScreen.id,
+            routes: {
+              LoginScreen.id: (context) => const LoginScreen(),
+              LoginOrCreateAccountScreen.id: (context) =>
+                  const LoginOrCreateAccountScreen(),
+              LoginGoogleScreen.id: (context) => const LoginGoogleScreen(),
+              CreateAccountScreenTwoContact.id: (context) =>
+                  const CreateAccountScreenTwoContact(),
+              RegistrationConfirmationScreen.id: (context) =>
+                  const RegistrationConfirmationScreen(),
+              CreateAccountScreenOnePersonal.id: (context) =>
+                  const CreateAccountScreenOnePersonal(),
+              CreateAccountScreenThreePassword.id: (context) =>
+                  const CreateAccountScreenThreePassword(),
+              MyProfileMainScreen.id: (context) => const MyProfileMainScreen(),
+              NightSocialConversationScreen.id: (context) =>
+                  const NightSocialConversationScreen(),
+              MainScreen.id: (context) => const MainScreen(),
+              PreferencesMainScreen.id: (context) =>
+                  const PreferencesMainScreen(),
+              SwipeMainScreen.id: (context) => const SwipeMainScreen(),
+              WaitingForLoginScreen.id: (context) =>
+                  const WaitingForLoginScreen(),
+              NightMapMainOfferScreen.id: (context) =>
+                  const NightMapMainOfferScreen(),
+              LocationPermissionWhileInUseScreen.id: (context) =>
+                  const LocationPermissionWhileInUseScreen(),
+              LocationPermissionAlwaysScreen.id: (context) =>
+                  const LocationPermissionAlwaysScreen(),
+              LocationPermissionPreciseScreen.id: (context) =>
+                  const LocationPermissionPreciseScreen(),
+              LocationPermissionServiceScreen.id: (context) =>
+                  const LocationPermissionServiceScreen(),
+              LocationPermissionCheckerScreen.id: (context) =>
+                  const LocationPermissionCheckerScreen(),
+              FriendRequestsScreen.id: (context) =>
+                  const FriendRequestsScreen(),
+              FindNewFriendsScreen.id: (context) =>
+                  const FindNewFriendsScreen(),
+              OtherProfileMainScreen.id: (context) =>
+                  const OtherProfileMainScreen(),
+              NewChatScreen.id: (context) => const NewChatScreen(),
+              BalladefabrikkenMainScreen.id: (context) =>
+                  const BalladefabrikkenMainScreen(),
+              ShotAccumulationScreen.id: (context) =>
+                  const ShotAccumulationScreen(),
+              ShotRedemtionScreen.id: (context) => const ShotRedemtionScreen(),
+            },
+          );
         },
       ),
     );

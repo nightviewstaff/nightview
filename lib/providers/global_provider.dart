@@ -1,3 +1,4 @@
+
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,7 @@ import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {
+
     userDataHelper = UserDataHelper(
       onReceive: (data) {
         userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
@@ -35,12 +37,13 @@ class GlobalProvider extends ChangeNotifier {
       },
     );
 
-    //  clubDataHelper = ClubDataHelper(  //TEST FOR NOW
-    //   onReceive: (data) {
-    //    clubDataHelper.evaluateVisitors();
-    //   notifyListeners();
-    //   },
-    //);
+    clubDataHelper = ClubDataHelper(
+      onReceive: (data) {
+        clubDataHelper.evaluateVisitors();
+        notifyListeners();
+      },
+    );
+
   }
 
   ClubDataHelper clubDataHelper = ClubDataHelper();
@@ -120,10 +123,8 @@ class GlobalProvider extends ChangeNotifier {
     String clubId = _chosenClub!.id;
 
     try {
-      DocumentSnapshot clubDoc = await FirebaseFirestore.instance
-          .collection('club_data')
-          .doc(clubId)
-          .get();
+      DocumentSnapshot clubDoc =
+      await FirebaseFirestore.instance.collection('club_data').doc(clubId).get();
 
       if (clubDoc.exists) {
         List<dynamic> favoritesList = clubDoc['favorites'] ?? [];
@@ -135,6 +136,7 @@ class GlobalProvider extends ChangeNotifier {
 
     return false;
   }
+
 
   Color get partyStatusColor {
     switch (_partyStatusLocal) {

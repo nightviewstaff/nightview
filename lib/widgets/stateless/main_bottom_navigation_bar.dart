@@ -12,9 +12,8 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clubDataHelper = Provider
-        .of<NightMapProvider>(context, listen: false)
-        .clubDataHelper;
+    final clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
 
     return Stack(
       alignment: Alignment.center,
@@ -22,16 +21,14 @@ class MainBottomNavigationBar extends StatelessWidget {
         BottomNavigationBar(
           selectedItemColor: primaryColor,
           unselectedItemColor: secondaryColor,
-          currentIndex: Provider
-              .of<MainNavigationProvider>(context)
-              .currentScreenIndex,
+          currentIndex:
+              Provider.of<MainNavigationProvider>(context).currentScreenIndex,
           items: [
             BottomNavigationBarItem(
               icon: Stack(
                 alignment: Alignment.topRight,
                 children: [
                   const Icon(Icons.pin_drop), // Base icon
-
                 ],
               ),
               // TODO civilized colors at some point?
@@ -58,7 +55,9 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
-        ValueListenableBuilder<int>(
+
+        /* TODO not working as inteded. Not needed for now.
+  ValueListenableBuilder<int>(
           valueListenable: clubDataHelper.remainingNearbyClubsNotifier,
           builder: (context, remainingNearby, child) {
             if (remainingNearby > 1) {
@@ -105,8 +104,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                 builder: (context, remainingClubs, child) {
                   if (remainingClubs > 0) {
                     return LoadingIndicatorWithTick(
-                      remainingItemsNotifier: clubDataHelper
-                          .remainingClubsNotifier,
+                      remainingItemsNotifier: clubDataHelper.remainingClubsNotifier,
                       messageOnTap: "Henter resterende lokationer i baggrunden ({count})",
                     );
                   }
@@ -116,7 +114,7 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
-
+*/
       ],
     );
   }

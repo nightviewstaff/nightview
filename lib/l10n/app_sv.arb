@@ -1,0 +1,11 @@
+{
+  "@@locale": "sv",
+  "selectLanguage": "Välj språk",
+  "login": "Logga in",
+  "create_nightview_profile": "Skapa NightView-profil",
+  "create_with_google": "Skapa med Google",
+  "@selectLanguage": {"description": "Dialog title for language selection", "type": "text"},
+  "@login": {"type": "text"},
+  "@create_nightview_profile": {"type": "text"},
+  "@create_with_google": {"type": "text"}
+}

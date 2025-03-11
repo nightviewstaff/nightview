@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "selectLanguage": "Select Language",
+  "login": "Log in",
+  "create_nightview_profile": "Create NightView profile",
+  "create_with_google": "Create with Google",
+  "create_account": "Create Account",
+  "welcome": "Welcome",
+  "@selectLanguage": {"description": "Dialog title for language selection"},
+  "@login": {"type": "text"},
+  "@create_nightview_profile": {"type": "text"},
+  "@create_with_google": {"type": "text"},
+  "@create_account": {"type": "text"},
+  "@welcome": {"type": "text"}
+}

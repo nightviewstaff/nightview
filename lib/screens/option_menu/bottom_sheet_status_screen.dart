@@ -12,7 +12,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: black,
-      height: 200.0,
+      height: 210.0,
       child: SafeArea(
         child: Column(
           children: [

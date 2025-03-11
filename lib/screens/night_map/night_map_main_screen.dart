@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -493,24 +494,41 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                                     return ListTile(
                                       leading: Container(
+                                        width: kNormalSizeRadius * 2,
+                                        height: kNormalSizeRadius * 2,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          // Ensure the outline is circular
                                           border: Border.all(
                                             color: ClubOpeningHoursFormatter
-                                                    .isClubOpen(
-                                                        club) //TODO secondaryColor if opening soon.
+                                                    .isClubOpen(club)
                                                 ? primaryColor
                                                 : redAccent,
-                                            width: 3.0, // Outline thickness
+                                            width: 3.0,
                                           ),
                                         ),
-                                        child: CircleAvatar(
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                                  club.logo),
-                                          radius:
-                                              kNormalSizeRadius, // Same radius as before
+                                        child: ClipOval(
+                                          child: CachedNetworkImage(
+                                            imageUrl: club.logo,
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    CachedNetworkImage(
+                                              imageUrl: club.typeOfClubImg,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                            fit: BoxFit.cover,
+                                            cacheManager: CacheManager(Config(
+                                              "customCacheKey",
+                                              stalePeriod:
+                                                  const Duration(days: 7),
+                                              maxNrOfCacheObjects: 100,
+                                            )), // Optional: Force cache refresh
+                                          ),
                                         ),
                                       ),
                                       title: Column(
@@ -746,7 +764,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
       return ListTile(
         leading: Container(
-          width: kNormalSizeRadius * 2, // Ensure proper size
+          width: kNormalSizeRadius * 2,
           height: kNormalSizeRadius * 2,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -754,11 +772,20 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               color: ClubOpeningHoursFormatter.isClubOpen(club)
                   ? primaryColor
                   : redAccent,
-              width: 3.0, // Outline thickness
+              width: 3.0,
             ),
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(club.logo),
-              fit: BoxFit.cover, // Ensures proper image scaling
+          ),
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: club.logo,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => CachedNetworkImage(
+                imageUrl: club.typeOfClubImg,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+              fit: BoxFit.cover,
             ),
           ),
         ),

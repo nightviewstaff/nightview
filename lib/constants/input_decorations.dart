@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:searchfield/searchfield.dart';
 
 const kMainInputDecoration = InputDecoration(
   enabledBorder: OutlineInputBorder(
@@ -39,3 +40,9 @@ const kMainInputDecoration = InputDecoration(
     ),
   ),
 );
+
+SearchInputDecoration kSearchInputDecoration = SearchInputDecoration(
+  border: InputBorder.none
+);
+
+

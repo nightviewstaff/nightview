@@ -28,11 +28,10 @@ class _NewChatScreenState extends State<NewChatScreen> {
       List<String> friendIds = await FriendsHelper.getAllFriendIds();
       List<UserData> friends = friendIds
           .map((id) => Provider.of<GlobalProvider>(context, listen: false)
-              .userDataHelper
-              .userData[id]!)
+          .userDataHelper
+          .userData[id]!)
           .toList();
-      Provider.of<SearchNewChatHelper>(context, listen: false)
-          .setFriends(friends);
+      Provider.of<SearchNewChatHelper>(context, listen: false).setFriends(friends);
     });
     super.initState();
   }
@@ -75,11 +74,13 @@ class _NewChatScreenState extends State<NewChatScreen> {
                   ),
                   Expanded(
                     child: TextField(
+                      decoration: kSearchInputDecoration.copyWith(
+                        hintText: 'Hvem vil du chatte med?',
+                      ),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
                       onChanged: (String input) {
-                        Provider.of<SearchNewChatHelper>(context, listen: false)
-                            .updateSearch(input);
+                        Provider.of<SearchNewChatHelper>(context, listen: false).updateSearch(input);
                       },
                     ),
                   ),
@@ -89,14 +90,12 @@ class _NewChatScreenState extends State<NewChatScreen> {
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) {
-                  UserData user =
-                      Provider.of<SearchNewChatHelper>(context, listen: false)
-                          .filteredFriends[index];
+                  UserData user = Provider.of<SearchNewChatHelper>(context, listen: false).filteredFriends[index];
 
                   return ListTile(
                     onTap: () async {
-                      String? newChatId =
-                          await ChatHelper.createNewChat(user.id);
+
+                      String? newChatId = await ChatHelper.createNewChat(user.id);
 
                       if (newChatId == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -110,13 +109,12 @@ class _NewChatScreenState extends State<NewChatScreen> {
                         );
                         return;
                       }
-                      Provider.of<GlobalProvider>(context, listen: false)
-                          .setChosenChatId(newChatId);
-                      Navigator.of(context).pushReplacementNamed(
-                          NightSocialConversationScreen.id);
+                      Provider.of<GlobalProvider>(context, listen: false).setChosenChatId(newChatId);
+                      Navigator.of(context).pushReplacementNamed(NightSocialConversationScreen.id);
                     },
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(kMainBorderRadius),
+                      borderRadius:
+                      BorderRadius.circular(kMainBorderRadius),
                       side: BorderSide(
                         width: kMainStrokeWidth,
                         color: white,
@@ -134,9 +132,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                 separatorBuilder: (context, index) => SizedBox(
                   height: kSmallSpacerValue,
                 ),
-                itemCount: Provider.of<SearchNewChatHelper>(context)
-                    .filteredFriends
-                    .length,
+                itemCount: Provider.of<SearchNewChatHelper>(context).filteredFriends.length,
               ),
             ),
           ],

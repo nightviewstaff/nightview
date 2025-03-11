@@ -8,22 +8,16 @@ class CustomModalMessage {
     EdgeInsets padding = const EdgeInsets.all(15.0),
     int autoDismissDurationSeconds = 1,
   }) {
-    try {
-      if (context.mounted) {
-        showModalBottomSheet(
-          context: context,
-          builder: (context) => Container(
-            padding: padding,
-            child: Text(
-              message,
-              style: textStyle,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error showing bottom sheet: $e');
-    }
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: padding,
+        child: Text(
+          message,
+          style: textStyle,
+        ),
+      ),
+    );
 
     Future.delayed(Duration(seconds: autoDismissDurationSeconds), () {
       if (Navigator.of(context).canPop()) {

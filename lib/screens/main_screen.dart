@@ -44,10 +44,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final navigationProvider = Provider.of<MainNavigationProvider>(context);
 
-    print('currentScreenIndex: ${navigationProvider.currentScreenIndex}');
-    print(
-        'currentUserId: ${Provider.of<GlobalProvider>(context).userDataHelper.currentUserId}');
-
     return Scaffold(
       appBar: AppBar(
         // title: Text(Provider.of<MainNavigationProvider>(context)
