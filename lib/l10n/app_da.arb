@@ -4,12 +4,110 @@
   "login": "Log ind",
   "create_nightview_profile": "Opret NightView profil",
   "create_with_google": "Opret med Google",
-  "create_account": "Opret konto",
-  "welcome": "Velkommen",
-  "@selectLanguage": {"description": "Dialog title for language selection"},
-  "@login": {"type": "text"},
-  "@create_nightview_profile": {"type": "text"},
-  "@create_with_google": {"type": "text"},
-  "@create_account": {"type": "text"},
-  "@welcome": {"type": "text"}
+  "continueButton": "Fortsæt",
+  "invalidLogin": "Ugyldigt login",
+  "incorrectInfoTryAgain": "Oplysninger er ikke indtastet korrekt. Prøv igen.",
+  "okay": "Okay",
+  "mail": "Email",
+  "password": "Adgangskode",
+  "stayLoggedIn": "Forbliv logget ind",
+  "firstNames": "Fornavn(e)",
+  "lastNames": "Efternavn(e)",
+  "birthdate": "Fødselsdato",
+  "mustBeOver18InDenmark": "Du skal være over 18 for at bruge NightView i Danmark",
+  "choosePassword": "Vælg kodeord",
+  "passwordRequirements": "Dit kodeord skal indeholde både store og små bogstaver, tal og være mindst 8 tegn langt.",
+  "passwordHint": "Kodeord",
+  "passwordEmptyError": "Kodeord er tomt",
+  "passwordUpperLowerError": "Skal indeholde store og små bogstaver",
+  "passwordDigitError": "Skal indeholde tal",
+  "passwordMinLengthError": "Skal være mindst 8 tegn",
+  "confirmPasswordHint": "Bekræft kodeord",
+  "confirmPasswordEmptyError": "Skriv venligst et kodeord",
+  "passwordMismatchError": "Kodeord stemmer ikke overens",
+  "somethingWentWrong": "Noget gik galt. Prøv venligst igen.",
+  "emailAlreadyInUseError": "Denne email er allerede registreret.",
+  "invalidEmailError": "Indtast en gyldig emailadresse.",
+  "weakPasswordError": "Kodeordet er for svagt. Brug mindst 8 tegn med tal og bogstaver.",
+  "noInternetError": "Ingen internetforbindelse. Tjek din netværksstatus.",
+  "genericErrorOccurred": "Der opstod en fejl:",
+  "errorTitle": "Fejl",
+  "contactInformation": "Kontaktoplysninger",
+  "phoneNumber": "Telefonnummer",
+  "invalidEmailTitle": "Ugyldig Email",
+  "invalidEmailContent": "Denne email bliver brugt af en anden bruger.",
+  "remainingInformation": "Resterende information",
+  "confirmationCodeSent": "Du har modtaget en bekræftelseskode:",
+  "enterCodeToContinue": "Indtast koden for at fortsætte",
+  "checkSpamFolder": "Tjek din spammappe, hvis den ikke dukker op",
+  "fourDigitCode": "4-cifret kode",
+  "incorrectConfirmationCode": "Forkert bekræftelseskode",
+  "invalidConfirmationCode": "Ugyldig bekræftelseskode",
+  "pleaseEnterConfirmationCode": "Indtast venligst en bekræftelseskode",
+  "activeUsersNow": "Brugere i byen nu",
+
+
+  "clubTypeBar": "Bar",
+  "clubTypeBarClub": "Bar/Klub",
+  "clubTypeBeerBar": "Ølbar",
+  "clubTypeBodega": "Bodega",
+  "clubTypeClub": "Klub",
+  "clubTypeCocktailBar": "Cocktailbar",
+  "clubTypeGayBar": "Gaybar",
+  "clubTypeJazzBar": "Jazzbar",
+  "clubTypeKaraokeBar": "Karaokebar",
+  "clubTypeLiveMusicBar": "Livemusikbar",
+  "clubTypePub": "Pub",
+  "clubTypeSportsBar": "Sportsbar",
+  "clubTypeWineBar": "Vinbar",
+
+"map": "Kort",
+"social": "Social",
+"@map": {"description": "Label for the Map tab in the bottom navigation"},
+"@social": {"description": "Label for the Social tab in the bottom navigation"},
+
+  "@selectLanguage": {
+    "description": "Dialog title for language selection",
+    "type": "text"
+  },
+  "@login": {
+    "description": "Label for login button or screen title",
+    "type": "text"
+  },
+  "@create_nightview_profile": {
+    "description": "Label for creating a NightView profile",
+    "type": "text"
+  },
+  "@create_with_google": {
+    "description": "Label for creating an account with Google",
+    "type": "text"
+  },
+  "@continueButton": {
+    "description": "Label for a continue button",
+    "type": "text"
+  },
+  "@invalidLogin": {
+    "description": "Dialog title for invalid login attempt",
+    "type": "text"
+  },
+  "@incorrectInfoTryAgain": {
+    "description": "Dialog message for incorrect login information",
+    "type": "text"
+  },
+  "@okay": {
+    "description": "Button label to dismiss a dialog",
+    "type": "text"
+  },
+  "@mail": {
+    "description": "Hint text for email input field",
+    "type": "text"
+  },
+  "@password": {
+    "description": "Hint text for password input field",
+    "type": "text"
+  },
+  "@stayLoggedIn": {
+    "description": "Label for stay logged in checkbox",
+    "type": "text"
+  }
 }

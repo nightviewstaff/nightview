@@ -5,6 +5,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -118,7 +119,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   children: [
                     //TOP part
                     Text(
-                      'Brugere i byen nu',
+                      AppLocalizations.of(context)!.activeUsersNow,
                       style: kTextStyleH3,
                     ),
                     Row(
@@ -275,8 +276,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     controller: controller,
                                     leading: Icon(Icons.search_sharp,
                                         color: primaryColor),
-                                    hintText:
-                                        "Søg efter lokationer, områder eller andet",
+                                    hintText: AppLocalizations.of(context)!
+                                        .searchForLocations,
                                     hintStyle:
                                         WidgetStateProperty.all(kTextStyleP2),
                                     backgroundColor:

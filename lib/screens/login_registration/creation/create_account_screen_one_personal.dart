@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -28,12 +29,14 @@ class CreateAccountScreenOnePersonal extends StatefulWidget {
 class _CreateAccountScreenOnePersonalState
     extends State<CreateAccountScreenOnePersonal> {
   @override
-  void initState() { // TODO Check all good
+  void initState() {
+    // TODO Check all good
     super.initState();
     final provider =
         Provider.of<LoginRegistrationProvider>(context, listen: false);
 
-    InitStateManager.initPersonalInfo( // remember info
+    InitStateManager.initPersonalInfo(
+      // remember info
       context: context,
       formKey: _formKey,
       provider: provider,
@@ -64,7 +67,7 @@ class _CreateAccountScreenOnePersonalState
         onBack: () => Navigator.of(context)
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         title: Text(
-          'Personlige Oplysninger',
+          AppLocalizations.of(context)!.personalInformation,
           textAlign: TextAlign.center,
           style: kTextStyleH2, // Put default
         ),
@@ -77,7 +80,7 @@ class _CreateAccountScreenOnePersonalState
               children: [
                 CustomTextField.buildTextField(
                   controller: firstNameInputController,
-                  hintText: 'Fornavn(e)',
+                  hintText: AppLocalizations.of(context)!.firstNames,
                   onChanged: (value) {
                     provider.setFirstName(value);
                     ValidationHelper.updateValidationStateFormOne(
@@ -93,7 +96,7 @@ class _CreateAccountScreenOnePersonalState
                 SizedBox(height: kNormalSpacerValue),
                 CustomTextField.buildTextField(
                   controller: lastNameInputController,
-                  hintText: 'Efternavn(e)',
+                  hintText: AppLocalizations.of(context)!.lastNames,
                   onChanged: (value) {
                     provider.setLastName(value);
                     ValidationHelper.updateValidationStateFormOne(
@@ -132,7 +135,8 @@ class _CreateAccountScreenOnePersonalState
     );
   }
 
-  void _openDatePicker(BuildContext context) { //TODO extract
+  void _openDatePicker(BuildContext context) {
+    //TODO extract
     // Extract
     final provider =
         Provider.of<LoginRegistrationProvider>(context, listen: false);
@@ -195,7 +199,7 @@ class _CreateAccountScreenOnePersonalState
       if (selectedDate != null && selectedDate!.isAfter(legalAgeAgo)) {
         CustomModalMessage.showCustomBottomSheetOneSecond(
           context: context,
-          message: "Man skal være over 18 for at bruge NightView i Danmark",
+          message: AppLocalizations.of(context)!.mustBeOver18InDenmark,
           textStyle: kTextStyleP3ErrorText,
           autoDismissDurationSeconds: 3,
         );
@@ -224,7 +228,7 @@ class _CreateAccountScreenOnePersonalState
         child: Center(
           child: Text(
             showHintDatePicker
-                ? 'Fødselsdato' // Show hint
+                ? AppLocalizations.of(context)!.birthdate
                 : '${selectedDate!.day} / ${selectedDate!.month} / ${selectedDate!.year}', // Show selected date
             style: TextStyle(
                 color: showHintDatePicker

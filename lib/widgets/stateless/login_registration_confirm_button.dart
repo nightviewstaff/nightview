@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/hero_tags.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -6,13 +7,21 @@ import 'package:nightview/constants/values.dart';
 
 class LoginRegistrationConfirmButton extends StatelessWidget {
   final VoidCallback? onPressed;
-  final String text;
+  final String? text; // Make text nullable to allow default
   final bool enabled;
 
-  const LoginRegistrationConfirmButton({super.key, this.onPressed, this.text = 'Fortsæt', this.enabled = true});
+  const LoginRegistrationConfirmButton({
+    super.key,
+    this.onPressed,
+    this.text, // Remove default value to enforce context usage
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Use provided text or default to 'continueButton'
+    final buttonText = text ?? AppLocalizations.of(context)!.continueButton;
+
     return Hero(
       tag: kHeroConfirmationButton,
       child: TextButton(
@@ -25,7 +34,7 @@ class LoginRegistrationConfirmButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              text,
+              buttonText, // Use the resolved text
               style: kTextStyleH2,
             ),
             SizedBox(

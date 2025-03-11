@@ -1,0 +1,1 @@
+dart run intl_translation:generate_from_arb --output-dir=lib/l10n lib/app_localization.dart lib/l10n/app_da.arb lib/l10n/app_en.arb

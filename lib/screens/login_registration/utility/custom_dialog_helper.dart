@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 
 class CustomDialogHelper {
-  static void showErrorDialog(BuildContext context, String title, String message) {
+  static void showErrorDialog(
+      BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -11,7 +13,8 @@ class CustomDialogHelper {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK', style: TextStyle(color: redAccent)),
+            child: Text(AppLocalizations.of(context)!.okay,
+                style: TextStyle(color: redAccent)),
           ),
         ],
       ),

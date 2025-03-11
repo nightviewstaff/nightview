@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -67,7 +68,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         currentStep: 2,
         title: Text(
-          'Resterende Oplysninger',
+          AppLocalizations.of(context)!.remainingInformation,
           textAlign: TextAlign.center,
           style: kTextStyleH2,
         ),
@@ -101,7 +102,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                     Expanded(
                       child: CustomTextField.buildTextField(
                         controller: phoneInputController,
-                        hintText: 'Telefonnummer',
+                        hintText: AppLocalizations.of(context)!.phoneNumber,
                         keyboardType: TextInputType.phone,
                         onChanged: (value) {
                           provider.setPhone(value);
@@ -205,7 +206,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                 //   ValidationHelper.updateValidationStateFormOneAndTwo(
                 //       _formKey, provider, inputIsFilled, 1, '',
                 //       isDateValid: false);
-              }else {
+              } else {
                 inputIsFilled[1] = false;
               }
               ValidationHelper.checkAllFieldsValid(provider, inputIsFilled);
@@ -228,7 +229,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
       if (selectedDate != null && selectedDate!.isAfter(legalAgeAgo)) {
         CustomModalMessage.showCustomBottomSheetOneSecond(
           context: context,
-          message: "Man skal være over 18 for at bruge NightView i Danmark",
+          message: AppLocalizations.of(context)!.mustBeOver18InDenmark,
           textStyle: kTextStyleP3ErrorText,
           autoDismissDurationSeconds: 3,
         );
@@ -257,7 +258,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
         child: Center(
           child: Text(
             showHintDatePicker
-                ? 'Fødselsdato' // Show hint
+                ? AppLocalizations.of(context)!.birthdate // Show hint
                 : '${selectedDate!.day} / ${selectedDate!.month} / ${selectedDate!.year}', // Show selected date
             style: TextStyle(
                 color: showHintDatePicker

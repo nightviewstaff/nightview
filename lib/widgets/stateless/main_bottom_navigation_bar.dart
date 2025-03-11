@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
@@ -32,11 +33,11 @@ class MainBottomNavigationBar extends StatelessWidget {
                 ],
               ),
               // TODO civilized colors at some point?
-              label: 'MAP',
+              label: AppLocalizations.of(context)!.map,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt),
-              label: 'SOCIAL',
+              label: AppLocalizations.of(context)!.social,
             ),
           ],
           onTap: (index) {

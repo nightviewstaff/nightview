@@ -21,7 +21,7 @@ class PhoneCountryCode {
 
   final _flagImages = {
     CountryCode.dk: Image.asset('images/flags/dk.png'),
-    CountryCode.se: Image.asset('images/flags/se.png'),
+    CountryCode.se: Image.asset('images/flags/sv.png'),
     CountryCode.no: Image.asset('images/flags/no.png'),
   };
 

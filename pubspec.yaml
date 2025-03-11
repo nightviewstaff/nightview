@@ -67,6 +67,11 @@ dependencies:
   shared_preferences: ^2.5.2
   async: ^2.12.0
 
+  # easy_localization: ^3.0.7+1 Lightweight translation
+  
+  palette_generator: ^0.3.3+6
+  
+  
   cached_network_image: ^3.4.1
   image_picker: ^1.1.2
   image_cropper: ^9.0.0
@@ -115,6 +120,7 @@ flutter:
     - images/logo_text_subtitle.png
 
     - images/flags/
+    # - assets/translations/
 #  - images/
 #   - images/flags/
 

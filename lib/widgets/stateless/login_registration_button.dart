@@ -24,9 +24,10 @@ class LoginRegistrationButton extends StatelessWidget {
     required this.type,
     this.onPressed,
     this.width = double.infinity, // Default to full width
-    this.height = (17*3), // Default height
+    this.height = (17 * 3), // Default height
     this.borderRadius = kMainBorderRadius, // Default border radius
-    this.padding = const EdgeInsets.symmetric(vertical: 12.0), // Default padding
+    this.padding =
+        const EdgeInsets.symmetric(vertical: 12.0), // Default padding
     this.textStyle = kTextStyleH3ToP1, // Default text style
     this.filledColor = black, // Default filled button color
     this.outlinedColor = white, // Default outlined button border color
@@ -42,14 +43,20 @@ class LoginRegistrationButton extends StatelessWidget {
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all(
-            type == LoginRegistrationButtonType.transparent ? filledColor : Colors.transparent,
+            type == LoginRegistrationButtonType.transparent
+                ? filledColor
+                : Colors.transparent,
           ),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
               side: BorderSide(
-                color: type == LoginRegistrationButtonType.filled ? Colors.transparent : outlinedColor,
-                width: type == LoginRegistrationButtonType.filled ? 0.0 : outlinedWidth,
+                color: type == LoginRegistrationButtonType.filled
+                    ? Colors.transparent
+                    : outlinedColor,
+                width: type == LoginRegistrationButtonType.filled
+                    ? 0.0
+                    : outlinedWidth,
               ),
             ),
           ),

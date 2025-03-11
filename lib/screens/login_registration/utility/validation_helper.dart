@@ -25,12 +25,11 @@ class ValidationHelper {
   }
 
   static void checkAllFieldsValid(
-      LoginRegistrationProvider provider,
-      List<bool> inputIsFilled,
-      ){
+    LoginRegistrationProvider provider,
+    List<bool> inputIsFilled,
+  ) {
     bool allFieldsValid = inputIsFilled.every((filled) => filled);
     provider.setCanContinue(allFieldsValid);
-
   }
 
   static Future<void> updateValidationStateFormTwo(
@@ -73,20 +72,23 @@ class ValidationHelper {
       TextEditingController passwordController,
       TextEditingController confirmPasswordController,
       {bool isPassValid = true}) {
-
     provider.setPassword(passwordController.text);
 
     // Check if the password meets all validation requirements
-    bool isPasswordValid = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*?[0-9]).{8,}$').hasMatch(passwordController.text);
+    bool isPasswordValid = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*?[0-9]).{8,}$')
+        .hasMatch(passwordController.text);
 
     // Ensure passwords match
-    bool passwordsMatch = passwordController.text == confirmPasswordController.text;
+    bool passwordsMatch =
+        passwordController.text == confirmPasswordController.text;
 
     // Only update validation state if the password is valid
     inputIsFilled[index] = value.isNotEmpty && isPassValid && isPasswordValid;
 
     // canContinue should only be true if all validation conditions are met
-    bool allFieldsValid = inputIsFilled.every((filled) => filled) && passwordsMatch && isPasswordValid;
+    bool allFieldsValid = inputIsFilled.every((filled) => filled) &&
+        passwordsMatch &&
+        isPasswordValid;
     provider.setCanContinue(allFieldsValid);
 
     if (allFieldsValid) {
@@ -103,9 +105,8 @@ class ValidationHelper {
       TextEditingController passwordController,
       TextEditingController confirmPasswordController,
       {bool isPassValid = true,
-        bool isPhoneValid = true,
-        bool isMailValid = true}) {
-
+      bool isPhoneValid = true,
+      bool isMailValid = true}) {
     // Store password in provider
     provider.setPassword(passwordController.text);
 
@@ -114,7 +115,8 @@ class ValidationHelper {
         .hasMatch(passwordController.text);
 
     // ✅ Ensure Passwords Match
-    bool passwordsMatch = passwordController.text == confirmPasswordController.text;
+    bool passwordsMatch =
+        passwordController.text == confirmPasswordController.text;
 
     // ✅ Validate Phone Number (if required)
     bool phoneValid = isPhoneValid;
@@ -141,8 +143,6 @@ class ValidationHelper {
     }
   }
 
-
-
   static bool checkEmail(String? value) {
     if (value == null || value.isEmpty) return false;
     if (!RegExp(
@@ -156,6 +156,7 @@ class ValidationHelper {
     if (!RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
     ).hasMatch(value)) return 'Ugyldig mail';
+    //TODO HOW DO I TRANSLATE HERE!
     return null;
   }
 
@@ -176,7 +177,8 @@ class ValidationHelper {
   static Future<DateTime?> selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(Duration(days: 18 * 365)), // Default: 18 years old
+      initialDate: DateTime.now()
+          .subtract(Duration(days: 18 * 365)), // Default: 18 years old
       firstDate: DateTime(DateTime.now().year - 100), // Oldest selectable date
       lastDate: DateTime(DateTime.now().year - 18), // Must be at least 18
       builder: (context, child) {
@@ -189,8 +191,4 @@ class ValidationHelper {
 
     return selectedDate;
   }
-
-
-
-
 }

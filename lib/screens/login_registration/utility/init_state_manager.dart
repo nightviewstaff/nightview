@@ -93,7 +93,5 @@ class InitStateManager {
     // ✅ Check if birthdate exists & update UI safely
     setSelectedDate(provider.birthDate);
     setShowHintDatePicker(false);
-    }
-
-
+  }
 }

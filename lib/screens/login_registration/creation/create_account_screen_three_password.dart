@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -59,13 +60,13 @@ class _CreateAccountScreenThreePasswordState
         title: Column(
           children: [
             Text(
-              'Vælg Kodeord',
+              AppLocalizations.of(context)!.choosePassword,
               textAlign: TextAlign.center,
-              style: kTextStyleH1,
+              style: kTextStyleH2,
             ),
             SizedBox(height: kNormalSpacerValue), // Adjust spacing as needed
             Text(
-              'Kodeordet skal indeholde både små og store bogstaver, tal og være mindst 8 tegn.',
+              AppLocalizations.of(context)!.passwordRequirements,
               textAlign: TextAlign.center,
               style: kTextStyleP3, // Use a smaller text style
             ),
@@ -80,7 +81,7 @@ class _CreateAccountScreenThreePasswordState
               children: [
                 CustomTextField.buildTextField(
                   controller: passwordController,
-                  hintText: 'Kodeord',
+                  hintText: AppLocalizations.of(context)!.password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (value) {
                     ValidationHelper.updateValidationStateFormThree(
@@ -94,16 +95,18 @@ class _CreateAccountScreenThreePasswordState
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Kodeord er tomt';
+                      return AppLocalizations.of(context)!.passwordEmptyError;
                     }
                     if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])').hasMatch(value)) {
-                      return 'Skal indeholde store og små bogstaver';
+                      return AppLocalizations.of(context)!
+                          .passwordUpperLowerError;
                     }
                     if (!RegExp(r'^(?=.*?[0-9])').hasMatch(value)) {
-                      return 'Skal indeholde tal';
+                      return AppLocalizations.of(context)!.passwordDigitError;
                     }
                     if (!RegExp(r'^.{8,}').hasMatch(value)) {
-                      return 'Skal være mindst 8 cifre';
+                      return AppLocalizations.of(context)!
+                          .passwordMinLengthError;
                     }
                     return null;
                   },
@@ -113,7 +116,7 @@ class _CreateAccountScreenThreePasswordState
                 ),
                 CustomTextField.buildTextField(
                   controller: confirmPasswordController,
-                  hintText: 'Bekræft kodeord',
+                  hintText: AppLocalizations.of(context)!.confirmPasswordHint,
                   isObscure: true,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (value) {
@@ -128,10 +131,12 @@ class _CreateAccountScreenThreePasswordState
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Skriv venligst et kodeord';
+                      return AppLocalizations.of(context)!
+                          .confirmPasswordEmptyError;
                     }
                     if (passwordController.text != value) {
-                      return 'Kodeord stemmer ikke overens';
+                      return AppLocalizations.of(context)!
+                          .passwordMismatchError;
                     }
                     return null;
                   },
@@ -178,26 +183,34 @@ class _CreateAccountScreenThreePasswordState
                 prefs.setString('mail', provider.mail);
                 prefs.setString('password', provider.password);
               } catch (e) {
-                String errorMessage = 'Noget gik galt. Prøv igen.';
+                String errorMessage =
+                    AppLocalizations.of(context)!.somethingWentWrong;
 
                 if (e is FirebaseAuthException) {
                   switch (e.code) {
                     case 'email-already-in-use':
-                      errorMessage = 'Denne mail er allerede registreret.';
+                      errorMessage =
+                          AppLocalizations.of(context)!.emailAlreadyInUseError;
+
                       break;
                     case 'invalid-email':
-                      errorMessage = 'Indtast en gyldig mailadresse.';
+                      errorMessage =
+                          AppLocalizations.of(context)!.invalidEmailError;
+
                       break;
                     case 'weak-password':
                       errorMessage =
-                          'Kodeordet er for svagt. Brug mindst 8 tegn med tal og bogstaver.';
+                          AppLocalizations.of(context)!.weakPasswordError;
+
                       break;
                     case 'network-request-failed':
                       errorMessage =
-                          'Ingen internetforbindelse. Tjek din netværksstatus.';
+                          AppLocalizations.of(context)!.noInternetError;
+
                       break;
                     default:
-                      errorMessage = 'Der opstod en fejl: ${e.message}';
+                      errorMessage =
+                          AppLocalizations.of(context)!.genericErrorOccurred;
                   }
                 }
 
@@ -205,7 +218,7 @@ class _CreateAccountScreenThreePasswordState
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(
-                      'Fejl',
+                      AppLocalizations.of(context)!.errorTitle,
                       style: TextStyle(color: redAccent),
                     ),
                     content: SingleChildScrollView(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -23,7 +24,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _formKey = GlobalKey<FormState>();
   final mailPhoneInputController = TextEditingController();
   final passwordInputController = TextEditingController();
@@ -37,12 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
         onBack: () => Navigator.of(context)
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         showProgressBar: false,
-
         title: Text(
-          'Log ind',
+          AppLocalizations.of(context)!.login,
           style: kTextStyleH2,
         ),
-
         formFields: [
           SizedBox(height: kBiggerSpacerValue),
           Form(
@@ -51,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 CustomTextField.buildTextField(
                   controller: mailPhoneInputController,
-                    keyboardType: TextInputType.emailAddress,
-                    hintText: 'Mail',
+                  keyboardType: TextInputType.emailAddress,
+                  hintText: AppLocalizations.of(context)!.mail,
                   onChanged: (value) {
                     inputIsFilled[0] = !(value.isEmpty);
                     provider.setCanContinue(!inputIsFilled.contains(false));
@@ -64,27 +62,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-
-                SizedBox(                  height: kNormalSpacerValue,                ),
-
-                CustomTextField.buildTextField( // TODO remember password/mail?
+                SizedBox(
+                  height: kNormalSpacerValue,
+                ),
+                CustomTextField.buildTextField(
+                  // TODO remember password/mail?
                   controller: passwordInputController,
                   isObscure: true,
-                  hintText: 'Kodeord',
+                  hintText: AppLocalizations.of(context)!.password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (value) {
                     inputIsFilled[1] = !(value.isEmpty);
                     provider.setCanContinue(!inputIsFilled.contains(false));
-                  },        validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return ''; // This prevents extra space by not showing any error message
-                  }
-                  return null;
-                },
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return ''; // This prevents extra space by not showing any error message
+                    }
+                    return null;
+                  },
                 ),
-
-                SizedBox(                  height: kNormalSpacerValue,                ),
-
+                SizedBox(
+                  height: kNormalSpacerValue,
+                ),
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -103,16 +103,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           provider.toggleStayLogin();
                         },
                         child: Text(
-                          'Forbliv logget ind',
+                          AppLocalizations.of(context)!.stayLoggedIn,
                           style: kTextStyleH3,
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                SizedBox(                  height: kNormalSpacerValue,                ),
-
+                SizedBox(
+                  height: kNormalSpacerValue,
+                ),
                 LoginRegistrationConfirmButton(
                   enabled: provider.canContinue,
                   onPressed: () async {
@@ -137,19 +137,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         prefs.setString(
                             'password', passwordInputController.text);
                       }
-                      // else {
-                      //   prefs.remove('mail');
-                      //   prefs.remove('password');
-                      // }
                     } else {
                       await showDialog(
                         context: context,
                         barrierDismissible: false,
                         builder: (context) => AlertDialog(
-                          title: Text('Ugyldigt login'),
+                          title: Text(AppLocalizations.of(context)!
+                              .invalidLogin), // Localized
                           content: SingleChildScrollView(
-                            child: Text(
-                                'Oplysninger er ikke indtastet korrekt. Prøv igen.'),
+                            child: Text(AppLocalizations.of(context)!
+                                .incorrectInfoTryAgain), // Localized
                           ),
                           actions: [
                             TextButton(
@@ -157,10 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                'Okay',
-                                style: TextStyle(
-                                  color: primaryColor,
-                                ),
+                                AppLocalizations.of(context)!.okay, // Localized
+                                style: TextStyle(color: primaryColor),
                               ),
                             )
                           ],

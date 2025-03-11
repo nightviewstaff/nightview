@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
@@ -44,7 +45,7 @@ class _BalladefabrikkenMainScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Der skete en fejl under indlæsning af nye referencer',
+              AppLocalizations.of(context)!.error_loading_references,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.black,
@@ -55,7 +56,8 @@ class _BalladefabrikkenMainScreenState
             await ReferralPointsHelper.incrementReferralPoints(newRedemtions);
         String msg = 'Der skete en fejl under opdatering af point';
         if (succes) {
-          msg = 'Du har tjent $newRedemtions point siden sidst. Godt gået!';
+          msg =
+              AppLocalizations.of(context)!.pointsEarnedMessage(newRedemtions);
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -81,7 +83,7 @@ class _BalladefabrikkenMainScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Kunne ikke indlæse optjente point',
+              AppLocalizations.of(context)!.error_loading_points,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.black,
@@ -448,7 +450,8 @@ class _BalladefabrikkenMainScreenState
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('App Store link copied to clipboard!'),
+                              content:
+                                  Text('App Store link copied to clipboard!'),
                             ),
                           );
                         },
@@ -457,15 +460,18 @@ class _BalladefabrikkenMainScreenState
                           style: linkTextStyle,
                         ),
                       ),
-                      if (Platform.isAndroid) // Only show Google Play option on Android
+                      if (Platform
+                          .isAndroid) // Only show Google Play option on Android
                         GestureDetector(
                           onTap: () async {
                             // Copy and open the Google Play link
-                            await Clipboard.setData(ClipboardData(text: androidLink));
+                            await Clipboard.setData(
+                                ClipboardData(text: androidLink));
                             await launchUrl(Uri.parse(androidLink));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Google Play link copied to clipboard!'),
+                                content: Text(
+                                    'Google Play link copied to clipboard!'),
                               ),
                             );
                           },

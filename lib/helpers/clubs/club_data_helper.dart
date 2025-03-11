@@ -83,8 +83,10 @@ class ClubDataHelper with ChangeNotifier {
           lon,
         );
 
-        if (distance <= 1000000) {
-          // 1,000 km HUGE BUG. Now it only show clubs within that range. Needs
+        await _processClubsInBatches(snapshot.docs); // MAYBES NOT GOOD?!?
+
+        if (distance <= 10000000) {
+          // 10.000 km HUGE BUG. Now it only show clubs within that range. Needs
           nearbyClubs.add(doc);
         } else {
           remainingClubs.add(doc);

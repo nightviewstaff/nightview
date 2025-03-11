@@ -79,7 +79,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       //                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       //                     child: LoginRegistrationButton(
                       //                      icon: defaultGoogleIcon,
-                      //                     text: 'Opret med Google',
+                      //                     text: AppLocalizations.of(context)!.google,
                       //                    type: LoginRegistrationButtonType.transparent,
                       //                   filledColor: primaryColor,
                       //                  onPressed: () async {
@@ -95,7 +95,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       //     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       //     child: LoginRegistrationButton(
                       //       icon: defaultAppleIcon,
-                      //       text: 'Opret med Apple',
+                      //       text: AppLocalizations.of(context)!.apple,
                       //       type: LoginRegistrationButtonType.transparent,
                       //       filledColor: primaryColor,
                       //       onPressed: () {
