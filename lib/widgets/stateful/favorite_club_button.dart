@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
+                // AppLocalizations.of(context)!.genericError,
                 'Der skete en fejl',
                 style: TextStyle(color: redAccent),
               ),
@@ -82,11 +84,13 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.addFavorite,
           'Tilføj favorit',
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
+            // AppLocalizations.of(context)!.addFavouriteDescription,
             'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.',
           ),
         ),
@@ -97,6 +101,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
+              // AppLocalizations.of(context)!.cancel,
               'Fortryd',
               style: TextStyle(color: Colors.redAccent),
             ),
@@ -106,6 +111,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
+              // AppLocalizations.of(context)!.continue,
               'Fortsæt',
               style: TextStyle(color: primaryColor),
             ),
@@ -123,11 +129,13 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.removeFavourite,
           'Fjern favorit',
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text(
+            // AppLocalizations.of(context)!.confirmRemoveFavourite,
             'Er du sikker på, at du vil fjerne denne klub fra dine favoritter?',
           ),
         ),
@@ -138,6 +146,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
+              // AppLocalizations.of(context)!.cancel,
               'Fortryd',
               style: TextStyle(color: primaryColor),
             ),
@@ -148,6 +157,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
+              // AppLocalizations.of(context)!.remove,
               'Fjern',
               style: TextStyle(color: Colors.redAccent),
             ),

@@ -16,7 +16,7 @@ class SwipeCardContent extends StatelessWidget {
 
   //TODO Put variables in here. Pictures and text Also reduce reduancy with a lot of methods.
 
- static String getRandomMessage() {
+  static String getRandomMessage() {
     Random random = Random();
     List<String> messages = [
       "Er du klar til at erobre dansegulvet i nat?",
@@ -108,9 +108,13 @@ class SwipeCardContent extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text(
+              // AppLocalizations.of(context)!.genericError,
+              'Error: ${snapshot.error}'));
         } else if (!snapshot.hasData) {
-          return Center(child: Text('No image found'));
+          return Center(child: Text(
+              // AppLocalizations.of(context)!.noImage,
+              'No image found'));
         } else {
           return Stack(
             children: [
@@ -159,7 +163,9 @@ class SwipeCardContent extends StatelessWidget {
                         Container(
                           child: IconWithText(
                             icon: FontAwesomeIcons.xmark,
-                            text: 'Ikke i dag',
+                            text:
+                                // AppLocalizations.of(context)!.notToday,
+                                'Ikke i dag',
                             onTap: () {
                               Provider.of<GlobalProvider>(context,
                                       listen: false)
@@ -170,7 +176,9 @@ class SwipeCardContent extends StatelessWidget {
                         ),
                         IconWithText(
                           icon: FontAwesomeIcons.solidHeart,
-                          text: 'Jeg er frisk!',
+                          text:
+                              // AppLocalizations.of(context)!.yes!,
+                              'Ja!',
                           iconColor: primaryColor,
                           showCircle: false,
                           onTap: () {

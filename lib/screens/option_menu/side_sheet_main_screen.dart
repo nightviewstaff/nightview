@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
@@ -73,7 +74,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                   ),
                 ),
                 ListTile(
-                  title: Text('Profil'),
+                  title: Text(AppLocalizations.of(context)!.profile),
                   leading: CircleAvatar(
                     backgroundImage:
                         Provider.of<GlobalProvider>(context).profilePicture,

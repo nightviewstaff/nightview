@@ -1,6 +1,7 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -37,6 +38,7 @@ class ClubBottomSheet {
                 Center(
                   child: Text(
                     '${ClubNameFormatter.displayClubName(club)} har intet tilbud lige nu',
+                    // AppLocalizations.of(context)!.noOfferRightNow
                     style: kTextStyleP3, // Add your desired text style
                   ),
                 )
@@ -76,6 +78,7 @@ class ClubBottomSheet {
     return Container(
       alignment: Alignment.topCenter,
       child: Text(
+        // AppLocalizations.of(context)!.mainOffer,
         'Hovedtilbud',
         style: kTextStyleH1,
       ),

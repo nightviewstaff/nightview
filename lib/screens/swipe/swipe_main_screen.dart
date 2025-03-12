@@ -24,15 +24,18 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
     if (details.velocity.pixelsPerSecond.dx > 0) {
       // Swiped right
       globalProvider.setPartyStatusLocal(PartyStatus.yes);
-      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.yes);
+      globalProvider.userDataHelper
+          .setCurrentUsersPartyStatus(status: PartyStatus.yes);
     } else if (details.velocity.pixelsPerSecond.dx < 0) {
       // Swiped left
       globalProvider.setPartyStatusLocal(PartyStatus.no);
-      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.no);
+      globalProvider.userDataHelper
+          .setCurrentUsersPartyStatus(status: PartyStatus.no);
     } else {
       // Swiped up/down or no significant swipe
       globalProvider.setPartyStatusLocal(PartyStatus.unsure);
-      globalProvider.userDataHelper.setCurrentUsersPartyStatus(status: PartyStatus.unsure);
+      globalProvider.userDataHelper
+          .setCurrentUsersPartyStatus(status: PartyStatus.unsure);
     }
     Navigator.of(context).pushReplacementNamed(MainScreen.id);
   }
@@ -68,6 +71,7 @@ class _SwipeMainScreenState extends State<SwipeMainScreen> {
               right: 0,
               child: Center(
                 child: Text(
+                  // AppLocalizations.of(context)!.swipe,
                   'Swipe!',
                   style: kTextStyleSwipeH1,
                 ),

@@ -5,13 +5,14 @@ class CompleteProfileScreen extends StatelessWidget {
   final String lastName;
   final String mail;
   final Function(
-      String phone,
-      int birthdateDay,
-      int birthdateMonth,
-      int birthdateYear,
-      ) onProfileComplete;
+    String phone,
+    int birthdateDay,
+    int birthdateMonth,
+    int birthdateYear,
+  ) onProfileComplete;
 
-  CompleteProfileScreen({super.key, 
+  CompleteProfileScreen({
+    super.key,
     required this.firstName,
     required this.lastName,
     required this.mail,
@@ -24,7 +25,9 @@ class CompleteProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Complete Your Profile")),
+      appBar: AppBar(title: Text(
+          // AppLocalizations.of(context)!.completeProfile,
+          "Complete Your Profile")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -33,7 +36,9 @@ class CompleteProfileScreen extends StatelessWidget {
               controller: phoneController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                labelText: "Phone Number",
+                labelText:
+                    // AppLocalizations.of(context)!.phoneNumber,
+                    "Phone Number",
                 hintText: "+1234567890",
               ),
             ),
@@ -41,8 +46,12 @@ class CompleteProfileScreen extends StatelessWidget {
               controller: birthDateController,
               keyboardType: TextInputType.datetime,
               decoration: InputDecoration(
-                labelText: "Birth Date",
-                hintText: "DD/MM/YYYY",
+                labelText:
+                    // AppLocalizations.of(context)!.birthDate,
+                    "Birth Date",
+                hintText:
+                    // AppLocalizations.of(context)!.dayFormat,
+                    "DD/MM/YYYY",
               ),
             ),
             SizedBox(height: 20),
@@ -57,7 +66,9 @@ class CompleteProfileScreen extends StatelessWidget {
                   final birthdateMonth = int.tryParse(parts[1]) ?? 0;
                   final birthdateYear = int.tryParse(parts[2]) ?? 0;
 
-                  if (birthdateDay > 0 && birthdateMonth > 0 && birthdateYear > 0) {
+                  if (birthdateDay > 0 &&
+                      birthdateMonth > 0 &&
+                      birthdateYear > 0) {
                     onProfileComplete(
                       phone,
                       birthdateDay,
@@ -66,16 +77,22 @@ class CompleteProfileScreen extends StatelessWidget {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Invalid birth date format")),
+                      SnackBar(content: Text(
+                          // AppLocalizations.of(context)!.invalidBirthDate,
+                          "Invalid birth date format")),
                     );
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please fill in all fields")),
+                    SnackBar(content: Text(
+                        // AppLocalizations.of(context)!.fillAllFields,
+                        "Please fill in all fields")),
                   );
                 }
               },
-              child: Text("Save and Continue"),
+              child: Text(
+                  // AppLocalizations.of(context)!.saveAndContinue,
+                  "Save and Continue"),
             ),
           ],
         ),

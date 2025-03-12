@@ -15,7 +15,8 @@ class DistanceDisplayWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) { // WIDGET MEANT FOR clubsheet
+  Widget build(BuildContext context) {
+    // WIDGET MEANT FOR clubsheet
     return Align(
       alignment: Alignment.topRight, // Position in top-right
       child: Padding(
@@ -25,6 +26,8 @@ class DistanceDisplayWidget extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text(
+// AppLocalizations.of(context)!.calculating,
+
                 'Udregner...',
                 style: TextStyle(
                   color: primaryColor,
@@ -33,7 +36,7 @@ class DistanceDisplayWidget extends StatelessWidget {
               );
             } else if (snapshot.hasError || snapshot.data == null) {
               return Text(
-                'N/A',
+                '',
                 style: TextStyle(
                   color: redAccent,
                   fontSize: 16.0,
@@ -60,8 +63,7 @@ class DistanceDisplayWidget extends StatelessWidget {
                   }
                 },
 
-
-              //DISPLAY!
+                //DISPLAY!
                 child: Text(
                   ClubDistanceCalculator.displayDistanceToClub(
                     club: club,

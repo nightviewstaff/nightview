@@ -57,7 +57,8 @@ class _LocationPermissionServiceScreenState
         .serviceEnabled
         .then((hasPermission) {
       if (hasPermission) {
-        Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+        Navigator.of(context)
+            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
       }
     });
   }
@@ -66,6 +67,7 @@ class _LocationPermissionServiceScreenState
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
+        // AppLocalizations.of(context)!.enableLocation,
         'Slå lokation til',
         textAlign: TextAlign.center,
         style: kTextStyleH1,
@@ -73,6 +75,7 @@ class _LocationPermissionServiceScreenState
       content: Column(
         children: [
           Text(
+            // AppLocalizations.of(context)!.locationRequiredToUseNightview,
             'For at du kan bruge NightView, er du nødt til at slå lokationstjenesten til.',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -81,7 +84,9 @@ class _LocationPermissionServiceScreenState
             height: kNormalSpacerValue,
           ),
           LoginRegistrationButton(
-            text: 'Refresh',
+            text:
+                // AppLocalizations.of(context)!.refresh,
+                'Refresh',
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
               checkPermission();

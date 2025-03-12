@@ -450,6 +450,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Text(
+                                            // AppLocalizations.of(context)!.noLocationsFound,
                                             "Ingen lokationer fundet",
                                             style: TextStyle(
                                                 color: redAccent, fontSize: 14),
@@ -686,6 +687,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           CircularProgressIndicator(color: secondaryColor),
           const SizedBox(height: 16),
           Text(
+            // AppLocalizations.of(context)!.fetchingLocations,
             'Henter lokationer',
             style: kTextStyleP1.copyWith(color: primaryColor),
           ),
@@ -828,7 +830,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             ),
             Text(
               clubOpeningHoursFormatted,
-              style: clubOpeningHoursFormatted.toLowerCase() == "lukket i dag."
+              style: clubOpeningHoursFormatted.toLowerCase() ==
+
+                      // AppLocalizations.of(context)!.closedToday,
+                      "lukket i dag."
                   ? kTextStyleP3.copyWith(color: redAccent)
                   : kTextStyleP3,
             ),

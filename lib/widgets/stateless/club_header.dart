@@ -177,6 +177,7 @@ class ClubHeader extends StatelessWidget {
                       CustomModalMessage.showCustomBottomSheetOneSecond(
                         context: context,
                         message:
+                            // AppLocalizations.of(context)!.filledUp,
                             "${(percentOfCapacity * 100).toStringAsFixed(0)}% fyldt op",
                         textStyle: kTextStyleP1,
                       );
@@ -219,6 +220,7 @@ class ClubHeader extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: Text(
+                      // AppLocalizations.of(context)!.capacity,
                       "Kapacitet",
                       style: kTextStyleP1,
                     ),
@@ -233,7 +235,9 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   Text(
                     openingHoursToday,
-                    style: openingHoursToday.toLowerCase() == "lukket i dag."
+                    style: openingHoursToday.toLowerCase() ==
+                            // AppLocalizations.of(context)!.closedToday,
+                            "lukket i dag."
                         ? kTextStyleP1.copyWith(color: redAccent)
                         : kTextStyleP1,
                   ),

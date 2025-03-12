@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -28,11 +29,16 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.redeemSuccesful,
           'Indløsning succesfuld!',
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
-          child: Text('Du indløste ${shotsRedeemed < 10 ? '$shotsRedeemed ${shotsRedeemed == 1 ? 'shot' : 'shots'}' : '1 flaske'}'),
+          child: Text(
+              // AppLocalizations.of(context)!.youRedeemed
+              'Du indløste ${shotsRedeemed < 10 ? '$shotsRedeemed ${shotsRedeemed == 1 ? 'shot' : 'shots'}' : '1 flaske'}'),
+          // AppLocalizations.of(context)!.shot
+          // AppLocalizations.of(context)!.shots
         ),
         actions: [
           TextButton(
@@ -40,7 +46,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.okay,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -55,11 +61,14 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.redeemFailed,
           'Indløsning mislykkedes',
           style: TextStyle(color: Colors.redAccent),
         ),
         content: SingleChildScrollView(
-          child: Text('Der skete en fejl ved indløsning af shots.\nPrøv igen senere.'),
+          child: Text(
+              // AppLocalizations.of(context)!.redeemFailedTryAgainLater,
+              'Der skete en fejl ved indløsning af shots.\nPrøv igen senere.'),
         ),
         actions: [
           TextButton(
@@ -67,7 +76,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.okay,
               style: TextStyle(color: Colors.redAccent),
             ),
           ),
@@ -93,7 +102,8 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                     Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('images/balladefabrikken_shots.jpg'),
+                          image:
+                              AssetImage('images/balladefabrikken_shots.jpg'),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(
@@ -110,7 +120,15 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(kMainPadding),
                         child: Text(
-                          Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske',
+                          Provider.of<BalladefabrikkenProvider>(context)
+                                      .redemtionCount <
+                                  10
+                              ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}'
+                              // AppLocalizations.of(context)!.shot
+                              // AppLocalizations.of(context)!.shots
+
+                              : '1 flaske',
+                          // AppLocalizations.of(context)!.bottle
                           style: kTextStyleH2,
                         ),
                       ),
@@ -129,6 +147,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                 buttonColor: primaryColor,
                 vibrationFlag: true,
                 label: Text(
+                  // AppLocalizations.of(context)!.redeem,
                   '            Indløs',
                   style: kTextStyleH1,
                 ),
@@ -139,13 +158,26 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                   size: kSliderHeight * 0.5,
                 ),
                 action: () async {
-                  int redemtionCount = Provider.of<BalladefabrikkenProvider>(context, listen: false).redemtionCount;
-                  bool succes = await ReferralPointsHelper.incrementReferralPoints(-redemtionCount);
+                  int redemtionCount = Provider.of<BalladefabrikkenProvider>(
+                          context,
+                          listen: false)
+                      .redemtionCount;
+                  bool succes =
+                      await ReferralPointsHelper.incrementReferralPoints(
+                          -redemtionCount);
                   if (succes) {
                     await showSuccesDialog(redemtionCount);
-                    Provider.of<BalladefabrikkenProvider>(context, listen: false).points -= redemtionCount;
-                    Provider.of<BalladefabrikkenProvider>(context, listen: false).redemtionCount =
-                        min(10, Provider.of<BalladefabrikkenProvider>(context, listen: false).points);
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .points -= redemtionCount;
+                    Provider.of<BalladefabrikkenProvider>(context,
+                                listen: false)
+                            .redemtionCount =
+                        min(
+                            10,
+                            Provider.of<BalladefabrikkenProvider>(context,
+                                    listen: false)
+                                .points);
                   } else {
                     await showErrorDialog();
                   }
@@ -164,6 +196,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Text(
+                            // AppLocalizations.of(context)!.shotsCanBeRedeemed,
                             'Shots kan indløses ved:\n${snapshot.data}',
                             textAlign: TextAlign.center,
                             style: kTextStyleP1,
@@ -174,12 +207,14 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                           );
                         }
                       },
-                      future: CustomDataHelper.getBalladeFabrikkenCertifiedAsString(),
+                      future: CustomDataHelper
+                          .getBalladeFabrikkenCertifiedAsString(),
                     ),
                     SizedBox(
                       height: kNormalSpacerValue,
                     ),
                     Text(
+                      // AppLocalizations.of(context)!.importantShowStaffBeforeRedempetion,
                       'VIGTIGT:\nVis til personalet at du indløser shots.\nEllers er indløsningen ugyldig!',
                       textAlign: TextAlign.center,
                       style: kTextStyleP1,

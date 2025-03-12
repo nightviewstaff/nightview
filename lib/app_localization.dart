@@ -261,6 +261,94 @@ class AppLocalizations {
         desc: 'Success message for earning points',
       );
 
+  String get profile => Intl.message(
+        'Profil',
+        name: 'profile',
+      );
+  String get shareNightViewPrefix => Intl.message(
+        'Share ',
+        name: 'shareNightViewPrefix',
+        desc: 'Prefix for sharing NightView, e.g., "Share "',
+      );
+
+  String get pointsEarnedPrefix => Intl.message(
+        'You have earned ',
+        name: 'pointsEarnedPrefix',
+        desc: 'Prefix for points earned message',
+      );
+
+  String get pointsEarnedSuffix => Intl.message(
+        ' points',
+        name: 'pointsEarnedSuffix',
+        desc: 'Suffix for points earned message',
+      );
+
+  String get errorUpdatingPoints => Intl.message(
+        'An error occurred while updating points',
+        name: 'errorUpdatingPoints',
+        desc: 'Error message when updating points fails',
+      );
+
+  String get phoneNumberHint => Intl.message(
+        'Enter phone number',
+        name: 'phoneNumberHint',
+        desc: 'Hint text for phone number input',
+      );
+
+  String get phoneNumberEmpty => Intl.message(
+        'Please enter a phone number',
+        name: 'phoneNumberEmpty',
+        desc: 'Error message when phone number is empty',
+      );
+
+  String get invalidPhoneNumber => Intl.message(
+        'Invalid phone number',
+        name: 'invalidPhoneNumber',
+        desc: 'Error message for invalid phone number',
+      );
+
+  String get shareCodeUploadError => Intl.message(
+        'Share code could not be uploaded to the cloud. Please try again.',
+        name: 'shareCodeUploadError',
+        desc: 'Error message when share code upload fails',
+      );
+
+  String get smsLaunchError => Intl.message(
+        'An error occurred while opening the SMS application',
+        name: 'smsLaunchError',
+        desc: 'Error message when SMS launch fails',
+      );
+
+  String get sendLinkForPoints => Intl.message(
+        'Send a link to your friends to earn points!',
+        name: 'sendLinkForPoints',
+        desc: 'Instruction text to send link for earning points',
+      );
+
+  String get appStore => Intl.message(
+        'App Store',
+        name: 'appStore',
+        desc: 'Label for App Store',
+      );
+
+  String get googlePlay => Intl.message(
+        'Google Play',
+        name: 'googlePlay',
+        desc: 'Label for Google Play',
+      );
+
+  String get appStoreLinkCopied => Intl.message(
+        'App Store link copied to clipboard!',
+        name: 'appStoreLinkCopied',
+        desc: 'Message when App Store link is copied',
+      );
+
+  String get googlePlayLinkCopied => Intl.message(
+        'Google Play link copied to clipboard!',
+        name: 'googlePlayLinkCopied',
+        desc: 'Message when Google Play link is copied',
+      );
+
   String get map => Intl.message(
         'Map',
         name: 'map',

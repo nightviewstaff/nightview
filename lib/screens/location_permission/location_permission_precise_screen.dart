@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -63,6 +64,7 @@ class _LocationPermissionPreciseScreenState
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
+        // AppLocalizations.of(context)!.allowExcactLocation,
         'Tillad præcis lokation',
         textAlign: TextAlign.center,
         style: kTextStyleH1,
@@ -70,6 +72,7 @@ class _LocationPermissionPreciseScreenState
       content: Column(
         children: [
           Text(
+            // AppLocalizations.of(context)!.locationNessearyMessage,
             'For at levere den bedste oplevelse for NightViews brugere, er det nødvendigt at appen har adgang til telefonens præcise position.',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -100,26 +103,40 @@ class _LocationPermissionPreciseScreenState
   }
 
   String get buttonText {
+    // KAN KUN VÆRE ANDROID
+
     if (Platform.isAndroid) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
     if (Platform.isIOS) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return
+        // AppLocalizations.of(context)!.notValidOS
+        'IKKE GYLDIGT STYRESYSTEM';
   }
 
   String get guideText {
+    // KAN KUN VÆRE ANDROID
+
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Brug præcis lokation';
+      return
+          // AppLocalizations.of(context)!.appSettingsAllowLocationAlways,
+          '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
     }
 
     if (Platform.isIOS) {
-      return '> Åbn app-indstillinger\n> Lokalitet\n> Præcis lokalitet';
+      // AppLocalizations.of(context)!.appSettingsAllowLocationInUse,
+      return '> Åbn app-indstillinger\n> Lokalitet\n> Ved brug af appen';
     }
 
+// AppLocalizations.of(context)!.notValidOS,
     return 'IKKE GYLDIGT STYRESYSTEM';
   }
 }

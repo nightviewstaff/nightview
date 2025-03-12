@@ -1,6 +1,7 @@
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
@@ -46,15 +47,18 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Location tracking'),
+          title: const Text(
+              // AppLocalizations.of(context)!.locationTracking,
+              'Location tracking'),
           content: const Text(
+            // AppLocalizations.of(context)!.locationTrackingDescription,
             'We use your location data to improve the app for you and others. '
             'You can opt out at any time in your device settings.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: Text(AppLocalizations.of(context)!.okay),
             ),
           ],
         );
@@ -88,9 +92,12 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Fejl ved login'),
+              title: Text(
+                  // AppLocalizations.of(context)!.logInError),
+                  'Fejl ved login'),
               content: SingleChildScrollView(
                 child: Text(
+                  // AppLocalizations.of(context)!.automaticLogInError),
                   'Der skete en fejl, da vi forsøgte at logge dig ind automatisk. Måske har du ændret din kode siden sidst.',
                 ),
               ),
@@ -100,7 +107,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
                     Navigator.of(context).pop();
                   },
                   child: Text(
-                    'OK',
+                    AppLocalizations.of(context)!.okay,
                     style: TextStyle(
                       color: primaryColor,
                     ),

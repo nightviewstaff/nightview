@@ -132,8 +132,12 @@ class _RateClubState extends State<RateClub>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Bekræft bedømmelse'),
+          title: const Text(
+              // AppLocalizations.of(context)!.confirmRating,
+
+              'Bekræft bedømmelse'),
           content: Text(
+              // AppLocalizations.of(context)!.giveClubRating,
               'Vil du give $clubName en bedømmelse på $rating/5 stjerner?'),
           backgroundColor: black,
           titleTextStyle: TextStyle(color: primaryColor, fontSize: 20),
@@ -143,13 +147,19 @@ class _RateClubState extends State<RateClub>
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text('Fortryd', style: TextStyle(color: redAccent)),
+              child: Text(
+                  // AppLocalizations.of(context)!.cancel,
+                  'Fortryd',
+                  style: TextStyle(color: redAccent)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text('Fortsæt', style: TextStyle(color: primaryColor)),
+              child: Text(
+                  // AppLocalizations.of(context)!.continue,
+                  'Fortsæt',
+                  style: TextStyle(color: primaryColor)),
             ),
           ],
         );
@@ -223,6 +233,7 @@ class _RateClubState extends State<RateClub>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
+                // AppLocalizations.of(context)!.alreadyRated,
                 'Du har allerede bedømt $clubName for nylig.',
                 style: TextStyle(color: redAccent),
               ),

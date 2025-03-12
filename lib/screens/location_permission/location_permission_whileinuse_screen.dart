@@ -69,6 +69,7 @@ class _LocationPermissionWhileInUseScreen
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
+        // AppLocalizations.of(context)!.allowWhileInUse,
         'Tillad lokation mens du bruger appen',
         textAlign: TextAlign.center,
         style: kTextStyleH1,
@@ -76,6 +77,7 @@ class _LocationPermissionWhileInUseScreen
       content: Column(
         children: [
           Text(
+            // AppLocalizations.of(context)!.LocationEnabledNessesityMessage,
             'For at få den bedste oplevelse på NightView, er det nødvendigt at appen har adgang til din lokation mens du bruger appen (det gælder også, når du har appen åben i baggrunden).',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -106,30 +108,40 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get buttonText {
-    // CAN ONLY BE iOS
+    // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
     if (Platform.isIOS) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return
+        // AppLocalizations.of(context)!.notValidOS
+        'IKKE GYLDIGT STYRESYSTEM';
   }
 
   String get guideText {
-    // CAN ONLY BE iOS
+    // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad kun, mens appen er i brug';
+      return
+          // AppLocalizations.of(context)!.appSettingsAllowLocationAlways,
+          '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
     }
 
     if (Platform.isIOS) {
+      // AppLocalizations.of(context)!.appSettingsAllowLocationInUse,
       return '> Åbn app-indstillinger\n> Lokalitet\n> Ved brug af appen';
     }
 
+// AppLocalizations.of(context)!.notValidOS,
     return 'IKKE GYLDIGT STYRESYSTEM';
   }
 }

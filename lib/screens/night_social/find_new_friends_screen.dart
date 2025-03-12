@@ -32,7 +32,8 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
 
   ImageProvider getPb(int index) {
     try {
-      return Provider.of<SearchFriendsHelper>(context, listen: false).searchedUserPbs[index];
+      return Provider.of<SearchFriendsHelper>(context, listen: false)
+          .searchedUserPbs[index];
     } catch (e) {
       return AssetImage('images/user_pb.jpg');
     }
@@ -50,6 +51,7 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
               color: black,
               width: double.maxFinite,
               child: Text(
+                // AppLocalizations.of(context)!.findNewFriends,
                 'Find nye venner',
                 style: kTextStyleH1,
                 overflow: TextOverflow.ellipsis,
@@ -91,8 +93,10 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                         .searchedUsers[index];
                     return ListTile(
                       onTap: () {
-                        Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(user);
-                        Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
+                        Provider.of<GlobalProvider>(context, listen: false)
+                            .setChosenProfile(user);
+                        Navigator.of(context)
+                            .pushNamed(OtherProfileMainScreen.id);
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius:
@@ -115,7 +119,9 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                         ),
                         onPressed: () {
                           FriendRequestHelper.sendFriendRequest(user.id);
-                          Provider.of<SearchFriendsHelper>(context, listen: false).removeFromSearch(index);
+                          Provider.of<SearchFriendsHelper>(context,
+                                  listen: false)
+                              .removeFromSearch(index);
                         },
                       ),
                     );

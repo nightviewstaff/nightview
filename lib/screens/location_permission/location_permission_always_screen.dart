@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -55,20 +56,22 @@ class _LocationPermissionAlwaysScreen
   }
 
   Future<void> checkPermission() async {
-    bool hasPermission = await Provider.of<NightMapProvider>(context, listen: false)
-    .locationHelper
-    .requestLocationPermission();
+    bool hasPermission =
+        await Provider.of<NightMapProvider>(context, listen: false)
+            .locationHelper
+            .requestLocationPermission();
 
-    if(hasPermission){
-      Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+    if (hasPermission) {
+      Navigator.of(context)
+          .pushReplacementNamed(LocationPermissionCheckerScreen.id);
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
+        // AppLocalizations.of(context)!.alwaysAllowLocation,
         'Tillad lokation altid',
         textAlign: TextAlign.center,
         style: kTextStyleH1,
@@ -76,6 +79,7 @@ class _LocationPermissionAlwaysScreen
       content: Column(
         children: [
           Text(
+            // AppLocalizations.of(context)!.locationNessesaryMessage,
             'For at få den bedste oplevelse på NightView, er det nødvendigt at appen altid har adgang til din lokation.',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -116,27 +120,37 @@ class _LocationPermissionAlwaysScreen
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
     if (Platform.isIOS) {
-      return 'Åbn app-indstillinger';
+      return
+          // AppLocalizations.of(context)!.openAppSettings,
+          'Åbn app-indstillinger';
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return
+        // AppLocalizations.of(context)!.notValidOS
+        'IKKE GYLDIGT STYRESYSTEM';
   }
 
   String get guideText {
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
+      return
+          // AppLocalizations.of(context)!.appSettingsAllowLocationAlways,
+          '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
     }
 
     if (Platform.isIOS) {
+      // AppLocalizations.of(context)!.appSettingsAllowLocationInUse,
       return '> Åbn app-indstillinger\n> Lokalitet\n> Ved brug af appen';
     }
 
+// AppLocalizations.of(context)!.notValidOS,
     return 'IKKE GYLDIGT STYRESYSTEM';
   }
 }

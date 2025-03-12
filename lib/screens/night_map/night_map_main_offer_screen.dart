@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
@@ -32,7 +33,9 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String? currentUserId;
       do {
-        currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+        currentUserId = Provider.of<GlobalProvider>(context, listen: false)
+            .userDataHelper
+            .currentUserId;
         await Future.delayed(Duration(milliseconds: 100));
       } while (currentUserId == null);
       String clubId =
@@ -88,6 +91,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
+                          // AppLocalizations.of(context)!.errorOccured,
                           'Der skete en fejl',
                           style: TextStyle(color: white),
                         ),
@@ -107,6 +111,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   return null;
                 },
                 label: Text(
+                  // AppLocalizations.of(context)!.redeem,
                   '            Indløs',
                   style: kTextStyleH1,
                 ),
@@ -121,6 +126,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                 height: kNormalSpacerValue,
               ),
               Text(
+                // AppLocalizations.of(context)!.showStaffBeforeRedemption,
                 'VIGTIGT:\nVis til personalet at du indløser tilbuddet.\nEllers er indløsningen ugyldig!',
                 textAlign: TextAlign.center,
                 style: kTextStyleP1,
@@ -133,6 +139,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         return SizedBox(
           height: kSliderHeight + kBottomSpacerValue,
           child: Text(
+            // AppLocalizations.of(context)!.alreadyRedeemedToday,
             'Du har allerede indløst dette tilbud i dag.\nKom igen i morgen!',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -149,11 +156,13 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.succesfulRedemtion,
           'Indløsning succesfuld!',
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
+              // AppLocalizations.of(context)!.redemptionCompleted,
               'Indløsning af hovedtilbud ved ${chosenClub.name} blev fuldført.'),
         ),
         actions: [
@@ -162,7 +171,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.okay,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -177,11 +186,13 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
+          // AppLocalizations.of(context)!.redemptionFailed,
           'Indløsning mislykkedes',
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text(
+              // AppLocalizations.of(context)!.redepmtionErrorTryLater,
               'Der skete en fejl ved indløsning af hovedtilbuddet.\nPrøv igen senere.'),
         ),
         actions: [
@@ -190,7 +201,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              AppLocalizations.of(context)!.okay,
               style: TextStyle(color: redAccent),
             ),
           ),
@@ -213,9 +224,10 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(Provider.of<GlobalProvider>(context)
-                        .chosenClub
-                        .mainOfferImg!),
+                    image: CachedNetworkImageProvider(
+                        Provider.of<GlobalProvider>(context)
+                            .chosenClub
+                            .mainOfferImg!),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.all(

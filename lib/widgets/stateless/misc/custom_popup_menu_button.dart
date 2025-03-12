@@ -62,6 +62,7 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
           PopupMenuItem(
             value: null,
             child: Text(
+              // AppLocalizations.of(context)!.unknownOpeningHours,
               'Ukendte åbningstider', // "No opening hours" in Danish
               style: kTextStyleP1,
             ),

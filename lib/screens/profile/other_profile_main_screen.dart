@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -35,14 +36,17 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      userId = Provider.of<GlobalProvider>(context, listen: false).chosenProfile?.id;
+      userId =
+          Provider.of<GlobalProvider>(context, listen: false).chosenProfile?.id;
 
       if (userId == null) {
         return;
       }
 
-      biographyController.text = await BiographyHelper.getBiography(userId!) ?? '';
-      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!).then((url) => url == null ? null : CachedNetworkImageProvider(url));
+      biographyController.text =
+          await BiographyHelper.getBiography(userId!) ?? '';
+      profilePicture = await ProfilePictureHelper.getProfilePicture(userId!)
+          .then((url) => url == null ? null : CachedNetworkImageProvider(url));
       setState(() {});
 
       await checkFriendButton();
@@ -80,9 +84,9 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
+                // AppLocalizations.of(context)!.removeFriend,
                 'Fjern ven',
-                style: kTextStyleH4
-                ,
+                style: kTextStyleH4,
               ),
               FaIcon(FontAwesomeIcons.userMinus),
             ],
@@ -102,6 +106,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
+                // AppLocalizations.of(context)!.addFriend,
                 'Tilføj ven',
                 style: kTextStyleH2,
               ),
@@ -114,20 +119,35 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
   AlertDialog getDialog(BuildContext context, LocationData? locationData) {
     final String text;
     if (locationData == null) {
-      text = 'Kunne ikke finde seneste lokation';
+      text =
+          // AppLocalizations.of(context)!.noLatestLocation,
+          'Kunne ikke finde seneste lokation';
     } else if (locationData.private) {
-      text = 'Denne person deler ikke sin lokation';
+      text =
+          // AppLocalizations.of(context)!.userNotSharingLocation,
+          'Denne person deler ikke sin lokation';
     } else {
       // Add check for more than 100 days ago
-      String? clubName = Provider.of<GlobalProvider>(context, listen: false).clubDataHelper.clubData[locationData.clubId]?.name;
+      String? clubName = Provider.of<GlobalProvider>(context, listen: false)
+          .clubDataHelper
+          .clubData[locationData.clubId]
+          ?.name;
       if (clubName == null) {
-        text = 'Kunne ikke finde seneste lokation';
+        text =
+            // AppLocalizations.of(context)!.noLatestLocation,
+            'Kunne ikke finde seneste lokation';
       } else {
-        text = 'Lokation: $clubName\nTidspunkt: ${locationData.readableTimestamp}';
+        text =
+
+            // AppLocalizations.of(context)!.location
+            // AppLocalizations.of(context)!.time
+            'Lokation: $clubName\nTidspunkt: ${locationData.readableTimestamp}';
       }
     }
     return AlertDialog(
-      title: Text('Seneste lokation'),
+      title: Text(
+          // AppLocalizations.of(context)!.latestLocation,
+          'Seneste lokation'),
       content: Text(text),
       actions: [
         TextButton(
@@ -135,7 +155,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             Navigator.of(context).pop();
           },
           child: Text(
-            'OK',
+            AppLocalizations.of(context)!.okay,
             style: TextStyle(color: primaryColor),
           ),
         )
@@ -148,7 +168,9 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(Provider.of<GlobalProvider>(context).chosenProfile == null
-            ? 'Ugyldig bruger'
+            ?
+            // AppLocalizations.of(context)!.invalidUser,
+            'Ugyldig bruger'
             : '${Provider.of<GlobalProvider>(context).chosenProfile?.firstName} ${Provider.of<GlobalProvider>(context).chosenProfile?.lastName}'),
       ),
       body: SafeArea(
@@ -173,6 +195,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             height: kSmallSpacerValue,
                           ),
                           Text(
+                            // AppLocalizations.of(context)!.biography,
                             'Biografi',
                             style: kTextStyleH3,
                           ),
@@ -184,7 +207,10 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             padding: EdgeInsets.all(kMainPadding),
                             child: TextField(
                               controller: biographyController,
-                              decoration: InputDecoration.collapsed(hintText: 'Denne bruger har ikke angivet en biografi'),
+                              decoration: InputDecoration.collapsed(
+                                  hintText:
+// AppLocalizations.of(context)!.userHasNoBiography,
+                                      'Denne bruger har ikke angivet en biografi'),
                               readOnly: true,
                               maxLines: 8,
                             ),
@@ -200,7 +226,8 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
-                        backgroundImage: profilePicture ?? AssetImage('images/user_pb.jpg'),
+                        backgroundImage:
+                            profilePicture ?? AssetImage('images/user_pb.jpg'),
                         radius: 60.0,
                       ),
                       SizedBox(
@@ -208,24 +235,33 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                       ),
                       Visibility(
                         visible: isFriend,
-                        child: FilledButton( // Change color
+                        child: FilledButton(
+                          // Change color
                           onPressed: () async {
-                            UserData? user = Provider.of<GlobalProvider>(context, listen: false).chosenProfile;
+                            UserData? user = Provider.of<GlobalProvider>(
+                                    context,
+                                    listen: false)
+                                .chosenProfile;
                             if (user == null) {
                               return;
                             }
                             LocationData? lastLocation =
-                                await Provider.of<NightMapProvider>(context, listen: false).locationHelper.getLastPositionOfUser(user.id);
+                                await Provider.of<NightMapProvider>(context,
+                                        listen: false)
+                                    .locationHelper
+                                    .getLastPositionOfUser(user.id);
                             await showDialog(
                               context: context,
                               barrierDismissible: false,
-                              builder: (context) => getDialog(context, lastLocation),
+                              builder: (context) =>
+                                  getDialog(context, lastLocation),
                             );
                           },
                           style: kTransparentButtonStyle,
                           child: Row(
                             children: [
                               Text(
+                                // AppLocalizations.of(context)!.find,
                                 'Find',
                                 style: kTextStyleP1,
                               ),

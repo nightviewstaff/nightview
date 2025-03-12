@@ -66,6 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
     'passwordUpperLowerError': MessageLookupByLibrary.simpleMessage('Skal indeholde store og små bogstaver'),
     'phoneNumber': MessageLookupByLibrary.simpleMessage('Telefonnummer'),
     'pleaseEnterConfirmationCode': MessageLookupByLibrary.simpleMessage('Indtast venligst en bekræftelseskode'),
+    'profile': MessageLookupByLibrary.simpleMessage('Profil'),
     'remainingInformation': MessageLookupByLibrary.simpleMessage('Resterende information'),
     'selectLanguage': MessageLookupByLibrary.simpleMessage('Vælg sprog'),
     'social': MessageLookupByLibrary.simpleMessage('Social'),

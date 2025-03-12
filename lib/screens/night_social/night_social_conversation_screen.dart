@@ -230,6 +230,7 @@ class _NightSocialConversationScreenState
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
+                                    // AppLocalizations.of(context)!.sendingChatError,
                                     'Kunne ikke sende besked',
                                     style: TextStyle(color: Colors.white),
                                   ),

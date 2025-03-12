@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -24,6 +25,7 @@ class ShotsGraph extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: kMainPadding),
               child: Text(
+                // AppLocalizations.of(context)!.freeBottle,
                 '1 gratis flaske!',
                 style: kTextStyleH2,
               ),
@@ -48,6 +50,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: kMainPadding),
                     child: Text(
+                      // AppLocalizations.of(context)!.freeShots,
                       '$points gratis shots',
                       style: kTextStyleH2,
                     ),
@@ -78,6 +81,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: kMainPadding),
                     child: Text(
+                      // AppLocalizations.of(context)!.shots,
                       '$points shots',
                       style: kTextStyleH2,
                     ),

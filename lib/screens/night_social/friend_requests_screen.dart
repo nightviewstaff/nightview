@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -43,7 +44,8 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
       friendRequests = requests.reversed.toList();
       friendRequestPbs.clear();
       for (FriendRequest request in friendRequests) {
-        String? url = await ProfilePictureHelper.getProfilePicture(request.fromId);
+        String? url =
+            await ProfilePictureHelper.getProfilePicture(request.fromId);
         if (url == null) {
           friendRequestPbs.add(const AssetImage('images/user_pb.jpg'));
         } else {
@@ -67,6 +69,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
               color: Colors.black,
               width: double.maxFinite,
               child: Text(
+                // AppLocalizations.of(context)!.friendRequests,
                 'Venneanmodninger',
                 style: kTextStyleH2,
               ),
@@ -95,8 +98,10 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
 
                       return ListTile(
                         onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(fromUserData);
-                          Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(fromUserData);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius:

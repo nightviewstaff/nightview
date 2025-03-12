@@ -54,7 +54,7 @@ class _BalladefabrikkenMainScreenState
       } else if (newRedemtions > 0) {
         bool succes =
             await ReferralPointsHelper.incrementReferralPoints(newRedemtions);
-        String msg = 'Der skete en fejl under opdatering af point';
+        String msg = AppLocalizations.of(context)!.errorUpdatingPoints;
         if (succes) {
           msg =
               AppLocalizations.of(context)!.pointsEarnedMessage(newRedemtions);
@@ -256,28 +256,30 @@ class _BalladefabrikkenMainScreenState
             Expanded(
               child: ListView(
                 children: [
+                  // Share NightView header
                   Padding(
                     padding: const EdgeInsets.all(kMainPadding),
                     child: Text.rich(
                       TextSpan(
-                        text: 'Del ', // Normal text
-                        style: kTextStyleH2, // Base style
+                        text: AppLocalizations.of(context)!
+                            .shareNightViewPrefix, // e.g., "Del "
+                        style: kTextStyleH2,
                         children: [
                           TextSpan(
-                            text: 'NightView', // Styled text
+                            text: 'NightView',
                             style: kTextStyleH2.copyWith(
-                              color:
-                                  primaryColor, // Change to your desired color
+                              color: primaryColor,
                             ),
                           ),
                           TextSpan(
-                            text: '!',
+                            text: '!', // Exclamation mark remains literal.
                             style: kTextStyleH2,
                           )
                         ],
                       ),
                     ),
                   ),
+                  // Points container
                   Container(
                     padding: EdgeInsets.all(kMainPadding),
                     color: black,
@@ -287,66 +289,40 @@ class _BalladefabrikkenMainScreenState
                           padding: EdgeInsets.all(kMainPadding),
                           child: Text.rich(
                             TextSpan(
-                              text: 'Du har optjent ', // Static text
-                              style: kTextStyleH3, // Base style
+                              text: AppLocalizations.of(context)!
+                                  .pointsEarnedPrefix, // e.g., "Du har optjent "
+                              style: kTextStyleH3,
                               children: [
                                 TextSpan(
                                   text:
-                                      '${Provider.of<BalladefabrikkenProvider>(context).points}', // Points amount
+                                      '${Provider.of<BalladefabrikkenProvider>(context).points}',
                                   style: kTextStyleH3.copyWith(
                                     color: primaryColor,
-                                    // Desired color for the points
-                                    fontWeight: FontWeight
-                                        .bold, // Optional: Make it bold
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: ' point',
-                                  // Static text after the points
-                                  style: kTextStyleH3, // Use base style
+                                  text: AppLocalizations.of(context)!
+                                      .pointsEarnedSuffix, // e.g., " point"
+                                  style: kTextStyleH3,
                                 ),
                               ],
                             ),
                           ),
                         ),
-
-                        // Padding(
-                        //   padding: const EdgeInsets.all(kMainPadding),
-                        //   child: FilledButton(
-                        //     onPressed: () {
-                        //       Navigator.of(context)
-                        //           .pushNamed(ShotAccumulationScreen.id);
-                        //     },
-                        //     style: kFilledButtonStyle.copyWith(
-                        //       fixedSize: MaterialStatePropertyAll(
-                        //         Size(double.maxFinite, 60.0),
-                        //       ),
-                        //     ),
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.all(kMainPadding),
-                        //       child: Text(
-                        //         'Indløs shots!',
-                        //         style: kTextStyleH2,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: MediaQuery.of(context).viewInsets.bottom > 0
-                        //       ? kNormalSpacerValue
-                        //       : kBottomSpacerValue,
-                        // ),
+                        // (The commented-out "Indløs shots!" widget remains unchanged.)
                       ],
                     ),
                   ),
+                  // Link invitation text
                   Padding(
                     padding: const EdgeInsets.all(kMainPadding),
                     child: Text(
-                      'Send et link til dine venner for at optjene point!',
-                      // bed dem om at indtaste din kode for at få endnu flere shots!',
+                      AppLocalizations.of(context)!.sendLinkForPoints,
                       style: kTextStyleP1,
                     ),
                   ),
+                  // Phone input form
                   Padding(
                     padding: const EdgeInsets.all(kMainPadding),
                     child: Form(
@@ -358,15 +334,18 @@ class _BalladefabrikkenMainScreenState
                             child: TextFormField(
                               controller: _phoneInputController,
                               decoration: kMainInputDecoration.copyWith(
-                                  hintText: 'Indtast telefonnummer',
+                                  hintText: AppLocalizations.of(context)!
+                                      .phoneNumberHint,
                                   hintStyle: kTextStyleP1),
                               keyboardType: TextInputType.phone,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Skriv venligst et telefonnummer';
+                                  return AppLocalizations.of(context)!
+                                      .phoneNumberEmpty;
                                 }
                                 if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                  return 'Ugyldigt tlf-nummer';
+                                  return AppLocalizations.of(context)!
+                                      .invalidPhoneNumber;
                                 }
                                 return null;
                               },
@@ -402,7 +381,8 @@ class _BalladefabrikkenMainScreenState
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          'Delekode blev ikke uploadet til skyen. Prøv igen.',
+                                          AppLocalizations.of(context)!
+                                              .shareCodeUploadError,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         backgroundColor: Colors.black,
@@ -414,7 +394,8 @@ class _BalladefabrikkenMainScreenState
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Der skete en fejl under åbning af SMS-applikation',
+                                        AppLocalizations.of(context)!
+                                            .smsLaunchError,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       backgroundColor: Colors.black,
@@ -440,43 +421,41 @@ class _BalladefabrikkenMainScreenState
                   SizedBox(
                     height: kNormalSpacerValue,
                   ),
+                  // Bottom navigation links
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       GestureDetector(
                         onTap: () async {
-                          // Copy and open the App Store link
                           await Clipboard.setData(ClipboardData(text: iosLink));
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text('App Store link copied to clipboard!'),
+                              content: Text(AppLocalizations.of(context)!
+                                  .appStoreLinkCopied),
                             ),
                           );
                         },
                         child: Text(
-                          'App Store',
+                          AppLocalizations.of(context)!.appStore,
                           style: linkTextStyle,
                         ),
                       ),
-                      if (Platform
-                          .isAndroid) // Only show Google Play option on Android
+                      if (Platform.isAndroid)
                         GestureDetector(
                           onTap: () async {
-                            // Copy and open the Google Play link
                             await Clipboard.setData(
                                 ClipboardData(text: androidLink));
                             await launchUrl(Uri.parse(androidLink));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                    'Google Play link copied to clipboard!'),
+                                content: Text(AppLocalizations.of(context)!
+                                    .googlePlayLinkCopied),
                               ),
                             );
                           },
                           child: Text(
-                            'Google Play',
+                            AppLocalizations.of(context)!.googlePlay,
                             style: linkTextStyle,
                           ),
                         ),
@@ -488,11 +467,9 @@ class _BalladefabrikkenMainScreenState
                       if (snapshot.hasData) {
                         if (snapshot.data == false) {
                           return SizedBox(
-                            // Quickfix
                             height: 0,
                             width: 0,
                           );
-                          // return getSendShotWidget(context);
                         } else {
                           return SizedBox(
                             height: 0,
@@ -504,12 +481,7 @@ class _BalladefabrikkenMainScreenState
                       }
                     },
                   ),
-                  // SizedBox(height: 10),Future release
-                  // QrImage(
-                  //   data: qrCodeLink, // The link dynamically determined by the platform
-                  //   version: QrVersions.auto,
-                  //   size: 200.0, // Adjust size as needed
-                  // ),
+                  // SizedBox(height: 10), Future release: QR code widget
                 ],
               ),
             ),
