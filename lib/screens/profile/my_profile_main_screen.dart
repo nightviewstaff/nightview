@@ -157,26 +157,111 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircleAvatar(
-                            backgroundImage:
-                                Provider.of<GlobalProvider>(context)
-                                    .profilePicture,
-                            radius: 70.0,
+                          InkWell(
+                            onTap: () async {
+                              bool? confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return AlertDialog(
+                                    title: Text('Skift billede'),
+                                    // AppLocalizations.of(context)!.changePicture,
+
+                                    content: Text(
+                                        // AppLocalizations.of(context)!.confirmChangePicture,
+
+                                        'Vil du skifte dit profilbillede?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(dialogContext)
+                                                .pop(false),
+                                        child: Text('Nej',
+                                            style:
+                                                TextStyle(color: primaryColor)),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(dialogContext)
+                                                .pop(true),
+                                        child: Text('Ja',
+                                            style:
+                                                TextStyle(color: primaryColor)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              if (confirmed == true) {
+                                if (await ProfilePictureHelper
+                                    .pickCropResizeCompressAndUploadPb()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Profilbillede opdateret',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                  String? currentUserId =
+                                      Provider.of<GlobalProvider>(context,
+                                              listen: false)
+                                          .userDataHelper
+                                          .currentUserId;
+                                  if (currentUserId == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Der skete en fejl under indlæsning af profilbillede',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: Colors.black,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  String? pbUrl = await ProfilePictureHelper
+                                      .getProfilePicture(currentUserId);
+                                  Provider.of<GlobalProvider>(context,
+                                          listen: false)
+                                      .setProfilePicture(pbUrl);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Der skete en fejl under ændring af profilbillede',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  0), // Adjust for border thickness if needed
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: primaryColor, width: 1.5),
+                              ),
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    Provider.of<GlobalProvider>(context)
+                                        .profilePicture,
+                                radius: 70.0,
+                              ),
+                            ),
                           ),
                           SizedBox(height: kNormalSpacerValue),
-                          FilledButton(
-                            onPressed: () async {
-                              // [Existing button logic remains unchanged]
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed(FindNewFriendsScreen.id);
                             },
-                            style: FilledButton.styleFrom(
-                              side: BorderSide(color: primaryColor, width: 2.0),
-                              backgroundColor: Colors.transparent,
-                              foregroundColor: primaryColor,
-                            ),
-                            child: Text(
-                                // AppLocalizations.of(context)!.changePicture,
-                                'Skift billede',
-                                style: kTextStyleP1),
+                            icon: FaIcon(FontAwesomeIcons.userPlus),
+                            color: primaryColor,
                           ),
                           SizedBox(height: kSmallSpacerValue),
                           Visibility(
@@ -212,14 +297,6 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           // AppLocalizations.of(context)!.friends,
                           'Venner',
                           style: kTextStyleH2),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed(FindNewFriendsScreen.id);
-                        },
-                        icon: FaIcon(FontAwesomeIcons.userPlus),
-                        color: primaryColor,
-                      ),
                     ],
                   ),
                 ),
@@ -286,10 +363,12 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                       await showDialog(
                         context: context,
                         builder: (dialogContext) => AlertDialog(
-                          title: Text(
-                            // AppLocalizations.of(context)!.privacyPolicy,
-                            'Privatlivspolitik',
-                            style: TextStyle(color: primaryColor),
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.privacyPolicy,
+                              'Privatlivspolitik',
+                              style: TextStyle(color: primaryColor),
+                            ),
                           ),
                           content: Text(
                               // AppLocalizations.of(context)!.openPrivacyPolicyInBrowser,
@@ -334,10 +413,12 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                         context: context,
                         barrierDismissible: false,
                         builder: (deleteUserContext) => AlertDialog(
-                          title: Text(
-                            // AppLocalizations.of(context)!.deleteUser,
-                            'Slet bruger',
-                            style: TextStyle(color: redAccent),
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.deleteUser,
+                              'Slet bruger',
+                              style: TextStyle(color: redAccent),
+                            ),
                           ),
                           content: Text(
                             // AppLocalizations.of(context)!.confirmDeleteUserAndAllData,
@@ -419,10 +500,12 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                       await showDialog(
                         context: context,
                         builder: (dialogContext) => AlertDialog(
-                          title: Text(
-                            // AppLocalizations.of(context)!.logOff,
-                            'Log af',
-                            style: TextStyle(color: redAccent),
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.logOff,
+                              'Log af',
+                              style: TextStyle(color: redAccent),
+                            ),
                           ),
                           content: Text(
                               // AppLocalizations.of(context)!.confirmLogOff,

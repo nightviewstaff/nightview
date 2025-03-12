@@ -61,7 +61,9 @@ class LanguageSwitcher extends StatelessWidget {
         Provider.of<LanguageProvider>(context, listen: false);
     // Map flag image paths to their native names.
     const languageNames = {
-      'images/flags/dk.png': 'Dansk',
+      'images/flags/dk.png':
+          // AppLocalizations.of(context)!.languageName,
+          'Dansk',
       'images/flags/uk.png': 'English',
       // Uncomment and add others as needed:
       // 'images/flags/de.png': 'Deutsch',
@@ -109,22 +111,23 @@ class LanguageSwitcher extends StatelessWidget {
                   future: getDominantColors(flagPath),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      final color1 = snapshot.data![0];
-                      final color2 = snapshot.data![1];
+                      // Instead of using the dominant colors, force a white gradient:
                       return GradientText(
                         text: languageNames[flagPath]!,
-                        style:
-                            kTextStyleH3.copyWith(fontWeight: FontWeight.bold),
+                        style: kTextStyleH3.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Force white text
+                        ),
                         gradient: LinearGradient(
-                          colors: [color1, color1, color2, color2],
-                          stops: [0.0, 0, 1, 0],
+                          colors: [Colors.white, Colors.white],
                         ),
                       );
                     } else {
+                      // Force the fallback text style to white as well.
                       return Text(
                         languageNames[flagPath]!,
                         style: kTextStyleH3.copyWith(
-                          color: primaryColor,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       );

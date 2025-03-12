@@ -26,78 +26,115 @@ class OtherProfileMainScreen extends StatefulWidget {
 }
 
 class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
+  String lastLocationText =
+      // AppLocalizations.of(context)!.fetchingLocation;
+      '';
+
   final TextEditingController biographyController = TextEditingController();
 
   ImageProvider? profilePicture;
-  Widget? friendButton;
   String? userId;
   bool isFriend = false;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       userId =
           Provider.of<GlobalProvider>(context, listen: false).chosenProfile?.id;
-
-      if (userId == null) {
-        return;
-      }
+      if (userId == null) return;
 
       biographyController.text =
           await BiographyHelper.getBiography(userId!) ?? '';
       profilePicture = await ProfilePictureHelper.getProfilePicture(userId!)
           .then((url) => url == null ? null : CachedNetworkImageProvider(url));
-      setState(() {});
-
       await checkFriendButton();
-    });
 
-    super.initState();
+      // Fetch last location data.
+      LocationData? locationData =
+          await Provider.of<NightMapProvider>(context, listen: false)
+              .locationHelper
+              .getLastPositionOfUser(userId!);
+
+      if (locationData == null) {
+        lastLocationText = '';
+      } else if (locationData.private) {
+        lastLocationText = '';
+      } else {
+        String? clubName = Provider.of<GlobalProvider>(context, listen: false)
+            .clubDataHelper
+            .clubData[locationData.clubId]
+            ?.name;
+        if (clubName == null) {
+          lastLocationText = '';
+        } else {
+          lastLocationText =
+              '$clubName\nTidspunkt: ${locationData.readableTimestamp}';
+        }
+      }
+
+      setState(() {});
+    });
   }
 
   Future<void> checkFriendButton() async {
     isFriend = await FriendsHelper.isFriend(userId!);
     bool friendRequestSent = await FriendRequestHelper.userHasRequest(userId!);
-
     setState(() {
-      if (isFriend) {
-        friendButton = removeFriendButton();
-      } else if (!friendRequestSent) {
-        friendButton = addFriendButton();
-      } else {
-        friendButton = null;
-      }
+      // No extra widget; the friend button will be conditionally rendered.
+      // If not a friend and no request sent, we'll show the add friend button.
     });
   }
 
-  Widget removeFriendButton() => FilledButton(
+  Widget removeFriendButton(BuildContext context) => IconButton(
+        icon: FaIcon(
+          FontAwesomeIcons.userMinus,
+          color: Colors.redAccent,
+          size: 15.0,
+        ),
+        tooltip:
+            // AppLocalizations.of(context)!.removeFriend,
+            'Fjern ven',
         onPressed: () async {
-          await FriendsHelper.removeFriend(userId!);
-          checkFriendButton();
+          final confirmed = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: Text(
+                  // AppLocalizations.of(context)!.removeFriend,
+                  'Fjern ven',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                content: Text(
+                    // AppLocalizations.of(context)!.confirmRemoveFriend,
+                    'Er du sikker på, at du vil fjerne denne ven?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text('Nej', style: TextStyle(color: primaryColor)),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child:
+                        Text('Ja', style: TextStyle(color: Colors.redAccent)),
+                  ),
+                ],
+              );
+            },
+          );
+
+          if (confirmed == true) {
+            await FriendsHelper.removeFriend(userId!);
+            await checkFriendButton();
+          }
         },
-        style: kFilledButtonStyle.copyWith(
-          backgroundColor: WidgetStatePropertyAll(Colors.redAccent),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(kMainPadding),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                // AppLocalizations.of(context)!.removeFriend,
-                'Fjern ven',
-                style: kTextStyleH4,
-              ),
-              FaIcon(FontAwesomeIcons.userMinus),
-            ],
-          ),
-        ),
       );
 
   Widget addFriendButton() => FilledButton(
         onPressed: () async {
           await FriendRequestHelper.sendFriendRequest(userId!);
-          checkFriendButton();
+          await checkFriendButton();
         },
         style: kFilledButtonStyle,
         child: Padding(
@@ -108,7 +145,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
               Text(
                 // AppLocalizations.of(context)!.addFriend,
                 'Tilføj ven',
-                style: kTextStyleH2,
+                style: kTextStyleP2,
               ),
               FaIcon(FontAwesomeIcons.userPlus),
             ],
@@ -121,13 +158,14 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
     if (locationData == null) {
       text =
           // AppLocalizations.of(context)!.noLatestLocation,
-          'Kunne ikke finde seneste lokation';
+          '';
+      // 'Kunne ikke finde seneste lokation';
     } else if (locationData.private) {
       text =
           // AppLocalizations.of(context)!.userNotSharingLocation,
-          'Denne person deler ikke sin lokation';
+          // 'Denne person deler ikke sin lokation';
+          '';
     } else {
-      // Add check for more than 100 days ago
       String? clubName = Provider.of<GlobalProvider>(context, listen: false)
           .clubDataHelper
           .clubData[locationData.clubId]
@@ -138,7 +176,6 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             'Kunne ikke finde seneste lokation';
       } else {
         text =
-
             // AppLocalizations.of(context)!.location
             // AppLocalizations.of(context)!.time
             'Lokation: $clubName\nTidspunkt: ${locationData.readableTimestamp}';
@@ -167,120 +204,178 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Provider.of<GlobalProvider>(context).chosenProfile == null
-            ?
-            // AppLocalizations.of(context)!.invalidUser,
-            'Ugyldig bruger'
-            : '${Provider.of<GlobalProvider>(context).chosenProfile?.firstName} ${Provider.of<GlobalProvider>(context).chosenProfile?.lastName}'),
+        centerTitle: true,
+        title: Text(
+          Provider.of<GlobalProvider>(context).chosenProfile == null
+              ? 'Ugyldig bruger'
+              : '${Provider.of<GlobalProvider>(context).chosenProfile?.firstName} ${Provider.of<GlobalProvider>(context).chosenProfile?.lastName}',
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: primaryColor),
+        ),
+        actions: [
+          if (isFriend) removeFriendButton(context),
+        ],
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.all(kMainPadding),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(kMainBorderRadius),
-                        border: Border.all(
-                          color: primaryColor,
-                          width: kMainStrokeWidth,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: kSmallSpacerValue,
-                          ),
-                          Text(
-                            // AppLocalizations.of(context)!.biography,
-                            'Biografi',
-                            style: kTextStyleH3,
-                          ),
-                          Divider(
-                            color: primaryColor,
-                            thickness: kMainStrokeWidth,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(kMainPadding),
-                            child: TextField(
-                              controller: biographyController,
-                              decoration: InputDecoration.collapsed(
-                                  hintText:
-// AppLocalizations.of(context)!.userHasNoBiography,
-                                      'Denne bruger har ikke angivet en biografi'),
-                              readOnly: true,
-                              maxLines: 8,
+            // Main content mimicking MyProfileMainScreen layout.
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(kMainPadding),
+                  color: Colors.black,
+                  child: Row(
+                    children: [
+                      // Left: Biography container.
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(kMainBorderRadius),
+                            border: Border.all(
+                              color: primaryColor,
+                              width: kMainStrokeWidth,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: kNormalSpacerValue,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            profilePicture ?? AssetImage('images/user_pb.jpg'),
-                        radius: 60.0,
-                      ),
-                      SizedBox(
-                        height: kNormalSpacerValue,
-                      ),
-                      Visibility(
-                        visible: isFriend,
-                        child: FilledButton(
-                          // Change color
-                          onPressed: () async {
-                            UserData? user = Provider.of<GlobalProvider>(
-                                    context,
-                                    listen: false)
-                                .chosenProfile;
-                            if (user == null) {
-                              return;
-                            }
-                            LocationData? lastLocation =
-                                await Provider.of<NightMapProvider>(context,
-                                        listen: false)
-                                    .locationHelper
-                                    .getLastPositionOfUser(user.id);
-                            await showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) =>
-                                  getDialog(context, lastLocation),
-                            );
-                          },
-                          style: kTransparentButtonStyle,
-                          child: Row(
+                          child: Column(
                             children: [
+                              SizedBox(height: kSmallSpacerValue),
                               Text(
-                                // AppLocalizations.of(context)!.find,
-                                'Find',
-                                style: kTextStyleP1,
+                                // AppLocalizations.of(context)!.biography,
+                                'Biografi',
+                                style: kTextStyleH4,
                               ),
-                              SizedBox(
-                                width: kSmallSpacerValue,
+                              Divider(
+                                color: primaryColor,
+                                thickness: kMainStrokeWidth,
                               ),
-                              Icon(Icons.pin_drop),
+                              Padding(
+                                padding: EdgeInsets.all(kMainPadding),
+                                child: TextField(
+                                  controller: biographyController,
+                                  decoration: InputDecoration.collapsed(
+                                      hintText:
+                                          // AppLocalizations.of(context)!.userHasNoBiography,
+                                          'Denne bruger har ikke angivet en biografi'),
+                                  readOnly: true,
+                                  maxLines: 8,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
+                      SizedBox(width: kNormalSpacerValue),
+                      // Right: Profile picture and friend actions.
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: profilePicture ??
+                                AssetImage('images/user_pb.jpg'),
+                            radius: 70.0,
+                          ),
+                          SizedBox(height: kNormalSpacerValue),
+                          // Render either the remove or add friend button.
+
+                          if (isFriend)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: kSmallSpacerValue),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    lastLocationText,
+                                    style: kTextStyleP1,
+                                  ),
+                                  SizedBox(width: kSmallSpacerValue),
+                                  // Icon(Icons.pin_drop),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(kMainPadding),
-              child: friendButton,
+                ),
+                // You can add further content here if needed.
+
+                // Add this inside your Column (as a sibling to your profile info container)
+
+//TODO Add the favorite clubs of this user here.
+
+// Todo add chaat here.
+// Expanded(
+//   child: Container(
+//     decoration: BoxDecoration(
+//       border: Border(
+//         top: BorderSide(color: primaryColor, width: kMainStrokeWidth),
+//       ),
+//     ),
+//     child: Column(
+//       children: [
+//         // Chat header
+//         Padding(
+//           padding: EdgeInsets.all(kMainPadding),
+//           child: Row(
+//             children: [
+//               CircleAvatar(
+//                 backgroundImage: Provider.of<GlobalProvider>(context).chosenChatPicture,
+//               ),
+//               SizedBox(width: kSmallSpacerValue),
+//               Expanded(
+//                 child: Text(
+//                   Provider.of<GlobalProvider>(context).chosenChatTitle,
+//                   style: kTextStyleH3,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//         // Chat messages list
+//         Expanded(
+//           child: ListView.separated(
+//             reverse: true,
+//             padding: EdgeInsets.all(kMainPadding),
+//             itemCount: Provider.of<ChatSubscriber>(context).messages.length,
+//             itemBuilder: (context, index) {
+//               // Build your message widget here.
+//               return Text("Message placeholder");
+//             },
+//             separatorBuilder: (context, index) => SizedBox(height: kSmallSpacerValue),
+//           ),
+//         ),
+//         // Message input field
+//         Padding(
+//           padding: EdgeInsets.all(kMainPadding),
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 child: TextField(
+//                   decoration: kMainInputDecoration.copyWith(hintText: 'Aa'),
+//                   cursorColor: primaryColor,
+//                   textCapitalization: TextCapitalization.sentences,
+//                 ),
+//               ),
+//               TextButton(
+//                 onPressed: () {
+//                   // Send message logic goes here.
+//                 },
+//                 child: FaIcon(
+//                   FontAwesomeIcons.solidPaperPlane,
+//                   color: primaryColor,
+//                 ),
+//               )
+//             ],
+//           ),
+//         ),
+//       ],
+//     ),
+//   ),
+// ),
+              ],
             ),
           ],
         ),
