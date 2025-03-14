@@ -100,10 +100,10 @@ class ClubOpeningHoursFormatter {
       final Duration remaining = currentClose.difference(_now);
 
       // Format the remaining time as hours and minutes.
-      final int hours = remaining.inHours;
+
       final int minutes = remaining.inMinutes % 60;
       final int totalMinutes = remaining.inMinutes;
-
+      double roundedHours = roundToNearestHalfHour(totalMinutes);
       if (remaining.inHours > 5) {
         // Format the closing time (ensure minutes are padded with a leading zero)
         final String closeTimeFormatted =
@@ -111,13 +111,19 @@ class ClubOpeningHoursFormatter {
         return "Åben til $closeTimeFormatted i dag.";
       }
       if (totalMinutes > 0) {
+        //TODO Should totalMinutes >60 not be here instead??!?
         // Calculate the remaining time in hours as a decimal.
         // For example, 90 minutes becomes 1.5 hours.
         final double remainingHours = totalMinutes / 60.0;
         // Format to one decimal place (so 30 minutes becomes 0.5)
-        final String formattedHours = remainingHours.toStringAsFixed(1);
+        String formattedHours = roundedHours == roundedHours.toInt()
+            ? roundedHours.toInt().toString()
+            : roundedHours.toStringAsFixed(1);
         // Choose singular/plural based on the numeric value (you may adjust this as needed)
-        final String hourText = (remainingHours == 1.0) ? 'time' : 'timer';
+        String hourText =
+            roundedHours == roundedHours.toInt() && roundedHours.toInt() == 1
+                ? 'time'
+                : 'timer';
         return "Åben $formattedHours $hourText endnu.";
       } else {
         return "Åben $minutes ${minutes == 1 ? 'minut' : 'minutter'} endnu.";
@@ -237,5 +243,11 @@ class ClubOpeningHoursFormatter {
     }
 
     return false;
+  }
+
+  static double roundToNearestHalfHour(int totalMinutes) {
+    int quotient = (totalMinutes / 30).round();
+    int roundedMinutes = quotient * 30;
+    return roundedMinutes / 60.0;
   }
 }

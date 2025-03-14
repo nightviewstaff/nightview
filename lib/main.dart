@@ -37,7 +37,7 @@ import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
-import 'package:nightview/screens/swipe/swipe_main_screen.dart';
+import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Add this
@@ -127,6 +127,7 @@ class NightViewApp extends StatelessWidget {
               ),
             ),
             initialRoute: WaitingForLoginScreen.id,
+            // SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),
               LoginOrCreateAccountScreen.id: (context) =>
@@ -146,7 +147,7 @@ class NightViewApp extends StatelessWidget {
               MainScreen.id: (context) => const MainScreen(),
               PreferencesMainScreen.id: (context) =>
                   const PreferencesMainScreen(),
-              SwipeMainScreen.id: (context) => const SwipeMainScreen(),
+              SwipeScreen.id: (context) => const SwipeScreen(),
               WaitingForLoginScreen.id: (context) =>
                   const WaitingForLoginScreen(),
               NightMapMainOfferScreen.id: (context) =>
