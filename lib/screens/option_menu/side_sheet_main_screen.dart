@@ -91,10 +91,15 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                       //  SizedBox(
                       //     width: 30.0), // Add some spacing between dot and flag
 
-                      LanguageSwitcher(
+                      CircleAvatar(
+                        backgroundImage: AssetImage('images/flags/dk.png'),
                         radius: 15.0,
-                        borderRadius: 25.0,
                       ),
+
+                      // LanguageSwitcher(
+                      //   radius: 15.0,
+                      //   borderRadius: 25.0,
+                      // ),
                     ],
                   ),
                   onTap: () {

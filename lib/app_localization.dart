@@ -239,7 +239,7 @@ class AppLocalizations {
       name: 'googleLoginFailedMessage');
 
   String get activeUsersNow => Intl.message(
-        'Users in town now',
+        'Users out now',
         name: 'activeUsersNow',
         desc: 'Label showing active users in town now',
       );

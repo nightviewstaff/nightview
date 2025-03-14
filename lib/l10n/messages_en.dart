@@ -14,78 +14,119 @@ import 'package:intl/message_lookup_by_library.dart';
 
 final messages = MessageLookup();
 
-typedef String? MessageIfAbsent(
-    String? messageStr, List<Object>? args);
+typedef String? MessageIfAbsent(String? messageStr, List<Object>? args);
 
 class MessageLookup extends MessageLookupByLibrary {
   @override
   String get localeName => 'en';
 
   @override
-  final Map<String, dynamic> messages = _notInlinedMessages(_notInlinedMessages);
+  final Map<String, dynamic> messages =
+      _notInlinedMessages(_notInlinedMessages);
 
   static Map<String, dynamic> _notInlinedMessages(_) => {
-      'activeUsersNow': MessageLookupByLibrary.simpleMessage('Users in town now'),
-    'appStore': MessageLookupByLibrary.simpleMessage('App Store'),
-    'appStoreLinkCopied': MessageLookupByLibrary.simpleMessage('App Store link copied to clipboard!'),
-    'birthdate': MessageLookupByLibrary.simpleMessage('Birthdate'),
-    'checkSpamFolder': MessageLookupByLibrary.simpleMessage('Check your spam folder if it does not appear'),
-    'choosePassword': MessageLookupByLibrary.simpleMessage('Choose Password'),
-    'confirmPasswordEmptyError': MessageLookupByLibrary.simpleMessage('Please enter a password'),
-    'confirmPasswordHint': MessageLookupByLibrary.simpleMessage('Confirm password'),
-    'confirmationCodeSent': MessageLookupByLibrary.simpleMessage('You have been sent a confirmation code:'),
-    'contactInformation': MessageLookupByLibrary.simpleMessage('Contact Information'),
-    'continueButton': MessageLookupByLibrary.simpleMessage('Continue'),
-    'create_nightview_profile': MessageLookupByLibrary.simpleMessage('Create NightView profile'),
-    'create_with_google': MessageLookupByLibrary.simpleMessage('Create with Google'),
-    'emailAlreadyInUseError': MessageLookupByLibrary.simpleMessage('This email is already registered.'),
-    'enterCodeToContinue': MessageLookupByLibrary.simpleMessage('Enter the code to continue'),
-    'errorTitle': MessageLookupByLibrary.simpleMessage('Error'),
-    'errorUpdatingPoints': MessageLookupByLibrary.simpleMessage('An error occurred while updating points'),
-    'firstNames': MessageLookupByLibrary.simpleMessage('First name(s)'),
-    'fourDigitCode': MessageLookupByLibrary.simpleMessage('4-digit code'),
-    'genericErrorOccurred': MessageLookupByLibrary.simpleMessage('An error occurred:'),
-    'googlePlay': MessageLookupByLibrary.simpleMessage('Google Play'),
-    'googlePlayLinkCopied': MessageLookupByLibrary.simpleMessage('Google Play link copied to clipboard!'),
-    'incorrectConfirmationCode': MessageLookupByLibrary.simpleMessage('Incorrect confirmation code'),
-    'incorrectInfoTryAgain': MessageLookupByLibrary.simpleMessage('The information is not entered correctly. Try again.'),
-    'invalidConfirmationCode': MessageLookupByLibrary.simpleMessage('Invalid confirmation code'),
-    'invalidEmailContent': MessageLookupByLibrary.simpleMessage('This email is already used by another user.'),
-    'invalidEmailError': MessageLookupByLibrary.simpleMessage('Enter a valid email address.'),
-    'invalidEmailTitle': MessageLookupByLibrary.simpleMessage('Invalid Email'),
-    'invalidLogin': MessageLookupByLibrary.simpleMessage('Invalid login'),
-    'invalidPhoneNumber': MessageLookupByLibrary.simpleMessage('Invalid phone number'),
-    'lastNames': MessageLookupByLibrary.simpleMessage('Last name(s)'),
-    'login': MessageLookupByLibrary.simpleMessage('Log in'),
-    'mail': MessageLookupByLibrary.simpleMessage('Email'),
-    'map': MessageLookupByLibrary.simpleMessage('Map'),
-    'mustBeOver18InDenmark': MessageLookupByLibrary.simpleMessage('You must be over 18 to use NightView in Denmark'),
-    'noInternetError': MessageLookupByLibrary.simpleMessage('No internet connection. Check your network status.'),
-    'password': MessageLookupByLibrary.simpleMessage('Password'),
-    'passwordDigitError': MessageLookupByLibrary.simpleMessage('Must contain digits'),
-    'passwordEmptyError': MessageLookupByLibrary.simpleMessage('Password is empty'),
-    'passwordHint': MessageLookupByLibrary.simpleMessage('Password'),
-    'passwordMinLengthError': MessageLookupByLibrary.simpleMessage('Must be at least 8 characters'),
-    'passwordMismatchError': MessageLookupByLibrary.simpleMessage('Passwords do not match'),
-    'passwordRequirements': MessageLookupByLibrary.simpleMessage('Your password must contain both uppercase and lowercase letters, digits, and be at least 8 characters long.'),
-    'passwordUpperLowerError': MessageLookupByLibrary.simpleMessage('Must contain uppercase and lowercase letters'),
-    'personalInformation': MessageLookupByLibrary.simpleMessage('Personal Information'),
-    'phoneNumber': MessageLookupByLibrary.simpleMessage('Phone number'),
-    'phoneNumberEmpty': MessageLookupByLibrary.simpleMessage('Please enter a phone number'),
-    'phoneNumberHint': MessageLookupByLibrary.simpleMessage('Enter phone number'),
-    'pleaseEnterConfirmationCode': MessageLookupByLibrary.simpleMessage('Please enter a confirmation code'),
-    'pointsEarnedPrefix': MessageLookupByLibrary.simpleMessage('You have earned '),
-    'pointsEarnedSuffix': MessageLookupByLibrary.simpleMessage(' points'),
-    'profile': MessageLookupByLibrary.simpleMessage('Profile'),
-    'remainingInformation': MessageLookupByLibrary.simpleMessage('Remaining Information'),
-    'searchForLocations': MessageLookupByLibrary.simpleMessage('Search for locations, areas or other'),
-    'selectLanguage': MessageLookupByLibrary.simpleMessage('Select Language'),
-    'sendLinkForPoints': MessageLookupByLibrary.simpleMessage('Send a link to your friends to earn points!'),
-    'shareCodeUploadError': MessageLookupByLibrary.simpleMessage('Share code could not be uploaded to the cloud. Please try again.'),
-    'shareNightViewPrefix': MessageLookupByLibrary.simpleMessage('Share '),
-    'smsLaunchError': MessageLookupByLibrary.simpleMessage('An error occurred while opening the SMS application'),
-    'social': MessageLookupByLibrary.simpleMessage('Social'),
-    'somethingWentWrong': MessageLookupByLibrary.simpleMessage('Something went wrong. Please try again.'),
-    'stayLoggedIn': MessageLookupByLibrary.simpleMessage('Stay logged in')
-  };
+        'activeUsersNow': MessageLookupByLibrary.simpleMessage('Users out now'),
+        'appStore': MessageLookupByLibrary.simpleMessage('App Store'),
+        'appStoreLinkCopied': MessageLookupByLibrary.simpleMessage(
+            'App Store link copied to clipboard!'),
+        'birthdate': MessageLookupByLibrary.simpleMessage('Birthdate'),
+        'checkSpamFolder': MessageLookupByLibrary.simpleMessage(
+            'Check your spam folder if it does not appear'),
+        'choosePassword':
+            MessageLookupByLibrary.simpleMessage('Choose Password'),
+        'confirmPasswordEmptyError':
+            MessageLookupByLibrary.simpleMessage('Please enter a password'),
+        'confirmPasswordHint':
+            MessageLookupByLibrary.simpleMessage('Confirm password'),
+        'confirmationCodeSent': MessageLookupByLibrary.simpleMessage(
+            'You have been sent a confirmation code:'),
+        'contactInformation':
+            MessageLookupByLibrary.simpleMessage('Contact Information'),
+        'continueButton': MessageLookupByLibrary.simpleMessage('Continue'),
+        'create_nightview_profile':
+            MessageLookupByLibrary.simpleMessage('Create NightView profile'),
+        'create_with_google':
+            MessageLookupByLibrary.simpleMessage('Create with Google'),
+        'emailAlreadyInUseError': MessageLookupByLibrary.simpleMessage(
+            'This email is already registered.'),
+        'enterCodeToContinue':
+            MessageLookupByLibrary.simpleMessage('Enter the code to continue'),
+        'errorTitle': MessageLookupByLibrary.simpleMessage('Error'),
+        'errorUpdatingPoints': MessageLookupByLibrary.simpleMessage(
+            'An error occurred while updating points'),
+        'firstNames': MessageLookupByLibrary.simpleMessage('First name(s)'),
+        'fourDigitCode': MessageLookupByLibrary.simpleMessage('4-digit code'),
+        'genericErrorOccurred':
+            MessageLookupByLibrary.simpleMessage('An error occurred:'),
+        'googlePlay': MessageLookupByLibrary.simpleMessage('Google Play'),
+        'googlePlayLinkCopied': MessageLookupByLibrary.simpleMessage(
+            'Google Play link copied to clipboard!'),
+        'incorrectConfirmationCode':
+            MessageLookupByLibrary.simpleMessage('Incorrect confirmation code'),
+        'incorrectInfoTryAgain': MessageLookupByLibrary.simpleMessage(
+            'The information is not entered correctly. Try again.'),
+        'invalidConfirmationCode':
+            MessageLookupByLibrary.simpleMessage('Invalid confirmation code'),
+        'invalidEmailContent': MessageLookupByLibrary.simpleMessage(
+            'This email is already used by another user.'),
+        'invalidEmailError': MessageLookupByLibrary.simpleMessage(
+            'Enter a valid email address.'),
+        'invalidEmailTitle':
+            MessageLookupByLibrary.simpleMessage('Invalid Email'),
+        'invalidLogin': MessageLookupByLibrary.simpleMessage('Invalid login'),
+        'invalidPhoneNumber':
+            MessageLookupByLibrary.simpleMessage('Invalid phone number'),
+        'lastNames': MessageLookupByLibrary.simpleMessage('Last name(s)'),
+        'login': MessageLookupByLibrary.simpleMessage('Log in'),
+        'mail': MessageLookupByLibrary.simpleMessage('Email'),
+        'map': MessageLookupByLibrary.simpleMessage('Map'),
+        'mustBeOver18InDenmark': MessageLookupByLibrary.simpleMessage(
+            'You must be over 18 to use NightView in Denmark'),
+        'noInternetError': MessageLookupByLibrary.simpleMessage(
+            'No internet connection. Check your network status.'),
+        'password': MessageLookupByLibrary.simpleMessage('Password'),
+        'passwordDigitError':
+            MessageLookupByLibrary.simpleMessage('Must contain digits'),
+        'passwordEmptyError':
+            MessageLookupByLibrary.simpleMessage('Password is empty'),
+        'passwordHint': MessageLookupByLibrary.simpleMessage('Password'),
+        'passwordMinLengthError': MessageLookupByLibrary.simpleMessage(
+            'Must be at least 8 characters'),
+        'passwordMismatchError':
+            MessageLookupByLibrary.simpleMessage('Passwords do not match'),
+        'passwordRequirements': MessageLookupByLibrary.simpleMessage(
+            'Your password must contain both uppercase and lowercase letters, digits, and be at least 8 characters long.'),
+        'passwordUpperLowerError': MessageLookupByLibrary.simpleMessage(
+            'Must contain uppercase and lowercase letters'),
+        'personalInformation':
+            MessageLookupByLibrary.simpleMessage('Personal Information'),
+        'phoneNumber': MessageLookupByLibrary.simpleMessage('Phone number'),
+        'phoneNumberEmpty':
+            MessageLookupByLibrary.simpleMessage('Please enter a phone number'),
+        'phoneNumberHint':
+            MessageLookupByLibrary.simpleMessage('Enter phone number'),
+        'pleaseEnterConfirmationCode': MessageLookupByLibrary.simpleMessage(
+            'Please enter a confirmation code'),
+        'pointsEarnedPrefix':
+            MessageLookupByLibrary.simpleMessage('You have earned '),
+        'pointsEarnedSuffix': MessageLookupByLibrary.simpleMessage(' points'),
+        'profile': MessageLookupByLibrary.simpleMessage('Profile'),
+        'remainingInformation':
+            MessageLookupByLibrary.simpleMessage('Remaining Information'),
+        'searchForLocations': MessageLookupByLibrary.simpleMessage(
+            'Search for locations, areas or other'),
+        'selectLanguage':
+            MessageLookupByLibrary.simpleMessage('Select Language'),
+        'sendLinkForPoints': MessageLookupByLibrary.simpleMessage(
+            'Send a link to your friends to earn points!'),
+        'shareCodeUploadError': MessageLookupByLibrary.simpleMessage(
+            'Share code could not be uploaded to the cloud. Please try again.'),
+        'shareNightViewPrefix': MessageLookupByLibrary.simpleMessage('Share '),
+        'smsLaunchError': MessageLookupByLibrary.simpleMessage(
+            'An error occurred while opening the SMS application'),
+        'social': MessageLookupByLibrary.simpleMessage('Social'),
+        'somethingWentWrong': MessageLookupByLibrary.simpleMessage(
+            'Something went wrong. Please try again.'),
+        'stayLoggedIn': MessageLookupByLibrary.simpleMessage('Stay logged in')
+      };
 }

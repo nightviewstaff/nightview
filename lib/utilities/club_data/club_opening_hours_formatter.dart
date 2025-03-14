@@ -154,7 +154,10 @@ class ClubOpeningHoursFormatter {
   /// Returns the lower-case weekday (e.g., "monday", "tuesday") for a given DateTime.
   static String _getWeekday(DateTime date) {
     // The DateFormat 'EEEE' returns the full weekday name.
-    return DateFormat('EEEE').format(date).toLowerCase();
+    return DateFormat(
+      'EEEE',
+      'en_US',
+    ).format(date).toLowerCase();
   }
 
   /// Returns true if the club is currently open, false otherwise.

@@ -88,5 +88,17 @@
       </dict>
     </array>
 
+
+
+
+<!-- THIS IS TO AVOID SELECTING ENCRYPTION IN APPLE CONNECT EVERY UPLOAD -->
+    <key>ITSAppUsesNonExemptEncryption</key>  
+<false/>
+
+
+
+
+
+
   </dict>
 </plist>

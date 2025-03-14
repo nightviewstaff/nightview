@@ -89,10 +89,16 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 18.0),
-            child: LanguageSwitcher(
+
+            child: CircleAvatar(
+              backgroundImage: const AssetImage('images/flags/dk.png'),
               radius: 15.0,
-              borderRadius: 25.0,
             ),
+
+            // child: LanguageSwitcher(
+            //   radius: 15.0,
+            //   borderRadius: 25.0,
+            // ),
           ),
         ],
       ),
