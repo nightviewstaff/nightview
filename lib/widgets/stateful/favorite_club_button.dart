@@ -90,8 +90,9 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
         ),
         content: SingleChildScrollView(
           child: Text(
+            // TODO MAKE SURE RIGHT MESSAGE
             // AppLocalizations.of(context)!.addFavouriteDescription,
-            'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.',
+            'Ved at tilføje en klub som favorit giver du lov til at denne lokation sender dig beskeder om deres tilbud.',
           ),
         ),
         actions: [
