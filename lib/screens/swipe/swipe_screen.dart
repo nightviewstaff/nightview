@@ -336,8 +336,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
     //TODO CAN DO A LOT OF FUN STUFF HERE IN TIME!
     // await controller.animateTo(
-    //   const Offset(distance, 0),
-    //   duration: const Duration(milliseconds: 500),
+    //   const Offset(distance * 4, 0),
+    //   duration: const Duration(milliseconds: 1500),
     //   curve: Curves.easeInOut,
     // );
     // if (isDragging || !isShaking) {
@@ -347,7 +347,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
 
     await controller.animateTo(
       const Offset(distance * 10, -20),
-      duration: const Duration(milliseconds: 1300),
+      duration: const Duration(milliseconds: 2000),
       curve: Curves.easeInOut,
     );
     backgroundColor = primaryColor;

@@ -92,13 +92,23 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text(
+              title: Text(// TODO Center
                   // AppLocalizations.of(context)!.logInError),
                   'Fejl ved login'),
               content: SingleChildScrollView(
-                child: Text(
-                  // AppLocalizations.of(context)!.automaticLogInError),
-                  'Der skete en fejl, da vi forsøgte at logge dig ind automatisk. Måske har du ændret din kode siden sidst.',
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal:
+                            16.0), // Optional: Adds padding for better readability
+                    width: double
+                        .infinity, // Ensures the container takes full width but centers the text
+                    child: Text(
+                      'Der skete en fejl, da vi forsøgte at logge dig ind automatisk. Måske har du ændret din kode siden sidst.',
+                      textAlign: TextAlign
+                          .center, // Centers the text within its bounds
+                    ),
+                  ),
                 ),
               ),
               actions: [
@@ -109,7 +119,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
                   child: Text(
                     AppLocalizations.of(context)!.okay,
                     style: TextStyle(
-                      color: primaryColor,
+                      color: redAccent,
                     ),
                   ),
                 ),
