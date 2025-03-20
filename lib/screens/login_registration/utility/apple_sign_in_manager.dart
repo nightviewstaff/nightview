@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -16,7 +16,8 @@ class AppleSignInManager extends StatelessWidget {
         ],
       );
       // Handle successful login here
-      print('${S.of(context).login} ${credential.email}');
+      print(
+          '${S.of(context).login} ${credential.email}');
     } catch (error) {
       print('${S.of(context).login_failed} $error');
     }
