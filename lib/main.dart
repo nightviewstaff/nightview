@@ -46,16 +46,11 @@ import 'package:flutter_localizations/flutter_localizations.dart'; // Add this
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
-import '';
-import 'providers/locale_provider.dart'; // Your AppLocalizations file
 
 GlobalKey<NavigatorState> ourNavigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final localeProvider = LocaleProvider();
-  await localeProvider.loadLocale();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -97,12 +92,12 @@ class NightViewApp extends StatelessWidget {
           create: (_) => BalladefabrikkenProvider(),
         ),
         ChangeNotifierProvider(create: (_) => ClubDataHelper()),
-        ChangeNotifierProvider<LocaleProvider>(
+        ChangeNotifierProvider<LanguageProvider>(
           // Add LanguageProvider
-          create: (_) => LocaleProvider(),
+          create: (_) => LanguageProvider(),
         ),
       ],
-      child: Consumer<LocaleProvider>(
+      child: Consumer<LanguageProvider>(
         // Wrap MaterialApp with Consumer for language updates
         builder: (context, languageProvider, child) {
           return MaterialApp(

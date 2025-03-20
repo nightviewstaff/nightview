@@ -14,7 +14,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
-import 'package:nightview/widgets/icons/flag_top_right_drop_down.dart';
+
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,13 +91,10 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 18.0),
-
-            child: LanguageFlagDropdown(),
-
-            // child: LanguageSwitcher(
-            //   radius: 15.0,
-            //   borderRadius: 25.0,
-            // ),
+            child: LanguageSwitcher(
+              radius: 15.0,
+              borderRadius: 25.0,
+            ),
           ),
         ],
       ),

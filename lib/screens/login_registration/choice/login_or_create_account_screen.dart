@@ -10,7 +10,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
-import 'package:nightview/widgets/icons/flag_top_right_drop_down.dart';
+
 import 'package:nightview/widgets/icons/logo_top_right.dart';
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
@@ -26,16 +26,14 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            LanguageFlagDropdown(),
-
-            // Positioned(
-            //   top: 10,
-            //   right: 10,
-            //   child: LanguageSwitcher(
-            //     radius: 17.5, // Matches width/height of 35
-            //     borderRadius: 25.0,
-            //   ),
-            // ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: LanguageSwitcher(
+                radius: 17.5, // Matches width/height of 35
+                borderRadius: 25.0,
+              ),
+            ),
             Column(
               children: [
                 Expanded(

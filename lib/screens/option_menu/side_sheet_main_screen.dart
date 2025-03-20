@@ -10,7 +10,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
-import 'package:nightview/widgets/icons/flag_top_right_drop_down.dart';
+
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,12 +93,10 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                       //  SizedBox(
                       //     width: 30.0), // Add some spacing between dot and flag
 
-                      LanguageFlagDropdown()
-
-                      // LanguageSwitcher(
-                      //   radius: 15.0,
-                      //   borderRadius: 25.0,
-                      // ),
+                      LanguageSwitcher(
+                        radius: 15.0,
+                        borderRadius: 25.0,
+                      ),
                     ],
                   ),
                   onTap: () {
