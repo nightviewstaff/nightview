@@ -17,10 +17,7 @@ class GoogleSignInHelper {
 
       if (googleAccount == null) {
         CustomDialogHelper.showErrorDialog(
-            context,
-            S.of(context).error,
-            S.of(context).google_login_cancelled
-        );
+            context, S.of(context).error, S.of(context).google_login_cancelled);
         return;
       }
 
@@ -35,10 +32,7 @@ class GoogleSignInHelper {
       Navigator.of(context).pushReplacementNamed(LoginGoogleScreen.id);
     } catch (error) {
       CustomDialogHelper.showErrorDialog(
-          context,
-          S.of(context).error,
-          S.of(context).google_login_error
-      );
+          context, S.of(context).error, S.of(context).google_login_error);
     }
   }
 }

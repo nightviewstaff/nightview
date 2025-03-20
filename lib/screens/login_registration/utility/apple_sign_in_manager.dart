@@ -16,8 +16,7 @@ class AppleSignInManager extends StatelessWidget {
         ],
       );
       // Handle successful login here
-      print(
-          '${S.of(context).login} ${credential.email}');
+      print('${S.of(context).login} ${credential.email}');
     } catch (error) {
       print('${S.of(context).login_failed} $error');
     }

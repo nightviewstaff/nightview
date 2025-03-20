@@ -32,7 +32,7 @@ class _CreateAccountScreenTwoContactState
   void initState() {
     super.initState();
     final provider =
-    Provider.of<LoginRegistrationProvider>(context, listen: false);
+        Provider.of<LoginRegistrationProvider>(context, listen: false);
 
     InitStateManager.initContactInfo(
         context: context,
@@ -58,7 +58,6 @@ class _CreateAccountScreenTwoContactState
         onBack: () => Navigator.of(context)
             .pushReplacementNamed(CreateAccountScreenOnePersonal.id),
         currentStep: 2,
-
         title: Text(
           S.of(context).contact_information,
           textAlign: TextAlign.center,
@@ -124,7 +123,8 @@ class _CreateAccountScreenTwoContactState
                         _formKey, provider, inputIsFilled, 1, value,
                         isMailValid: false);
                   },
-                  validator: (value) => ValidationHelper.validateEmail(context, value),
+                  validator: (value) =>
+                      ValidationHelper.validateEmail(context, value),
                 ),
                 // SizedBox(height: kNormalSpacerValue),
               ],
@@ -142,7 +142,8 @@ class _CreateAccountScreenTwoContactState
               _formKey.currentState!
                   .save(); // Todo look into saving and restoring instead of init?
               bool mailExistsAlready = Provider.of<GlobalProvider>(
-                context,listen: false,
+                context,
+                listen: false,
               ).userDataHelper.doesMailExist(mail: mailInputController.text);
               if (mailExistsAlready) {
                 await showDialog(
@@ -153,8 +154,7 @@ class _CreateAccountScreenTwoContactState
                       style: TextStyle(color: redAccent),
                     ),
                     content: SingleChildScrollView(
-                      child:
-                      Text(S.of(context).email_in_use),
+                      child: Text(S.of(context).email_in_use),
                     ),
                     actions: [
                       TextButton(

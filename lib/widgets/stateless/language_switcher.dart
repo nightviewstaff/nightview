@@ -68,7 +68,7 @@ class LanguageSwitcher extends StatelessWidget {
       'images/flags/uk.png': 'English',
       // Uncomment and add others as needed:
       // 'images/flags/de.png': 'Deutsch',
-      // 'images/flags/se.png': 'Svenska',
+      // 'images/flags/sv.png': 'Svenska',
       // 'images/flags/no.png': 'Norsk',
     };
 

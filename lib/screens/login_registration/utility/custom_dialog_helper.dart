@@ -14,8 +14,7 @@ class CustomDialogHelper {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(S.of(context).ok,
-                style: TextStyle(color: redAccent)),
+            child: Text(S.of(context).ok, style: TextStyle(color: redAccent)),
           ),
         ],
       ),

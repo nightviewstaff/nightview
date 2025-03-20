@@ -56,9 +56,7 @@ void main() async {
 
   final localeProvider = LocaleProvider();
   await localeProvider.loadLocale();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -80,14 +78,13 @@ class NightViewApp extends StatelessWidget {
         ChangeNotifierProvider<NightMapProvider>(
           create: (_) => NightMapProvider(),
         ),
-        ChangeNotifierProvider<GlobalProvider>(
-          create: (_) => GlobalProvider(),
-        ),
+        ChangeNotifierProvider<GlobalProvider>(create: (_) => GlobalProvider()),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
         ),
         ChangeNotifierProvider<LoginRegistrationProvider>(
-            create: (_) => LoginRegistrationProvider()),
+          create: (_) => LoginRegistrationProvider(),
+        ),
         ChangeNotifierProvider<SearchProvider>(create: (_) => SearchProvider()),
         ChangeNotifierProvider<SearchFriendsHelper>(
           create: (_) => SearchFriendsHelper(),
@@ -95,9 +92,7 @@ class NightViewApp extends StatelessWidget {
         ChangeNotifierProvider<SearchNewChatHelper>(
           create: (_) => SearchNewChatHelper(),
         ),
-        ChangeNotifierProvider<ChatSubscriber>(
-          create: (_) => ChatSubscriber(),
-        ),
+        ChangeNotifierProvider<ChatSubscriber>(create: (_) => ChatSubscriber()),
         ChangeNotifierProvider<BalladefabrikkenProvider>(
           create: (_) => BalladefabrikkenProvider(),
         ),
@@ -123,9 +118,7 @@ class NightViewApp extends StatelessWidget {
 
             theme: ThemeData.dark().copyWith(
               scaffoldBackgroundColor: black,
-              appBarTheme: const AppBarTheme(
-                color: black,
-              ),
+              appBarTheme: const AppBarTheme(color: black),
               bottomNavigationBarTheme: const BottomNavigationBarThemeData(
                 backgroundColor: black,
                 showUnselectedLabels: false,

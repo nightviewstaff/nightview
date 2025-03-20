@@ -98,7 +98,7 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image:
-                          AssetImage('images/balladefabrikken_shots.jpg'),
+                              AssetImage('images/balladefabrikken_shots.jpg'),
                           fit: BoxFit.cover,
                         ),
                         borderRadius: BorderRadius.all(
@@ -116,8 +116,8 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                         padding: const EdgeInsets.all(kMainPadding),
                         child: Text(
                           Provider.of<BalladefabrikkenProvider>(context)
-                              .redemtionCount <
-                              10
+                                      .redemtionCount <
+                                  10
                               ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? S.of(context).shot : S.of(context).shots}'
                               : '1 ${S.of(context).bottle}',
                           style: kTextStyleH2,
@@ -148,24 +148,24 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                 ),
                 action: () async {
                   int redemtionCount = Provider.of<BalladefabrikkenProvider>(
-                      context,
-                      listen: false)
+                          context,
+                          listen: false)
                       .redemtionCount;
                   bool succes =
-                  await ReferralPointsHelper.incrementReferralPoints(
-                      -redemtionCount);
+                      await ReferralPointsHelper.incrementReferralPoints(
+                          -redemtionCount);
                   if (succes) {
                     await showSuccesDialog(redemtionCount);
                     Provider.of<BalladefabrikkenProvider>(context,
-                        listen: false)
+                            listen: false)
                         .points -= redemtionCount;
                     Provider.of<BalladefabrikkenProvider>(context,
-                        listen: false)
-                        .redemtionCount =
+                                listen: false)
+                            .redemtionCount =
                         min(
                             10,
                             Provider.of<BalladefabrikkenProvider>(context,
-                                listen: false)
+                                    listen: false)
                                 .points);
                   } else {
                     await showErrorDialog();

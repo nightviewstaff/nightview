@@ -11,22 +11,31 @@ class ClubAgeRestrictionFormatter {
     return formatAgeRestriction(club);
   }
 
-  static String displayClubAgeRestrictionFormattedShort(ClubData club) { // Never used
+  static String displayClubAgeRestrictionFormattedShort(ClubData club) {
+    // Never used
     final ageRestriction = formatAgeRestriction(club);
-    return ageRestriction == S.of(ourNavigatorKey.currentContext!).age_limit_not_specified ? '??+' : ageRestriction;
+    return ageRestriction ==
+            S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
+        ? '??+'
+        : ageRestriction;
   }
 
   static String displayClubAgeRestrictionFormattedOnlyAge(ClubData club) {
     final ageRestriction = formatAgeRestriction(club);
-    return ageRestriction == S.of(ourNavigatorKey.currentContext!).age_limit_not_specified ? '' : ageRestriction;
+    return ageRestriction ==
+            S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
+        ? ''
+        : ageRestriction;
   }
 
   static String formatAgeRestriction(ClubData club) {
-    final String currentWeekday = DateFormat('EEEE').format(DateTime.now()).toLowerCase();
-    final Map<String, dynamic>? openingHoursToday = club.openingHours?[currentWeekday];
+    final String currentWeekday =
+        DateFormat('EEEE').format(DateTime.now()).toLowerCase();
+    final Map<String, dynamic>? openingHoursToday =
+        club.openingHours?[currentWeekday];
 
-
-    final int currentAgeRestriction = (openingHoursToday?['ageRestriction'] as int?) ?? club.ageRestriction;
+    final int currentAgeRestriction =
+        (openingHoursToday?['ageRestriction'] as int?) ?? club.ageRestriction;
 
     return currentAgeRestriction <= 17
         ? S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
@@ -35,13 +44,12 @@ class ClubAgeRestrictionFormatter {
 
   static String formatAgeRestrictionForSpecificDay(
       ClubData club, String weekday) {
-    final Map<String, dynamic>? openingHoursForSpecificDay = club.openingHours?[weekday.toLowerCase()];
+    final Map<String, dynamic>? openingHoursForSpecificDay =
+        club.openingHours?[weekday.toLowerCase()];
     final int ageRestriction =
-        (openingHoursForSpecificDay?['ageRestriction'] as int?) ?? club.ageRestriction;
+        (openingHoursForSpecificDay?['ageRestriction'] as int?) ??
+            club.ageRestriction;
 
-    return ageRestriction <= 17
-        ? '??+'
-        : '$ageRestriction+';
+    return ageRestriction <= 17 ? '??+' : '$ageRestriction+';
   }
-
 }

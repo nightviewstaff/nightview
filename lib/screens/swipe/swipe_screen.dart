@@ -62,8 +62,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
       }
     });
     // Get one message from SwipeMessages.
-    selectedMessage =
-        SwipeMessages.messages()[Random().nextInt(SwipeMessages.messages().length)];
+    selectedMessage = SwipeMessages.messages()[
+        Random().nextInt(SwipeMessages.messages().length)];
     // shake animation after 0,4 sec.
     Future.delayed(const Duration(milliseconds: 400)).then((_) {
       _shakeCardRight();

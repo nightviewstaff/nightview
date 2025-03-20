@@ -103,8 +103,8 @@ class _RegistrationConfirmationScreenState
                     return;
                   }
                   if (valid) {
-                    Navigator.of(context)
-                        .pushReplacementNamed(CreateAccountScreenThreePassword.id);
+                    Navigator.of(context).pushReplacementNamed(
+                        CreateAccountScreenThreePassword.id);
                   }
                 },
               ),

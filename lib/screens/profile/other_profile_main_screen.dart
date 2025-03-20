@@ -112,12 +112,13 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(false),
-                    child: Text(S.of(context).no, style: TextStyle(color: primaryColor)),
+                    child: Text(S.of(context).no,
+                        style: TextStyle(color: primaryColor)),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(true),
-                    child:
-                        Text(S.of(context).yes, style: TextStyle(color: Colors.redAccent)),
+                    child: Text(S.of(context).yes,
+                        style: TextStyle(color: Colors.redAccent)),
                   ),
                 ],
               );
@@ -178,7 +179,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
         text =
             // AppLocalizations.of(context)!.location
             // AppLocalizations.of(context)!.time
-        '${S.of(context).location}: $clubName\n${S.of(context).time}: ${locationData.readableTimestamp}';
+            '${S.of(context).location}: $clubName\n${S.of(context).time}: ${locationData.readableTimestamp}';
       }
     }
     return AlertDialog(

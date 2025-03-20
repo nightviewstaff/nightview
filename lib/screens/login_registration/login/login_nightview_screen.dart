@@ -119,18 +119,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     provider.setCanContinue(false);
 
                     if (await Provider.of<GlobalProvider>(context,
-                        listen: false)
+                            listen: false)
                         .userDataHelper
                         .loginUser(
-                        mail: mailPhoneInputController.text,
-                        password: passwordInputController.text)) {
+                            mail: mailPhoneInputController.text,
+                            password: passwordInputController.text)) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         LocationPermissionCheckerScreen.id,
-                            (route) => false,
+                        (route) => false,
                       );
 
                       SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
+                          await SharedPreferences.getInstance();
 
                       if (provider.stayLoggedIn) {
                         prefs.setString('mail', mailPhoneInputController.text);

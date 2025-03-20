@@ -34,7 +34,7 @@ class _CreateAccountScreenThreePasswordState
   void initState() {
     super.initState();
     final provider =
-    Provider.of<LoginRegistrationProvider>(context, listen: false);
+        Provider.of<LoginRegistrationProvider>(context, listen: false);
 
     InitStateManager.initPasswordInfo(
         context: context,
@@ -155,21 +155,21 @@ class _CreateAccountScreenThreePasswordState
                 await Provider.of<GlobalProvider>(context, listen: false)
                     .userDataHelper
                     .createUserWithEmail(
-                  email: provider.mail,
-                  password: provider.password,
-                );
+                      email: provider.mail,
+                      password: provider.password,
+                    );
 
                 await Provider.of<GlobalProvider>(context, listen: false)
                     .userDataHelper
                     .uploadUserData(
-                  firstName: provider.firstName,
-                  lastName: provider.lastName,
-                  mail: provider.mail,
-                  phone: provider.phone,
-                  birthdateDay: provider.birthDate.day,
-                  birthdateMonth: provider.birthDate.month,
-                  birthdateYear: provider.birthDate.year,
-                );
+                      firstName: provider.firstName,
+                      lastName: provider.lastName,
+                      mail: provider.mail,
+                      phone: provider.phone,
+                      birthdateDay: provider.birthDate.day,
+                      birthdateMonth: provider.birthDate.month,
+                      birthdateYear: provider.birthDate.year,
+                    );
 
                 ReferralPointsHelper.incrementReferralPoints(1);
                 Navigator.of(context)
@@ -196,7 +196,8 @@ class _CreateAccountScreenThreePasswordState
                       errorMessage = S.of(context).no_internet;
                       break;
                     default:
-                      errorMessage = '${S.of(context).error_occurred}: ${e.message}';
+                      errorMessage =
+                          '${S.of(context).error_occurred}: ${e.message}';
                   }
                 }
 

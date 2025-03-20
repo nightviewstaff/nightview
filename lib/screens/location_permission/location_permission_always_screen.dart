@@ -56,14 +56,15 @@ class _LocationPermissionAlwaysScreen
   }
 
   Future<void> checkPermission() async {
-    bool hasPermission = await Provider.of<NightMapProvider>(context, listen: false)
-        .locationHelper
-        .requestLocationPermission();
+    bool hasPermission =
+        await Provider.of<NightMapProvider>(context, listen: false)
+            .locationHelper
+            .requestLocationPermission();
 
-    if(hasPermission){
-      Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+    if (hasPermission) {
+      Navigator.of(context)
+          .pushReplacementNamed(LocationPermissionCheckerScreen.id);
     }
-
   }
 
   @override

@@ -7,7 +7,8 @@ class ClubOpeningHoursFormatter {
   // TODO SOME CLOSETIME IS "luk" Take care.
   /// For testing you can override this value.
   static DateTime? now;
-  static final String closedTodayString = S.of(ourNavigatorKey.currentContext!).closed_today;
+  static final String closedTodayString =
+      S.of(ourNavigatorKey.currentContext!).closed_today;
 
   // static final String closedUnknownOpening = "Ukendt Lukkettid i dag.";
 

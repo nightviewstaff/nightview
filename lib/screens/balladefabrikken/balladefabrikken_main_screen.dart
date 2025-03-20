@@ -340,8 +340,7 @@ class _BalladefabrikkenMainScreenState
                                   return S.of(context).phone_number_required;
                                 }
                                 if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                  return  S.of(context)
-                                      .invalid_phone_number;
+                                  return S.of(context).invalid_phone_number;
                                 }
                                 return null;
                               },
@@ -425,8 +424,7 @@ class _BalladefabrikkenMainScreenState
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(S.of(context)!
-                                  .appStoreLinkCopied),
+                              content: Text(S.of(context)!.appStoreLinkCopied),
                             ),
                           );
                         },
@@ -443,8 +441,8 @@ class _BalladefabrikkenMainScreenState
                             await launchUrl(Uri.parse(androidLink));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(S.of(context)!
-                                    .googlePlayLinkCopied),
+                                content:
+                                    Text(S.of(context)!.googlePlayLinkCopied),
                               ),
                             );
                           },

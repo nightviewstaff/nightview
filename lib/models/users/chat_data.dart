@@ -14,10 +14,10 @@ class ChatData {
 
   ChatData(
       {required this.id,
-        required this.lastMessage,
-        required this.lastSender,
-        required this.lastUpdated,
-        required this.participants});
+      required this.lastMessage,
+      required this.lastSender,
+      required this.lastUpdated,
+      required this.participants});
 
   String getReadableTimestamp() {
     String hour = lastUpdated.hour.toString().padLeft(2, '0');
