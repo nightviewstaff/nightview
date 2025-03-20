@@ -15,4 +15,6 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+
+    <string name="default_web_client_id">573043562926-f99lsdihtl5cfspkbka72aekmrjsli7n.apps.googleusercontent.com</string>
 </resources>

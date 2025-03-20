@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/users/chat_data.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
@@ -33,11 +34,11 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false).subscribeToUsersChats(context);
+      chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false)
+          .subscribeToUsersChats(context);
       checkPending();
     });
-Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
-
+    Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
   }
 
   @override
@@ -50,7 +51,8 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
 
   void checkPending() {
     FriendRequestHelper.pendingFriendRequests().then((pending) {
-      Provider.of<GlobalProvider>(context, listen: false).setPendingFriendRequests(pending);
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setPendingFriendRequests(pending);
     });
   }
 
@@ -65,7 +67,8 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Chats',
+                // AppLocalizations.of(context)!.chats,
+                S.of(context).chats,
                 style: kTextStyleH1,
               ),
               Row(
@@ -104,7 +107,8 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Nye venneanmodninger',
+                    // AppLocalizations.of(context)!.newFriendRequests,
+                    S.of(context).new_friend_requests,
                     style: kTextStyleH3,
                   ),
                   FaIcon(FontAwesomeIcons.arrowRight),
@@ -118,8 +122,17 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
             padding: EdgeInsets.all(kMainPadding),
             itemCount: Provider.of<ChatSubscriber>(context).chats.length,
             itemBuilder: (context, index) {
-              ChatData chatData = Provider.of<ChatSubscriber>(context, listen: false).chats.values.toList().reversed.toList()[index];
-              String? userId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+              ChatData chatData =
+                  Provider.of<ChatSubscriber>(context, listen: false)
+                      .chats
+                      .values
+                      .toList()
+                      .reversed
+                      .toList()[index];
+              String? userId =
+                  Provider.of<GlobalProvider>(context, listen: false)
+                      .userDataHelper
+                      .currentUserId;
 
               if (userId == null) {
                 return null;
@@ -127,8 +140,10 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
 
               return ListTile(
                 onTap: () {
-                  Provider.of<GlobalProvider>(context, listen: false).setChosenChatId(chatData.id);
-                  Navigator.of(context).pushNamed(NightSocialConversationScreen.id);
+                  Provider.of<GlobalProvider>(context, listen: false)
+                      .setChosenChatId(chatData.id);
+                  Navigator.of(context)
+                      .pushNamed(NightSocialConversationScreen.id);
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(kMainBorderRadius),
@@ -138,7 +153,8 @@ Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
                   ),
                 ),
                 leading: CircleAvatar(
-                  backgroundImage: Provider.of<ChatSubscriber>(context).chatImages[chatData.id],
+                  backgroundImage: Provider.of<ChatSubscriber>(context)
+                      .chatImages[chatData.id],
                 ),
                 title: Text(
                   chatData.title ?? '',

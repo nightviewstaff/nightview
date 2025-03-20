@@ -4,12 +4,18 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 
 class ClubMarker extends StatelessWidget {
-
-  final ImageProvider<Object> logo;
+  final Widget logo; // Changed from ImageProvider<Object> to Widget
   final int visitors;
   final VoidCallback? onTap;
+  final Color borderColor;
 
-  const ClubMarker({super.key, required this.logo, required this.visitors, this.onTap});
+  const ClubMarker({
+    super.key,
+    required this.borderColor,
+    required this.logo,
+    required this.visitors,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +50,20 @@ class ClubMarker extends StatelessWidget {
               height: kSmallSpacerValue,
             ),
           ),
-          CircleAvatar(
-            backgroundImage: logo,
-            radius: 15, //What is default size?
-          )
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Changed to BoxShape.circle
+              border: Border.all(
+                color: borderColor,
+                width: 3.0,
+              ),
+            ),
+            child: CircleAvatar(
+              child: ClipOval(child: logo), // Use the Widget directly
+              radius: 15,
+              backgroundColor: Colors.transparent,
+            ),
+          ),
         ],
       ),
     );

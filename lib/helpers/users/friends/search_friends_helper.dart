@@ -15,7 +15,7 @@ class SearchFriendsHelper extends ChangeNotifier {
   DateTime? _lastUpdate;
   List<UserData> _searchedUsers = [];
   bool _shouldSearch = false;
-  List<ImageProvider> _searchedUserPbs = [];
+  final List<ImageProvider> _searchedUserPbs = [];
 
   List<UserData> get searchedUsers => _searchedUsers;
 

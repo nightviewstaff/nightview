@@ -3,6 +3,7 @@ import 'package:nightview/constants/enums.dart';
 
 class PhoneCountryCode {
   String? phoneCode;
+  int? minimumPhoneNumberLength;
   Image? flagImage;
   CountryCode? countryCode;
 
@@ -10,6 +11,12 @@ class PhoneCountryCode {
     CountryCode.dk: '+45',
     CountryCode.se: '+46',
     CountryCode.no: '+47',
+  };
+
+  final _minimumPhoneNumberLength = {
+    CountryCode.dk: 8,
+    CountryCode.se: 7,
+    CountryCode.no: 5,
   };
 
   final _flagImages = {
@@ -21,5 +28,6 @@ class PhoneCountryCode {
   PhoneCountryCode(this.countryCode) {
     phoneCode = _phoneCodes[countryCode];
     flagImage = _flagImages[countryCode];
+    minimumPhoneNumberLength = _minimumPhoneNumberLength[countryCode];
   }
 }

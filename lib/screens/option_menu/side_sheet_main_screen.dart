@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/screens/login_registration/login_registration_option_screen.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
+import 'package:nightview/widgets/icons/flag_top_right_drop_down.dart';
+import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -61,35 +65,45 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                       //TODO
                     },
                     child: Icon(
-                      1>0 //TODO Location
+                      1 > 0 //TODO Location
                           ? defaultLocationDot
                           : defaultLocationDotLocked,
-                      color: 1>2 // Same
+                      color: 1 > 2 // Same
                           ? primaryColor
                           : grey,
                       grade: 15.0,
                     ),
-
                   ),
                 ),
                 ListTile(
-                  title: Text('Profil'),
+                  title: Text(S.of(context).profile),
                   leading: CircleAvatar(
                     backgroundImage:
                         Provider.of<GlobalProvider>(context).profilePicture,
                   ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      //    FaIcon(
+                      //     FontAwesomeIcons.solidCircleDot,
+                      //    color: Provider.of<GlobalProvider>(context)
+                      //         .partyStatusColor,
+                      //    size: 20.0,
+                      //   ),
+                      //  SizedBox(
+                      //     width: 30.0), // Add some spacing between dot and flag
+
+                      LanguageFlagDropdown()
+
+                      // LanguageSwitcher(
+                      //   radius: 15.0,
+                      //   borderRadius: 25.0,
+                      // ),
+                    ],
+                  ),
                   onTap: () {
                     Navigator.of(context).pushNamed(MyProfileMainScreen.id);
                   },
-                  trailing: GestureDetector(
-                    onTap: () {
-                      //TODO
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage('images/flags/dk.png'),
-                      radius: 15.0,
-                    ),
-                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: kMainPadding),
@@ -99,7 +113,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                   ),
                 ),
                 ListTile(
-                  title: Text('Skift status'),
+                  //      title: Text('Skift status'),
                   leading: FaIcon(
                     FontAwesomeIcons.solidCircleDot,
                     color:
@@ -114,107 +128,6 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                 )
               ],
             ),
-            Column(
-              children: [
-                ListTile(
-                  title: Text('Privatlivspolitik'),
-                  leading: FaIcon(
-                    FontAwesomeIcons.lock,
-                  ),
-                  onTap: () {
-                    launchUrl(
-                        Uri.parse('https://night-view.dk/privacy-policy/'));
-                  },
-                ),
-                ListTile(
-                  title: Text('Slet bruger'),
-                  leading: FaIcon(
-                    FontAwesomeIcons.userSlash,
-                  ),
-                  onTap: () async {
-                    await showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (deleteUserContext) => AlertDialog(
-                        title: Text('Slet bruger'),
-                        content: Text(
-                            'Er du sikker på, at du vil slette din bruger? Alt data associeret med din bruger vil blive fjernet.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(deleteUserContext).pop();
-                            },
-                            child: Text(
-                              'Nej',
-                              style: TextStyle(color: primaryColor),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              bool succes = await Provider.of<GlobalProvider>(
-                                      deleteUserContext,
-                                      listen: false)
-                                  .deleteAllUserData();
-                              if (succes) {
-                                await Navigator.of(deleteUserContext)
-                                    .pushNamedAndRemoveUntil(
-                                        LoginRegistrationOptionScreen.id,
-                                        (route) => false);
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.remove('mail');
-                                prefs.remove('password');
-                              } else {
-                                await showDialog(
-                                  context: deleteUserContext,
-                                  builder: (errorContext) => AlertDialog(
-                                    title: Text('Fejl ved sletning af bruger'),
-                                    content: Text(
-                                        'Der skete en fejl under sletning af din bruger. Prøv igen senere. Hvis du oplever problemer med din bruger fremadrettet kan du sende en mail til business@night-view.dk.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(errorContext).pop();
-                                        },
-                                        child: Text(
-                                          'OK',
-                                          style: TextStyle(color: primaryColor),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                            child: Text(
-                              'Ja',
-                              style: TextStyle(color: redAccent),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('Log af'),
-                  leading: FaIcon(
-                    FontAwesomeIcons.rightFromBracket,
-                  ),
-                  onTap: () async {
-                    await Provider.of<GlobalProvider>(context, listen: false)
-                        .userDataHelper
-                        .signOutCurrentUser();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        LoginRegistrationOptionScreen.id, (route) => false);
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.remove('mail');
-                    prefs.remove('password');
-                  },
-                )
-              ],
-            )
           ],
         ),
       ),

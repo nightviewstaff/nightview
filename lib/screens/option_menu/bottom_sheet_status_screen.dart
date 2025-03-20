@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // TODO Remove all imports and make them uniqe values in constatnt
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,12 +14,14 @@ class BottomSheetStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: black,
-      height: 200.0,
+      height: 210.0,
       child: SafeArea(
         child: Column(
           children: [
             ListTile(
-              title: Text('Skal i byen i aften'),
+              title: Text(
+                  // AppLocalizations.of(context)!.isGoingOutTonight,
+                  S.of(context).going_out_tonight),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: primaryColor,
@@ -32,7 +36,9 @@ class BottomSheetStatusScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Skal ikke i byen i aften'),
+              title: Text(
+                  // AppLocalizations.of(context)!.notGoingOutTonight,
+                  S.of(context).not_going_out_tonight),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: redAccent,
@@ -47,7 +53,9 @@ class BottomSheetStatusScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text('Usikker'),
+              title: Text(
+                  // AppLocalizations.of(context)!.unsure,
+                  S.of(context).unsure),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: grey,

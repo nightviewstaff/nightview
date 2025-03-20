@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:nightview/models/users/location_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:location/location.dart' as loc;
 import 'package:nightview/locations/geofence_corner.dart';
 import 'package:nightview/locations/geofence_center.dart';
 import 'package:nightview/locations/geofence.dart';
@@ -62,7 +60,7 @@ class GeofencingService {
     for (var doc in querySnapshot.docs) {
       var data = doc.data() as Map<String, dynamic>;
       List corners = data['corners'];
-      if (corners != null && corners.length >= 4) {
+      if (corners.length >= 4) {
         geofences.add(Geofence(
           clubId: doc.id, // Add clubId to Geofence
           corners:

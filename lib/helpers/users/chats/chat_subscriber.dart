@@ -13,9 +13,9 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
 class ChatSubscriber extends ChangeNotifier { // Needs refac
-  Map<String, ChatMessageData> _messages = {};
-  Map<String, ChatData> _chats = {};
-  Map<String, ImageProvider> _chatImages = {};
+  final Map<String, ChatMessageData> _messages = {};
+  final Map<String, ChatData> _chats = {};
+  final Map<String, ImageProvider> _chatImages = {};
 
   Map<String, ChatMessageData> get messages => _messages;
 

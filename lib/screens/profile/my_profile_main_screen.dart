@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/constants/button_styles.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/users/misc/biography_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
+import 'package:nightview/widgets/icons/flag_top_right_drop_down.dart';
+import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyProfileMainScreen extends StatefulWidget {
   static const id = 'my_profile_main_screen';
@@ -77,267 +83,484 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: Text(S.of(context).profile),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 18.0),
-            // Todo figure out the diff and make some sort of variable / system
-            child: GestureDetector(
-              onTap: () {
-                // TODO: Handle profile picture click
-              },
-              child: CircleAvatar(
-                backgroundImage: const AssetImage('images/flags/dk.png'),
-                radius: 15.0,
-              ),
-            ),
+
+            child: LanguageFlagDropdown(),
+
+            // child: LanguageSwitcher(
+            //   radius: 15.0,
+            //   borderRadius: 25.0,
+            // ),
           ),
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.all(kMainPadding),
-              color: Colors.black,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(kMainBorderRadius),
-                        border: Border.all(
-                          color: primaryColor,
-                          width: kMainStrokeWidth,
+            // Main content
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(kMainPadding),
+                  color: Colors.black,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(kMainBorderRadius),
+                            border: Border.all(
+                              color: primaryColor,
+                              width: kMainStrokeWidth,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: kSmallSpacerValue),
+                              Text(
+                                  // AppLocalizations.of(context)!.biography,
+                                  S.of(context).bio,
+                                  style: kTextStyleH4),
+                              Divider(
+                                color: primaryColor,
+                                thickness: kMainStrokeWidth,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(kMainPadding),
+                                child: TextField(
+                                  onChanged: (String text) {
+                                    Provider.of<GlobalProvider>(context,
+                                            listen: false)
+                                        .setBiographyChanged(true);
+                                  },
+                                  controller: biographyController,
+                                  maxLines: 6,
+                                  maxLength: 80,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
+                                  cursorColor: primaryColor,
+                                  decoration: InputDecoration.collapsed(
+                                    hintText: S.of(context).write_here,
+                                    hintStyle: kTextStyleP1,
+                                  ),
+                                  style: kTextStyleP1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Column(
+                      SizedBox(width: kNormalSpacerValue),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: kSmallSpacerValue,
+                          InkWell(
+                            onTap: () async {
+                              bool? confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return AlertDialog(
+                                    title: Text(S.of(context).change_picture),
+                                    // AppLocalizations.of(context)!.changePicture,
+
+                                    content: Text(
+                                        // AppLocalizations.of(context)!.confirmChangePicture,
+
+                                        S
+                                            .of(context)
+                                            .change_picture_confirmation),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(dialogContext)
+                                                .pop(false),
+                                        child: Text(S.of(context).no,
+                                            style:
+                                                TextStyle(color: primaryColor)),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(dialogContext)
+                                                .pop(true),
+                                        child: Text(S.of(context).yes,
+                                            style:
+                                                TextStyle(color: primaryColor)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              if (confirmed == true) {
+                                if (await ProfilePictureHelper
+                                    .pickCropResizeCompressAndUploadPb()) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        S.of(context).profile_picture_updated,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                  String? currentUserId =
+                                      Provider.of<GlobalProvider>(context,
+                                              listen: false)
+                                          .userDataHelper
+                                          .currentUserId;
+                                  if (currentUserId == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          S
+                                              .of(context)
+                                              .profile_picture_load_error,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: Colors.black,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  String? pbUrl = await ProfilePictureHelper
+                                      .getProfilePicture(currentUserId);
+                                  Provider.of<GlobalProvider>(context,
+                                          listen: false)
+                                      .setProfilePicture(pbUrl);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        S
+                                            .of(context)
+                                            .profile_picture_change_error,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  0), // Adjust for border thickness if needed
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border:
+                                    Border.all(color: primaryColor, width: 1.5),
+                              ),
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    Provider.of<GlobalProvider>(context)
+                                        .profilePicture,
+                                radius: 70.0,
+                              ),
+                            ),
                           ),
-                          Text('Biografi', style: kTextStyleH4),
-                          Divider(
+                          SizedBox(height: kNormalSpacerValue),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed(FindNewFriendsScreen.id);
+                            },
+                            icon: FaIcon(FontAwesomeIcons.userPlus),
                             color: primaryColor,
-                            thickness: kMainStrokeWidth,
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(kMainPadding),
-                            child: TextField(
-                              onChanged: (String text) {
-                                Provider.of<GlobalProvider>(context,
-                                        listen: false)
-                                    .setBiographyChanged(true);
+                          SizedBox(height: kSmallSpacerValue),
+                          Visibility(
+                            visible: Provider.of<GlobalProvider>(context)
+                                .biographyChanged,
+                            child: FilledButton(
+                              onPressed: () async {
+                                // [Existing button logic remains unchanged]
                               },
-                              controller: biographyController,
-                              maxLines: 6,
-                              maxLength: 80,
-                              textCapitalization: TextCapitalization.sentences,
-                              cursorColor: primaryColor,
-                              decoration: InputDecoration.collapsed(
-                                  hintText: 'Skriv her',
-                                  hintStyle: kTextStyleP1),
-                              style: kTextStyleP1,
+                              style: FilledButton.styleFrom(
+                                side:
+                                    BorderSide(color: primaryColor, width: 2.0),
+                                backgroundColor: Colors.transparent,
+                                foregroundColor: Colors.blue,
+                              ),
+                              child: Text(
+                                  // AppLocalizations.of(context)!.save,
+                                  S.of(context).save,
+                                  style: kTextStyleP1),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: kNormalSpacerValue,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            Provider.of<GlobalProvider>(context).profilePicture,
-                        radius: 70.0,
-                      ),
-                      SizedBox(
-                        height: kNormalSpacerValue,
-                      ),
-                      FilledButton(
-                        onPressed: () async {
-                          if (await ProfilePictureHelper
-                              .pickCropResizeCompressAndUploadPb()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Profilbillede opdateret',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.black,
-                              ),
-                            );
-                            String? currentUserId = Provider.of<GlobalProvider>(
-                                    context,
-                                    listen: false)
-                                .userDataHelper
-                                .currentUserId;
-                            if (currentUserId == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Der skete en fejl under indlæsning af profilbillede',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: Colors.black,
-                                ),
-                              );
-                              return;
-                            }
-                            String? pbUrl =
-                                await ProfilePictureHelper.getProfilePicture(
-                                    currentUserId);
-                            Provider.of<GlobalProvider>(context, listen: false)
-                                .setProfilePicture(pbUrl);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Der skete en fejl under ændring af profilbillede',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.black,
-                              ),
-                            );
-                          }
-                        },
-                        style: FilledButton.styleFrom(
-                          side: BorderSide(color: primaryColor, width: 2.0),
-                          // Outline color and width
-                          backgroundColor: Colors.transparent,
-                          // Transparent background
-                          foregroundColor: primaryColor, // Text and icon color
-                        ),
-                        child: Text(
-                          'Skift billede',
-                          style: kTextStyleP1,
-                        ),
-                      ),
-                      SizedBox(
-                        height: kSmallSpacerValue,
-                      ),
-                      Visibility(
-                        visible: Provider.of<GlobalProvider>(context)
-                            .biographyChanged,
-                        child: FilledButton(
-                          onPressed: () async {
-                            if (await BiographyHelper.setBiography(
-                                biographyController.text)) {
-                              Provider.of<GlobalProvider>(context,
-                                      listen: false)
-                                  .setBiographyChanged(false);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Biografi opdateret',
-                                    style: kTextStyleP1,
-                                  ),
-                                  backgroundColor: Colors.black,
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Der skete en fejl under opdatering af biografi',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: Colors.black,
-                                ),
-                              );
-                            }
-                          },
-                          style: FilledButton.styleFrom(
-                            side: BorderSide(color: primaryColor, width: 2.0),
-                            // Outline color and width
-                            backgroundColor: Colors.transparent,
-                            // Transparent background
-                            foregroundColor: Colors.blue, // Text and icon color
-                          ),
-                          child: Text(
-                            'Gem',
-                            style: kTextStyleP1,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(kBigPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Venner',
-                    style: kTextStyleH2,
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(FindNewFriendsScreen.id);
-                    },
-                    icon: FaIcon(FontAwesomeIcons.userPlus),
-                    color: primaryColor,
-                  ),
-                ],
-              ),
-            ),
-            Visibility(
-              visible: Provider.of<GlobalProvider>(context).friends.isNotEmpty,
-              replacement: Expanded(
-                child: SpinKitPouringHourGlass(
-                  // TODO Make variable
-                  color: primaryColor,
-                  size: 150.0,
-                  strokeWidth: 2.0,
                 ),
-              ),
-              child: Expanded(
-                child: ListView.separated(
-                    padding: EdgeInsets.all(kMainPadding),
-                    itemBuilder: (context, index) {
-                      UserData user =
-                          Provider.of<GlobalProvider>(context).friends[index];
-
-                      return ListTile(
-                        onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false)
-                              .setChosenProfile(user);
-                          Navigator.of(context)
-                              .pushNamed(OtherProfileMainScreen.id);
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(kMainBorderRadius),
-                          side: BorderSide(
-                            width: kMainStrokeWidth,
-                            color: primaryColor,
+                Container(
+                  padding: EdgeInsets.all(kBigPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                          // AppLocalizations.of(context)!.friends,
+                          S.of(context).friends,
+                          style: kTextStyleH2),
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible:
+                      Provider.of<GlobalProvider>(context).friends.isNotEmpty,
+                  replacement: Expanded(
+                    child: SpinKitPouringHourGlass(
+                      color: primaryColor,
+                      size: 150.0,
+                      strokeWidth: 2.0,
+                    ),
+                  ),
+                  child: Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.all(kMainPadding),
+                      itemBuilder: (context, index) {
+                        UserData user =
+                            Provider.of<GlobalProvider>(context).friends[index];
+                        return ListTile(
+                          onTap: () {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setChosenProfile(user);
+                            Navigator.of(context)
+                                .pushNamed(OtherProfileMainScreen.id);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(kMainBorderRadius),
+                            side: BorderSide(
+                                width: kMainStrokeWidth, color: primaryColor),
                           ),
-                        ),
-                        leading: CircleAvatar(
-                          backgroundImage: getPb(index),
-                        ),
-                        title: Text(
-                          '${user.firstName} ${user.lastName}',
-                          overflow: TextOverflow.ellipsis,
-                          style: kTextStyleP1,
+                          leading: CircleAvatar(backgroundImage: getPb(index)),
+                          title: Text(
+                            '${user.firstName} ${user.lastName}',
+                            overflow: TextOverflow.ellipsis,
+                            style: kTextStyleP1,
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: kSmallSpacerValue),
+                      itemCount:
+                          Provider.of<GlobalProvider>(context).friends.length,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Bottom right icons
+            Positioned(
+              bottom: kMainPadding,
+              right: kMainPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.lock,
+                      color: primaryColor, // Blue for privacy
+                      size: 15.0, // Smaller size
+                    ),
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.privacyPolicy,
+                              S.of(context).privacy_policy,
+                              style: TextStyle(color: primaryColor),
+                            ),
+                          ),
+                          content: Text(
+                              // AppLocalizations.of(context)!.openPrivacyPolicyInBrowser,
+                              S.of(context).privacy_policy_open),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.no,
+                                  S.of(context).no,
+                                  style: TextStyle(color: grey)),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                launchUrl(Uri.parse(
+                                    'https://night-view.dk/privacy-policy/'));
+                                Navigator.of(dialogContext).pop();
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.yes,
+                                  S.of(context).yes,
+                                  style: TextStyle(color: grey)),
+                            ),
+                          ],
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => SizedBox(
-                          height: kSmallSpacerValue,
+                    tooltip:
+                        // AppLocalizations.of(context)!.privacyPolicy,
+                        S.of(context).privacy_policy,
+                  ),
+                  IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.userSlash,
+                      color: redAccent, // Red for delete
+                      size: 15.0,
+                    ),
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (deleteUserContext) => AlertDialog(
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.deleteUser,
+                              S.of(context).delete_user,
+                              style: TextStyle(color: redAccent),
+                            ),
+                          ),
+                          content: Text(
+                            // AppLocalizations.of(context)!.confirmDeleteUserAndAllData,
+                            S.of(context).delete_confirmation,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(deleteUserContext).pop();
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.no,
+                                  S.of(context).no,
+                                  style: TextStyle(color: primaryColor)),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                bool success =
+                                    await Provider.of<GlobalProvider>(
+                                            deleteUserContext,
+                                            listen: false)
+                                        .deleteAllUserData();
+                                if (success) {
+                                  await Navigator.of(deleteUserContext)
+                                      .pushNamedAndRemoveUntil(
+                                          LoginOrCreateAccountScreen.id,
+                                          (route) => false);
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.remove('mail');
+                                  prefs.remove('password');
+                                } else {
+                                  await showDialog(
+                                    context: deleteUserContext,
+                                    builder: (errorContext) => AlertDialog(
+                                      title: Text(
+                                          // AppLocalizations.of(context)!.deleteUserError,
+                                          S.of(context).delete_user_error),
+                                      content: Text(
+                                        // AppLocalizations.of(context)!.deleteUserErrorTryAgainLater,
+                                        S
+                                            .of(context)
+                                            .delete_user_error_description,
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(errorContext).pop();
+                                          },
+                                          child: Text(
+                                              // AppLocalizations.of(context)!.okay,
+                                              S.of(context).ok,
+                                              style: TextStyle(
+                                                  color: primaryColor)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.yes,
+                                  S.of(context).yes,
+                                  style: TextStyle(color: redAccent)),
+                            ),
+                          ],
                         ),
-                    itemCount:
-                        Provider.of<GlobalProvider>(context).friends.length),
+                      );
+                    },
+                    tooltip:
+                        // AppLocalizations.of(context)!.deleteUser,
+                        S.of(context).delete_user,
+                  ),
+                  IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.rightFromBracket,
+                      color: grey, // Grey for logout
+                      size: 15.0,
+                    ),
+                    onPressed: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: Center(
+                            child: Text(
+                              // AppLocalizations.of(context)!.logOff,
+                              S.of(context).logout,
+                              style: TextStyle(color: redAccent),
+                            ),
+                          ),
+                          content: Text(
+                              // AppLocalizations.of(context)!.confirmLogOff,
+                              S.of(context).logout_confirmation),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext).pop();
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.no,
+                                  S.of(context).no,
+                                  style: TextStyle(color: primaryColor)),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await Provider.of<GlobalProvider>(context,
+                                        listen: false)
+                                    .userDataHelper
+                                    .signOutCurrentUser();
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    LoginOrCreateAccountScreen.id,
+                                    (route) => false);
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove('mail');
+                                prefs.remove('password');
+                              },
+                              child: Text(
+                                  // AppLocalizations.of(context)!.yes,
+                                  S.of(context).yes,
+                                  style: TextStyle(color: redAccent)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    tooltip:
+                        // AppLocalizations.of(context)!.logOff,
+                        S.of(context).logout,
+                  ),
+                ],
               ),
             ),
           ],

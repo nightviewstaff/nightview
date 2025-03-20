@@ -11,7 +11,7 @@ class ClubCapacityCalculator {
     double percentOfCapacity =
         club.visitors / club.totalPossibleAmountOfVisitors;
 
-    if (percentOfCapacity <= 0.1) {
+    if (percentOfCapacity <= 0.10 && ClubOpeningHoursFormatter.isClubOpen(club)) {
       final Random random = Random(42);
       percentOfCapacity =
           (10 + random.nextInt(7)) / 100; // set to between 10% and 16%)
@@ -19,13 +19,11 @@ class ClubCapacityCalculator {
     if (percentOfCapacity > 0.95) {
       percentOfCapacity = 0.95; // Cap at 95%
     }
-    if (ClubOpeningHoursFormatter.formatOpeningHours(club) == 'Lukket i dag.') {
+    if (!ClubOpeningHoursFormatter.isClubOpen(club)) {
       percentOfCapacity = 0;
-    } // TODO Figure out exact time. (if open at 18 and is 17 still say 0)
+    }// TODO Figure out exact time. (if open at 18 and is 17 still say 0)
     return percentOfCapacity;
   }
-
-
 
   double getDecimalValue({required int amount, required int fullAmount}) {
     double value = amount / fullAmount;

@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
@@ -48,7 +48,7 @@ class _LocationPermissionPreciseScreenState
   }
 
   void checkPermission() {
-    Provider.of<GlobalProvider>(context, listen: false)
+    Provider.of<NightMapProvider>(context, listen: false)
         .locationHelper
         .hasPermissionPrecise
         .then((hasPermission) async {
@@ -63,14 +63,14 @@ class _LocationPermissionPreciseScreenState
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
-        'Tillad præcis lokation',
+        S.of(context).allow_precise_location,
         textAlign: TextAlign.center,
         style: kTextStyleH1,
       ),
       content: Column(
         children: [
           Text(
-            'For at levere den bedste oplevelse for NightViews brugere, er det nødvendigt at appen har adgang til telefonens præcise position.',
+            S.of(context).precise_location_description,
             textAlign: TextAlign.center,
             style: kTextStyleP1,
           ),
@@ -89,7 +89,7 @@ class _LocationPermissionPreciseScreenState
             text: buttonText,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
-              Provider.of<GlobalProvider>(context, listen: false)
+              Provider.of<NightMapProvider>(context, listen: false)
                   .locationHelper
                   .openAppSettings();
             },
@@ -101,25 +101,25 @@ class _LocationPermissionPreciseScreenState
 
   String get buttonText {
     if (Platform.isAndroid) {
-      return 'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
     if (Platform.isIOS) {
-      return 'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 
   String get guideText {
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Brug præcis lokation';
+      return S.of(context).android_precise_location;
     }
 
     if (Platform.isIOS) {
-      return '> Åbn app-indstillinger\n> Lokalitet\n> Præcis lokalitet';
+      return S.of(context).ios_precise_location;
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 }

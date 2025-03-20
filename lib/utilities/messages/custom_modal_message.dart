@@ -6,7 +6,7 @@ class CustomModalMessage {
     required String message,
     required TextStyle textStyle,
     EdgeInsets padding = const EdgeInsets.all(15.0),
-    Duration autoDismissDuration = const Duration(seconds: 1),
+    int autoDismissDurationSeconds = 1,
   }) {
     showModalBottomSheet(
       context: context,
@@ -19,11 +19,10 @@ class CustomModalMessage {
       ),
     );
 
-    Future.delayed(autoDismissDuration, () {
+    Future.delayed(Duration(seconds: autoDismissDurationSeconds), () {
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
     });
   }
-
 }

@@ -1,3 +1,6 @@
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
+
 class ChatData {
   final String id;
   final String lastMessage;
@@ -11,10 +14,10 @@ class ChatData {
 
   ChatData(
       {required this.id,
-      required this.lastMessage,
-      required this.lastSender,
-      required this.lastUpdated,
-      required this.participants});
+        required this.lastMessage,
+        required this.lastSender,
+        required this.lastUpdated,
+        required this.participants});
 
   String getReadableTimestamp() {
     String hour = lastUpdated.hour.toString().padLeft(2, '0');
@@ -32,19 +35,19 @@ class ChatData {
 
     switch (lastUpdated.weekday) {
       case 1:
-        return 'Man ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_monday} ';
       case 2:
-        return 'Tir ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_tuesday} ';
       case 3:
-        return 'Ons ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_wednesday} ';
       case 4:
-        return 'Tor ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_thursday} ';
       case 5:
-        return 'Fre ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_friday} ';
       case 6:
-        return 'Lør ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_saturday} ';
       case 7:
-        return 'Søn ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_sunday} ';
     }
     return '';
   }

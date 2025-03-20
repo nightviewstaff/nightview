@@ -1,22 +1,23 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/widgets/stateless/offer_list_item.dart';
 import 'package:provider/provider.dart';
 
 class NightOffersMainScreen extends StatelessWidget {
-
   const NightOffersMainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(kPagePadding),
+      padding: const EdgeInsets.all(kBiggerPadding),
       child: ListView(
         children: [
           Center(
             child: Text(
+              // AppLocalizations.of(context)!.topOffers,
               'TOP OFFERS',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
@@ -34,9 +35,10 @@ class NightOffersMainScreen extends StatelessWidget {
             ),
           ),
           Text(Provider.of<GlobalProvider>(context)
-              .clubDataHelper
-              .clubData['jagtbar_0']
-              ?.logo ??
+                  .clubDataHelper
+                  .clubData['jagtbar_0']
+                  ?.logo ??
+              // AppLocalizations.of(context)!.error,
               'ERROR'),
           OfferListItem(
             image: Image.asset('images/logo_icon.png'),

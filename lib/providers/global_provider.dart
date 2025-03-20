@@ -1,22 +1,17 @@
-import 'dart:math';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
-import 'package:nightview/models/users/location_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/helpers/misc/main_offer_redemptions_helper.dart';
 import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/helpers/misc/share_code_helper.dart';
@@ -25,67 +20,38 @@ import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
   GlobalProvider() {
-    clubDataHelper = ClubDataHelper(
-      onReceive: (data) {
-        clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-        notifyListeners();
-      },
-    );
+
     userDataHelper = UserDataHelper(
       onReceive: (data) {
-        userDataHelper
-            .evaluatePartyCount(
-          userData: data ?? {},
-        )
-            .then((count) {
+        userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
           _partyCount = count;
           if (DateTime.now().weekday != DateTime.sunday) {
-            if (_partyCount <= 130) {
-              Random random = Random();
-              _partyCount = 131 + random.nextInt(65);
-            }
+            // if (_partyCount <= 99) { // TEST
+            //   Random random = Random();
+            //   _partyCount = 99 + random.nextInt(65);
+            // }
           }
           // _partyCount = 1633; // TEST
           notifyListeners();
         });
       },
     );
-    locationHelper = LocationHelper(
-      onPositionUpdate: (location) async {
-        if (userDataHelper.isLoggedIn() && location != null) {
-          clubDataHelper.clubData.forEach((clubId, clubData) {
-            if (locationHelper.locationInClub(
-                location: location, clubData: clubData)) {
-              locationHelper.uploadLocationData(
-                LocationData(
-                  userId: userDataHelper.currentUserId!,
-                  clubId: clubId,
-                  private: false,
-                  timestamp: Timestamp.now(),
-                ),
-              );
-              return;
-            }
-          });
-        }
-        if (backgroundLocationEnabled) {
-          await clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-          notifyListeners();
-        }
+
+    clubDataHelper = ClubDataHelper(
+      onReceive: (data) {
+        clubDataHelper.evaluateVisitors();
+        notifyListeners();
       },
     );
+
   }
 
-  late ClubDataHelper clubDataHelper;
+  ClubDataHelper clubDataHelper = ClubDataHelper();
   late UserDataHelper userDataHelper;
-  late LocationHelper locationHelper;
-  // late LocationService locationService;
-
+  // late LocationHelper locationHelper;
   MainOfferRedemptionsHelper mainOfferRedemptionsHelper =
       MainOfferRedemptionsHelper();
   AppinioSwiperController cardController = AppinioSwiperController();
-  MapController nightMapController = MapController();
-
 
   ClubData? _chosenClub;
   bool _chosenClubFavoriteLocal = false;
@@ -102,18 +68,20 @@ class GlobalProvider extends ChangeNotifier {
   String? _chosenChatId;
   ImageProvider _chosenChatPicture = AssetImage('images/user_pb.jpg');
   String _chosenChatTitle = '';
-  List<ImageProvider> _friendPbs = [];
+  final List<ImageProvider> _friendPbs = [];
   LatLng? _userLocation;
 
   // TEST //
   LatLng? get userLocation => _userLocation;
+
   Future<void> fetchUserLocation() async {
     try {
       LocationService.getUserLocation();
-    }catch(e){
+    } catch (e) {
       print(e.toString());
     }
   }
+
   // TEST //
 
   ClubData get chosenClub => _chosenClub!;
@@ -148,20 +116,27 @@ class GlobalProvider extends ChangeNotifier {
 
   List<ImageProvider> get friendPbs => _friendPbs;
 
-  bool get chosenClubFavorite {
+  Future<bool> getChosenClubFavorite() async {
     String? userId = userDataHelper.currentUserId;
-    String clubId = chosenClub.id;
-    List<dynamic> favoritesList;
+    if (userId == null || _chosenClub == null) return false;
+
+    String clubId = _chosenClub!.id;
 
     try {
-      favoritesList = clubDataHelper.clubData[clubId]!.favorites;
+      DocumentSnapshot clubDoc =
+      await FirebaseFirestore.instance.collection('club_data').doc(clubId).get();
+
+      if (clubDoc.exists) {
+        List<dynamic> favoritesList = clubDoc['favorites'] ?? [];
+        return favoritesList.contains(userId);
+      }
     } catch (e) {
-      print(e);
-      return false;
+      print("Error fetching favorite status: $e");
     }
 
-    return favoritesList.contains(userId);
+    return false;
   }
+
 
   Color get partyStatusColor {
     switch (_partyStatusLocal) {
@@ -270,19 +245,6 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePositionAndEvaluateVisitors(
-      {required double lat, required double lon}) async {
-     //await userDataHelper.setCurrentUsersLastPosition(
-    //   lat: lat,
-    //   lon: lon,
-    // );
-    clubDataHelper.evaluateVisitors(
-      // userData: userDataHelper.userData,
-      locationHelper: locationHelper,
-    );
-  }
-
-
   Future<bool> deleteAllUserData() async {
     String? userIdToDelete = userDataHelper.currentUserId;
 
@@ -293,7 +255,7 @@ class GlobalProvider extends ChangeNotifier {
     try {
       await userDataHelper.deleteDataAssociatedTo(userIdToDelete);
       await clubDataHelper.deleteDataAssociatedTo(userIdToDelete);
-      await locationHelper.deleteDataAssociatedTo(userIdToDelete);
+      // await locationHelper.deleteDataAssociatedTo(userIdToDelete); In provider now
       await mainOfferRedemptionsHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendRequestHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendsHelper.deleteDataAssociatedTo(userIdToDelete);

@@ -1,0 +1,24 @@
+{
+  "@@last_modified": "2025-03-11T16:22:58.238841",
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Dialog title for language selection",
+    "type": "text",
+    "placeholders": {}
+  },
+  "login": "Log in",
+  "@login": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "create_nightview_profile": "Create NightView profile",
+  "@create_nightview_profile": {
+    "type": "text",
+    "placeholders": {}
+  },
+  "create_with_google": "Create with Google",
+  "@create_with_google": {
+    "type": "text",
+    "placeholders": {}
+  }
+}

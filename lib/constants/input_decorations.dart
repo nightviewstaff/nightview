@@ -41,8 +41,5 @@ const kMainInputDecoration = InputDecoration(
   ),
 );
 
-SearchInputDecoration kSearchInputDecoration = SearchInputDecoration(
-  border: InputBorder.none
-);
-
-
+SearchInputDecoration kSearchInputDecoration =
+    SearchInputDecoration(border: InputBorder.none);

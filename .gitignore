@@ -13,7 +13,9 @@ upload-keystore.jks
 upload_certificate.pem
 migrate_working_dir/
 gradlekey.properties
-
+*.gradle
+add_club.dart
+pubspec.lock
 # IntelliJ related
 *.iml
 *.ipr

@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "573043562926-cui17rpehr9m29njv97hm7q90iqmefm7.apps.googleusercontent.com",
+          "client_id": "573043562926-6k836l1017jmruiqk53a1lg7uuik1dml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nightview.nightview",
+            "certificate_hash": "607a23a29e90301f4674515024438513eca61064"
+          }
+        },
+        {
+          "client_id": "573043562926-f99lsdihtl5cfspkbka72aekmrjsli7n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

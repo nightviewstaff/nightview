@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,12 +7,13 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_service_screen.dart';
 import 'package:nightview/screens/main_screen.dart';
-import 'package:nightview/screens/swipe/swipe_main_screen.dart';
+import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionCheckerScreen extends StatefulWidget {
@@ -34,44 +34,47 @@ class _LocationPermissionCheckerScreenState
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       LocationHelper locationHelper =
-          Provider.of<GlobalProvider>(context, listen: false).locationHelper;
+          Provider.of<NightMapProvider>(context, listen: false).locationHelper;
 
       if (backgroundLocationEnabled) {
         // Opt out not implemented
         if (Platform.isAndroid) {
           if (await locationHelper.serviceEnabled) {
-            if (await locationHelper.hasPermissionAlways || Provider
-                .of<GlobalProvider>(context, listen: false)
-                .locationOptOut) {
-              if (await locationHelper.hasPermissionPrecise || Provider
-                  .of<GlobalProvider>(context, listen: false)
-                  .locationOptOut) {
-                if (!Provider
-                    .of<GlobalProvider>(context, listen: false)
+            if (await locationHelper.hasPermissionAlways ||
+                Provider.of<GlobalProvider>(context, listen: false)
+                    .locationOptOut) {
+              if (await locationHelper.hasPermissionPrecise ||
+                  Provider.of<GlobalProvider>(context, listen: false)
+                      .locationOptOut) {
+                if (!Provider.of<GlobalProvider>(context, listen: false)
                     .locationOptOut) {
                   // await locationHelper.activateBackgroundLocation();
                   locationHelper.startLocationService();
                 }
                 UserData? currentUserData;
                 do {
-                  currentUserData = Provider
-                      .of<GlobalProvider>(context, listen: false)
-                      .userDataHelper
-                      .currentUserData;
+                  currentUserData =
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .userDataHelper
+                          .currentUserData;
                   await Future.delayed(Duration(milliseconds: 100));
                 } while (currentUserData == null);
 
                 currentUserData.answeredStatusToday()
                     ? Navigator.of(context).pushReplacementNamed(MainScreen.id)
-                    : Navigator.of(context).pushReplacementNamed(SwipeMainScreen.id);
+                    : Navigator.of(context)
+                        .pushReplacementNamed(SwipeScreen.id);
               } else {
-                Navigator.of(context).pushReplacementNamed(LocationPermissionPreciseScreen.id);
+                Navigator.of(context)
+                    .pushReplacementNamed(LocationPermissionPreciseScreen.id);
               }
             } else {
-              Navigator.of(context).pushReplacementNamed(LocationPermissionAlwaysScreen.id);
+              Navigator.of(context)
+                  .pushReplacementNamed(LocationPermissionAlwaysScreen.id);
             }
           } else {
-            Navigator.of(context).pushReplacementNamed(LocationPermissionServiceScreen.id);
+            Navigator.of(context)
+                .pushReplacementNamed(LocationPermissionServiceScreen.id);
           }
         }
 
@@ -83,32 +86,36 @@ class _LocationPermissionCheckerScreenState
                 // locationHelper.startBackgroundLocationService();
                 UserData? currentUserData;
                 do {
-                  currentUserData = Provider
-                      .of<GlobalProvider>(context, listen: false)
-                      .userDataHelper
-                      .currentUserData;
+                  currentUserData =
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .userDataHelper
+                          .currentUserData;
                   await Future.delayed(Duration(milliseconds: 100));
                 } while (currentUserData == null);
 
                 currentUserData.answeredStatusToday()
                     ? Navigator.of(context).pushReplacementNamed(MainScreen.id)
-                    : Navigator.of(context).pushReplacementNamed(SwipeMainScreen.id);
+                    : Navigator.of(context)
+                        .pushReplacementNamed(SwipeScreen.id);
               } else {
-                Navigator.of(context).pushReplacementNamed(LocationPermissionPreciseScreen.id);
+                Navigator.of(context)
+                    .pushReplacementNamed(LocationPermissionPreciseScreen.id);
               }
             } else {
-              Navigator.of(context).pushReplacementNamed(LocationPermissionWhileInUseScreen.id);
+              Navigator.of(context)
+                  .pushReplacementNamed(LocationPermissionWhileInUseScreen.id);
             }
           } else {
-            Navigator.of(context).pushReplacementNamed(LocationPermissionServiceScreen.id);
+            Navigator.of(context)
+                .pushReplacementNamed(LocationPermissionServiceScreen.id);
           }
         }
-      } else { // backgroundLocationEnabled = false
+      } else {
+        // backgroundLocationEnabled = false
         locationHelper.startLocationService();
         UserData? currentUserData;
         do {
-          currentUserData = Provider
-              .of<GlobalProvider>(context, listen: false)
+          currentUserData = Provider.of<GlobalProvider>(context, listen: false)
               .userDataHelper
               .currentUserData;
           await Future.delayed(Duration(milliseconds: 100));
@@ -116,10 +123,8 @@ class _LocationPermissionCheckerScreenState
 
         currentUserData.answeredStatusToday()
             ? Navigator.of(context).pushReplacementNamed(MainScreen.id)
-            : Navigator.of(context).pushReplacementNamed(SwipeMainScreen.id);
+            : Navigator.of(context).pushReplacementNamed(SwipeScreen.id);
       }
-
-
     });
   }
 

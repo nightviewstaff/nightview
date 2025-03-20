@@ -1,0 +1,11 @@
+{
+  "@@locale": "no",
+  "selectLanguage": "Velg språk",
+  "login": "Logg inn",
+  "create_nightview_profile": "Opprett NightView-profil",
+  "create_with_google": "Opprett med Google",
+  "@selectLanguage": {"description": "Dialog title for language selection", "type": "text"},
+  "@login": {"type": "text"},
+  "@create_nightview_profile": {"type": "text"},
+  "@create_with_google": {"type": "text"}
+}

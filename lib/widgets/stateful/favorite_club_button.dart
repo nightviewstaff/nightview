@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,9 +18,13 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
-      provider.setChosenClubFavoriteLocal(provider.chosenClubFavorite);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      GlobalProvider provider =
+          Provider.of<GlobalProvider>(context, listen: false);
+
+      bool isFavorite =
+          await provider.getChosenClubFavorite(); // ✅ Await the async function
+      provider.setChosenClubFavoriteLocal(isFavorite); // ✅ Update state safely
     });
   }
 
@@ -26,7 +32,8 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        GlobalProvider provider = Provider.of<GlobalProvider>(context, listen: false);
+        GlobalProvider provider =
+            Provider.of<GlobalProvider>(context, listen: false);
 
         String? userId = provider.userDataHelper.currentUserId;
         String clubId = provider.chosenClub.id;
@@ -35,7 +42,8 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Der skete en fejl',
+                // AppLocalizations.of(context)!.genericError,
+                S.of(context).generic_error,
                 style: TextStyle(color: redAccent),
               ),
               backgroundColor: black,
@@ -47,8 +55,11 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
         bool isFavorite = provider.chosenClubFavoriteLocal;
         if (isFavorite) {
           // Remove favorite club
-          provider.clubDataHelper.removeFavoriteClub(clubId, userId);
-          provider.setChosenClubFavoriteLocal(false);
+          bool doRemove = await _showRemoveConfirmationDialog(context);
+          if (doRemove) {
+            provider.clubDataHelper.removeFavoriteClub(clubId, userId);
+            provider.setChosenClubFavoriteLocal(false);
+          }
         } else {
           // Add favorite club
           bool doFavorite = await _showConfirmationDialog(context);
@@ -74,12 +85,15 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          'Tilføj favorit',
+          // AppLocalizations.of(context)!.addFavorite,
+          S.of(context).add_favorite,
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
-            'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.',
+            // TODO MAKE SURE RIGHT MESSAGE
+            // AppLocalizations.of(context)!.addFavouriteDescription,
+            S.of(context).favorite_club_message,
           ),
         ),
         actions: [
@@ -89,7 +103,8 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fortryd',
+              // AppLocalizations.of(context)!.cancel,
+              S.of(context).undo,
               style: TextStyle(color: Colors.redAccent),
             ),
           ),
@@ -98,7 +113,8 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fortsæt',
+              // AppLocalizations.of(context)!.continue,
+              S.of(context).continues,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -106,5 +122,51 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       ),
     );
     return doFavorite;
+  }
+
+  Future<bool> _showRemoveConfirmationDialog(BuildContext context) async {
+    bool doRemove = false;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          // AppLocalizations.of(context)!.removeFavourite,
+          S.of(context).remove_favorite,
+          style: TextStyle(color: redAccent),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            // AppLocalizations.of(context)!.confirmRemoveFavourite,
+            S.of(context).remove_favorite_confirmation,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              doRemove = false;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              // AppLocalizations.of(context)!.cancel,
+              S.of(context).undo,
+              style: TextStyle(color: primaryColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              doRemove = true;
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              // AppLocalizations.of(context)!.remove,
+              S.of(context).remove,
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+    return doRemove;
   }
 }

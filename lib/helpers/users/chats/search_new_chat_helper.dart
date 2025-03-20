@@ -6,7 +6,7 @@ import 'package:nightview/models/users/user_data.dart';
 class SearchNewChatHelper extends ChangeNotifier {
   List<UserData> _friends = [];
   List<UserData> _filteredFriends = [];
-  List<ImageProvider> _filteredFriendPbs = [];
+  final List<ImageProvider> _filteredFriendPbs = [];
 
   List<UserData> get friends => _friends;
 

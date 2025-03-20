@@ -1,116 +1,245 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/helpers/misc/firebase_storage_helper.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/models/clubs/club_visit.dart';
-import 'package:nightview/models/clubs/rating.dart';
 
-class ClubDataHelper {
+class ClubDataHelper with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _storageRef = FirebaseStorage.instance.ref();
 
   Map<String, ClubData> clubData = {};
+  final ValueNotifier<List<ClubData>> clubDataList = ValueNotifier([]);
+  final ValueNotifier<Set<String>> allClubTypes = ValueNotifier({});
+
+  final StreamController<ClubData> _initialLoadController =
+      StreamController.broadcast();
+
+  Stream<ClubData> get initialClubStream => _initialLoadController.stream;
+
+  final ValueNotifier<int> remainingNearbyClubsNotifier = ValueNotifier(0);
+  final ValueNotifier<int> remainingClubsNotifier = ValueNotifier(0);
+  int totalAmountOfClubs = 0;
 
   ClubDataHelper({Callback<Map<String, ClubData>>? onReceive}) {
     _firestore.collection('club_data').snapshots().listen((snap) {
-      clubData.clear();
+      print("🔄 Firestore updated: Processing only changed clubs...");
 
-      List<Future<void>> futures =
-      snap.docs.map((club) => _processClub(club)).toList();
-      Future.wait(futures).then((value) {
-        if (onReceive != null) {
-          onReceive(clubData);
+      for (var club in snap.docChanges) {
+        switch (club.type) {
+          case DocumentChangeType.added:
+          case DocumentChangeType.modified:
+            // _processClub(club.doc); // ✅ Update only the changed club
+            break;
+          case DocumentChangeType.removed:
+            clubData.remove(club.doc.id); // ✅ Remove deleted club
+            break;
         }
-      });
+      }
     });
   }
 
-  Future<void> _processClub(
-      QueryDocumentSnapshot<Map<String, dynamic>> club) async {
+  Future<void> loadInitialClubs() async {
+    try {
+      final positionFuture = LocationService.getUserLocation();
+      final snapshotFuture = _firestore.collection('club_data').get();
+      final results = await Future.wait([positionFuture, snapshotFuture]);
+      final userPosition = results[0] as LatLng?;
+      final snapshot = results[1] as QuerySnapshot<Map<String, dynamic>>;
+
+      remainingClubsNotifier.value = snapshot.docs.length;
+      totalAmountOfClubs = snapshot.docs.length;
+
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> nearbyClubs = [];
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> remainingClubs = [];
+      clubDataList.value = (snapshot.docs
+          .map((doc) {
+            final club = _processClub(doc);
+            if (club != null) {
+              clubData[club.id] = club;
+              remainingClubsNotifier.value--;
+              allClubTypes.value.add(club.typeOfClub);
+              return club;
+            }
+          })
+          .whereType<ClubData>()
+          .toList());
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final lat = data['lat'];
+        final lon = data['lon'];
+        final distance = Geolocator.distanceBetween(
+          userPosition?.latitude ?? 0,
+          userPosition?.longitude ?? 0,
+          lat,
+          lon,
+        );
+
+        await _processClubsInBatches(snapshot.docs); // MAYBES NOT GOOD?!?
+
+        if (distance <= 10000000) {
+          // 10.000 km HUGE BUG. Now it only show clubs within that range. Needs
+          nearbyClubs.add(doc);
+        } else {
+          remainingClubs.add(doc);
+        }
+      }
+
+      // Step 1: Process nearby clubs immediately
+      remainingNearbyClubsNotifier.value = nearbyClubs.length;
+      await _processClubsInBatches(nearbyClubs);
+      remainingClubsNotifier.addListener(() {
+        if (remainingClubsNotifier.value <= 0) {
+          clubDataList.value =
+              clubData.values.toList(); // Update with all clubs
+          notifyListeners();
+        }
+      });
+    } catch (e) {
+      print('❌ Error loading initial clubs: $e');
+    }
+    print(clubDataList.value.length);
+  }
+
+  Future<void> _processClubsInBatches(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> clubs) async {
+    final userLocation = await Geolocator.getCurrentPosition();
+    final stopwatch = Stopwatch()..start();
+    const int batchSize = 20;
+    for (int i = 0; i < clubs.length; i += batchSize) {
+      final batch = clubs.skip(i).take(batchSize).toList();
+      await Future.wait(batch.map((doc) async {
+        final club = _processClub(doc);
+        if (club != null) {
+          clubData[club.id] = club;
+          _initialLoadController.add(club);
+          remainingClubsNotifier.value--;
+          allClubTypes.value.add(club.typeOfClub);
+
+          if (Geolocator.distanceBetween(
+                userLocation.latitude,
+                userLocation.longitude,
+                club.lat,
+                club.lon,
+              ) <=
+              500000) {
+            remainingNearbyClubsNotifier.value--;
+          }
+        }
+      }));
+    }
+
+    stopwatch.stop();
+    print('Total time: ${stopwatch.elapsed}'); // Test
+  }
+
+  ClubData? _processClub(QueryDocumentSnapshot<Map<String, dynamic>> club) {
     try {
       final data = club.data();
 
-      String typeOfClubImageUrl;
-      try {
-        typeOfClubImageUrl = await _storageRef.child('/nightview_images/club_type_images/${data['type_of_club']}_icon.png').getDownloadURL();
-      } catch (e) {
-        print(
-            'Error fetching typeOfClub image URL for ${data['name']} (type: ${data['type_of_club']}): $e');
-        typeOfClubImageUrl = "null"; // Provide a fallback URL if necessary
-      }
+      // Skip if no meaningful changes
+      if (clubData.containsKey(club.id)) {
+        final existingClub = clubData[club.id]!;
+        bool hasChanged = existingClub.name != data['name'] ||
+            existingClub.rating != data['rating'] ||
+            existingClub.visitors != data['visitors'] ||
+            existingClub.logo != data['logo'];
 
-      String logoUrl;
-      try {
-        if (data['logo'] == 'default_logo.png') {
-          // If the logo is default, use the typeOfClubImageUrl
-          logoUrl = typeOfClubImageUrl;
-        } else {
-          logoUrl = await _storageRef.child('club_logos/${data['logo']}').getDownloadURL();
+        if (!hasChanged) {
+          print("✅ No changes detected for ${club.id}, skipping update.");
+          return null;
         }
-      } catch (e) {
-        print('Error fetching logo URL for ${data['name']}: $e');
-        logoUrl = "null"; // Fallback URL if necessary
       }
 
-      String? mainOfferImgUrl;
-      try {
-        if (stringToOfferType(data['offer_type']) != OfferType.none) {
-          mainOfferImgUrl =
-          await _storageRef.child('main_offers/${data['main_offer_img']}')
-              .getDownloadURL();
-        }
-      } catch (e) {
-        print('Error fetching main offer image URL for ${data['name']}: $e');
-        mainOfferImgUrl = null;
-      }
-
-      final corners = (data['corners'] as List).map((geoPoint) {
-        final point = geoPoint as GeoPoint;
-        return {'latitude': point.latitude, 'longitude': point.longitude};
-      }).toList();
-
-      // Handle opening_hours null values properly
+      // Parse opening hours
       final openingHours =
-      (data['opening_hours'] as Map<String, dynamic>).map((day, hours) {
-        if (hours == null) {
-          return MapEntry(day, <String, String>{});
-        } else {
-          return MapEntry(day, Map<String, String>.from(hours));
-        }
-      });
+          (data['opening_hours'] as Map<String, dynamic>?)?.map((day, hours) {
+                if (hours == null || hours.isEmpty) {
+                  return MapEntry(day, null);
+                }
+                return MapEntry(day, {
+                  'open': hours['open']?.toString(),
+                  'close': hours['close']?.toString(),
+                  'ageRestriction':
+                      hours['ageRestriction'] ?? data['age_restriction'] ?? 0,
+                });
+              }) ??
+              {};
 
-      clubData[club.id] = ClubData(
+      // Determine logo URL with fallback
+      String logoUrl;
+      if (data['logo'] == 'default_logo.png' || data['logo'] == null) {
+        logoUrl = fallbackImage(data['type_of_club']);
+      } else {
+        logoUrl = FirebaseStorageHelper.fetchStorageUrl(
+          'club_logos/${data['logo']}',
+        );
+      }
+
+      final urls = [
+        logoUrl, // Use the determined logo URL
+        (stringToOfferType(data['offer_type'] ?? '') != OfferType.none)
+            ? FirebaseStorageHelper.fetchStorageUrl(
+                'main_offers/${data['main_offer_img']}',
+              )
+            : "",
+      ];
+
+      // Fetch all URLs concurrently
+      final mainOfferImgUrl = urls[1];
+
+      // Parse corners
+      final corners = (data['corners'] as List?)
+              ?.whereType<GeoPoint>()
+              .map((point) =>
+                  {'latitude': point.latitude, 'longitude': point.longitude})
+              .toList() ??
+          [];
+
+      // Create and return the ClubData object
+      return ClubData(
         id: club.id,
         name: data['name'],
         logo: logoUrl,
         lat: data['lat'],
         lon: data['lon'],
-        favorites: List<String>.from(data['favorites']),
+        favorites: List<String>.from(data['favorites'] ?? []),
         corners: corners,
         offerType: stringToOfferType(data['offer_type'] ?? 'OfferType.none') ??
             OfferType.none,
         mainOfferImg: mainOfferImgUrl,
-        ageRestriction: data['age_restriction'],
-        typeOfClubImg: typeOfClubImageUrl,
-        typeOfClub: data['type_of_club'],
-        rating: data['rating'],
+        ageRestriction: data['age_restriction'] ?? 0,
+        typeOfClubImg: fallbackImage(data['type_of_club']),
+        typeOfClub: data['type_of_club'] ?? '',
+        rating: data['rating'] ?? 0.0,
         openingHours: openingHours,
-        visitors: data['visitors'],
+        visitors: data['visitors'] ?? 0,
         totalPossibleAmountOfVisitors:
-        data['total_possible_amount_of_visitors'],
+            data['total_possible_amount_of_visitors'] ?? 0,
       );
-
-      print('Club processed successfully: ${[club.id]}');
     } catch (e) {
-      print('Error processing club: $e - Club: ${[club.id]}');
+      print('❌ Error processing club ${club.id}: $e');
+      return null;
     }
+  }
+
+// Helper function to fetch URLs with a fallback
+  String fallbackImage(String typeOfClub) {
+    return FirebaseStorageHelper.fetchStorageUrl(
+        'nightview_images/club_type_images/${typeOfClub}_icon.png');
   }
 
   void setFavoriteClub(String clubId, String userId) async {
     DocumentSnapshot<Map<String, dynamic>> clubDocument =
-    await _firestore.collection('club_data').doc(clubId).get();
+        await _firestore.collection('club_data').doc(clubId).get();
     List<dynamic> favoritesList = clubDocument.data()!['favorites'];
 
     if (favoritesList.contains(userId)) {
@@ -126,7 +255,7 @@ class ClubDataHelper {
 
   void removeFavoriteClub(String clubId, String userId) async {
     DocumentSnapshot<Map<String, dynamic>> clubDocument =
-    await _firestore.collection('club_data').doc(clubId).get();
+        await _firestore.collection('club_data').doc(clubId).get();
     List<dynamic> favoritesList = clubDocument.data()!['favorites'];
 
     if (!favoritesList.contains(userId)) {
@@ -155,7 +284,7 @@ class ClubDataHelper {
     } else {
       // Document does not exist, create a new one with visit count of 1
       final clubVisit =
-      ClubVisit(userId: userId, clubId: clubId, visitCount: 1);
+          ClubVisit(userId: userId, clubId: clubId, visitCount: 1);
       await clubVisitRef.set(clubVisit.toMap());
     }
 
@@ -181,11 +310,10 @@ class ClubDataHelper {
   }
 
   // prompts updateVisitCount (club_visits in Firestore) TODO Think about LocationHelper here
-  Future<void> evaluateVisitors(
-      {required LocationHelper locationHelper}) async {
+  Future<void> evaluateVisitors() async {
     // Fetch all documents from the 'location_data' collection
     QuerySnapshot locationDataSnapshot =
-    await _firestore.collection('location_data').get();
+        await _firestore.collection('location_data').get();
 
     for (var locationDoc in locationDataSnapshot.docs) {
       // Check if the 'processed' field exists, if not, add it and set it to false
@@ -202,24 +330,18 @@ class ClubDataHelper {
         String clubId = data['club_id'];
 
         // Check if 'user_id' and 'club_id' fields exist before processing
-        if (userId != null && clubId != null) {
-          // Update the 'club_visits' collection
-          await updateVisitCount(userId, clubId);
+        // Update the 'club_visits' collection
+        await updateVisitCount(userId, clubId);
 
-          // Mark the document as processed
-          await locationDoc.reference.update({'processed': true});
-        } else {
-          print(
-              'Error: Missing user_id or club_id in document ${locationDoc
-                  .id}');
-        }
+        // Mark the document as processed
+        await locationDoc.reference.update({'processed': true});
       }
     }
   }
 
   // Updates club_data in Firestore
-  Future<void> _updateClubData(String clubId, String userId,
-      int visitCount) async {
+  Future<void> _updateClubData(
+      String clubId, String userId, int visitCount) async {
     final clubDataRef = _firestore.collection('club_data').doc(clubId);
     final clubDataDoc = await clubDataRef.get();
 
@@ -240,7 +362,7 @@ class ClubDataHelper {
           ? clubData['age_of_visitors']
           : "";
       int visitors =
-      clubData.containsKey('visitors') ? clubData['visitors'] : 0;
+          clubData.containsKey('visitors') ? clubData['visitors'] : 0;
 
       if (visitCount == 1) {
         firstTimeVisitors += 1;
@@ -252,13 +374,11 @@ class ClubDataHelper {
 
       // Append the age of the current user
       final userDoc =
-      await _firestore.collection('user_data').doc(userId).get();
+          await _firestore.collection('user_data').doc(userId).get();
       if (userDoc.exists) {
         final userData = userDoc.data()!;
         if (userData['birthday_year'] != null) {
-          num age = DateTime
-              .now()
-              .year - userData['birthday_year'];
+          num age = DateTime.now().year - userData['birthday_year'];
 
           ageOfVisitors += "$age, ";
 
@@ -282,7 +402,7 @@ class ClubDataHelper {
     // initializeWorkManager()
     //TODO needs to be done every day
     QuerySnapshot clubDataSnapshot =
-    await _firestore.collection('club_data').get();
+        await _firestore.collection('club_data').get();
 
     for (var clubDoc in clubDataSnapshot.docs) {
       await clubDoc.reference.update({
@@ -316,9 +436,7 @@ class ClubDataHelper {
 
     // Identify and store the peak hour for the club
     int peakHours =
-        hourlyVisits.entries
-            .reduce((a, b) => a.value > b.value ? a : b)
-            .key;
+        hourlyVisits.entries.reduce((a, b) => a.value > b.value ? a : b).key;
     final clubDataRef = _firestore.collection('club_data').doc(clubId);
     await clubDataRef.update({
       'peak_hours': peakHours,
@@ -391,7 +509,7 @@ class ClubDataHelper {
 
   Future<void> deleteDataAssociatedTo(String userId) async {
     QuerySnapshot<Map<String, dynamic>> snapshot =
-    await _firestore.collection('club_data').get();
+        await _firestore.collection('club_data').get();
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> club in snapshot.docs) {
       final String clubId = club.id;
@@ -426,5 +544,4 @@ class ClubDataHelper {
 
     return total = total / snapshot.docs.length;
   }
-
 }
