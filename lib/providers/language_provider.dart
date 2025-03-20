@@ -15,7 +15,7 @@ class LanguageProvider with ChangeNotifier {
 
   final Map<String, Locale> _supportedLanguages = {
     'images/flags/dk.png': const Locale('da'),
-    // 'images/flags/uk.png': const Locale('en'), // TODO When eng ready.
+    'images/flags/uk.png': const Locale('en'), // TODO When eng ready.
     //   'images/flags/de.png': const Locale('de'), // Add German flag
     // 'images/flags/sv.png': const Locale('sv'), // Add Swedish flag
     // 'images/flags/no.png': const Locale('no'),

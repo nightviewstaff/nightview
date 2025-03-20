@@ -123,6 +123,7 @@ class ClubOpeningHoursFormatter {
             ? roundedHours.toInt().toString()
             : roundedHours.toStringAsFixed(1);
         // Choose singular/plural based on the numeric value (you may adjust this as needed)
+        //TODO TRANSLATE PROPER
         String hourText =
             roundedHours == roundedHours.toInt() && roundedHours.toInt() == 1
                 ? 'time'

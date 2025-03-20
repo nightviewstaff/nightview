@@ -62,9 +62,7 @@ class LanguageSwitcher extends StatelessWidget {
         Provider.of<LanguageProvider>(context, listen: false);
     // Map flag image paths to their native names.
     const languageNames = {
-      'images/flags/dk.png':
-          // AppLocalizations.of(context)!.languageName,
-          'Dansk',
+      'images/flags/dk.png': 'Dansk',
       'images/flags/uk.png': 'English',
       // Uncomment and add others as needed:
       // 'images/flags/de.png': 'Deutsch',
