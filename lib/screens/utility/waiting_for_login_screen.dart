@@ -1,7 +1,7 @@
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:nightview/app_localization.dart';
+
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
