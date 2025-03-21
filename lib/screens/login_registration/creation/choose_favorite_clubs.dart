@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -30,7 +29,7 @@ class ChooseFavoriteClubsScreen extends StatefulWidget {
 class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
   late final TextEditingController _searchController;
   late final ClubDataHelper _clubDataHelper;
-  Map<String, bool> _selectedClubs = {};
+  final Map<String, bool> _selectedClubs = {};
   List<String> _filteredClubs = [];
 
   @override
@@ -249,7 +248,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                         return Column(
                           children: [
                             if (selectedClubs.isNotEmpty) ...[
-                              Container(
+                              SizedBox(
                                 height: 90,
                                 child: useTwoRows
                                     ? Wrap(

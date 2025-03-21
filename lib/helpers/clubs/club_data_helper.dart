@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/misc/firebase_storage_helper.dart';
@@ -16,7 +15,7 @@ import 'package:nightview/models/clubs/club_visit.dart';
 
 class ClubDataHelper with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final _storageRef = FirebaseStorage.instance.ref();
+  // final _storageRef = FirebaseStorage.instance.ref();
 
   Map<String, ClubData> clubData = {};
   final ValueNotifier<List<ClubData>> clubDataList = ValueNotifier([]);

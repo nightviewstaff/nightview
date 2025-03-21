@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/generated/l10n.dart';
-import 'package:nightview/screens/login_registration/utility/google_sign_in_manager.dart';
 
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/screens/login_registration/login/login_nightview_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
-import 'package:nightview/widgets/icons/logo_top_right.dart';
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 

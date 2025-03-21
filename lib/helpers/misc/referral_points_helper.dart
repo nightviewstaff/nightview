@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class ReferralPointsHelper {
   static Future<bool> incrementReferralPoints(int amount) async {
@@ -24,7 +25,9 @@ class ReferralPointsHelper {
           .doc(userId)
           .set({'points': points + amount}, SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
 
@@ -50,7 +53,9 @@ class ReferralPointsHelper {
         return 0;
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
@@ -77,7 +82,9 @@ class ReferralPointsHelper {
         return false;
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
@@ -98,7 +105,9 @@ class ReferralPointsHelper {
           .doc(userId)
           .set({'sent_status': status}, SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
 
@@ -110,7 +119,9 @@ class ReferralPointsHelper {
     try {
       await firestore.collection('referral_points').doc(userId).delete();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

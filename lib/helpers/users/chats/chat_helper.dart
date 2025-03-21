@@ -1,10 +1,9 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:nightview/models/users/chat_message_data.dart';
 
 class ChatHelper {
-
   static Future<String?> createNewChat(String otherId) async {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
@@ -25,7 +24,8 @@ class ChatHelper {
     }
 
     try {
-      DocumentReference<Map<String,dynamic>> ref = await firestore.collection('chats').add({
+      DocumentReference<Map<String, dynamic>> ref =
+          await firestore.collection('chats').add({
         'participants': participants,
         'last_message': '',
         'last_sender': '',
@@ -33,29 +33,39 @@ class ChatHelper {
       });
       return ref.id;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
 
-  static Future<String?> getChatIdWithParticipants(List<String> participants) async {
+  static Future<String?> getChatIdWithParticipants(
+      List<String> participants) async {
     final firestore = FirebaseFirestore.instance;
 
-    QuerySnapshot chatsAlikeSnap = await firestore.collection('chats').where('participants', isEqualTo: participants).get();
+    QuerySnapshot chatsAlikeSnap = await firestore
+        .collection('chats')
+        .where('participants', isEqualTo: participants)
+        .get();
 
     if (chatsAlikeSnap.size <= 0) {
       return null;
     }
 
     return chatsAlikeSnap.docs.first.id;
-
   }
 
-  static Future<bool> sendChatMessage(ChatMessageData messageData, String chatId) async {
+  static Future<bool> sendChatMessage(
+      ChatMessageData messageData, String chatId) async {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      await firestore.collection('chats').doc(chatId).collection('messages').add({
+      await firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .add({
         'message': messageData.message,
         'sender': messageData.sender,
         'timestamp': Timestamp.fromDate(messageData.timestamp),
@@ -67,10 +77,11 @@ class ChatHelper {
       }, SetOptions(merge: true));
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
-
   }
 
   static Future<String?> getOtherMember(String chatId) async {
@@ -78,15 +89,17 @@ class ChatHelper {
     final auth = FirebaseAuth.instance;
 
     try {
-      DocumentSnapshot<Map<String, dynamic>> snap = await firestore.collection('chats').doc(chatId).get();
+      DocumentSnapshot<Map<String, dynamic>> snap =
+          await firestore.collection('chats').doc(chatId).get();
       List<String> participants = List<String>.from(snap.get('participants'));
       participants.removeWhere((id) => id == auth.currentUser!.uid);
       return participants.first;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
-
   }
 
   // SKAL OVERHAULES, NÅR GRUPPECHATS BLIVER INTRODUCERET!!!
@@ -94,14 +107,17 @@ class ChatHelper {
     final firestore = FirebaseFirestore.instance;
 
     try {
-      QuerySnapshot<Map<String, dynamic>> snap = await firestore.collection('chats').where('participants', arrayContains: userId).get();
+      QuerySnapshot<Map<String, dynamic>> snap = await firestore
+          .collection('chats')
+          .where('participants', arrayContains: userId)
+          .get();
       for (DocumentSnapshot doc in snap.docs) {
         await firestore.collection('chats').doc(doc.id).delete();
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
-
   }
-
 }

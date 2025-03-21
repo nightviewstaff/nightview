@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
@@ -39,7 +40,7 @@ class CityTodaySection extends StatelessWidget {
       children: [
         Center(
           child: Text(
-            'Byen lige nu',
+            S.of(context).city_right_now_title,
             style: TextStyle(
               color: white,
               fontSize: 15,
@@ -61,7 +62,7 @@ class CityTodaySection extends StatelessWidget {
                 snapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Ingen klubber aktive lige nu',
+                  S.of(context).no_clubs_active_now,
                   style: TextStyle(color: redAccent),
                 ),
               );
@@ -99,7 +100,7 @@ class CityTodaySection extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text(
-                      '${club.visitors} gæster',
+                      S.of(context).visitors_count(club.visitors.toString()),
                       style: TextStyle(color: primaryColor),
                     ),
                     onTap: () {

@@ -6,8 +6,6 @@ import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/admin_screen.dart';
-import 'package:nightview/utilities/messages/custom_modal_message.dart';
-import 'package:nightview/widgets/icons/loading_indicator_with_tick.dart';
 import 'package:provider/provider.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
@@ -35,11 +33,11 @@ class MainBottomNavigationBar extends StatelessWidget {
                 ],
               ),
               // TODO civilized colors at some point?
-              label: S.of(context)!.map,
+              label: S.of(context).map,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt),
-              label: S.of(context)!.social,
+              label: S.of(context).social,
             ),
           ],
           onTap: (index) {

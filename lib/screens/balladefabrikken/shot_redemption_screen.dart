@@ -3,9 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -184,7 +182,6 @@ class _ShotRedemtionScreenState extends State<ShotRedemtionScreen> {
                     await showErrorDialog();
                   }
                   Navigator.of(context).pop();
-                  return null;
                   return null;
                 },
               ),

@@ -5,7 +5,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -19,7 +18,6 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
-import 'package:nightview/screens/night_map/widgets/active_users_widget.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
@@ -322,8 +320,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                                       WidgetsBinding.instance
                                           .addPostFrameCallback((_) {
-                                        if (!mounted)
+                                        if (!mounted) {
                                           return; // Only update if the widget is still in the tree.
+                                        }
                                         controller.clear();
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();

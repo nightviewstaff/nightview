@@ -35,8 +35,6 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
     try {
       return Provider.of<SearchFriendsHelper>(context, listen: false)
           .searchedUserPbs[index];
-      return Provider.of<SearchFriendsHelper>(context, listen: false)
-          .searchedUserPbs[index];
     } catch (e) {
       return AssetImage('images/user_pb.jpg');
     }

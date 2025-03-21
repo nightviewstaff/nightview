@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
@@ -424,12 +423,12 @@ class _BalladefabrikkenMainScreenState
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(S.of(context)!.appStoreLinkCopied),
+                              content: Text(S.of(context).appStoreLinkCopied),
                             ),
                           );
                         },
                         child: Text(
-                          S.of(context)!.appStore,
+                          S.of(context).appStore,
                           style: linkTextStyle,
                         ),
                       ),
@@ -442,12 +441,12 @@ class _BalladefabrikkenMainScreenState
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
-                                    Text(S.of(context)!.googlePlayLinkCopied),
+                                    Text(S.of(context).googlePlayLinkCopied),
                               ),
                             );
                           },
                           child: Text(
-                            S.of(context)!.googlePlay,
+                            S.of(context).googlePlay,
                             style: linkTextStyle,
                           ),
                         ),

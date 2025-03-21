@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/models/clubs/club_data.dart';
-import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
 
 class SearchProvider with ChangeNotifier {
   String _query = '';
-  List<ClubData> _results = [];
+  final List<ClubData> _results = [];
   bool _isLoading = false;
   List<ClubData> _allClubs = [];
   // final SearchService _searchService = SearchService();

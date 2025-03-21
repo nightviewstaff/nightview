@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
 import 'package:nightview/screens/login_registration/creation/choose_favorite_clubs.dart';
 import 'package:nightview/constants/colors.dart';

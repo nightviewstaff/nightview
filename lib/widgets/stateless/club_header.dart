@@ -16,9 +16,7 @@ import 'package:nightview/widgets/stateless/distance_display_widget.dart';
 import 'package:nightview/widgets/stateless/misc/custom_popup_menu_button.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:nightview/widgets/stateful/rate_club.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/global_provider.dart';
 import '../../utilities/club_data/club_name_formatter.dart';
 import '../../utilities/messages/custom_modal_message.dart';
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -11,20 +10,13 @@ import 'package:nightview/helpers/users/misc/biography_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
-import 'package:nightview/helpers/users/misc/biography_helper.dart';
-import 'package:nightview/helpers/users/friends/friends_helper.dart';
-import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
-import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/utility/bottom_menu_bar.dart';
 
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MyProfileMainScreen extends StatefulWidget {
   static const id = 'my_profile_main_screen';

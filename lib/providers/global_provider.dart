@@ -320,13 +320,13 @@ class GlobalProvider extends ChangeNotifier {
 
   Future<List<UserData>> getFriendsData() async {
     _friendsFuture ??= FriendsHelper.getFriendsData();
-    return (await _friendsFuture!)!
+    return (await _friendsFuture!)
         .where((friend) => friend.partyStatus == PartyStatus.yes)
         .toList();
   }
 
   Future<List<ClubData>> getFavoriteClubs() async {
-    final _firestore = FirebaseFirestore.instance;
+    final firestore = FirebaseFirestore.instance;
     String? currentUserId = userDataHelper.currentUserId;
     if (currentUserId == null) {
       return [];
@@ -340,7 +340,7 @@ class GlobalProvider extends ChangeNotifier {
 
       // Fetch the user's favorite club IDs from Firestore
       DocumentSnapshot userDoc =
-          await _firestore.collection('user_data').doc(currentUserId).get();
+          await firestore.collection('user_data').doc(currentUserId).get();
 
       if (!userDoc.exists) return [];
 
@@ -385,8 +385,9 @@ class GlobalProvider extends ChangeNotifier {
       if (aIsNearby && !bIsNearby) return -1;
       if (!aIsNearby && bIsNearby) return 1;
 
-      if (a.visitors != b.visitors)
+      if (a.visitors != b.visitors) {
         return b.visitors.compareTo(a.visitors); // More visitors first
+      }
 
       return distanceA.compareTo(distanceB); // Fallback: closer first
     });

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 

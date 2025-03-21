@@ -34,7 +34,7 @@ class LoginRegistrationProvider extends ChangeNotifier {
 
   String get phone => _phone!;
 
-  String get password => _password!;
+  String get password => _password;
 
   void toggleStayLogin() {
     _stayLoggedIn = !_stayLoggedIn;

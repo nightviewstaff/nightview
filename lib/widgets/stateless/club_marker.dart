@@ -59,9 +59,9 @@ class ClubMarker extends StatelessWidget {
               ),
             ),
             child: CircleAvatar(
-              child: ClipOval(child: logo), // Use the Widget directly
               radius: 15,
               backgroundColor: Colors.transparent,
+              child: ClipOval(child: logo),
             ),
           ),
         ],

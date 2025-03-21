@@ -1,10 +1,6 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/firebase_options.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
@@ -46,7 +42,6 @@ import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
-import 'package:nightview/services/firestore/firestore_updater.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -131,9 +126,8 @@ class NightViewApp extends StatelessWidget {
                 showUnselectedLabels: false,
               ),
             ),
-            initialRoute:
-                //  ChooseClubbingLocationScreen.id, //TEST
-                WaitingForLoginScreen.id,
+            initialRoute: ChooseClubbingLocationScreen.id, //TEST
+            // WaitingForLoginScreen.id,
             // SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),

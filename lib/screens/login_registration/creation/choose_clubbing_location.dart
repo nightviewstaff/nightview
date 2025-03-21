@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/misc/progress_bar.dart';
-import 'package:nightview/widgets/icons/back_button_top_left.dart';
 import 'package:nightview/widgets/icons/logo_top_right.dart';
 import 'package:nightview/screens/login_registration/creation/choose_clubbing_types.dart';
 
@@ -21,17 +21,28 @@ class ChooseClubbingLocationScreen extends StatefulWidget {
 
 class _ChooseClubbingLocationScreenState
     extends State<ChooseClubbingLocationScreen> {
-  final Map<String, bool> _selectedLocations = {
-    'København': false,
-    'Aarhus': false,
-    'Odense': false,
-    'Aalborg': false,
-    'Vejle': false,
+  final List<String> _locationKeys = [
+    'location_copenhagen',
+    'location_aarhus',
+    'location_odense',
+    'location_aalborg',
+    'location_vejle',
+  ];
+  final Map<String, String> _originalKeys = {
+    'location_copenhagen': 'København',
+    'location_aarhus': 'Aarhus',
+    'location_odense': 'Odense',
+    'location_aalborg': 'Aalborg',
+    'location_vejle': 'Vejle',
   };
+  late Map<String, bool> _selectedLocations;
 
   @override
   void initState() {
     super.initState();
+    _selectedLocations = {
+      for (var key in _locationKeys) key: false,
+    };
     _loadSelections(); // ✅ Load stored selections when screen opens
   }
 
@@ -39,19 +50,36 @@ class _ChooseClubbingLocationScreenState
   Future<void> _loadSelections() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      for (var location in _selectedLocations.keys) {
-        _selectedLocations[location] = prefs.getBool(location) ?? false;
+      for (var key in _locationKeys) {
+        _selectedLocations[key] = prefs.getBool(_originalKeys[key]!) ?? false;
       }
     });
   }
 
   /// **🔹 Toggle selection & store in `SharedPreferences`**
-  Future<void> _toggleLocation(String location) async {
+  Future<void> _toggleLocation(String key) async {
     setState(() {
-      _selectedLocations[location] = !_selectedLocations[location]!;
+      _selectedLocations[key] = !_selectedLocations[key]!;
     });
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(location, _selectedLocations[location]!);
+    await prefs.setBool(_originalKeys[key]!, _selectedLocations[key]!);
+  }
+
+  String _getLocalizedLocation(String key) {
+    switch (key) {
+      case 'location_copenhagen':
+        return S.of(context).location_copenhagen;
+      case 'location_aarhus':
+        return S.of(context).location_aarhus;
+      case 'location_odense':
+        return S.of(context).location_odense;
+      case 'location_aalborg':
+        return S.of(context).location_aalborg;
+      case 'location_vejle':
+        return S.of(context).location_vejle;
+      default:
+        return key;
+    }
   }
 
   @override
@@ -84,7 +112,7 @@ class _ChooseClubbingLocationScreenState
 
                   /// **🔹 Title**
                   Text(
-                    'Hvor tager du typisk i byen?',
+                    S.of(context).where_do_you_usually_go_out_title,
                     style: kTextStyleH2,
                     textAlign: TextAlign.center,
                   ),
@@ -93,8 +121,8 @@ class _ChooseClubbingLocationScreenState
                   /// **🔹 Location Buttons**
                   Expanded(
                     child: ListView(
-                      children: _selectedLocations.keys.map((location) {
-                        return _buildLocationButton(context, location);
+                      children: _locationKeys.map((key) {
+                        return _buildLocationButton(context, key);
                       }).toList(),
                     ),
                   ),
@@ -108,7 +136,7 @@ class _ChooseClubbingLocationScreenState
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Spring over',
+                            text: S.of(context).skip_button,
                             type: LoginRegistrationButtonType.transparent,
                             textStyle: kTextStyleH3ToP1.copyWith(color: white),
                             onPressed: () {
@@ -122,7 +150,7 @@ class _ChooseClubbingLocationScreenState
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Gem og fortsæt',
+                            text: S.of(context).save_and_continue_button,
                             type: LoginRegistrationButtonType.transparent,
                             filledColor: primaryColor,
                             onPressed: () {
@@ -155,7 +183,10 @@ class _ChooseClubbingLocationScreenState
           side: BorderSide(color: white, width: 2),
         ),
         onPressed: () => _toggleLocation(location),
-        child: Text(location, style: kTextStyleH3),
+        child: Text(
+          _getLocalizedLocation(location),
+          style: kTextStyleH3,
+        ),
       ),
     );
   }

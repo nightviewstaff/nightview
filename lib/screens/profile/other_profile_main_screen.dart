@@ -11,7 +11,6 @@ import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/models/users/location_data.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
-import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:provider/provider.dart';

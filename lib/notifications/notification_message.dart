@@ -31,7 +31,7 @@ class NotificationMessage {
       s.live_life_to_fullest,
       s.party_like_never_before,
       s.take_nightlife_by_storm,
-      s.make_night_unforgettable_2,
+      s.make_night_unforgettable,
       s.dancefloor_as_stage,
       s.light_up_city,
       s.go_wild_on_dancefloor,
@@ -41,7 +41,7 @@ class NotificationMessage {
       s.create_wild_memories,
       s.party_without_equal,
       s.fire_up_dancefloor,
-      s.make_city_safe_2,
+
       s.adventure_in_nightlife,
       s.conquer_nightlife,
       s.play_rockstars,

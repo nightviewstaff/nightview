@@ -148,7 +148,9 @@ class ValidationHelper {
     if (value == null || value.isEmpty) return false;
     if (!RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
-    ).hasMatch(value)) return false;
+    ).hasMatch(value)) {
+      return false;
+    }
     return true;
   }
 
@@ -156,7 +158,9 @@ class ValidationHelper {
     if (value == null || value.isEmpty) return '';
     if (!RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
-    ).hasMatch(value)) return S.of(context).invalid_email;
+    ).hasMatch(value)) {
+      return S.of(context).invalid_email;
+    }
     //TODO HOW DO I TRANSLATE HERE!
     return null;
   }

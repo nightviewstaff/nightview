@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/values.dart'; // Add this for kMainPadding
+import 'package:nightview/generated/l10n.dart';
+// Add this for kMainPadding
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
@@ -70,7 +71,7 @@ class SideSheetMainScreenSection extends StatelessWidget {
           children: [
             Center(
               child: Text(
-                'Venner i byen',
+                S.of(context).friends_in_town_title,
                 style: TextStyle(
                   color: white,
                   fontSize: 15.0,
@@ -111,33 +112,15 @@ class SideSheetMainScreenSection extends StatelessWidget {
                   Color friendsOutColor =
                       moreThanHalfOut ? primaryColor : redAccent;
 
-                  return Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '$friendsOutCount',
-                          style: TextStyle(
-                            color: friendsOutColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
+                  return Text(
+                    S.of(context).friends_out_count(
+                          friendsOutCount.toString(),
+                          totalFriends.toString(),
                         ),
-                        TextSpan(
-                          text: '/',
-                          style: TextStyle(
-                            color: white,
-                            fontSize: 14,
-                          ),
-                        ),
-                        TextSpan(
-                          text: '$totalFriends',
-                          style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                    style: TextStyle(
+                      color: friendsOutColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   );
                 },
@@ -160,7 +143,7 @@ class SideSheetMainScreenSection extends StatelessWidget {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    'Fejl ved hentning af venner',
+                    S.of(context).error_fetching_friends,
                     style: TextStyle(color: redAccent),
                   ),
                 );
@@ -168,7 +151,7 @@ class SideSheetMainScreenSection extends StatelessWidget {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(
                   child: Text(
-                    'Ingen venner i byen',
+                    S.of(context).no_friends_in_town,
                     style: TextStyle(color: redAccent),
                   ),
                 );

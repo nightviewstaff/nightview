@@ -120,11 +120,11 @@ class FirestoreUpdater {
 
   Future<void> updateFavoriteClubs() async {
     try {
-      final _firestore = FirebaseFirestore.instance;
+      final firestore = FirebaseFirestore.instance;
 
       // Fetch all users from user_data
       QuerySnapshot userSnapshot =
-          await _firestore.collection('user_data').get();
+          await firestore.collection('user_data').get();
       List<QueryDocumentSnapshot> users = userSnapshot.docs;
       int totalUsers = users.length;
       int processedUsers = 0;
@@ -202,7 +202,7 @@ class FirestoreUpdater {
           }
 
           // Query club_data for current favorited clubs
-          QuerySnapshot clubSnapshot = await _firestore
+          QuerySnapshot clubSnapshot = await firestore
               .collection('club_data')
               .where('favorites', arrayContains: userId)
               .get();
@@ -234,14 +234,14 @@ class FirestoreUpdater {
 
             // Update club_data for removed clubs
             for (String clubId in clubsToRemove) {
-              await _firestore.collection('club_data').doc(clubId).update({
+              await firestore.collection('club_data').doc(clubId).update({
                 'favorites': FieldValue.arrayRemove([userId]),
               });
             }
           }
 
           // Update user_data
-          await _firestore.collection('user_data').doc(userId).update({
+          await firestore.collection('user_data').doc(userId).update({
             'favorite_clubs': newFavoriteClubs,
           });
 
@@ -257,7 +257,7 @@ class FirestoreUpdater {
       }
 
       // Finalize
-      progressTimer?.cancel();
+      progressTimer.cancel();
       _printProgress(totalUsers, processedUsers, startTime, DateTime.now());
       print('Successfully updated favorite_clubs for all users');
     } catch (e) {

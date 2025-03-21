@@ -8,7 +8,6 @@ import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
-import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';

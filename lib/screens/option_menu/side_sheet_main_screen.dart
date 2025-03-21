@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/helpers/users/friends/friends_helper.dart';
-import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
-import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
-import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/widgets/stateless/city_today_section.dart';
-import 'package:nightview/widgets/stateless/club_logo.dart';
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:nightview/widgets/stateless/side_sheet_main_screen_section.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SideSheetMainScreen extends StatefulWidget {
   const SideSheetMainScreen({super.key});
@@ -147,8 +140,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                         children: [
                           Center(
                             child: Text(
-                              //Todo translate
-                              'Favoritter',
+                              S.of(context).favorites_title,
                               style: TextStyle(
                                 color: white,
                                 fontSize: 15.0,
@@ -176,34 +168,18 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                     List<ClubData> favoriteClubs =
                                         snapshot.data!;
 
-                                    return Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '${favoriteClubs.length}',
-                                            style: TextStyle(
-                                              color: (favoriteClubs.length >=
-                                                      favoriteClubMax)
-                                                  ? primaryColor
-                                                  : redAccent, // Red for the number of clubs
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                    return Text(
+                                      S.of(context).favorite_clubs_count(
+                                            favoriteClubs.length.toString(),
+                                            favoriteClubMax.toString(),
                                           ),
-                                          TextSpan(
-                                              text: '/',
-                                              style: TextStyle(
-                                                  color: white, fontSize: 14)),
-                                          TextSpan(
-                                            text: '$favoriteClubMax',
-                                            style: TextStyle(
-                                              color:
-                                                  primaryColor, // Blue for the "5"
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
+                                      style: TextStyle(
+                                        color: (favoriteClubs.length >=
+                                                favoriteClubMax)
+                                            ? primaryColor
+                                            : redAccent,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     );
                                   },
@@ -234,7 +210,9 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                 } else if (snapshot.hasError) {
                                   return Center(
                                     child: Text(
-                                      'Fejl ved hentning af favoritklubber',
+                                      S
+                                          .of(context)
+                                          .error_fetching_favorite_clubs,
                                       style: TextStyle(color: redAccent),
                                     ),
                                   );
@@ -242,7 +220,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                     snapshot.data!.isEmpty) {
                                   return Center(
                                     child: Text(
-                                      'Ingen favoritklubber endnu',
+                                      S.of(context).no_favorite_clubs_yet,
                                       style: TextStyle(color: redAccent),
                                     ),
                                   );

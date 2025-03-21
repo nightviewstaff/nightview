@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
@@ -181,7 +180,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          S.of(context).redemption_failed_2,
+          S.of(context).redemption_failed,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
