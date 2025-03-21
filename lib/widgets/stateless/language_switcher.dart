@@ -1,8 +1,8 @@
-// lib/widgets/language_switcher.dart
 import 'package:flutter/material.dart';
 import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/language_provider.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
@@ -61,10 +61,8 @@ class LanguageSwitcher extends StatelessWidget {
         Provider.of<LanguageProvider>(context, listen: false);
     // Map flag image paths to their native names.
     const languageNames = {
-      'images/flags/dk.png':
-          // AppLocalizations.of(context)!.languageName,
-          'Dansk',
-      'images/flags/gb.png': 'English',
+      'images/flags/dk.png': 'Dansk',
+      'images/flags/uk.png': 'English',
       // Uncomment and add others as needed:
       // 'images/flags/de.png': 'Deutsch',
       // 'images/flags/se.png': 'Svenska',
@@ -90,7 +88,7 @@ class LanguageSwitcher extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Center(
           child: Text(
-            AppLocalizations.of(context)!.selectLanguage,
+            S.of(context).select_language,
             style: TextStyle(
               color: primaryColor,
               fontWeight: FontWeight.bold,

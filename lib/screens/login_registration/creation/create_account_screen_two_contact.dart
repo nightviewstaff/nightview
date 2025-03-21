@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/constants/phone_country_code.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
@@ -35,17 +35,17 @@ class _CreateAccountScreenTwoContactState
         Provider.of<LoginRegistrationProvider>(context, listen: false);
 
     InitStateManager.initContactInfo(
-      context: context,
-      formKey: _formKey,
-      provider: provider,
-      phoneController: phoneInputController,
-      emailController: mailInputController,
-      inputIsFilled: inputIsFilled,
-    );
+        context: context,
+        formKey: _formKey,
+        provider: provider,
+        phoneController: phoneInputController,
+        emailController: mailInputController,
+        inputIsFilled: inputIsFilled);
   }
 
   final _formKey = GlobalKey<FormState>();
 
+  // final otpHelper = PreludeHelper(); // Not used atm
   final phoneInputController = TextEditingController();
   final mailInputController = TextEditingController();
 
@@ -59,14 +59,15 @@ class _CreateAccountScreenTwoContactState
             .pushReplacementNamed(CreateAccountScreenOnePersonal.id),
         currentStep: 2,
         title: Text(
-          AppLocalizations.of(context)!.contactInformation,
+          S.of(context).contact_information,
           textAlign: TextAlign.center,
           style: kTextStyleH2,
         ),
         formFields: [
           SizedBox(height: kBiggerSpacerValue),
           Form(
-            key: _formKey,
+            key: _formKey, // Associate the form with the key
+
             child: Column(
               children: [
                 Row(
@@ -93,7 +94,7 @@ class _CreateAccountScreenTwoContactState
                     Expanded(
                       child: CustomTextField.buildTextField(
                         controller: phoneInputController,
-                        hintText: AppLocalizations.of(context)!.phoneNumber,
+                        hintText: S.of(context).phone_number,
                         keyboardType: TextInputType.phone,
                         onChanged: (value) {
                           ValidationHelper.updateValidationStateFormTwo(
@@ -102,38 +103,44 @@ class _CreateAccountScreenTwoContactState
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return ''; // Prevents extra space by not showing an error message.
+                            return ''; // This prevents extra space by not showing any error message
                           }
                           return null;
-                        },
+                        }, // Trigger red outline without text TODO
                       ),
                     ),
                   ],
                 ),
+
                 SizedBox(height: kNormalSpacerValue),
+
                 CustomTextField.buildTextField(
                   controller: mailInputController,
-                  hintText: AppLocalizations.of(context)!.mail,
+                  hintText: S.of(context).email,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
                     ValidationHelper.updateValidationStateFormTwo(
                         _formKey, provider, inputIsFilled, 1, value,
                         isMailValid: false);
                   },
-                  validator: ValidationHelper.validateEmail,
+                  validator: (value) =>
+                      ValidationHelper.validateEmail(context, value),
                 ),
+                // SizedBox(height: kNormalSpacerValue),
               ],
             ),
           ),
         ],
         bottomContent: LoginRegistrationConfirmButton(
+          //TODO red if input and not accepted.
           enabled: provider.canContinue,
           onPressed: () async {
             bool? valid = _formKey.currentState?.validate();
             if (valid == null) return;
 
             if (valid) {
-              _formKey.currentState!.save();
+              _formKey.currentState!
+                  .save(); // Todo look into saving and restoring instead of init?
               bool mailExistsAlready = Provider.of<GlobalProvider>(
                 context,
                 listen: false,
@@ -143,12 +150,11 @@ class _CreateAccountScreenTwoContactState
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(
-                      AppLocalizations.of(context)!.invalidEmailTitle,
+                      S.of(context).invalid_email_address,
                       style: TextStyle(color: redAccent),
                     ),
                     content: SingleChildScrollView(
-                      child: Text(
-                          AppLocalizations.of(context)!.invalidEmailContent),
+                      child: Text(S.of(context).email_in_use),
                     ),
                     actions: [
                       TextButton(
@@ -156,7 +162,7 @@ class _CreateAccountScreenTwoContactState
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.okay,
+                          S.of(context).ok,
                           style: TextStyle(color: redAccent),
                         ),
                       ),

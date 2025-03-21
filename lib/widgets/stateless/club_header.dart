@@ -5,6 +5,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_capacity_calculator.dart';
@@ -177,7 +178,6 @@ class ClubHeader extends StatelessWidget {
                       CustomModalMessage.showCustomBottomSheetOneSecond(
                         context: context,
                         message:
-                            // AppLocalizations.of(context)!.filledUp,
                             "${(percentOfCapacity * 100).toStringAsFixed(0)}% fyldt op",
                         textStyle: kTextStyleP1,
                       );
@@ -220,8 +220,7 @@ class ClubHeader extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: Text(
-                      // AppLocalizations.of(context)!.capacity,
-                      "Kapacitet",
+                      S.of(context).capacity,
                       style: kTextStyleP1,
                     ),
                   ),
@@ -235,9 +234,7 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   Text(
                     openingHoursToday,
-                    style: openingHoursToday.toLowerCase() ==
-                            // AppLocalizations.of(context)!.closedToday,
-                            "lukket i dag."
+                    style: openingHoursToday.toLowerCase() == "lukket i dag."
                         ? kTextStyleP1.copyWith(color: redAccent)
                         : kTextStyleP1,
                   ),

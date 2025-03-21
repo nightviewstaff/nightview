@@ -3,6 +3,7 @@ import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
@@ -37,7 +38,7 @@ class _RegistrationConfirmationScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                AppLocalizations.of(context)!.confirmationCodeSent, // Localized
+                S.of(context).confirmation_code_sent,
                 textAlign: TextAlign.center,
                 style: kTextStyleH2,
               ),
@@ -53,7 +54,7 @@ class _RegistrationConfirmationScreenState
                 height: kNormalSpacerValue * 2,
               ),
               Text(
-                AppLocalizations.of(context)!.enterCodeToContinue, // Localized
+                S.of(context).enter_code_to_continue,
                 textAlign: TextAlign.center,
                 style: kTextStyleH2,
               ),
@@ -61,7 +62,7 @@ class _RegistrationConfirmationScreenState
                 height: kSmallSpacerValue,
               ),
               Text(
-                AppLocalizations.of(context)!.checkSpamFolder, // Localized
+                S.of(context).check_spam_folder,
                 textAlign: TextAlign.center,
                 style: kTextStyleP2,
               ),
@@ -72,8 +73,7 @@ class _RegistrationConfirmationScreenState
             children: [
               TextFormField(
                 decoration: kMainInputDecoration.copyWith(
-                  hintText:
-                      AppLocalizations.of(context)!.fourDigitCode, // Localized
+                  hintText: S.of(context).four_digit_code,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -82,16 +82,13 @@ class _RegistrationConfirmationScreenState
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!
-                        .pleaseEnterConfirmationCode; // Localized
+                    return S.of(context).enter_confirmation_code;
                   }
                   if (!RegExp(r'^[0-9]{4}$').hasMatch(value)) {
-                    return AppLocalizations.of(context)!
-                        .invalidConfirmationCode; // Localized
+                    return S.of(context).invalid_confirmation_code;
                   }
                   if (value != provider.verificationCode) {
-                    return AppLocalizations.of(context)!
-                        .incorrectConfirmationCode; // Localized
+                    return S.of(context).wrong_confirmation_code;
                   }
                   return null;
                 },

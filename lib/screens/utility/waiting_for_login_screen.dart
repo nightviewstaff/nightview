@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
@@ -47,18 +48,15 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-              // AppLocalizations.of(context)!.locationTracking,
-              'Location tracking'),
+          title: const Text('Location tracking'),
           content: const Text(
-            // AppLocalizations.of(context)!.locationTrackingDescription,
             'We use your location data to improve the app for you and others. '
             'You can opt out at any time in your device settings.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.okay),
+              child: Text(S.of(context).ok),
             ),
           ],
         );
@@ -93,8 +91,8 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
             context: context,
             builder: (context) => AlertDialog(
               title: Text(// TODO Center
-                  // AppLocalizations.of(context)!.logInError),
-                  'Fejl ved login'),
+
+                  S.of(context).login_error),
               content: SingleChildScrollView(
                 child: Center(
                   child: Container(
@@ -104,7 +102,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
                     width: double
                         .infinity, // Ensures the container takes full width but centers the text
                     child: Text(
-                      'Der skete en fejl, da vi forsøgte at logge dig ind automatisk. Måske har du ændret din kode siden sidst.',
+                      S.of(context).login_error_occurred,
                       textAlign: TextAlign
                           .center, // Centers the text within its bounds
                     ),
@@ -117,7 +115,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
                     Navigator.of(context).pop();
                   },
                   child: Text(
-                    AppLocalizations.of(context)!.okay,
+                    S.of(context).ok,
                     style: TextStyle(
                       color: redAccent,
                     ),

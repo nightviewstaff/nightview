@@ -80,12 +80,10 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                   onTap: () {
                     Navigator.of(context).pop();
                   },
-                  trailing: CircleAvatar(
-                    backgroundImage: AssetImage('images/flags/dk.png'),
+                  trailing: LanguageSwitcher(
                     radius: 19.0,
+                    borderRadius: 25.0,
                   ),
-
-                  //TODO LANGSWITCH
                 ),
                 ListTile(
                   //TODO NOT WORKING BIGGER SIZE.
@@ -117,6 +115,14 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                       CircleAvatar(
                         backgroundImage:
                             Provider.of<GlobalProvider>(context).profilePicture,
+                        //    FaIcon(
+                        //     FontAwesomeIcons.solidCircleDot,
+                        //    color: Provider.of<GlobalProvider>(context)
+                        //         .partyStatusColor,
+                        //    size: 20.0,
+                        //   ),
+                        //  SizedBox(
+                        //     width: 30.0), // Add some spacing between dot and flag
                       ),
                     ],
                   ),

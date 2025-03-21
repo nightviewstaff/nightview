@@ -1,11 +1,14 @@
 import 'package:intl/intl.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 import '../../models/clubs/club_data.dart';
 
 class ClubOpeningHoursFormatter {
   // TODO SOME CLOSETIME IS "luk" Take care.
   /// For testing you can override this value.
   static DateTime? now;
-  static final String closedTodayString = "Lukket i dag.";
+  static final String closedTodayString =
+      S.of(ourNavigatorKey.currentContext!).closed_today;
 
   // static final String closedUnknownOpening = "Ukendt Lukkettid i dag.";
 
@@ -108,7 +111,7 @@ class ClubOpeningHoursFormatter {
         // Format the closing time (ensure minutes are padded with a leading zero)
         final String closeTimeFormatted =
             "${currentClose.hour.toString().padLeft(2, '0')}:${currentClose.minute.toString().padLeft(2, '0')}";
-        return "Åben til $closeTimeFormatted i dag.";
+        return "${S.of(ourNavigatorKey.currentContext!).open_until} $closeTimeFormatted ${S.of(ourNavigatorKey.currentContext!).today}";
       }
       if (totalMinutes > 0) {
         //TODO Should totalMinutes >60 not be here instead??!?
@@ -120,13 +123,14 @@ class ClubOpeningHoursFormatter {
             ? roundedHours.toInt().toString()
             : roundedHours.toStringAsFixed(1);
         // Choose singular/plural based on the numeric value (you may adjust this as needed)
+        //TODO TRANSLATE PROPER
         String hourText =
             roundedHours == roundedHours.toInt() && roundedHours.toInt() == 1
                 ? 'time'
                 : 'timer';
-        return "Åben $formattedHours $hourText endnu.";
+        return "${S.of(ourNavigatorKey.currentContext!).open} $formattedHours $hourText ${S.of(ourNavigatorKey.currentContext!).yet}.";
       } else {
-        return "Åben $minutes ${minutes == 1 ? 'minut' : 'minutter'} endnu.";
+        return "${S.of(ourNavigatorKey.currentContext!).open} $minutes ${minutes == 1 ? S.of(ourNavigatorKey.currentContext!).minute : S.of(ourNavigatorKey.currentContext!).minutes} ${S.of(ourNavigatorKey.currentContext!).yet}.";
       }
     }
 

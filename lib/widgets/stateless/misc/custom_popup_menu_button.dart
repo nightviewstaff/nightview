@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/providers/language_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
   final ClubData club;
@@ -30,18 +33,25 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
       'sunday': 'søndag',
     };
     return dayMapping[englishDay.toLowerCase()] ??
-        englishDay; // Fallback to English if not found
+        englishDay; // Fallback to English
+  }
+
+  // Helper function to capitalize the first letter of a string
+  String _capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<LanguageProvider>(context);
+    final currentLocale = provider.locale;
+
     final openingHours = club.openingHours;
 
     // Filter and sort opening hours
     final filteredOpeningHours = openingHours?.entries.where((entry) {
       final hours = entry.value;
-
-      // Keep only days with valid open and close times
       return hours != null && hours['open'] != null && hours['close'] != null;
     }).toList()
       ?..sort((a, b) {
@@ -62,8 +72,7 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
           PopupMenuItem(
             value: null,
             child: Text(
-              // AppLocalizations.of(context)!.unknownOpeningHours,
-              'Ukendte åbningstider', // "No opening hours" in Danish
+              S.of(context).unknown_opening_hours,
               style: kTextStyleP1,
             ),
           ),
@@ -80,8 +89,12 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
       ),
       itemBuilder: (context) {
         return filteredOpeningHours.map((entry) {
-          final englishDay = entry.key; // The English key (e.g., "monday")
-          final danishDay = _mapDayToDanish(englishDay); // Convert to Danish
+          final englishDay = entry.key; // e.g., "monday"
+          final danishDay = currentLocale == Locale('en')
+              ? englishDay
+              : _mapDayToDanish(englishDay); // e.g., "mandag" or "monday"
+          final capitalizedDay =
+              _capitalizeFirstLetter(danishDay); // e.g., "Mandag" or "Monday"
           final hours = entry.value;
           final openTime = hours?['open'];
           final closeTime = hours?['close'];
@@ -92,7 +105,7 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '$danishDay: $openTime - $closeTime',
+                  '$capitalizedDay: $openTime - $closeTime', // Display capitalized day
                   style: kTextStyleP1,
                 ),
               ],

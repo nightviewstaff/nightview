@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 
 class ValidationHelper {
@@ -151,11 +152,11 @@ class ValidationHelper {
     return true;
   }
 
-  static String? validateEmail(String? value) {
+  static String? validateEmail(BuildContext context, String? value) {
     if (value == null || value.isEmpty) return '';
     if (!RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
-    ).hasMatch(value)) return 'Ugyldig mail';
+    ).hasMatch(value)) return S.of(context).invalid_email;
     //TODO HOW DO I TRANSLATE HERE!
     return null;
   }

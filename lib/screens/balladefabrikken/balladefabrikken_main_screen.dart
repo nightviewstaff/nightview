@@ -10,6 +10,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/helpers/misc/share_code_helper.dart';
 import 'package:nightview/helpers/users/misc/sms_helper.dart';
@@ -45,7 +46,7 @@ class _BalladefabrikkenMainScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)!.error_loading_references,
+              S.of(context).credential_error,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.black,
@@ -54,10 +55,10 @@ class _BalladefabrikkenMainScreenState
       } else if (newRedemtions > 0) {
         bool succes =
             await ReferralPointsHelper.incrementReferralPoints(newRedemtions);
-        String msg = AppLocalizations.of(context)!.errorUpdatingPoints;
+        String msg = S.of(context).points_update_error;
         if (succes) {
           msg =
-              AppLocalizations.of(context)!.pointsEarnedMessage(newRedemtions);
+              '${S.of(context).points_earned} $newRedemtions ${S.of(context).points_since_last}';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -83,7 +84,7 @@ class _BalladefabrikkenMainScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)!.error_loading_points,
+              S.of(context).points_load_error,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.black,
@@ -261,12 +262,11 @@ class _BalladefabrikkenMainScreenState
                     padding: const EdgeInsets.all(kMainPadding),
                     child: Text.rich(
                       TextSpan(
-                        text: AppLocalizations.of(context)!
-                            .shareNightViewPrefix, // e.g., "Del "
+                        text: S.of(context).share,
                         style: kTextStyleH2,
                         children: [
                           TextSpan(
-                            text: 'NightView',
+                            text: ' NightView',
                             style: kTextStyleH2.copyWith(
                               color: primaryColor,
                             ),
@@ -289,8 +289,7 @@ class _BalladefabrikkenMainScreenState
                           padding: EdgeInsets.all(kMainPadding),
                           child: Text.rich(
                             TextSpan(
-                              text: AppLocalizations.of(context)!
-                                  .pointsEarnedPrefix, // e.g., "Du har optjent "
+                              text: S.of(context).you_have_earned,
                               style: kTextStyleH3,
                               children: [
                                 TextSpan(
@@ -302,8 +301,7 @@ class _BalladefabrikkenMainScreenState
                                   ),
                                 ),
                                 TextSpan(
-                                  text: AppLocalizations.of(context)!
-                                      .pointsEarnedSuffix, // e.g., " point"
+                                  text: S.of(context).points,
                                   style: kTextStyleH3,
                                 ),
                               ],
@@ -318,7 +316,7 @@ class _BalladefabrikkenMainScreenState
                   Padding(
                     padding: const EdgeInsets.all(kMainPadding),
                     child: Text(
-                      AppLocalizations.of(context)!.sendLinkForPoints,
+                      S.of(context).share_link_message,
                       style: kTextStyleP1,
                     ),
                   ),
@@ -334,18 +332,15 @@ class _BalladefabrikkenMainScreenState
                             child: TextFormField(
                               controller: _phoneInputController,
                               decoration: kMainInputDecoration.copyWith(
-                                  hintText: AppLocalizations.of(context)!
-                                      .phoneNumberHint,
+                                  hintText: S.of(context).enter_phone_number,
                                   hintStyle: kTextStyleP1),
                               keyboardType: TextInputType.phone,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .phoneNumberEmpty;
+                                  return S.of(context).phone_number_required;
                                 }
                                 if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                                  return AppLocalizations.of(context)!
-                                      .invalidPhoneNumber;
+                                  return S.of(context).invalid_phone_number;
                                 }
                                 return null;
                               },
@@ -381,8 +376,7 @@ class _BalladefabrikkenMainScreenState
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          AppLocalizations.of(context)!
-                                              .shareCodeUploadError,
+                                          S.of(context).share_code_upload_error,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         backgroundColor: Colors.black,
@@ -394,8 +388,7 @@ class _BalladefabrikkenMainScreenState
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        AppLocalizations.of(context)!
-                                            .smsLaunchError,
+                                        S.of(context).sms_app_error,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       backgroundColor: Colors.black,
@@ -431,13 +424,12 @@ class _BalladefabrikkenMainScreenState
                           await launchUrl(Uri.parse(iosLink));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(AppLocalizations.of(context)!
-                                  .appStoreLinkCopied),
+                              content: Text(S.of(context)!.appStoreLinkCopied),
                             ),
                           );
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.appStore,
+                          S.of(context)!.appStore,
                           style: linkTextStyle,
                         ),
                       ),
@@ -449,13 +441,13 @@ class _BalladefabrikkenMainScreenState
                             await launchUrl(Uri.parse(androidLink));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(AppLocalizations.of(context)!
-                                    .googlePlayLinkCopied),
+                                content:
+                                    Text(S.of(context)!.googlePlayLinkCopied),
                               ),
                             );
                           },
                           child: Text(
-                            AppLocalizations.of(context)!.googlePlay,
+                            S.of(context)!.googlePlay,
                             style: linkTextStyle,
                           ),
                         ),

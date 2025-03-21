@@ -4,6 +4,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/hero_tags.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 
 class LoginRegistrationConfirmButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -20,7 +21,7 @@ class LoginRegistrationConfirmButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use provided text or default to 'continueButton'
-    final buttonText = text ?? AppLocalizations.of(context)!.continueButton;
+    final buttonText = text ?? S.of(context).continues;
 
     return Hero(
       tag: kHeroConfirmationButton,

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
@@ -59,6 +62,8 @@ class _LocationPermissionServiceScreenState
       if (hasPermission) {
         Navigator.of(context)
             .pushReplacementNamed(LocationPermissionCheckerScreen.id);
+        Navigator.of(context)
+            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
       }
     });
   }
@@ -67,16 +72,14 @@ class _LocationPermissionServiceScreenState
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
-        // AppLocalizations.of(context)!.enableLocation,
-        'Slå lokation til',
+        S.of(context).enable_location,
         textAlign: TextAlign.center,
         style: kTextStyleH1,
       ),
       content: Column(
         children: [
           Text(
-            // AppLocalizations.of(context)!.locationRequiredToUseNightview,
-            'For at du kan bruge NightView, er du nødt til at slå lokationstjenesten til.',
+            S.of(context).enable_location_description,
             textAlign: TextAlign.center,
             style: kTextStyleP1,
           ),
@@ -84,9 +87,7 @@ class _LocationPermissionServiceScreenState
             height: kNormalSpacerValue,
           ),
           LoginRegistrationButton(
-            text:
-                // AppLocalizations.of(context)!.refresh,
-                'Refresh',
+            text: S.of(context).refresh,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
               checkPermission();

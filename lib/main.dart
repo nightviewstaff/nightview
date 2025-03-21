@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nightview/app_localization.dart';
 import 'package:nightview/firebase_options.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
@@ -53,11 +54,11 @@ import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
 
+GlobalKey<NavigatorState> ourNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -85,6 +86,7 @@ class NightViewApp extends StatelessWidget {
         ChangeNotifierProvider<GlobalProvider>(
           create: (_) => GlobalProvider(),
         ),
+        ChangeNotifierProvider<GlobalProvider>(create: (_) => GlobalProvider()),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
         ),
@@ -97,9 +99,7 @@ class NightViewApp extends StatelessWidget {
         ChangeNotifierProvider<SearchNewChatHelper>(
           create: (_) => SearchNewChatHelper(),
         ),
-        ChangeNotifierProvider<ChatSubscriber>(
-          create: (_) => ChatSubscriber(),
-        ),
+        ChangeNotifierProvider<ChatSubscriber>(create: (_) => ChatSubscriber()),
         ChangeNotifierProvider<BalladefabrikkenProvider>(
           create: (_) => BalladefabrikkenProvider(),
         ),
@@ -113,23 +113,19 @@ class NightViewApp extends StatelessWidget {
         // Wrap MaterialApp with Consumer for language updates
         builder: (context, languageProvider, child) {
           return MaterialApp(
-            locale: languageProvider.locale, // Use selected locale
-            supportedLocales: const [
-              Locale('en'), // English
-              Locale('da'), // Danish
-              //TODO Add more languages as needed.
-            ],
+            navigatorKey: ourNavigatorKey,
+            locale: languageProvider.locale,
             localizationsDelegates: const [
-              AppLocalizations.delegate, // Your custom delegate
+              S.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
+            supportedLocales: S.delegate.supportedLocales,
+
             theme: ThemeData.dark().copyWith(
               scaffoldBackgroundColor: black,
-              appBarTheme: const AppBarTheme(
-                color: black,
-              ),
+              appBarTheme: const AppBarTheme(color: black),
               bottomNavigationBarTheme: const BottomNavigationBarThemeData(
                 backgroundColor: black,
                 showUnselectedLabels: false,

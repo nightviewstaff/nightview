@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
@@ -69,16 +72,14 @@ class _LocationPermissionWhileInUseScreen
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
-        // AppLocalizations.of(context)!.allowWhileInUse,
-        'Tillad lokation mens du bruger appen',
+        S.of(context).allow_location_while_using,
         textAlign: TextAlign.center,
         style: kTextStyleH1,
       ),
       content: Column(
         children: [
           Text(
-            // AppLocalizations.of(context)!.LocationEnabledNessesityMessage,
-            'For at få den bedste oplevelse på NightView, er det nødvendigt at appen har adgang til din lokation mens du bruger appen (det gælder også, når du har appen åben i baggrunden).',
+            S.of(context).location_while_using_description,
             textAlign: TextAlign.center,
             style: kTextStyleP1,
           ),
@@ -108,40 +109,30 @@ class _LocationPermissionWhileInUseScreen
   }
 
   String get buttonText {
-    // KAN KUN VÆRE ANDROID
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
-      return
-          // AppLocalizations.of(context)!.openAppSettings,
-          'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
     if (Platform.isIOS) {
-      return
-          // AppLocalizations.of(context)!.openAppSettings,
-          'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
-    return
-        // AppLocalizations.of(context)!.notValidOS
-        'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 
   String get guideText {
-    // KAN KUN VÆRE ANDROID
+    // CAN ONLY BE iOS
 
     if (Platform.isAndroid) {
-      return
-          // AppLocalizations.of(context)!.appSettingsAllowLocationAlways,
-          '> Åbn app-indstillinger\n> Tilladelser\n> Placering\n> Tillad altid';
+      return S.of(context).android_location_while_using;
     }
 
     if (Platform.isIOS) {
-      // AppLocalizations.of(context)!.appSettingsAllowLocationInUse,
-      return '> Åbn app-indstillinger\n> Lokalitet\n> Ved brug af appen';
+      return S.of(context).ios_location_while_using;
     }
 
-// AppLocalizations.of(context)!.notValidOS,
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 }

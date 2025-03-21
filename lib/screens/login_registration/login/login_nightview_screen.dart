@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         showProgressBar: false,
         title: Text(
-          AppLocalizations.of(context)!.login,
+          S.of(context).login,
           style: kTextStyleH2,
         ),
         formFields: [
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomTextField.buildTextField(
                   controller: mailPhoneInputController,
                   keyboardType: TextInputType.emailAddress,
-                  hintText: AppLocalizations.of(context)!.mail,
+                  hintText: S.of(context).email,
                   onChanged: (value) {
                     inputIsFilled[0] = !(value.isEmpty);
                     provider.setCanContinue(!inputIsFilled.contains(false));
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // TODO remember password/mail?
                   controller: passwordInputController,
                   isObscure: true,
-                  hintText: AppLocalizations.of(context)!.password,
+                  hintText: S.of(context).password,
                   keyboardType: TextInputType.visiblePassword,
                   onChanged: (value) {
                     inputIsFilled[1] = !(value.isEmpty);
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           provider.toggleStayLogin();
                         },
                         child: Text(
-                          AppLocalizations.of(context)!.stayLoggedIn,
+                          S.of(context).stay_logged_in,
                           style: kTextStyleH3,
                         ),
                       ),
@@ -142,11 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         context: context,
                         barrierDismissible: false,
                         builder: (context) => AlertDialog(
-                          title: Text(AppLocalizations.of(context)!
-                              .invalidLogin), // Localized
+                          title: Text(S.of(context).invalid_login),
                           content: SingleChildScrollView(
-                            child: Text(AppLocalizations.of(context)!
-                                .incorrectInfoTryAgain), // Localized
+                            child: Text(S.of(context).incorrect_information),
                           ),
                           actions: [
                             TextButton(
@@ -154,8 +152,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.of(context).pop();
                               },
                               child: Text(
-                                AppLocalizations.of(context)!.okay, // Localized
-                                style: TextStyle(color: primaryColor),
+                                S.of(context).okay,
+                                style: TextStyle(
+                                  color: primaryColor,
+                                ),
                               ),
                             )
                           ],

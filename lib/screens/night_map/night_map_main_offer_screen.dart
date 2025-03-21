@@ -8,6 +8,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
@@ -91,7 +92,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          // AppLocalizations.of(context)!.errorOccured,
                           'Der skete en fejl',
                           style: TextStyle(color: white),
                         ),
@@ -111,7 +111,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   return null;
                 },
                 label: Text(
-                  // AppLocalizations.of(context)!.redeem,
                   '            Indløs',
                   style: kTextStyleH1,
                 ),
@@ -126,7 +125,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                 height: kNormalSpacerValue,
               ),
               Text(
-                // AppLocalizations.of(context)!.showStaffBeforeRedemption,
                 'VIGTIGT:\nVis til personalet at du indløser tilbuddet.\nEllers er indløsningen ugyldig!',
                 textAlign: TextAlign.center,
                 style: kTextStyleP1,
@@ -139,7 +137,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         return SizedBox(
           height: kSliderHeight + kBottomSpacerValue,
           child: Text(
-            // AppLocalizations.of(context)!.alreadyRedeemedToday,
             'Du har allerede indløst dette tilbud i dag.\nKom igen i morgen!',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -156,13 +153,11 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.succesfulRedemtion,
           'Indløsning succesfuld!',
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
-              // AppLocalizations.of(context)!.redemptionCompleted,
               'Indløsning af hovedtilbud ved ${chosenClub.name} blev fuldført.'),
         ),
         actions: [
@@ -171,7 +166,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              AppLocalizations.of(context)!.okay,
+              S.of(context).ok,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -186,14 +181,11 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.redemptionFailed,
-          'Indløsning mislykkedes',
+          S.of(context).redemption_failed_2,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
-          child: Text(
-              // AppLocalizations.of(context)!.redepmtionErrorTryLater,
-              'Der skete en fejl ved indløsning af hovedtilbuddet.\nPrøv igen senere.'),
+          child: Text(S.of(context).main_offer_redemption_error),
         ),
         actions: [
           TextButton(
@@ -201,7 +193,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              AppLocalizations.of(context)!.okay,
+              S.of(context).ok,
               style: TextStyle(color: redAccent),
             ),
           ),

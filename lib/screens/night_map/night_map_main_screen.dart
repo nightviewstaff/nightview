@@ -10,6 +10,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -120,11 +121,11 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   children: [
                     //TOP part
                     //TODO MAKE LOGIC THAT makes "byen" interactable. It should start out in the bigest city
-                    // Text(
-                    //   AppLocalizations.of(context)!.activeUsersNow,
-                    //   style: kTextStyleH3,
-                    // ),
-                    ActiveUsersWidget(),
+                    Text(
+                      S.of(context).current_users,
+                      style: kTextStyleH3,
+                    ),
+                    // ActiveUsersWidget(),
                     Row(
                       children: [
                         Consumer<GlobalProvider>(
@@ -279,8 +280,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     controller: controller,
                                     leading: Icon(Icons.search_sharp,
                                         color: primaryColor),
-                                    hintText: AppLocalizations.of(context)!
-                                        .searchForLocations,
+                                    hintText: S.of(context).search_locations,
                                     hintStyle:
                                         WidgetStateProperty.all(kTextStyleP2),
                                     backgroundColor:
@@ -453,8 +453,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Text(
-                                            // AppLocalizations.of(context)!.noLocationsFound,
-                                            "Ingen lokationer fundet",
+                                            S.of(context).no_locations_found,
                                             style: TextStyle(
                                                 color: redAccent, fontSize: 14),
                                           ),
@@ -690,8 +689,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           CircularProgressIndicator(color: secondaryColor),
           const SizedBox(height: 16),
           Text(
-            // AppLocalizations.of(context)!.fetchingLocations,
-            'Henter lokationer',
+            S.of(context).fetching_locations,
             style: kTextStyleP1.copyWith(color: primaryColor),
           ),
         ],
@@ -834,9 +832,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             Text(
               clubOpeningHoursFormatted,
               style: clubOpeningHoursFormatted.toLowerCase() ==
-
-                      // AppLocalizations.of(context)!.closedToday,
-                      "lukket i dag."
+                      S.of(context).closed_today
                   ? kTextStyleP3.copyWith(color: redAccent)
                   : kTextStyleP3,
             ),

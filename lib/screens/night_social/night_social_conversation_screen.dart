@@ -7,6 +7,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/models/users/chat_message_data.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
@@ -198,7 +199,7 @@ class _NightSocialConversationScreenState
                           child: TextField(
                             controller: messageController,
                             decoration: kMainInputDecoration.copyWith(
-                              hintText: 'Aa',
+                              hintText: S.of(context).write_here,
                             ),
                             cursorColor: primaryColor,
                             textCapitalization: TextCapitalization.sentences,
@@ -230,8 +231,7 @@ class _NightSocialConversationScreenState
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    // AppLocalizations.of(context)!.sendingChatError,
-                                    'Kunne ikke sende besked',
+                                    S.of(context).message_send_error,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   backgroundColor: Colors.black,

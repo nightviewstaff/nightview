@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:math';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,8 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/l10n/messages_en.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/main_screen.dart';
 import 'package:nightview/widgets/stateless/icon_with_text.dart';
@@ -61,8 +63,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
       }
     });
     // Get one message from SwipeMessages.
-    selectedMessage =
-        SwipeMessages.messages[Random().nextInt(SwipeMessages.messages.length)];
+    selectedMessage = SwipeMessages.messages()[
+        Random().nextInt(SwipeMessages.messages().length)];
     // shake animation after 0,4 sec.
     Future.delayed(const Duration(milliseconds: 400)).then((_) {
       _shakeCardRight();
@@ -96,8 +98,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             ? AppinioSwiper(
                                 invertAngleOnBottomDrag: true,
                                 backgroundCardCount: 0,
-                                swipeOptions: const SwipeOptions
-                                    .all(), // All 4 directions possible.
+                                swipeOptions: const SwipeOptions.all(),
+                                // All 4 directions possible.
                                 controller: controller,
                                 onCardPositionChanged:
                                     (SwiperPosition position) {
@@ -201,7 +203,9 @@ class _SwipeScreenState extends State<SwipeScreen> {
                                                     child: IconWithText(
                                                       icon: FontAwesomeIcons
                                                           .xmark,
-                                                      text: 'Ikke i dag',
+                                                      text: S
+                                                          .of(context)
+                                                          .not_today,
                                                       onTap: () {
                                                         controller.swipeLeft();
                                                       },
@@ -212,9 +216,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
                                                       controller.swipeRight();
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets
-                                                          .all(
-                                                          30.0), // Increases clickable area by ~30px (15px on each side)
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              30.0),
+                                                      // Increases clickable area by ~30px (15px on each side)
                                                       decoration:
                                                           const BoxDecoration(
                                                         shape: BoxShape.circle,
@@ -224,7 +229,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
                                                       child: IconWithText(
                                                         icon: FontAwesomeIcons
                                                             .solidHeart,
-                                                        text: 'Ja!',
+                                                        text:
+                                                            '${S.of(context).yes}!',
                                                         iconColor: primaryColor,
                                                         showCircle: false,
                                                         onTap:
@@ -424,65 +430,67 @@ class _SwipeScreenState extends State<SwipeScreen> {
 }
 
 class SwipeMessages {
-  static const List<String> messages = [
-    "Er du klar til at erobre dansegulvet i nat?",
-    "Har du planer om at tage på eventyr i byen i aften?",
-    "Skal vi ud og lave ballade i nat?",
-    "Bliver det en af de vilde aftener i byen i aften?",
-    "Er det en af de aftener, hvor vi slår os løs?",
-    "Skal vi ud og vise vores bedste moves i aften?",
-    "Er du på vej ud for at gøre byen usikker i nat?",
-    "Specielle drinks hos en god bartender?",
-    "Mangler du en date i aften?",
-    "Hvad hvis vi spilder ungdommen i aften og ser, hvor det bringer os hen?",
-    "Er du klar til at lyse dansegulvet op i aften?",
-    "Har du planer om at skabe minder i byen i nat?",
-    "Er det en af de aftener, hvor vi giver den max gas?",
-    "Skal vi ud og gøre natten vild og uforglemmelig?",
-    "Er du parat til at indtage byen med stil?",
-    "Bliver det en nat med masser af latter og dans?",
-    "Er du klar til at erobre byen og have det sjovt?",
-    "Skal vi ud og gøre natten til vores egen fest?",
-    "Er det en af de aftener, hvor vi slipper alle hæmninger?",
-    "Har du tænkt dig at tage på natteeventyr med os i aften?",
-    "Er det i aften, vi gør gaderne usikre?",
-    "Skal vi ud og skabe feststemning i nat?",
-    "Er du klar til at gøre natten til noget særligt?",
-    "Bliver det en af de aftener, hvor vi lever livet fuldt ud?",
-    "Skal vi ud og feste som aldrig før i nat?",
-    "Er du klar til at indtage nattelivet med os?",
-    "Har du tænkt dig at gøre natten vild og uforglemmelig?",
-    "Er du klar til at gøre dansegulvet til din scene i aften?",
-    "Skal vi ud og få byen til at lyse op i nat?",
-    "Er det i aften, vi går amok på dansegulvet?",
-    "Har du tænkt dig at være festens midtpunkt i nat?",
-    "Er du parat til en nat fyldt med grin og gode vibes?",
-    "Er du klar til at tage byen med storm i aften?",
-    "Er du klar til at skabe vilde minder i nat?",
-    "Er du parat til at gøre natten til en fest uden lige?",
-    "Skal vi ud og fyre den af på dansegulvet?",
-    "Er du klar til at gøre byen usikker med os i nat?",
-    "Har du planer om at tage på eventyr i nattelivet?",
-    "Skal vi ud og erobre nattelivet i aften?",
-    "Skal vi ud og lege rockstjerner i nat?",
-    "Er du klar til at danse, som om vi har to venstre fødder?",
-    "Er det i aften, vi laver nogle episke Snapchat-historier?",
-    "Er du klar til at være byens skøreste festabe i nat?",
-    "Skal vi ud og lave nogle legendariske fejltrin på dansegulvet?",
-    "Skal vi ud og se, hvor mange nye venner vi kan få i nat?",
-    "Er du klar til at tage en tur i festligaen i nat?",
-    "Ud i aften?",
-    "Skal vi?",
-    "Ud og fyre den af?",
-    "Druk?",
-    "Skal vi ud?",
-    "Klubben?",
-    "Er du klar til at skabe ravage i byen i aften?",
-    "Skal vi ud og skabe lidt festlig uro i byen?",
-    "Skal vi ud og ryste byen op?",
-    "Er det tid til at lave noget ballade i nat?",
-    "Bliver du en del af nattelivet i dag?",
-    "Har du planer om at gå ud i aften?",
-    "Er du klar til en bytur i dag?"
-  ];
+  static List<String> messages() {
+    return [
+      S.of(ourNavigatorKey.currentContext!).ready_to_conquer_dancefloor,
+      S.of(ourNavigatorKey.currentContext!).plans_for_adventure,
+      S.of(ourNavigatorKey.currentContext!).let_make_trouble,
+      S.of(ourNavigatorKey.currentContext!).wild_night,
+      S.of(ourNavigatorKey.currentContext!).let_loose,
+      S.of(ourNavigatorKey.currentContext!).show_best_moves,
+      S.of(ourNavigatorKey.currentContext!).make_city_safe,
+      S.of(ourNavigatorKey.currentContext!).good_bartender,
+      S.of(ourNavigatorKey.currentContext!).be_my_date,
+      S.of(ourNavigatorKey.currentContext!).waste_youth,
+      S.of(ourNavigatorKey.currentContext!).light_up_dancefloor,
+      S.of(ourNavigatorKey.currentContext!).create_memories,
+      S.of(ourNavigatorKey.currentContext!).max_gas,
+      S.of(ourNavigatorKey.currentContext!).make_night_unforgettable,
+      S.of(ourNavigatorKey.currentContext!).take_city_with_style,
+      S.of(ourNavigatorKey.currentContext!).night_of_laughter_and_dance,
+      S.of(ourNavigatorKey.currentContext!).conquer_city,
+      S.of(ourNavigatorKey.currentContext!).make_own_party,
+      S.of(ourNavigatorKey.currentContext!).let_go_of_inhibitions,
+      S.of(ourNavigatorKey.currentContext!).night_adventure,
+      S.of(ourNavigatorKey.currentContext!).make_streets_safe,
+      S.of(ourNavigatorKey.currentContext!).create_party_vibe,
+      S.of(ourNavigatorKey.currentContext!).make_night_special,
+      S.of(ourNavigatorKey.currentContext!).live_life_to_fullest,
+      S.of(ourNavigatorKey.currentContext!).party_like_never_before,
+      S.of(ourNavigatorKey.currentContext!).take_nightlife_by_storm,
+      S.of(ourNavigatorKey.currentContext!).make_night_unforgettable_2,
+      S.of(ourNavigatorKey.currentContext!).dancefloor_as_stage,
+      S.of(ourNavigatorKey.currentContext!).light_up_city,
+      S.of(ourNavigatorKey.currentContext!).go_wild_on_dancefloor,
+      S.of(ourNavigatorKey.currentContext!).be_center_of_party,
+      S.of(ourNavigatorKey.currentContext!).night_full_of_fun,
+      S.of(ourNavigatorKey.currentContext!).take_city_by_storm,
+      S.of(ourNavigatorKey.currentContext!).create_wild_memories,
+      S.of(ourNavigatorKey.currentContext!).party_without_equal,
+      S.of(ourNavigatorKey.currentContext!).fire_up_dancefloor,
+      S.of(ourNavigatorKey.currentContext!).make_city_safe_2,
+      S.of(ourNavigatorKey.currentContext!).adventure_in_nightlife,
+      S.of(ourNavigatorKey.currentContext!).conquer_nightlife,
+      S.of(ourNavigatorKey.currentContext!).play_rockstars,
+      S.of(ourNavigatorKey.currentContext!).dance_with_two_left_feet,
+      S.of(ourNavigatorKey.currentContext!).epic_snapchat_stories,
+      S.of(ourNavigatorKey.currentContext!).crazy_party_animal,
+      S.of(ourNavigatorKey.currentContext!).legendary_missteps,
+      S.of(ourNavigatorKey.currentContext!).make_new_friends,
+      S.of(ourNavigatorKey.currentContext!).trip_to_party_league,
+      S.of(ourNavigatorKey.currentContext!).going_out_tonight,
+      S.of(ourNavigatorKey.currentContext!).shall_we,
+      S.of(ourNavigatorKey.currentContext!).fire_it_up,
+      S.of(ourNavigatorKey.currentContext!).drinking,
+      S.of(ourNavigatorKey.currentContext!).going_out,
+      S.of(ourNavigatorKey.currentContext!).club,
+      S.of(ourNavigatorKey.currentContext!).create_ravage,
+      S.of(ourNavigatorKey.currentContext!).create_festive_chaos,
+      S.of(ourNavigatorKey.currentContext!).shake_up_city,
+      S.of(ourNavigatorKey.currentContext!).time_for_trouble,
+      S.of(ourNavigatorKey.currentContext!).part_of_nightlife,
+      S.of(ourNavigatorKey.currentContext!).plans_for_evening,
+      S.of(ourNavigatorKey.currentContext!).ready_for_city_trip,
+    ];
+  }
 }

@@ -5,6 +5,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
@@ -57,8 +58,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
               padding: EdgeInsets.all(kBigPadding),
               width: double.maxFinite,
               child: Text(
-                // AppLocalizations.of(context)!.newChat,
-                'Ny chat',
+                S.of(context).new_chat,
                 style: kTextStyleH1,
               ),
             ),
@@ -78,7 +78,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                   Expanded(
                     child: TextField(
                       decoration: kSearchInputDecoration.copyWith(
-                        hintText: 'Hvem vil du chatte med?',
+                        hintText: S.of(context).chat_prompt,
                       ),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
@@ -107,8 +107,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              // AppLocalizations.of(context)!.createChatError,
-                              'Kunne ikke oprette ny chat',
+                              S.of(context).chat_creation_error,
                               style: TextStyle(color: white),
                             ),
                             backgroundColor: black,

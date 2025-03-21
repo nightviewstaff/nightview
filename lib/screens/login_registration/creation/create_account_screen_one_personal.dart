@@ -4,6 +4,7 @@ import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
@@ -67,7 +68,7 @@ class _CreateAccountScreenOnePersonalState
         onBack: () => Navigator.of(context)
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         title: Text(
-          AppLocalizations.of(context)!.personalInformation,
+          S.of(context).personal_information,
           textAlign: TextAlign.center,
           style: kTextStyleH2, // Put default
         ),
@@ -80,7 +81,7 @@ class _CreateAccountScreenOnePersonalState
               children: [
                 CustomTextField.buildTextField(
                   controller: firstNameInputController,
-                  hintText: AppLocalizations.of(context)!.firstNames,
+                  hintText: S.of(context).first_name,
                   onChanged: (value) {
                     provider.setFirstName(value);
                     ValidationHelper.updateValidationStateFormOne(
@@ -96,7 +97,7 @@ class _CreateAccountScreenOnePersonalState
                 SizedBox(height: kNormalSpacerValue),
                 CustomTextField.buildTextField(
                   controller: lastNameInputController,
-                  hintText: AppLocalizations.of(context)!.lastNames,
+                  hintText: S.of(context).last_name,
                   onChanged: (value) {
                     provider.setLastName(value);
                     ValidationHelper.updateValidationStateFormOne(
@@ -199,7 +200,7 @@ class _CreateAccountScreenOnePersonalState
       if (selectedDate != null && selectedDate!.isAfter(legalAgeAgo)) {
         CustomModalMessage.showCustomBottomSheetOneSecond(
           context: context,
-          message: AppLocalizations.of(context)!.mustBeOver18InDenmark,
+          message: S.of(context).age_restriction,
           textStyle: kTextStyleP3ErrorText,
           autoDismissDurationSeconds: 3,
         );
@@ -228,7 +229,7 @@ class _CreateAccountScreenOnePersonalState
         child: Center(
           child: Text(
             showHintDatePicker
-                ? AppLocalizations.of(context)!.birthdate
+                ? S.of(context).birthdate
                 : '${selectedDate!.day} / ${selectedDate!.month} / ${selectedDate!.year}', // Show selected date
             style: TextStyle(
                 color: showHintDatePicker

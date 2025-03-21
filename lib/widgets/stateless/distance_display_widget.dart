@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
@@ -26,9 +27,7 @@ class DistanceDisplayWidget extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text(
-// AppLocalizations.of(context)!.calculating,
-
-                'Udregner...',
+                S.of(context).calculating,
                 style: TextStyle(
                   color: primaryColor,
                   fontSize: 16.0,

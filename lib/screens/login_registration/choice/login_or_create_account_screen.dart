@@ -3,6 +3,7 @@ import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/screens/login_registration/utility/google_sign_in_manager.dart';
 
 import 'package:nightview/constants/enums.dart';
@@ -24,29 +25,19 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            ImageInsertDefaultTopRight(
-              //TODO borderRadius flag.
-              imagePath: 'images/flags/dk.png',
-              width: 35,
-              height: 35,
-              borderRadius: 25,
+            Positioned(
+              top: 10,
+              right: 10,
+              child: LanguageSwitcher(
+                radius: 17.5, // Matches width/height of 35
+                borderRadius: 25.0,
+              ),
             ),
-
-            // Positioned(
-            //   top: 10,
-            //   right: 10,
-            //   child: LanguageSwitcher(
-            //     radius: 17.5, // Matches width/height of 35
-            //     borderRadius: 25.0,
-            //   ),
-            // ),
             Column(
               children: [
                 Expanded(
                   child: Center(
-                    child: Image.asset(
-                      'images/logo_text_subtitle.png',
-                    ),
+                    child: Image.asset('images/logo_text_subtitle.png'),
                   ),
                 ),
                 Padding(
@@ -58,10 +49,11 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: LoginRegistrationButton(
-                          text: AppLocalizations.of(context)!.login,
+                          text: S.of(context).login,
                           type: LoginRegistrationButtonType.transparent,
-                          textStyle:
-                              kTextStyleH3ToP1.copyWith(color: primaryColor),
+                          textStyle: kTextStyleH3ToP1.copyWith(
+                            color: primaryColor,
+                          ),
                           onPressed: () {
                             Navigator.of(context).pushNamed(LoginScreen.id);
                           },
@@ -73,13 +65,13 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: LoginRegistrationButton(
-                          text: AppLocalizations.of(context)!
-                              .create_nightview_profile,
+                          text: S.of(context).create_nightview_profile,
                           type: LoginRegistrationButtonType.transparent,
                           filledColor: primaryColor,
                           onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed(CreateAccountScreenOnePersonal.id);
+                            Navigator.of(
+                              context,
+                            ).pushNamed(CreateAccountScreenOnePersonal.id);
                           },
                         ),
                       ),
@@ -88,7 +80,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       //                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       //                     child: LoginRegistrationButton(
                       //                      icon: defaultGoogleIcon,
-                      //                     text: AppLocalizations.of(context)!.google,
+                      //
                       //                    type: LoginRegistrationButtonType.transparent,
                       //                   filledColor: primaryColor,
                       //                  onPressed: () async {
@@ -104,7 +96,7 @@ class LoginOrCreateAccountScreen extends StatelessWidget {
                       //     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                       //     child: LoginRegistrationButton(
                       //       icon: defaultAppleIcon,
-                      //       text: AppLocalizations.of(context)!.apple,
+                      //
                       //       type: LoginRegistrationButtonType.transparent,
                       //       filledColor: primaryColor,
                       //       onPressed: () {

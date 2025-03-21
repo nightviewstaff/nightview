@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nightview/app_localization.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -26,9 +26,7 @@ class OtherProfileMainScreen extends StatefulWidget {
 }
 
 class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
-  String lastLocationText =
-      // AppLocalizations.of(context)!.fetchingLocation;
-      '';
+  String lastLocationText = '';
 
   final TextEditingController biographyController = TextEditingController();
 
@@ -92,9 +90,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           color: Colors.redAccent,
           size: 15.0,
         ),
-        tooltip:
-            // AppLocalizations.of(context)!.removeFriend,
-            'Fjern ven',
+        tooltip: S.of(context).remove_friend,
         onPressed: () async {
           final confirmed = await showDialog<bool>(
             context: context,
@@ -102,22 +98,20 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: Text(
-                  // AppLocalizations.of(context)!.removeFriend,
-                  'Fjern ven',
+                  S.of(context).remove_friend,
                   style: TextStyle(color: Colors.redAccent),
                 ),
-                content: Text(
-                    // AppLocalizations.of(context)!.confirmRemoveFriend,
-                    'Er du sikker på, at du vil fjerne denne ven?'),
+                content: Text(S.of(context).remove_friend_confirmation),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(false),
-                    child: Text('Nej', style: TextStyle(color: primaryColor)),
+                    child: Text(S.of(context).no,
+                        style: TextStyle(color: primaryColor)),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(true),
-                    child:
-                        Text('Ja', style: TextStyle(color: Colors.redAccent)),
+                    child: Text(S.of(context).yes,
+                        style: TextStyle(color: Colors.redAccent)),
                   ),
                 ],
               );
@@ -143,8 +137,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                // AppLocalizations.of(context)!.addFriend,
-                'Tilføj ven',
+                S.of(context).add_friend,
                 style: kTextStyleP2,
               ),
               FaIcon(FontAwesomeIcons.userPlus),
@@ -156,13 +149,11 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
   AlertDialog getDialog(BuildContext context, LocationData? locationData) {
     final String text;
     if (locationData == null) {
-      text =
-          // AppLocalizations.of(context)!.noLatestLocation,
-          '';
+      text = '';
       // 'Kunne ikke finde seneste lokation';
     } else if (locationData.private) {
       text =
-          // AppLocalizations.of(context)!.userNotSharingLocation,
+
           // 'Denne person deler ikke sin lokation';
           '';
     } else {
@@ -171,20 +162,14 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           .clubData[locationData.clubId]
           ?.name;
       if (clubName == null) {
-        text =
-            // AppLocalizations.of(context)!.noLatestLocation,
-            'Kunne ikke finde seneste lokation';
+        text = S.of(context).latest_location;
       } else {
         text =
-            // AppLocalizations.of(context)!.location
-            // AppLocalizations.of(context)!.time
-            'Lokation: $clubName\nTidspunkt: ${locationData.readableTimestamp}';
+            '${S.of(context).location}: $clubName\n${S.of(context).time}: ${locationData.readableTimestamp}';
       }
     }
     return AlertDialog(
-      title: Text(
-          // AppLocalizations.of(context)!.latestLocation,
-          'Seneste lokation'),
+      title: Text(S.of(context).latest_location),
       content: Text(text),
       actions: [
         TextButton(
@@ -192,7 +177,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             Navigator.of(context).pop();
           },
           child: Text(
-            AppLocalizations.of(context)!.okay,
+            S.of(context).ok,
             style: TextStyle(color: primaryColor),
           ),
         )
@@ -207,7 +192,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
         centerTitle: true,
         title: Text(
           Provider.of<GlobalProvider>(context).chosenProfile == null
-              ? 'Ugyldig bruger'
+              ? S.of(context).invalid_user
               : '${Provider.of<GlobalProvider>(context).chosenProfile?.firstName} ${Provider.of<GlobalProvider>(context).chosenProfile?.lastName}',
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
@@ -243,8 +228,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             children: [
                               SizedBox(height: kSmallSpacerValue),
                               Text(
-                                // AppLocalizations.of(context)!.biography,
-                                'Biografi',
+                                S.of(context).bio,
                                 style: kTextStyleH4,
                               ),
                               Divider(
@@ -256,9 +240,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                                 child: TextField(
                                   controller: biographyController,
                                   decoration: InputDecoration.collapsed(
-                                      hintText:
-                                          // AppLocalizations.of(context)!.userHasNoBiography,
-                                          'Denne bruger har ikke angivet en biografi'),
+                                      hintText: S.of(context).no_bio),
                                   readOnly: true,
                                   maxLines: 8,
                                 ),

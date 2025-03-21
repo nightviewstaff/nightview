@@ -3,6 +3,7 @@ import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 
 class ShotsGraph extends StatelessWidget {
   final int maxPoints = 10;
@@ -25,8 +26,7 @@ class ShotsGraph extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(bottom: kMainPadding),
               child: Text(
-                // AppLocalizations.of(context)!.freeBottle,
-                '1 gratis flaske!',
+                S.of(context).free_bottle,
                 style: kTextStyleH2,
               ),
             ),
@@ -50,8 +50,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: kMainPadding),
                     child: Text(
-                      // AppLocalizations.of(context)!.freeShots,
-                      '$points gratis shots',
+                      '$points ${S.of(context).free_shots}',
                       style: kTextStyleH2,
                     ),
                   ),
@@ -81,8 +80,7 @@ class ShotsGraph extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: kMainPadding),
                     child: Text(
-                      // AppLocalizations.of(context)!.shots,
-                      '$points shots',
+                      '$points ${S.of(context).shots}',
                       style: kTextStyleH2,
                     ),
                   ),

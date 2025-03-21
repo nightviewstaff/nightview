@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/app_localization.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:nightview/screens/balladefabrikken/shot_redemption_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shots_graph.dart';
@@ -33,8 +35,7 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                 Padding(
                   padding: EdgeInsets.all(kMainPadding),
                   child: Text(
-                    // AppLocalizations.of(context)!.earnedPoints,
-                    'Optjente point:',
+                    S.of(context).earned_points,
                     style: kTextStyleH2,
                   ),
                 ),
@@ -55,19 +56,15 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                           context: context,
                           barrierDismissible: false,
                           builder: (context) => AlertDialog(
-                            title: Text(
-                                // AppLocalizations.of(context)!.redeemShots,
-                                'Indløsning af shots'),
-                            content: Text(
-                                // AppLocalizations.of(context)!.pointsEqualsShots,
-                                '1 point = 1 shot\n\n10 point = 1 flaske'),
+                            title: Text(S.of(context).redeem_shots),
+                            content: Text(S.of(context).points_conversion),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
                                 child: Text(
-                                  AppLocalizations.of(context)!.okay,
+                                  S.of(context).okay,
                                   style: TextStyle(color: primaryColor),
                                 ),
                               ),
@@ -103,7 +100,11 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                   int points = Provider.of<BalladefabrikkenProvider>(context,
                           listen: false)
                       .points;
+
                   if (newValue > points) {
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = points;
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = points;
@@ -111,7 +112,13 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = 1;
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = 1;
                   } else {
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = newValue.round();
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = newValue.round();
@@ -144,8 +151,7 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(kMainPadding),
                   child: Text(
-                    // AppLocalizations.of(context)!.redeem
-                    'Indløs ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? 'shot' : 'shots'}' : '1 flaske'}',
+                    '${S.of(context).redeem} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? S.of(context).shot : S.of(context).shots}' : '1 ${S.of(context).bottle}'}',
                     style: kTextStyleH2,
                   ),
                 ),

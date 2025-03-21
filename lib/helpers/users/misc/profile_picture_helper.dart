@@ -7,8 +7,9 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../../constants/colors.dart';
+import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 
 class ProfilePictureHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -42,7 +43,7 @@ class ProfilePictureHelper {
 // Removed cropStyle. Is it needed?
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Vælg billede',
+          toolbarTitle: S.of(ourNavigatorKey.currentContext!).select_image,
           toolbarColor: black,
           toolbarWidgetColor: white,
           hideBottomControls: true,
@@ -50,9 +51,9 @@ class ProfilePictureHelper {
           lockAspectRatio: true,
         ),
         IOSUiSettings(
-          title: 'Vælg billede',
-          doneButtonTitle: 'Fortsæt',
-          cancelButtonTitle: 'Tilbage',
+          title: S.of(ourNavigatorKey.currentContext!).select_image,
+          doneButtonTitle: S.of(ourNavigatorKey.currentContext!).continues,
+          cancelButtonTitle: S.of(ourNavigatorKey.currentContext!).back,
           aspectRatioPickerButtonHidden: true,
           resetButtonHidden: true,
           rotateButtonsHidden: true,

@@ -4,6 +4,7 @@ import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
@@ -68,7 +69,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         currentStep: 2,
         title: Text(
-          AppLocalizations.of(context)!.remainingInformation,
+          S.of(context).remaining_information,
           textAlign: TextAlign.center,
           style: kTextStyleH2,
         ),
@@ -102,7 +103,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                     Expanded(
                       child: CustomTextField.buildTextField(
                         controller: phoneInputController,
-                        hintText: AppLocalizations.of(context)!.phoneNumber,
+                        hintText: S.of(context).phone_number,
                         keyboardType: TextInputType.phone,
                         onChanged: (value) {
                           provider.setPhone(value);
@@ -229,7 +230,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
       if (selectedDate != null && selectedDate!.isAfter(legalAgeAgo)) {
         CustomModalMessage.showCustomBottomSheetOneSecond(
           context: context,
-          message: AppLocalizations.of(context)!.mustBeOver18InDenmark,
+          message: S.of(context).age_restriction,
           textStyle: kTextStyleP3ErrorText,
           autoDismissDurationSeconds: 3,
         );
@@ -258,7 +259,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
         child: Center(
           child: Text(
             showHintDatePicker
-                ? AppLocalizations.of(context)!.birthdate // Show hint
+                ? S.of(context)!.birthdate // Show hint
                 : '${selectedDate!.day} / ${selectedDate!.month} / ${selectedDate!.year}', // Show selected date
             style: TextStyle(
                 color: showHintDatePicker

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/admin_screen.dart';
@@ -35,11 +35,11 @@ class MainBottomNavigationBar extends StatelessWidget {
                 ],
               ),
               // TODO civilized colors at some point?
-              label: AppLocalizations.of(context)!.map,
+              label: S.of(context)!.map,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt),
-              label: AppLocalizations.of(context)!.social,
+              label: S.of(context)!.social,
             ),
           ],
           onTap: (index) {

@@ -6,16 +6,25 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/helpers/users/misc/biography_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/helpers/users/misc/biography_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/utility/bottom_menu_bar.dart';
+
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyProfileMainScreen extends StatefulWidget {
   static const id = 'my_profile_main_screen';
@@ -100,13 +109,13 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.profile),
+        title: Text(S.of(context).profile),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 18.0),
-            child: CircleAvatar(
-              backgroundImage: const AssetImage('images/flags/dk.png'),
-              radius: 15.0,
+            child: LanguageSwitcher(
+              radius: 19.0,
+              borderRadius: 25.0,
             ),
           ),
         ],
@@ -134,7 +143,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: kSmallSpacerValue),
-                              Text('Biografi', style: kTextStyleH4),
+                              Text(S.of(context).bio, style: kTextStyleH4),
                               Divider(
                                 color: primaryColor,
                                 thickness: kMainStrokeWidth,
@@ -154,7 +163,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                       TextCapitalization.sentences,
                                   cursorColor: primaryColor,
                                   decoration: InputDecoration.collapsed(
-                                    hintText: 'Skriv her',
+                                    hintText: S.of(context).write_here,
                                     hintStyle: kTextStyleP1,
                                   ),
                                   style: kTextStyleP1,
@@ -174,15 +183,16 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 context: context,
                                 builder: (dialogContext) {
                                   return AlertDialog(
-                                    title: Text('Skift billede'),
-                                    content: Text(
-                                        'Vil du skifte dit profilbillede?'),
+                                    title: Text(S.of(context).change_picture),
+                                    content: Text(S
+                                        .of(context)
+                                        .change_picture_confirmation),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
                                             Navigator.of(dialogContext)
                                                 .pop(false),
-                                        child: Text('Nej',
+                                        child: Text(S.of(context).no,
                                             style:
                                                 TextStyle(color: primaryColor)),
                                       ),
@@ -190,7 +200,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                         onPressed: () =>
                                             Navigator.of(dialogContext)
                                                 .pop(true),
-                                        child: Text('Ja',
+                                        child: Text(S.of(context).yes,
                                             style:
                                                 TextStyle(color: primaryColor)),
                                       ),
@@ -204,7 +214,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Profilbillede opdateret',
+                                        S.of(context).profile_picture_updated,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       backgroundColor: Colors.black,
@@ -219,7 +229,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          'Der skete en fejl under indlæsning af profilbillede',
+                                          S
+                                              .of(context)
+                                              .profile_picture_load_error,
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         backgroundColor: Colors.black,
@@ -236,7 +248,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Der skete en fejl under ændring af profilbillede',
+                                        S
+                                            .of(context)
+                                            .profile_picture_change_error,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       backgroundColor: Colors.black,
@@ -285,7 +299,8 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 backgroundColor: Colors.transparent,
                                 foregroundColor: Colors.blue,
                               ),
-                              child: Text('Gem', style: kTextStyleP1),
+                              child:
+                                  Text(S.of(context).save, style: kTextStyleP1),
                             ),
                           ),
                         ],
@@ -298,7 +313,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Venner', style: kTextStyleH2),
+                      Text(S.of(context).friends, style: kTextStyleH2),
                     ],
                   ),
                 ),
@@ -386,6 +401,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
             ),
             // Use the new BottomMenuBar widget
             const BottomMenuBar(),
+            // Bottom right icons
           ],
         ),
       ),

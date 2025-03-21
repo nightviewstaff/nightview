@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/users/chat_data.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
@@ -32,11 +33,15 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
   @override
   void initState() {
     super.initState();
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false)
+          .subscribeToUsersChats(context);
       chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false)
           .subscribeToUsersChats(context);
       checkPending();
     });
+    Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
     Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
   }
 
@@ -50,6 +55,8 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
 
   void checkPending() {
     FriendRequestHelper.pendingFriendRequests().then((pending) {
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setPendingFriendRequests(pending);
       Provider.of<GlobalProvider>(context, listen: false)
           .setPendingFriendRequests(pending);
     });
@@ -66,8 +73,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                // AppLocalizations.of(context)!.chats,
-                'Chats',
+                S.of(context).chats,
                 style: kTextStyleH1,
               ),
               Row(
@@ -106,8 +112,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    // AppLocalizations.of(context)!.newFriendRequests,
-                    'Nye venneanmodninger',
+                    S.of(context).new_friend_requests,
                     style: kTextStyleH3,
                   ),
                   FaIcon(FontAwesomeIcons.arrowRight),
@@ -139,6 +144,10 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
 
               return ListTile(
                 onTap: () {
+                  Provider.of<GlobalProvider>(context, listen: false)
+                      .setChosenChatId(chatData.id);
+                  Navigator.of(context)
+                      .pushNamed(NightSocialConversationScreen.id);
                   Provider.of<GlobalProvider>(context, listen: false)
                       .setChosenChatId(chatData.id);
                   Navigator.of(context)
