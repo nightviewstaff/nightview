@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
+import 'package:nightview/screens/admin_screen.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
 import 'package:nightview/widgets/icons/loading_indicator_with_tick.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +58,38 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
+        Consumer<GlobalProvider>(
+          builder: (context, provider, child) {
+            // TODO
+            bool isAdmin = provider.isAdmin;
+            return isAdmin
+                ? Positioned(
+                    bottom: 20.0, // Adjust to position above the nav bar
+                    child: GestureDetector(
+                      onTap: () {
+                        print('Admin icon tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AdminScreen()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Icon(
+                          Icons.shield, // Admin icon
+                          color: nightviewOrange,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox(); // Hide if not admin
+          },
+        ),
 
-        /* TODO not working as inteded. Not needed for now.
-  ValueListenableBuilder<int>(
+        /* TODO not working as intended. Not needed for now.
+        ValueListenableBuilder<int>(
           valueListenable: clubDataHelper.remainingNearbyClubsNotifier,
           builder: (context, remainingNearby, child) {
             if (remainingNearby > 1) {
@@ -115,7 +146,7 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
-*/
+        */
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
+import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
@@ -156,32 +157,36 @@ class _CreateAccountScreenThreePasswordState
             if (valid) {
               provider.setPassword(passwordController.text);
               try {
-                await Provider.of<GlobalProvider>(context, listen: false)
-                    .userDataHelper
-                    .createUserWithEmail(
-                      email: provider.mail,
-                      password: provider.password,
-                    );
+                if (provider.password.isNotEmpty) {
+                  await Provider.of<GlobalProvider>(context, listen: false)
+                      .userDataHelper
+                      .createUserWithEmail(
+                        email: provider.mail,
+                        password: provider.password,
+                      );
 
-                await Provider.of<GlobalProvider>(context, listen: false)
-                    .userDataHelper
-                    .uploadUserData(
-                      firstName: provider.firstName,
-                      lastName: provider.lastName,
-                      mail: provider.mail,
-                      phone: provider.phone,
-                      birthdateDay: provider.birthDate.day,
-                      birthdateMonth: provider.birthDate.month,
-                      birthdateYear: provider.birthDate.year,
-                    );
+                  await Provider.of<GlobalProvider>(context, listen: false)
+                      .userDataHelper
+                      .uploadUserData(
+                        firstName: provider.firstName,
+                        lastName: provider.lastName,
+                        mail: provider.mail,
+                        phone: provider.phone,
+                        birthdateDay: provider.birthDate.day,
+                        birthdateMonth: provider.birthDate.month,
+                        birthdateYear: provider.birthDate.year,
+                      );
 
-                ReferralPointsHelper.incrementReferralPoints(1);
-                Navigator.of(context)
-                    .pushReplacementNamed(LocationPermissionCheckerScreen.id);
+                  ReferralPointsHelper.incrementReferralPoints(1);
 
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('mail', provider.mail);
-                prefs.setString('password', provider.password);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setString('mail', provider.mail);
+                  prefs.setString('password', provider.password);
+                  Navigator.of(context).pushReplacementNamed(
+                      // ChooseClubbingLocationScreen
+                      LocationPermissionCheckerScreen.id);
+                }
               } catch (e) {
                 String errorMessage =
                     AppLocalizations.of(context)!.somethingWentWrong;

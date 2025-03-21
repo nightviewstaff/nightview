@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
@@ -110,6 +111,7 @@ class ProfilePictureHelper {
   }
 
   static Future<String?> getProfilePicture(String userId) async {
+    const defaultImage = AssetImage('images/user_pb.jpg');
     try {
       Reference ref = FirebaseStorage.instance.ref('pb/$userId.jpg');
       String downloadURL = await ref.getDownloadURL();
@@ -119,4 +121,18 @@ class ProfilePictureHelper {
       return null;
     }
   }
+
+// static Future<String> getProfilePicture(String userId) async {
+//   if (_profilePictureCache.containsKey(userId)) {
+//     return _profilePictureCache[userId]!;
+//   }
+//   // Fetch from Firestore or Storage
+//   String url = await FirebaseFirestore.instance
+//       .collection('user_data')
+//       .doc(userId)
+//       .get()
+//       .then((doc) => doc.get('profile_picture') as String? ?? '');
+//   _profilePictureCache[userId] = url;
+//   return url;
+// }
 }

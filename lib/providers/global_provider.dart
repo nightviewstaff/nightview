@@ -1,3 +1,4 @@
+import 'dart:math';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,19 +20,43 @@ import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
+  Future<List<UserData>>? _friendsFuture;
   GlobalProvider() {
-
     userDataHelper = UserDataHelper(
       onReceive: (data) {
+        // Extract isAdmin from the received data
+        _isAdmin = data?['isAdmin'] as bool? ?? false;
         userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
           _partyCount = count;
+
+          // TEST
           if (DateTime.now().weekday != DateTime.sunday) {
-            // if (_partyCount <= 99) { // TEST
-            //   Random random = Random();
-            //   _partyCount = 99 + random.nextInt(65);
-            // }
+            if (_partyCount <= 99) {
+              Random random = Random();
+              int baseCount;
+              switch (DateTime.now().weekday) {
+                case DateTime.thursday: // Thursday
+                case DateTime.friday: // Friday
+                case DateTime.saturday: // Saturday
+                  baseCount = 120; // Base count for popular days
+                  _partyCount = baseCount + random.nextInt(321); // 120 to 150
+                  break;
+                case DateTime.wednesday: // Wednesday
+                case DateTime.tuesday: // Tuesday
+                case DateTime.monday: // Monday (assumed low attendance)
+                  baseCount = 60; // Base count for less popular days
+                  _partyCount = baseCount + random.nextInt(21); // 60 to 80
+                  break;
+                default:
+                  // Fallback (should not occur due to weekday check)
+                  _partyCount =
+                      99 + random.nextInt(65); // Original range as fallback
+                  break;
+              }
+            }
           }
-          // _partyCount = 1633; // TEST
+          // TEST
+
           notifyListeners();
         });
       },
@@ -43,7 +68,6 @@ class GlobalProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
-
   }
 
   ClubDataHelper clubDataHelper = ClubDataHelper();
@@ -84,6 +108,27 @@ class GlobalProvider extends ChangeNotifier {
 
   // TEST //
 
+  bool _isAdmin = false; // Cached admin status
+
+  bool get isAdmin => _isAdmin;
+
+  Future<void> refreshAdminStatus() async {
+    final firestore = FirebaseFirestore.instance;
+    String? userId = userDataHelper.currentUserId;
+    if (userId == null) return;
+
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await firestore.collection('user_data').doc(userId).get();
+      if (snapshot.exists) {
+        _isAdmin = snapshot.data()?['isAdmin'] as bool? ?? false;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error refreshing admin status: $e");
+    }
+  }
+
   ClubData get chosenClub => _chosenClub!;
 
   bool get chosenClubFavoriteLocal => _chosenClubFavoriteLocal;
@@ -123,8 +168,10 @@ class GlobalProvider extends ChangeNotifier {
     String clubId = _chosenClub!.id;
 
     try {
-      DocumentSnapshot clubDoc =
-      await FirebaseFirestore.instance.collection('club_data').doc(clubId).get();
+      DocumentSnapshot clubDoc = await FirebaseFirestore.instance
+          .collection('club_data')
+          .doc(clubId)
+          .get();
 
       if (clubDoc.exists) {
         List<dynamic> favoritesList = clubDoc['favorites'] ?? [];
@@ -136,7 +183,6 @@ class GlobalProvider extends ChangeNotifier {
 
     return false;
   }
-
 
   Color get partyStatusColor {
     switch (_partyStatusLocal) {
@@ -270,5 +316,86 @@ class GlobalProvider extends ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  Future<List<UserData>> getFriendsData() async {
+    _friendsFuture ??= FriendsHelper.getFriendsData();
+    return (await _friendsFuture!)!
+        .where((friend) => friend.partyStatus == PartyStatus.yes)
+        .toList();
+  }
+
+  Future<List<ClubData>> getFavoriteClubs() async {
+    final _firestore = FirebaseFirestore.instance;
+    String? currentUserId = userDataHelper.currentUserId;
+    if (currentUserId == null) {
+      return [];
+    }
+
+    try {
+      // Ensure clubData is loaded (call loadInitialClubs if not already done)
+      if (clubDataHelper.clubData.isEmpty) {
+        await clubDataHelper.loadInitialClubs();
+      }
+
+      // Fetch the user's favorite club IDs from Firestore
+      DocumentSnapshot userDoc =
+          await _firestore.collection('user_data').doc(currentUserId).get();
+
+      if (!userDoc.exists) return [];
+
+      List<dynamic> favoriteClubIds = userDoc['favorite_clubs'] ?? [];
+      if (favoriteClubIds.isEmpty) return [];
+
+      // Map the club IDs to ClubData objects from ClubDataHelper
+      List<ClubData> favoriteClubs = favoriteClubIds
+          .map((clubEntry) {
+            // Ensure clubEntry is a map and extract clubId
+            if (clubEntry is Map<String, dynamic>) {
+              String clubId = clubEntry['clubId'] as String? ?? '';
+              return clubDataHelper.clubData[clubId];
+            }
+            return null; // Skip invalid entries
+          })
+          .whereType<ClubData>() // Remove null values
+          .toList();
+
+      return favoriteClubs;
+    } catch (e) {
+      print('Error fetching favorite clubs: $e');
+      return [];
+    }
+  }
+
+  Future<List<ClubData>> getSortedClubList() async {
+    List<ClubData> allClubs = clubDataHelper.clubData.values.toList();
+
+    // Get user location
+    LatLng? userLocation = this.userLocation;
+    if (userLocation == null) return allClubs; // If no location, return all
+
+    // Sort clubs
+    allClubs.sort((a, b) {
+      double distanceA = _calculateDistance(userLocation, LatLng(a.lat, a.lon));
+      double distanceB = _calculateDistance(userLocation, LatLng(b.lat, b.lon));
+
+      bool aIsNearby = distanceA <= 1.0;
+      bool bIsNearby = distanceB <= 1.0;
+
+      if (aIsNearby && !bIsNearby) return -1;
+      if (!aIsNearby && bIsNearby) return 1;
+
+      if (a.visitors != b.visitors)
+        return b.visitors.compareTo(a.visitors); // More visitors first
+
+      return distanceA.compareTo(distanceB); // Fallback: closer first
+    });
+
+    return allClubs;
+  }
+
+  double _calculateDistance(LatLng start, LatLng end) {
+    final Distance distance = Distance();
+    return distance.as(LengthUnit.Kilometer, start, end);
   }
 }

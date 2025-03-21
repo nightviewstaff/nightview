@@ -18,6 +18,7 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
+import 'package:nightview/screens/night_map/widgets/active_users_widget.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
@@ -118,10 +119,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //TOP part
-                    Text(
-                      AppLocalizations.of(context)!.activeUsersNow,
-                      style: kTextStyleH3,
-                    ),
+                    //TODO MAKE LOGIC THAT makes "byen" interactable. It should start out in the bigest city
+                    // Text(
+                    //   AppLocalizations.of(context)!.activeUsersNow,
+                    //   style: kTextStyleH3,
+                    // ),
+                    ActiveUsersWidget(),
                     Row(
                       children: [
                         Consumer<GlobalProvider>(

@@ -64,10 +64,10 @@ class LanguageSwitcher extends StatelessWidget {
       'images/flags/dk.png':
           // AppLocalizations.of(context)!.languageName,
           'Dansk',
-      'images/flags/uk.png': 'English',
+      'images/flags/gb.png': 'English',
       // Uncomment and add others as needed:
       // 'images/flags/de.png': 'Deutsch',
-      // 'images/flags/sv.png': 'Svenska',
+      // 'images/flags/se.png': 'Svenska',
       // 'images/flags/no.png': 'Norsk',
     };
 

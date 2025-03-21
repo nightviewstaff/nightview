@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +26,9 @@ import 'package:nightview/screens/location_permission/location_permission_precis
 import 'package:nightview/screens/location_permission/location_permission_service_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_whileinuse_screen.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
+import 'package:nightview/screens/login_registration/creation/choose_clubbing_types.dart';
+import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
+import 'package:nightview/screens/login_registration/creation/choose_favorite_clubs.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
@@ -39,13 +45,13 @@ import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
+import 'package:nightview/services/firestore/firestore_updater.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // Add this
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'constants/Initializator.dart';
 import 'constants/colors.dart';
 import 'never_used/preferences/preferences_main_screen.dart';
-import ''; // Your AppLocalizations file
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +65,9 @@ void main() async {
 
   Initializator initializator = Initializator();
   initializator.initializeNeededTasks();
+
+  // ClubDataHelper clubDataHelper = ClubDataHelper(); // TODO Maybe best to fetch clubs before starting app?
+  // clubDataHelper.loadInitialClubs();
 
   runApp(const NightViewApp());
 }
@@ -127,8 +136,9 @@ class NightViewApp extends StatelessWidget {
               ),
             ),
             initialRoute:
-                // WaitingForLoginScreen.id,
-                SwipeScreen.id, // TEST
+                //  ChooseClubbingLocationScreen.id, //TEST
+                WaitingForLoginScreen.id,
+            // SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),
               LoginOrCreateAccountScreen.id: (context) =>
@@ -175,6 +185,12 @@ class NightViewApp extends StatelessWidget {
               ShotAccumulationScreen.id: (context) =>
                   const ShotAccumulationScreen(),
               ShotRedemtionScreen.id: (context) => const ShotRedemtionScreen(),
+              ChooseClubbingLocationScreen.id: (context) =>
+                  const ChooseClubbingLocationScreen(),
+              ChooseClubbingTypesScreen.id: (context) =>
+                  const ChooseClubbingTypesScreen(),
+              ChooseFavoriteClubsScreen.id: (context) =>
+                  const ChooseFavoriteClubsScreen(),
             },
           );
         },

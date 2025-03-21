@@ -15,6 +15,7 @@ class UserData {
   final DateTime? lastPositionTime;
   final PartyStatus partyStatus;
   final DateTime partyStatusTime;
+  final List<Map<String, dynamic>> favoriteClubs;
 
   UserData({
     required this.id,
@@ -30,6 +31,7 @@ class UserData {
     this.lastPositionTime,
     required this.partyStatus,
     required this.partyStatusTime,
+    required this.favoriteClubs,
   });
 
   bool answeredStatusToday() {
@@ -58,6 +60,7 @@ class UserData {
       'lastPositionTime': lastPositionTime?.millisecondsSinceEpoch,
       'partyStatus': partyStatus.toString().split('.').last,
       'partyStatusTime': partyStatusTime.millisecondsSinceEpoch,
+      'favoriteClubs': favoriteClubs,
     };
   }
 
@@ -84,6 +87,8 @@ class UserData {
           (e) => e.toString() == 'PartyStatus.' + map['partyStatus']),
       partyStatusTime:
           DateTime.fromMillisecondsSinceEpoch(map['partyStatusTime']),
+      favoriteClubs:
+          List<Map<String, dynamic>>.from(map['favoriteClubs'] ?? []),
     );
   }
 }

@@ -14,7 +14,7 @@ class LoginRegistrationProvider extends ChangeNotifier {
   DateTime _birthDate = DateTime(2000);
   String? _mail;
   String? _phone;
-  String? _password;
+  String _password = '';
 
   bool get stayLoggedIn => _stayLoggedIn;
 

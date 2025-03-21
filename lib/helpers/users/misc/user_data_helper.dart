@@ -12,39 +12,44 @@ class UserDataHelper {
   Map<String, UserData> userData = {};
 
   UserDataHelper({Callback<Map<String, UserData>>? onReceive}) {
-    _firestore.collection('user_data').snapshots().listen((snap) {
+    _firestore.collection('user_data').snapshots().listen((snap) async {
+      // Clear the existing userData map
       userData.clear();
 
-      Future.forEach(snap.docs, (user) async {
+      // Process each user document one by one
+      for (var user in snap.docs) {
         try {
           final data = user.data();
           userData[user.id] = UserData(
             id: user.id,
-            firstName: data['first_name'],
-            lastName: data['last_name'],
-            mail: data['mail'],
-            phone: data['phone'],
-            birthdayDay: data['birthdate_day'],
-            birthdayMonth: data['birthdate_month'],
-            birthdayYear: data['birthdate_year'],
-            lastPositionLat: data['last_position_lat'] ?? 0.0,
-            lastPositionLon: data['last_position_lon'] ?? 0.0,
+            firstName: data['first_name'] ?? '',
+            lastName: data['last_name'] ?? '',
+            mail: data['mail'] ?? '',
+            phone: data['phone'] ?? '',
+            birthdayDay: data['birthdate_day'] ?? 1,
+            birthdayMonth: data['birthdate_month'] ?? 1,
+            birthdayYear: data['birthdate_year'] ?? 1969,
+            lastPositionLat: (data['last_position_lat'] ?? 0.0).toDouble(),
+            lastPositionLon: (data['last_position_lon'] ?? 0.0).toDouble(),
             lastPositionTime:
                 data['last_position_time']?.toDate() ?? DateTime(2000),
-            partyStatus: stringToPartyStatus(
-                    data['party_status'] ?? 'PartyStatus.unsure') ??
-                PartyStatus.unsure,
+            partyStatus:
+                stringToPartyStatus(data['party_status'] ?? 'unsure') ??
+                    PartyStatus.unsure,
             partyStatusTime:
                 data['party_status_time']?.toDate() ?? DateTime(2000),
+            favoriteClubs:
+                List<Map<String, dynamic>>.from(data['favorite_clubs'] ?? []),
           );
         } catch (e) {
-          print(e);
+          print('Error processing user ${user.id}: $e');
         }
-      }).then((value) {
-        if (onReceive != null) {
-          onReceive(userData);
-        }
-      });
+      }
+
+      // Call onReceive only after all users are processed
+      if (onReceive != null) {
+        onReceive(userData);
+      }
     });
   }
 
@@ -97,11 +102,13 @@ class UserDataHelper {
         'birthdate_day': birthdateDay,
         'birthdate_month': birthdateMonth,
         'birthdate_year': birthdateYear,
+        'favorite_clubs': [],
       });
     } catch (e) {
+      print("false0");
       return false;
     }
-
+    print("true");
     return true;
   }
 
