@@ -37,7 +37,6 @@ class NightOffersMainScreen extends StatelessWidget {
                   .clubDataHelper
                   .clubData['jagtbar_0']
                   ?.logo ??
-              // AppLocalizations.of(context)!.error,
               'ERROR'),
           OfferListItem(
             image: Image.asset('images/logo_icon.png'),

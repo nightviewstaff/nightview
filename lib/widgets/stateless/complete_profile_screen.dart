@@ -69,9 +69,7 @@ class CompleteProfileScreen extends StatelessWidget {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(
-                          // AppLocalizations.of(context)!.invalidBirthDate,
-                          "Invalid birth date format")),
+                      SnackBar(content: Text("Invalid birth date format")),
                     );
                   }
                 } else {
