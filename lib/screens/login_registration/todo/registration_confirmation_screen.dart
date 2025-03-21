@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -10,6 +11,7 @@ import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationConfirmationScreen extends StatefulWidget {
+  // TODO PRelude is working. Maybe use firebase instead?
   static const id = 'registration_confirmation_screen';
 
   const RegistrationConfirmationScreen({super.key});

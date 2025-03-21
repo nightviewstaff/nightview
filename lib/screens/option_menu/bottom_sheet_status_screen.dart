@@ -19,9 +19,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
         child: Column(
           children: [
             ListTile(
-              title: Text(
-                  // AppLocalizations.of(context)!.isGoingOutTonight,
-                  S.of(context).going_out_tonight),
+              title: Text(S.of(context).going_out_tonight),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: primaryColor,
@@ -36,9 +34,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text(
-                  // AppLocalizations.of(context)!.notGoingOutTonight,
-                  S.of(context).not_going_out_tonight),
+              title: Text(S.of(context).not_going_out_tonight),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: redAccent,
@@ -53,9 +49,7 @@ class BottomSheetStatusScreen extends StatelessWidget {
               },
             ),
             ListTile(
-              title: Text(
-                  // AppLocalizations.of(context)!.unsure,
-                  S.of(context).unsure),
+              title: Text(S.of(context).unsure),
               leading: FaIcon(
                 FontAwesomeIcons.solidCircleDot,
                 color: grey,

@@ -26,9 +26,7 @@ class OtherProfileMainScreen extends StatefulWidget {
 }
 
 class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
-  String lastLocationText =
-      // AppLocalizations.of(context)!.fetchingLocation;
-      '';
+  String lastLocationText = '';
 
   final TextEditingController biographyController = TextEditingController();
 
@@ -92,9 +90,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           color: Colors.redAccent,
           size: 15.0,
         ),
-        tooltip:
-            // AppLocalizations.of(context)!.removeFriend,
-            S.of(context).remove_friend,
+        tooltip: S.of(context).remove_friend,
         onPressed: () async {
           final confirmed = await showDialog<bool>(
             context: context,
@@ -102,13 +98,10 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: Text(
-                  // AppLocalizations.of(context)!.removeFriend,
                   S.of(context).remove_friend,
                   style: TextStyle(color: Colors.redAccent),
                 ),
-                content: Text(
-                    // AppLocalizations.of(context)!.confirmRemoveFriend,
-                    S.of(context).remove_friend_confirmation),
+                content: Text(S.of(context).remove_friend_confirmation),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -144,7 +137,6 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                // AppLocalizations.of(context)!.addFriend,
                 S.of(context).add_friend,
                 style: kTextStyleP2,
               ),
@@ -157,13 +149,11 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
   AlertDialog getDialog(BuildContext context, LocationData? locationData) {
     final String text;
     if (locationData == null) {
-      text =
-          // AppLocalizations.of(context)!.noLatestLocation,
-          '';
+      text = '';
       // 'Kunne ikke finde seneste lokation';
     } else if (locationData.private) {
       text =
-          // AppLocalizations.of(context)!.userNotSharingLocation,
+
           // 'Denne person deler ikke sin lokation';
           '';
     } else {
@@ -172,20 +162,14 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
           .clubData[locationData.clubId]
           ?.name;
       if (clubName == null) {
-        text =
-            // AppLocalizations.of(context)!.noLatestLocation,
-            S.of(context).latest_location;
+        text = S.of(context).latest_location;
       } else {
         text =
-            // AppLocalizations.of(context)!.location
-            // AppLocalizations.of(context)!.time
             '${S.of(context).location}: $clubName\n${S.of(context).time}: ${locationData.readableTimestamp}';
       }
     }
     return AlertDialog(
-      title: Text(
-          // AppLocalizations.of(context)!.latestLocation,
-          S.of(context).latest_location),
+      title: Text(S.of(context).latest_location),
       content: Text(text),
       actions: [
         TextButton(
@@ -244,7 +228,6 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                             children: [
                               SizedBox(height: kSmallSpacerValue),
                               Text(
-                                // AppLocalizations.of(context)!.biography,
                                 S.of(context).bio,
                                 style: kTextStyleH4,
                               ),
@@ -257,9 +240,7 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
                                 child: TextField(
                                   controller: biographyController,
                                   decoration: InputDecoration.collapsed(
-                                      hintText:
-                                          // AppLocalizations.of(context)!.userHasNoBiography,
-                                          S.of(context).no_bio),
+                                      hintText: S.of(context).no_bio),
                                   readOnly: true,
                                   maxLines: 8,
                                 ),

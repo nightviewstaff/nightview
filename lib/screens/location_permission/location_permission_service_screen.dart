@@ -7,6 +7,8 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
+import 'package:nightview/widgets/stateless/login_registration_button.dart';
+import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
 class LocationPermissionServiceScreen extends StatefulWidget {
@@ -58,6 +60,8 @@ class _LocationPermissionServiceScreenState
         .serviceEnabled
         .then((hasPermission) {
       if (hasPermission) {
+        Navigator.of(context)
+            .pushReplacementNamed(LocationPermissionCheckerScreen.id);
         Navigator.of(context)
             .pushReplacementNamed(LocationPermissionCheckerScreen.id);
       }

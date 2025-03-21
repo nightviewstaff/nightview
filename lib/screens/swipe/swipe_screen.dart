@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:math';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/cupertino.dart';
@@ -282,7 +283,6 @@ class _SwipeScreenState extends State<SwipeScreen> {
       },
     );
   }
-
   //Todo perfect color. ANYTIME card moves color should indicate the action with opacity. 100% should be when card is out of the screen maybe even furhter.
   //TODO As soon as user touches screen they should have full control and the card should not be moved except by the user.
 

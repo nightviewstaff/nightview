@@ -19,6 +19,7 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
+import 'package:nightview/screens/night_map/widgets/active_users_widget.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
@@ -119,10 +120,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //TOP part
+                    //TODO MAKE LOGIC THAT makes "byen" interactable. It should start out in the bigest city
                     Text(
                       S.of(context).current_users,
                       style: kTextStyleH3,
                     ),
+                    // ActiveUsersWidget(),
                     Row(
                       children: [
                         Consumer<GlobalProvider>(
@@ -450,7 +453,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Text(
-                                            // AppLocalizations.of(context)!.noLocationsFound,
                                             S.of(context).no_locations_found,
                                             style: TextStyle(
                                                 color: redAccent, fontSize: 14),
@@ -687,7 +689,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           CircularProgressIndicator(color: secondaryColor),
           const SizedBox(height: 16),
           Text(
-            // AppLocalizations.of(context)!.fetchingLocations,
             S.of(context).fetching_locations,
             style: kTextStyleP1.copyWith(color: primaryColor),
           ),
@@ -831,9 +832,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             Text(
               clubOpeningHoursFormatted,
               style: clubOpeningHoursFormatted.toLowerCase() ==
-
-                      // AppLocalizations.of(context)!.closedToday,
-                      "lukket i dag."
+                      S.of(context).closed_today
                   ? kTextStyleP3.copyWith(color: redAccent)
                   : kTextStyleP3,
             ),

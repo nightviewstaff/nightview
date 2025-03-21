@@ -58,7 +58,6 @@ class _NewChatScreenState extends State<NewChatScreen> {
               padding: EdgeInsets.all(kBigPadding),
               width: double.maxFinite,
               child: Text(
-                // AppLocalizations.of(context)!.newChat,
                 S.of(context).new_chat,
                 style: kTextStyleH1,
               ),
@@ -108,7 +107,6 @@ class _NewChatScreenState extends State<NewChatScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              // AppLocalizations.of(context)!.createChatError,
                               S.of(context).chat_creation_error,
                               style: TextStyle(color: white),
                             ),

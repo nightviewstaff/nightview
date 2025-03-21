@@ -27,8 +27,6 @@ class DistanceDisplayWidget extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text(
-// AppLocalizations.of(context)!.calculating,
-
                 S.of(context).calculating,
                 style: TextStyle(
                   color: primaryColor,

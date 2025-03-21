@@ -17,7 +17,6 @@ class NightOffersMainScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              // AppLocalizations.of(context)!.topOffers,
               'TOP OFFERS',
               style: Theme.of(context).textTheme.headlineLarge,
             ),

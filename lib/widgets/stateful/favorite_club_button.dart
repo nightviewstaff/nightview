@@ -42,7 +42,6 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                // AppLocalizations.of(context)!.genericError,
                 S.of(context).generic_error,
                 style: TextStyle(color: redAccent),
               ),
@@ -85,14 +84,11 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.addFavorite,
           S.of(context).add_favorite,
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
-            // TODO MAKE SURE RIGHT MESSAGE
-            // AppLocalizations.of(context)!.addFavouriteDescription,
             S.of(context).favorite_club_message,
           ),
         ),
@@ -103,7 +99,6 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              // AppLocalizations.of(context)!.cancel,
               S.of(context).undo,
               style: TextStyle(color: Colors.redAccent),
             ),
@@ -113,7 +108,6 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              // AppLocalizations.of(context)!.continue,
               S.of(context).continues,
               style: TextStyle(color: primaryColor),
             ),
@@ -131,13 +125,11 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.removeFavourite,
           S.of(context).remove_favorite,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text(
-            // AppLocalizations.of(context)!.confirmRemoveFavourite,
             S.of(context).remove_favorite_confirmation,
           ),
         ),
@@ -148,7 +140,6 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              // AppLocalizations.of(context)!.cancel,
               S.of(context).undo,
               style: TextStyle(color: primaryColor),
             ),
@@ -159,7 +150,6 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              // AppLocalizations.of(context)!.remove,
               S.of(context).remove,
               style: TextStyle(color: Colors.redAccent),
             ),

@@ -137,10 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         prefs.setString(
                             'password', passwordInputController.text);
                       }
-                      // else {
-                      //   prefs.remove('mail');
-                      //   prefs.remove('password');
-                      // }
                     } else {
                       await showDialog(
                         context: context,

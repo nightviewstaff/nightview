@@ -25,9 +25,7 @@ class CompleteProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(
-          // AppLocalizations.of(context)!.completeProfile,
-          "Complete Your Profile")),
+      appBar: AppBar(title: Text("Complete Your Profile")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -36,9 +34,7 @@ class CompleteProfileScreen extends StatelessWidget {
               controller: phoneController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                labelText:
-                    // AppLocalizations.of(context)!.phoneNumber,
-                    "Phone Number",
+                labelText: "Phone Number",
                 hintText: "+1234567890",
               ),
             ),
@@ -46,12 +42,8 @@ class CompleteProfileScreen extends StatelessWidget {
               controller: birthDateController,
               keyboardType: TextInputType.datetime,
               decoration: InputDecoration(
-                labelText:
-                    // AppLocalizations.of(context)!.birthDate,
-                    "Birth Date",
-                hintText:
-                    // AppLocalizations.of(context)!.dayFormat,
-                    "DD/MM/YYYY",
+                labelText: "Birth Date",
+                hintText: "DD/MM/YYYY",
               ),
             ),
             SizedBox(height: 20),

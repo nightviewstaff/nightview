@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -51,6 +53,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
           friendRequestPbs.add(const AssetImage('images/user_pb.jpg'));
         } else {
           friendRequestPbs.add(CachedNetworkImageProvider(url));
+          friendRequestPbs.add(CachedNetworkImageProvider(url));
         }
       }
       Provider.of<GlobalProvider>(context, listen: false)
@@ -70,7 +73,6 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
               color: Colors.black,
               width: double.maxFinite,
               child: Text(
-                // AppLocalizations.of(context)!.friendRequests,
                 S.of(context).friend_requests,
                 style: kTextStyleH2,
               ),
@@ -99,6 +101,10 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
 
                       return ListTile(
                         onTap: () {
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(fromUserData);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
                           Provider.of<GlobalProvider>(context, listen: false)
                               .setChosenProfile(fromUserData);
                           Navigator.of(context)

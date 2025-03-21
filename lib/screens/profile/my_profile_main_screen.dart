@@ -10,6 +10,10 @@ import 'package:nightview/helpers/users/misc/biography_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
+import 'package:nightview/helpers/users/misc/biography_helper.dart';
+import 'package:nightview/helpers/users/friends/friends_helper.dart';
+import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
+import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
@@ -122,10 +126,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: kSmallSpacerValue),
-                              Text(
-                                  // AppLocalizations.of(context)!.biography,
-                                  S.of(context).bio,
-                                  style: kTextStyleH4),
+                              Text(S.of(context).bio, style: kTextStyleH4),
                               Divider(
                                 color: primaryColor,
                                 thickness: kMainStrokeWidth,
@@ -166,14 +167,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 builder: (dialogContext) {
                                   return AlertDialog(
                                     title: Text(S.of(context).change_picture),
-                                    // AppLocalizations.of(context)!.changePicture,
-
-                                    content: Text(
-                                        // AppLocalizations.of(context)!.confirmChangePicture,
-
-                                        S
-                                            .of(context)
-                                            .change_picture_confirmation),
+                                    content: Text(S
+                                        .of(context)
+                                        .change_picture_confirmation),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -285,10 +281,8 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 backgroundColor: Colors.transparent,
                                 foregroundColor: Colors.blue,
                               ),
-                              child: Text(
-                                  // AppLocalizations.of(context)!.save,
-                                  S.of(context).save,
-                                  style: kTextStyleP1),
+                              child:
+                                  Text(S.of(context).save, style: kTextStyleP1),
                             ),
                           ),
                         ],
@@ -301,10 +295,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                          // AppLocalizations.of(context)!.friends,
-                          S.of(context).friends,
-                          style: kTextStyleH2),
+                      Text(S.of(context).friends, style: kTextStyleH2),
                     ],
                   ),
                 ),
@@ -373,22 +364,17 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                         builder: (dialogContext) => AlertDialog(
                           title: Center(
                             child: Text(
-                              // AppLocalizations.of(context)!.privacyPolicy,
                               S.of(context).privacy_policy,
                               style: TextStyle(color: primaryColor),
                             ),
                           ),
-                          content: Text(
-                              // AppLocalizations.of(context)!.openPrivacyPolicyInBrowser,
-                              S.of(context).privacy_policy_open),
+                          content: Text(S.of(context).privacy_policy_open),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(dialogContext).pop();
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.no,
-                                  S.of(context).no,
+                              child: Text(S.of(context).no,
                                   style: TextStyle(color: grey)),
                             ),
                             TextButton(
@@ -397,18 +383,14 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                     'https://night-view.dk/privacy-policy/'));
                                 Navigator.of(dialogContext).pop();
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.yes,
-                                  S.of(context).yes,
+                              child: Text(S.of(context).yes,
                                   style: TextStyle(color: grey)),
                             ),
                           ],
                         ),
                       );
                     },
-                    tooltip:
-                        // AppLocalizations.of(context)!.privacyPolicy,
-                        S.of(context).privacy_policy,
+                    tooltip: S.of(context).privacy_policy,
                   ),
                   IconButton(
                     icon: FaIcon(
@@ -423,13 +405,11 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                         builder: (deleteUserContext) => AlertDialog(
                           title: Center(
                             child: Text(
-                              // AppLocalizations.of(context)!.deleteUser,
                               S.of(context).delete_user,
                               style: TextStyle(color: redAccent),
                             ),
                           ),
                           content: Text(
-                            // AppLocalizations.of(context)!.confirmDeleteUserAndAllData,
                             S.of(context).delete_confirmation,
                           ),
                           actions: [
@@ -437,9 +417,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               onPressed: () {
                                 Navigator.of(deleteUserContext).pop();
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.no,
-                                  S.of(context).no,
+                              child: Text(S.of(context).no,
                                   style: TextStyle(color: primaryColor)),
                             ),
                             TextButton(
@@ -462,11 +440,9 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                   await showDialog(
                                     context: deleteUserContext,
                                     builder: (errorContext) => AlertDialog(
-                                      title: Text(
-                                          // AppLocalizations.of(context)!.deleteUserError,
-                                          S.of(context).delete_user_error),
+                                      title:
+                                          Text(S.of(context).delete_user_error),
                                       content: Text(
-                                        // AppLocalizations.of(context)!.deleteUserErrorTryAgainLater,
                                         S
                                             .of(context)
                                             .delete_user_error_description,
@@ -476,9 +452,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                           onPressed: () {
                                             Navigator.of(errorContext).pop();
                                           },
-                                          child: Text(
-                                              // AppLocalizations.of(context)!.okay,
-                                              S.of(context).ok,
+                                          child: Text(S.of(context).ok,
                                               style: TextStyle(
                                                   color: primaryColor)),
                                         ),
@@ -487,18 +461,14 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                   );
                                 }
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.yes,
-                                  S.of(context).yes,
+                              child: Text(S.of(context).yes,
                                   style: TextStyle(color: redAccent)),
                             ),
                           ],
                         ),
                       );
                     },
-                    tooltip:
-                        // AppLocalizations.of(context)!.deleteUser,
-                        S.of(context).delete_user,
+                    tooltip: S.of(context).delete_user,
                   ),
                   IconButton(
                     icon: FaIcon(
@@ -512,22 +482,17 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                         builder: (dialogContext) => AlertDialog(
                           title: Center(
                             child: Text(
-                              // AppLocalizations.of(context)!.logOff,
                               S.of(context).logout,
                               style: TextStyle(color: redAccent),
                             ),
                           ),
-                          content: Text(
-                              // AppLocalizations.of(context)!.confirmLogOff,
-                              S.of(context).logout_confirmation),
+                          content: Text(S.of(context).logout_confirmation),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(dialogContext).pop();
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.no,
-                                  S.of(context).no,
+                              child: Text(S.of(context).no,
                                   style: TextStyle(color: primaryColor)),
                             ),
                             TextButton(
@@ -544,18 +509,14 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                                 prefs.remove('mail');
                                 prefs.remove('password');
                               },
-                              child: Text(
-                                  // AppLocalizations.of(context)!.yes,
-                                  S.of(context).yes,
+                              child: Text(S.of(context).yes,
                                   style: TextStyle(color: redAccent)),
                             ),
                           ],
                         ),
                       );
                     },
-                    tooltip:
-                        // AppLocalizations.of(context)!.logOff,
-                        S.of(context).logout,
+                    tooltip: S.of(context).logout,
                   ),
                 ],
               ),

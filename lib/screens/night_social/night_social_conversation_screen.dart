@@ -231,7 +231,6 @@ class _NightSocialConversationScreenState
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    // AppLocalizations.of(context)!.sendingChatError,
                                     S.of(context).message_send_error,
                                     style: TextStyle(color: Colors.white),
                                   ),

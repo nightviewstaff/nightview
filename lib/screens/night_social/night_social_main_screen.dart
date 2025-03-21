@@ -33,11 +33,15 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
   @override
   void initState() {
     super.initState();
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false)
+          .subscribeToUsersChats(context);
       chatsSubscription = Provider.of<ChatSubscriber>(context, listen: false)
           .subscribeToUsersChats(context);
       checkPending();
     });
+    Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
     Provider.of<GlobalProvider>(context, listen: false).fetchUserLocation();
   }
 
@@ -51,6 +55,8 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
 
   void checkPending() {
     FriendRequestHelper.pendingFriendRequests().then((pending) {
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setPendingFriendRequests(pending);
       Provider.of<GlobalProvider>(context, listen: false)
           .setPendingFriendRequests(pending);
     });
@@ -67,7 +73,6 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                // AppLocalizations.of(context)!.chats,
                 S.of(context).chats,
                 style: kTextStyleH1,
               ),
@@ -107,7 +112,6 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    // AppLocalizations.of(context)!.newFriendRequests,
                     S.of(context).new_friend_requests,
                     style: kTextStyleH3,
                   ),
@@ -140,6 +144,10 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
 
               return ListTile(
                 onTap: () {
+                  Provider.of<GlobalProvider>(context, listen: false)
+                      .setChosenChatId(chatData.id);
+                  Navigator.of(context)
+                      .pushNamed(NightSocialConversationScreen.id);
                   Provider.of<GlobalProvider>(context, listen: false)
                       .setChosenChatId(chatData.id);
                   Navigator.of(context)

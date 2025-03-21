@@ -92,7 +92,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          // AppLocalizations.of(context)!.errorOccured,
                           'Der skete en fejl',
                           style: TextStyle(color: white),
                         ),
@@ -112,7 +111,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   return null;
                 },
                 label: Text(
-                  // AppLocalizations.of(context)!.redeem,
                   '            Indløs',
                   style: kTextStyleH1,
                 ),
@@ -127,7 +125,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                 height: kNormalSpacerValue,
               ),
               Text(
-                // AppLocalizations.of(context)!.showStaffBeforeRedemption,
                 'VIGTIGT:\nVis til personalet at du indløser tilbuddet.\nEllers er indløsningen ugyldig!',
                 textAlign: TextAlign.center,
                 style: kTextStyleP1,
@@ -140,7 +137,6 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         return SizedBox(
           height: kSliderHeight + kBottomSpacerValue,
           child: Text(
-            // AppLocalizations.of(context)!.alreadyRedeemedToday,
             'Du har allerede indløst dette tilbud i dag.\nKom igen i morgen!',
             textAlign: TextAlign.center,
             style: kTextStyleP1,
@@ -157,13 +153,11 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.succesfulRedemtion,
           'Indløsning succesfuld!',
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
-              // AppLocalizations.of(context)!.redemptionCompleted,
               'Indløsning af hovedtilbud ved ${chosenClub.name} blev fuldført.'),
         ),
         actions: [
@@ -187,14 +181,11 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          // AppLocalizations.of(context)!.redemptionFailed,
           S.of(context).redemption_failed_2,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
-          child: Text(
-              // AppLocalizations.of(context)!.redepmtionErrorTryLater,
-              S.of(context).main_offer_redemption_error),
+          child: Text(S.of(context).main_offer_redemption_error),
         ),
         actions: [
           TextButton(

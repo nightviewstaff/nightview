@@ -144,18 +144,14 @@ class _RateClubState extends State<RateClub>
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text(
-                  // AppLocalizations.of(context)!.cancel,
-                  S.of(context).undo,
-                  style: TextStyle(color: redAccent)),
+              child:
+                  Text(S.of(context).undo, style: TextStyle(color: redAccent)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text(
-                  // AppLocalizations.of(context)!.continue,
-                  S.of(context).continues,
+              child: Text(S.of(context).continues,
                   style: TextStyle(color: primaryColor)),
             ),
           ],

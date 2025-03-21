@@ -48,11 +48,8 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-              // AppLocalizations.of(context)!.locationTracking,
-              'Location tracking'),
+          title: const Text('Location tracking'),
           content: const Text(
-            // AppLocalizations.of(context)!.locationTrackingDescription,
             'We use your location data to improve the app for you and others. '
             'You can opt out at any time in your device settings.',
           ),
@@ -94,7 +91,7 @@ class _WaitingForLoginScreenState extends State<WaitingForLoginScreen> {
             context: context,
             builder: (context) => AlertDialog(
               title: Text(// TODO Center
-                  // AppLocalizations.of(context)!.logInError),
+
                   S.of(context).login_error),
               content: SingleChildScrollView(
                 child: Center(

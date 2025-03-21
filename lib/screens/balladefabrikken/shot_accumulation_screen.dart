@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/app_localization.dart';
+import 'package:nightview/app_localization.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
@@ -34,7 +35,6 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                 Padding(
                   padding: EdgeInsets.all(kMainPadding),
                   child: Text(
-                    // AppLocalizations.of(context)!.earnedPoints,
                     S.of(context).earned_points,
                     style: kTextStyleH2,
                   ),
@@ -100,7 +100,11 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                   int points = Provider.of<BalladefabrikkenProvider>(context,
                           listen: false)
                       .points;
+
                   if (newValue > points) {
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = points;
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = points;
@@ -108,7 +112,13 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = 1;
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = 1;
                   } else {
+                    Provider.of<BalladefabrikkenProvider>(context,
+                            listen: false)
+                        .redemtionCount = newValue.round();
                     Provider.of<BalladefabrikkenProvider>(context,
                             listen: false)
                         .redemtionCount = newValue.round();
@@ -141,7 +151,6 @@ class _ShotAccumulationScreenState extends State<ShotAccumulationScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(kMainPadding),
                   child: Text(
-                    // AppLocalizations.of(context)!.redeem
                     '${S.of(context).redeem} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount < 10 ? '${Provider.of<BalladefabrikkenProvider>(context).redemtionCount} ${Provider.of<BalladefabrikkenProvider>(context).redemtionCount == 1 ? S.of(context).shot : S.of(context).shots}' : '1 ${S.of(context).bottle}'}',
                     style: kTextStyleH2,
                   ),

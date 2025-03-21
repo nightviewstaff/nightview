@@ -266,7 +266,7 @@ class _BalladefabrikkenMainScreenState
                         style: kTextStyleH2,
                         children: [
                           TextSpan(
-                            text: 'NightView',
+                            text: ' NightView',
                             style: kTextStyleH2.copyWith(
                               color: primaryColor,
                             ),
@@ -289,7 +289,7 @@ class _BalladefabrikkenMainScreenState
                           padding: EdgeInsets.all(kMainPadding),
                           child: Text.rich(
                             TextSpan(
-                              text: "${S.of(context).you_have_earned} ",
+                              text: S.of(context).you_have_earned,
                               style: kTextStyleH3,
                               children: [
                                 TextSpan(
@@ -301,7 +301,7 @@ class _BalladefabrikkenMainScreenState
                                   ),
                                 ),
                                 TextSpan(
-                                  text: ' ${S.of(context).points}',
+                                  text: S.of(context).points,
                                   style: kTextStyleH3,
                                 ),
                               ],
