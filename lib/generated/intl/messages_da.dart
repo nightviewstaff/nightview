@@ -491,5 +491,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Du har optjent "),
         "you_redeemed": MessageLookupByLibrary.simpleMessage("Du indløste "),
         "favorites_title": MessageLookupByLibrary.simpleMessage("Favoritter"),
+        "friends_in_town_title":
+            MessageLookupByLibrary.simpleMessage('Venner i byen'),
+        "city_right_now_title":
+            MessageLookupByLibrary.simpleMessage('Byen lige nu'),
+        "where_do_you_usually_go_out_title":
+            MessageLookupByLibrary.simpleMessage("Hvor går du ofte i byen?"),
+        "location_copenhagen":
+            MessageLookupByLibrary.simpleMessage("Copenhagen"),
+        "location_aarhus": MessageLookupByLibrary.simpleMessage("Aarhus"),
+        "location_odense": MessageLookupByLibrary.simpleMessage("Odense"),
+        "location_aalborg": MessageLookupByLibrary.simpleMessage("Aalborg"),
+        "location_vejle": MessageLookupByLibrary.simpleMessage("Vejle"),
+        "skip_button": MessageLookupByLibrary.simpleMessage("Spring over"),
+        "save_and_continue_button":
+            MessageLookupByLibrary.simpleMessage("Gem og fortsæt"),
+        "choose_favorite_clubs_title":
+            MessageLookupByLibrary.simpleMessage("Vælg op til 5 favoritsteder"),
+        "max_favorite_clubs_limit": MessageLookupByLibrary.simpleMessage(
+            "Du kan kun vælge op til 5 klubber. Fjern en klub for at vælge en ny."),
       };
 }

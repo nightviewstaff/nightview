@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/login_registration/creation/choose_clubbing_types.dart';
@@ -67,15 +68,15 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          content: const Text(
-            'Du kan kun vælge op til 5 klubber. Fjern en klub for at vælge en ny.',
+          content: Text(
+            S.of(context).max_favorite_clubs_limit,
             style: TextStyle(color: redAccent),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Ok',
+              child: Text(
+                S.of(context).ok,
                 style: TextStyle(color: primaryColor),
               ),
             ),
@@ -147,7 +148,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                 children: [
                   SizedBox(height: 50),
                   Text(
-                    'Vælg op til 5 favoritsteder',
+                    S.of(context).choose_favorite_clubs_title,
                     style: kTextStyleH2,
                     textAlign: TextAlign.center,
                   ),
@@ -161,8 +162,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                           controller: _searchController,
                           onChanged: _filterClubs,
                           decoration: InputDecoration(
-                            hintText:
-                                'Søg efter lokationer, områder, typer sted eller andet',
+                            hintText: S.of(context).search_locations,
                             filled: true,
                             fillColor: Colors.grey.shade800,
                             border: OutlineInputBorder(
@@ -290,7 +290,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                                       ),
                               ),
                               Text(
-                                'Tilføjer du en lokation som favorit, samtykker du til at modtage tilbudsbeskeder',
+                                S.of(context).favorite_club_message,
                                 style: TextStyle(fontSize: 9, color: white),
                               ),
                               Container(
@@ -336,7 +336,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Spring over',
+                            text: S.of(context).skip_button,
                             type: LoginRegistrationButtonType.transparent,
                             textStyle:
                                 kTextStyleH3ToP1.copyWith(color: Colors.white),
@@ -349,7 +349,7 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Gem og fortsæt',
+                            text: S.of(context).save_and_continue_button,
                             type: LoginRegistrationButtonType.transparent,
                             filledColor: primaryColor,
                             onPressed: _selectedClubs.containsValue(true)

@@ -25,6 +25,7 @@
   "no_internet": "No internet connection. Check your network status.",
   "error_occurred": "An error occurred",
   "error": "Error",
+  "google_login_cancelled": "You canceled the Google login.",
   "ok": "OK",
   "contact_information": "Contact Information",
   "phone_number": "Phone Number",
@@ -52,6 +53,7 @@
   "points_since_last": "points since last time. Well done!",
   "points_load_error": "Could not load earned points",
   "share": "Share",
+  "you_have_earned": "You have earned ",
   "points": " points",
   "map": "Map",
   "social": "Social",
@@ -77,10 +79,21 @@
   "redemption_warning": "IMPORTANT:\nShow the staff that you are redeeming shots.\nOtherwise, the redemption is invalid!",
   "free_bottle": "1 free bottle!",
   "free_shots": "free shots",
-  "privacy_policy_open": "Would you like to open the privacy policy in your browser?",
-  "change_picture_confirmation": "Do you want to change your profile picture?",
   "no_current_offer": "has no offers right now",
   "main_offer": "Main Offer",
+  "allow_location_always": "Allow location always",
+  "location_permission_description": "To get the best experience on NightView, the app needs to always have access to your location.",
+  "open_app_settings": "Open app settings",
+  "invalid_os": "INVALID OPERATING SYSTEM",
+  "android_location_instructions": "> Open app settings\n> Permissions\n> Location\n> Allow always",
+  "ios_location_instructions": "> Open app settings\n> Location\n> While using the app",
+  "allow_precise_location": "Allow precise location",
+  "precise_location_description": "To provide the best experience for NightView users, the app needs access to the phone's precise location.",
+  "android_precise_location": "> Open app settings\n> Permissions\n> Location\n> Use precise location",
+  "ios_precise_location": "> Open app settings\n> Location\n> Precise location",
+  "enable_location": "Enable location",
+  "enable_location_description": "To use NightView, you need to enable location services.",
+  "refresh": "Refresh",
   "appStore": "App Store",
   "@appStore": {
     "description": "Label for App Store"
@@ -97,19 +110,6 @@
   "@googlePlayLinkCopied": {
     "description": "Message when Google Play link is copied"
   },
-  "allow_location_always": "Allow location always",
-  "location_permission_description": "To get the best experience on NightView, the app needs to always have access to your location.",
-  "open_app_settings": "Open app settings",
-  "invalid_os": "INVALID OPERATING SYSTEM",
-  "android_location_instructions": "> Open app settings\n> Permissions\n> Location\n> Allow always",
-  "ios_location_instructions": "> Open app settings\n> Location\n> While using the app",
-  "allow_precise_location": "Allow precise location",
-  "precise_location_description": "To provide the best experience for NightView users, the app needs access to the phone's precise location.",
-  "android_precise_location": "> Open app settings\n> Permissions\n> Location\n> Use precise location",
-  "ios_precise_location": "> Open app settings\n> Location\n> Precise location",
-  "enable_location": "Enable location",
-  "enable_location_description": "To use NightView, you need to enable location services.",
-  "refresh": "Refresh",
   "allow_location_while_using": "Allow location while using the app",
   "location_while_using_description": "To get the best experience on NightView, the app needs access to your location while you are using the app (this also applies when the app is open in the background).",
   "android_location_while_using": "> Open app settings\n> Permissions\n> Location\n> Allow only while the app is in use",
@@ -137,6 +137,7 @@
   "profile": "Profile",
   "change_status": "Change status",
   "privacy_policy": "Privacy Policy",
+  "privacy_policy_open": "Would you like to open the privacy policy in your browser?",
   "delete_user": "Delete user",
   "delete_confirmation": "Are you sure you want to delete your user? All data associated with your user will be removed.",
   "no": "No",
@@ -144,22 +145,22 @@
   "delete_user_error_description": "An error occurred while deleting your user. Please try again later. If you experience issues with your user in the future, you can email business@night-view.dk.",
   "yes": "Yes",
   "logout": "Log out",
+  "logout_confirmation": "Are you sure you want to log out?",
   "bio": "Bio",
+  "no_bio": "This user has not provided a biography.",
+  "remove_friend_confirmation": "Are you sure you want to remove this friend?",
   "write_here": "Write here",
   "profile_picture_updated": "Profile picture updated",
   "profile_picture_load_error": "An error occurred while loading profile picture",
   "profile_picture_change_error": "An error occurred while changing profile picture",
   "change_picture": "Change picture",
+  "change_picture_confirmation": "Do you want to change your profile picture?",
   "bio_updated": "Bio updated",
   "bio_update_error": "An error occurred while updating bio",
   "save": "Save",
   "friends": "Friends",
-  "logout_confirmation": "Are you sure you want to log out?",
   "remove_friend": "Remove friend",
-  "remove_friend_confirmation": "Are you sure you want to remove this friend?",
   "add_friend": "Add friend",
-  "login_error_occurred": "Der skete en fejl, da vi forsøgte at logge dig ind automatisk. Måske har du ændret din kode siden sidst.",
-  "no_bio": "This user has not provided a biography.",
   "recent_location_error": "Could not find recent location",
   "location_sharing_disabled": "This person is not sharing their location",
   "location": "Location",
@@ -170,6 +171,7 @@
   "swipe": "Swipe!",
   "login_error": "Error logging in",
   "automatic_login_error": "An error occurred while trying to log you in automatically. You may have changed your password since last time.",
+  "login_error_occurred": "An error occurred while we were trying to log you in automatically. You may have changed your password since last time.",
   "ready_for_the_city": "Ready for the city?",
   "ready_to_conquer_dancefloor": "Are you ready to conquer the dance floor tonight?",
   "plans_for_adventure": "Do you have plans to go on an adventure in the city tonight?",
@@ -195,7 +197,7 @@
   "create_party_vibe": "Shall we go out and create a party vibe tonight?",
   "make_night_special": "Are you ready to make the night something special?",
   "live_life_to_fullest": "Will it be one of those nights where we live life to the fullest?",
-  "party_like_never_before": "Shall we go out and party like never before tonight?",
+  "party_like_never_before": "Shall wego out and party like never before tonight?",
   "take_nightlife_by_storm": "Are you ready to take the nightlife by storm with us?",
   "dancefloor_as_stage": "Are you ready to make the dance floor your stage tonight?",
   "light_up_city": "Shall we go out and light up the city tonight?",
@@ -231,17 +233,34 @@
   "open_until": "Open until",
   "today": " today.",
   "open": "Open",
+  "open_one_more_hour": "open {hours} more hour",
+  "@open_one_more_hour": {
+    "description": "Message indicating the location is open for one more hour",
+    "placeholders": {
+      "hours": {}
+    }
+  },
+  "open_more_hours": "open {hours} more hours",
+  "@open_more_hours": {
+    "description": "Message indicating the location is open for multiple more hours",
+    "placeholders": {
+      "hours": {}
+    }
+  },
   "yet": "yet.",
   "minute": "minute",
   "minutes": "minutes",
   "nowhere": "nowhere",
-  "select_image": "Select Image",
-  "select_language": "Select Language",
   "add_favorite": "Add favorite",
   "favorite_club_message": "By adding a club as a favorite, you allow this club/bar to send you messages about their offers.",
   "undo": "Undo",
+  "select_image": "Select Image",
+  "select_language": "Select Language",
   "continues": "Continue",
   "back": "Back",
+  "remove_favorite": "Remove favorite",
+  "remove_favorite_confirmation": "Are you sure you want to remove this club from your favorites?",
+  "remove": "Remove",
   "short_monday": "Mon",
   "short_tuesday": "Tue",
   "short_wednesday": "Wed",
@@ -249,10 +268,6 @@
   "short_friday": "Fri",
   "short_saturday": "Sat",
   "short_sunday": "Sun",
-  "remove_favorite": "Remove favorite",
-  "remove_favorite_confirmation": "Are you sure you want to remove this club from your favorites?",
-  "remove": "Remove",
-  "google_login_cancelled": "You canceled the Google login.",
   "confirm_rating": "Confirm rating",
   "give_rating": "Would you like to give",
   "rating": "a rating of",
@@ -265,11 +280,16 @@
   "calculating": "Calculating...",
   "fetching_nearby_locations": "Fetching locations near you",
   "fetching_remaining_locations": "Fetching remaining locations in the background ({count})",
+  "@fetching_remaining_locations": {
+    "description": "Message shown while fetching remaining locations in the background",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "not_today": "Not today",
   "i_am_fresh": "I am fresh!",
   "hour": "hour",
   "hours": "hours",
-
   "favorites_title": "Favorites",
   "@favorites_title": {
     "description": "Title for the favorites section in the side sheet"
@@ -290,7 +310,6 @@
   "@no_favorite_clubs_yet": {
     "description": "Message shown when there are no favorite clubs"
   },
-
   "friends_in_town_title": "Friends in town",
   "@friends_in_town_title": {
     "description": "Title for the friends in town section in the side sheet"
@@ -311,7 +330,7 @@
   "@no_friends_in_town": {
     "description": "Message shown when there are no friends in town"
   },
-"city_right_now_title": "City right now",
+  "city_right_now_title": "City right now",
   "@city_right_now_title": {
     "description": "Title for the city right now section in the side sheet"
   },
@@ -326,7 +345,6 @@
       "count": {}
     }
   },
-  {
   "where_do_you_usually_go_out_title": "Where do you usually go out?",
   "@where_do_you_usually_go_out_title": {
     "description": "Title for the screen where users select their usual clubbing locations"
@@ -360,6 +378,3 @@
     "description": "Text for the save and continue button on the clubbing location selection screen"
   }
 }
-
-
-  }

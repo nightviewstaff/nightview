@@ -112,15 +112,33 @@ class SideSheetMainScreenSection extends StatelessWidget {
                   Color friendsOutColor =
                       moreThanHalfOut ? primaryColor : redAccent;
 
-                  return Text(
-                    S.of(context).friends_out_count(
-                          friendsOutCount.toString(),
-                          totalFriends.toString(),
+                  return Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '$friendsOutCount',
+                          style: TextStyle(
+                            color: friendsOutColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                    style: TextStyle(
-                      color: friendsOutColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                        TextSpan(
+                          text: '/',
+                          style: TextStyle(
+                            color: white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '$totalFriends',
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },

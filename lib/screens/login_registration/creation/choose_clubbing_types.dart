@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:nightview/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
@@ -114,7 +115,7 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                 children: [
                   SizedBox(height: 50),
                   Text(
-                    'Hvor tager du oftest hen?',
+                    S.of(context).where_do_you_usually_go_out_title,
                     style: kTextStyleH2,
                     textAlign: TextAlign.center,
                   ),
@@ -157,7 +158,7 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Spring over',
+                            text: S.of(context).skip_button,
                             type: LoginRegistrationButtonType.transparent,
                             textStyle: kTextStyleH3ToP1.copyWith(color: white),
                             onPressed: () {
@@ -171,7 +172,7 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                           child: LoginRegistrationButton(
                             height: 45,
                             borderRadius: 15,
-                            text: 'Gem og fortsæt',
+                            text: S.of(context).save_and_continue_button,
                             type: LoginRegistrationButtonType.transparent,
                             filledColor: primaryColor,
                             onPressed: () {

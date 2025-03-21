@@ -540,7 +540,7 @@ class S {
   /// `Favorite club message`
   String get favorite_club_message {
     return Intl.message(
-        'By adding a club as a favorite, you allow this club/bar to send you messages about their offers.',
+        'Adding a club as a favorite, you allow this location to send you messages about their offers.',
         name: 'favorite_club_message',
         desc: '',
         args: []);
@@ -1839,6 +1839,25 @@ class S {
       name: 'visitors_count',
       desc: 'Shows the number of guests in a club',
       args: [count],
+    );
+  }
+
+  String get choose_favorite_clubs_title {
+    return Intl.message(
+      'Choose up to 5 favorite places',
+      name: 'choose_favorite_clubs_title',
+      desc: 'Title for the screen where users select their favorite clubs',
+      args: [],
+    );
+  }
+
+  String get max_favorite_clubs_limit {
+    return Intl.message(
+      'You can only choose up to 5 clubs. Remove a club to select a new one.',
+      name: 'max_favorite_clubs_limit',
+      desc:
+          'Message shown when the user tries to select more than 5 favorite clubs',
+      args: [],
     );
   }
 }
