@@ -53,7 +53,7 @@ class PhoneCountryCode {
     CountryCode.se: '+46',
     CountryCode.ch: '+41',
     CountryCode.ua: '+380',
-    CountryCode.gb: '+44',
+    CountryCode.uk: '+44',
     CountryCode.us: '+1'
   };
 
@@ -103,7 +103,7 @@ class PhoneCountryCode {
     CountryCode.se: 7,
     CountryCode.ch: 9,
     CountryCode.ua: 9,
-    CountryCode.gb: 9,
+    CountryCode.uk: 9,
     CountryCode.us: 10
   };
 

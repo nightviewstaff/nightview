@@ -55,7 +55,7 @@ enum CountryCode {
   se,
   ch,
   ua,
-  gb,
+  uk,
   us
 }
 

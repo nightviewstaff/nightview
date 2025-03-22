@@ -106,6 +106,7 @@ class UserDataHelper {
       });
     } catch (e) {
       print("false0");
+      print(e.toString());
       return false;
     }
     print("true");

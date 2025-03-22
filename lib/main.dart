@@ -126,8 +126,9 @@ class NightViewApp extends StatelessWidget {
                 showUnselectedLabels: false,
               ),
             ),
-            initialRoute: ChooseClubbingLocationScreen.id, //TEST
-            // WaitingForLoginScreen.id,
+            initialRoute:
+                // ChooseClubbingLocationScreen.id, //TEST
+                WaitingForLoginScreen.id,
             // SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),
