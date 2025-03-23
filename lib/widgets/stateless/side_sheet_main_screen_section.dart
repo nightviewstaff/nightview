@@ -193,6 +193,7 @@ class SideSheetMainScreenSection extends StatelessWidget {
                               .setChosenProfile(user);
                           Navigator.of(context)
                               .pushNamed(OtherProfileMainScreen.id);
+                          //TODO add navigation on map. Goto friends location. Popup with info and options.
                           // Add navigation or action if needed, similar to SideSheetMainScreen
                         },
                         child: Padding(
