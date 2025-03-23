@@ -29,34 +29,6 @@ class GlobalProvider extends ChangeNotifier {
         userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
           _partyCount = count;
 
-          // TEST
-          if (DateTime.now().weekday != DateTime.sunday) {
-            if (_partyCount <= 99) {
-              Random random = Random();
-              int baseCount;
-              switch (DateTime.now().weekday) {
-                case DateTime.thursday: // Thursday
-                case DateTime.friday: // Friday
-                case DateTime.saturday: // Saturday
-                  baseCount = 120; // Base count for popular days
-                  _partyCount = baseCount + random.nextInt(321); // 120 to 150
-                  break;
-                case DateTime.wednesday: // Wednesday
-                case DateTime.tuesday: // Tuesday
-                case DateTime.monday: // Monday (assumed low attendance)
-                  baseCount = 60; // Base count for less popular days
-                  _partyCount = baseCount + random.nextInt(21); // 60 to 80
-                  break;
-                default:
-                  // Fallback (should not occur due to weekday check)
-                  _partyCount =
-                      99 + random.nextInt(65); // Original range as fallback
-                  break;
-              }
-            }
-          }
-          // TEST
-
           notifyListeners();
         });
       },

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
@@ -199,6 +201,32 @@ class UserDataHelper {
         count++;
       }
     });
+    // TEST
+    if (DateTime.now().weekday != DateTime.sunday) {
+      if (count <= 99) {
+        Random random = Random();
+        int baseCount;
+        switch (DateTime.now().weekday) {
+          case DateTime.thursday: // Thursday
+          case DateTime.friday: // Friday
+          case DateTime.saturday: // Saturday
+            baseCount = 120; // Base count for popular days
+            count = baseCount + random.nextInt(321); // 120 to 150
+            break;
+          case DateTime.wednesday: // Wednesday
+          case DateTime.tuesday: // Tuesday
+          case DateTime.monday: // Monday (assumed low attendance)
+            baseCount = 60; // Base count for less popular days
+            count = baseCount + random.nextInt(21); // 60 to 80
+            break;
+          default:
+            // Fallback (should not occur due to weekday check)
+            count = 99 + random.nextInt(65); // Original range as fallback
+            break;
+        }
+      }
+    }
+    // TEST
 
     return count;
   }
