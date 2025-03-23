@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
-import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/widgets/stateless/login_registration_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
@@ -28,7 +29,7 @@ class _LocationPermissionAlwaysScreen
     WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<GlobalProvider>(context, listen: false)
+      Provider.of<NightMapProvider>(context, listen: false)
           .locationHelper
           .requestLocationPermission();
 
@@ -55,28 +56,29 @@ class _LocationPermissionAlwaysScreen
   }
 
   Future<void> checkPermission() async {
-    bool hasPermission = await Provider.of<GlobalProvider>(context, listen: false)
-    .locationHelper
-    .requestLocationPermission();
+    bool hasPermission =
+        await Provider.of<NightMapProvider>(context, listen: false)
+            .locationHelper
+            .requestLocationPermission();
 
-    if(hasPermission){
-      Navigator.of(context).pushReplacementNamed(LocationPermissionCheckerScreen.id);
+    if (hasPermission) {
+      Navigator.of(context)
+          .pushReplacementNamed(LocationPermissionCheckerScreen.id);
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     return LoginRegistrationLayout(
       title: Text(
-        'Tillad lokation altid',
+        S.of(context).allow_location_always,
         textAlign: TextAlign.center,
         style: kTextStyleH1,
       ),
       content: Column(
         children: [
           Text(
-            'For at få den bedste oplevelse på NightView, er det nødvendigt at appen altid har adgang til din lokation.',
+            S.of(context).location_permission_description,
             textAlign: TextAlign.center,
             style: kTextStyleP1,
           ),
@@ -95,7 +97,7 @@ class _LocationPermissionAlwaysScreen
             text: buttonText,
             type: LoginRegistrationButtonType.filled,
             onPressed: () {
-              Provider.of<GlobalProvider>(context, listen: false)
+              Provider.of<NightMapProvider>(context, listen: false)
                   .locationHelper
                   .openAppSettings();
             },
@@ -116,27 +118,27 @@ class _LocationPermissionAlwaysScreen
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return 'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
     if (Platform.isIOS) {
-      return 'Åbn app-indstillinger';
+      return S.of(context).open_app_settings;
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 
   String get guideText {
     // KAN KUN VÆRE ANDROID
 
     if (Platform.isAndroid) {
-      return '> Åbn app-indstillinger\n> Tilladelser\n> Lokation\n> Tillad altid';
+      return S.of(context).android_location_instructions;
     }
 
     if (Platform.isIOS) {
-      return '> Åbn app-indstillinger\n> Lokalitet\n> Ved brug af appen';
+      return S.of(context).ios_location_instructions;
     }
 
-    return 'IKKE GYLDIGT STYRESYSTEM';
+    return S.of(context).invalid_os;
   }
 }

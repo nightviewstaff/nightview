@@ -1,14 +1,14 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image/image.dart' as img;
-
-import '../../../constants/colors.dart';
+import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 
 class ProfilePictureHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -42,7 +42,7 @@ class ProfilePictureHelper {
 // Removed cropStyle. Is it needed?
       uiSettings: [
         AndroidUiSettings(
-          toolbarTitle: 'Vælg billede',
+          toolbarTitle: S.of(ourNavigatorKey.currentContext!).select_image,
           toolbarColor: black,
           toolbarWidgetColor: white,
           hideBottomControls: true,
@@ -50,9 +50,9 @@ class ProfilePictureHelper {
           lockAspectRatio: true,
         ),
         IOSUiSettings(
-          title: 'Vælg billede',
-          doneButtonTitle: 'Fortsæt',
-          cancelButtonTitle: 'Tilbage',
+          title: S.of(ourNavigatorKey.currentContext!).select_image,
+          doneButtonTitle: S.of(ourNavigatorKey.currentContext!).continues,
+          cancelButtonTitle: S.of(ourNavigatorKey.currentContext!).back,
           aspectRatioPickerButtonHidden: true,
           resetButtonHidden: true,
           rotateButtonsHidden: true,
@@ -67,7 +67,7 @@ class ProfilePictureHelper {
   static Future<File?> _compressImage(File original) async {
     XFile? compressed = await FlutterImageCompress.compressAndGetFile(
       original.absolute.path,
-      original.absolute.path + "_compressed.jpg",
+      "${original.absolute.path}_compressed.jpg",
       quality: 88, // 0-100, lower value means higher compression
       format: CompressFormat.jpeg,
     );
@@ -111,6 +111,7 @@ class ProfilePictureHelper {
   }
 
   static Future<String?> getProfilePicture(String userId) async {
+    const defaultImage = AssetImage('images/user_pb.jpg');
     try {
       Reference ref = FirebaseStorage.instance.ref('pb/$userId.jpg');
       String downloadURL = await ref.getDownloadURL();
@@ -120,4 +121,18 @@ class ProfilePictureHelper {
       return null;
     }
   }
+
+// static Future<String> getProfilePicture(String userId) async {
+//   if (_profilePictureCache.containsKey(userId)) {
+//     return _profilePictureCache[userId]!;
+//   }
+//   // Fetch from Firestore or Storage
+//   String url = await FirebaseFirestore.instance
+//       .collection('user_data')
+//       .doc(userId)
+//       .get()
+//       .then((doc) => doc.get('profile_picture') as String? ?? '');
+//   _profilePictureCache[userId] = url;
+//   return url;
+// }
 }

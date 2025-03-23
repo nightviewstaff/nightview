@@ -12,14 +12,14 @@ class CachedImageWidget extends StatelessWidget {
   final Widget Function(BuildContext, Object)? errorWidget;
 
   const CachedImageWidget({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.width = 100,
     this.height = 100,
     this.fit = BoxFit.cover,
     this.placeholder,
     this.errorWidget,
-  }) : super(key: key);
+  });
 
   Future<String> _getCachedImage(String url) async {
     final file = await DefaultCacheManager().getSingleFile(url);

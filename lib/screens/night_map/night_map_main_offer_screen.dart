@@ -7,6 +7,7 @@ import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,9 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       String? currentUserId;
       do {
-        currentUserId = Provider.of<GlobalProvider>(context, listen: false).userDataHelper.currentUserId;
+        currentUserId = Provider.of<GlobalProvider>(context, listen: false)
+            .userDataHelper
+            .currentUserId;
         await Future.delayed(Duration(milliseconds: 100));
       } while (currentUserId == null);
       String clubId =
@@ -54,7 +57,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
   Widget getBottomContent() {
     switch (canRedeem) {
       case MainOfferRedemptionPermisson.pending:
-        return Container(
+        return SizedBox(
           height: kBottomSpacerValue + kSliderHeight,
           child: SpinKitPouringHourGlass(
             color: primaryColor,
@@ -64,7 +67,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         );
 
       case MainOfferRedemptionPermisson.granted:
-        return Container(
+        return SizedBox(
           height: kBottomSpacerValue + kSliderHeight,
           child: Column(
             children: [
@@ -104,6 +107,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
                   succes ? await showSuccesDialog() : await showErrorDialog();
 
                   Navigator.of(context).pop();
+                  return null;
                 },
                 label: Text(
                   '            Indløs',
@@ -129,7 +133,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
         );
 
       case MainOfferRedemptionPermisson.denied:
-        return Container(
+        return SizedBox(
           height: kSliderHeight + kBottomSpacerValue,
           child: Text(
             'Du har allerede indløst dette tilbud i dag.\nKom igen i morgen!',
@@ -161,7 +165,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              S.of(context).ok,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -176,12 +180,11 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(
-          'Indløsning mislykkedes',
+          S.of(context).redemption_failed,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
-          child: Text(
-              'Der skete en fejl ved indløsning af hovedtilbuddet.\nPrøv igen senere.'),
+          child: Text(S.of(context).main_offer_redemption_error),
         ),
         actions: [
           TextButton(
@@ -189,7 +192,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'OK',
+              S.of(context).ok,
               style: TextStyle(color: redAccent),
             ),
           ),
@@ -203,7 +206,7 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(kCardPadding),
+        padding: EdgeInsets.all(kBiggerPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -212,9 +215,10 @@ class _NightMapMainOfferScreenState extends State<NightMapMainOfferScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(Provider.of<GlobalProvider>(context)
-                        .chosenClub
-                        .mainOfferImg!),
+                    image: CachedNetworkImageProvider(
+                        Provider.of<GlobalProvider>(context)
+                            .chosenClub
+                            .mainOfferImg!),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.all(

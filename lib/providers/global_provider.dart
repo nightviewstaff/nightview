@@ -4,19 +4,15 @@ import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
-import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
-import 'package:nightview/models/users/location_data.dart';
-import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/helpers/misc/main_offer_redemptions_helper.dart';
 import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/helpers/misc/share_code_helper.dart';
@@ -24,68 +20,34 @@ import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 
 class GlobalProvider extends ChangeNotifier {
+  Future<List<UserData>>? _friendsFuture;
   GlobalProvider() {
-    clubDataHelper = ClubDataHelper(
-      onReceive: (data) {
-        clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-        notifyListeners();
-      },
-    );
     userDataHelper = UserDataHelper(
       onReceive: (data) {
-        userDataHelper
-            .evaluatePartyCount(
-          userData: data ?? {},
-        )
-            .then((count) {
+        // Extract isAdmin from the received data
+        _isAdmin = data?['isAdmin'] as bool? ?? false;
+        userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
           _partyCount = count;
-          if (DateTime.now().weekday != DateTime.sunday) {
-            if (_partyCount <= 130) {
-              Random random = Random();
-              _partyCount = 131 + random.nextInt(65);
-            }
-          }
-          // _partyCount = 1633; // TEST
+
           notifyListeners();
         });
       },
     );
-    locationHelper = LocationHelper(
-      onPositionUpdate: (location) async {
-        if (userDataHelper.isLoggedIn() && location != null) {
-          clubDataHelper.clubData.forEach((clubId, clubData) {
-            if (locationHelper.locationInClub(
-                location: location, clubData: clubData)) {
-              locationHelper.uploadLocationData(
-                LocationData(
-                  userId: userDataHelper.currentUserId!,
-                  clubId: clubId,
-                  private: false,
-                  timestamp: Timestamp.now(),
-                ),
-              );
-              return;
-            }
-          });
-        }
-        if (backgroundLocationEnabled) {
-          await clubDataHelper.evaluateVisitors(locationHelper: locationHelper);
-          notifyListeners();
-        }
+
+    clubDataHelper = ClubDataHelper(
+      onReceive: (data) {
+        clubDataHelper.evaluateVisitors();
+        notifyListeners();
       },
     );
   }
 
-  late ClubDataHelper clubDataHelper;
+  ClubDataHelper clubDataHelper = ClubDataHelper();
   late UserDataHelper userDataHelper;
-  late LocationHelper locationHelper;
-  // late LocationService locationService;
-
+  // late LocationHelper locationHelper;
   MainOfferRedemptionsHelper mainOfferRedemptionsHelper =
       MainOfferRedemptionsHelper();
   AppinioSwiperController cardController = AppinioSwiperController();
-  MapController nightMapController = MapController();
-
 
   ClubData? _chosenClub;
   bool _chosenClubFavoriteLocal = false;
@@ -102,19 +64,42 @@ class GlobalProvider extends ChangeNotifier {
   String? _chosenChatId;
   ImageProvider _chosenChatPicture = AssetImage('images/user_pb.jpg');
   String _chosenChatTitle = '';
-  List<ImageProvider> _friendPbs = [];
+  final List<ImageProvider> _friendPbs = [];
   LatLng? _userLocation;
 
   // TEST //
   LatLng? get userLocation => _userLocation;
+
   Future<void> fetchUserLocation() async {
     try {
       LocationService.getUserLocation();
-    }catch(e){
+    } catch (e) {
       print(e.toString());
     }
   }
+
   // TEST //
+
+  bool _isAdmin = false; // Cached admin status
+
+  bool get isAdmin => _isAdmin;
+
+  Future<void> refreshAdminStatus() async {
+    final firestore = FirebaseFirestore.instance;
+    String? userId = userDataHelper.currentUserId;
+    if (userId == null) return;
+
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await firestore.collection('user_data').doc(userId).get();
+      if (snapshot.exists) {
+        _isAdmin = snapshot.data()?['isAdmin'] as bool? ?? false;
+        notifyListeners();
+      }
+    } catch (e) {
+      print("Error refreshing admin status: $e");
+    }
+  }
 
   ClubData get chosenClub => _chosenClub!;
 
@@ -148,19 +133,27 @@ class GlobalProvider extends ChangeNotifier {
 
   List<ImageProvider> get friendPbs => _friendPbs;
 
-  bool get chosenClubFavorite {
+  Future<bool> getChosenClubFavorite() async {
     String? userId = userDataHelper.currentUserId;
-    String clubId = chosenClub.id;
-    List<dynamic> favoritesList;
+    if (userId == null || _chosenClub == null) return false;
+
+    String clubId = _chosenClub!.id;
 
     try {
-      favoritesList = clubDataHelper.clubData[clubId]!.favorites;
+      DocumentSnapshot clubDoc = await FirebaseFirestore.instance
+          .collection('club_data')
+          .doc(clubId)
+          .get();
+
+      if (clubDoc.exists) {
+        List<dynamic> favoritesList = clubDoc['favorites'] ?? [];
+        return favoritesList.contains(userId);
+      }
     } catch (e) {
-      print(e);
-      return false;
+      print("Error fetching favorite status: $e");
     }
 
-    return favoritesList.contains(userId);
+    return false;
   }
 
   Color get partyStatusColor {
@@ -270,19 +263,6 @@ class GlobalProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePositionAndEvaluateVisitors(
-      {required double lat, required double lon}) async {
-     //await userDataHelper.setCurrentUsersLastPosition(
-    //   lat: lat,
-    //   lon: lon,
-    // );
-    clubDataHelper.evaluateVisitors(
-      // userData: userDataHelper.userData,
-      locationHelper: locationHelper,
-    );
-  }
-
-
   Future<bool> deleteAllUserData() async {
     String? userIdToDelete = userDataHelper.currentUserId;
 
@@ -293,7 +273,7 @@ class GlobalProvider extends ChangeNotifier {
     try {
       await userDataHelper.deleteDataAssociatedTo(userIdToDelete);
       await clubDataHelper.deleteDataAssociatedTo(userIdToDelete);
-      await locationHelper.deleteDataAssociatedTo(userIdToDelete);
+      // await locationHelper.deleteDataAssociatedTo(userIdToDelete); In provider now
       await mainOfferRedemptionsHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendRequestHelper.deleteDataAssociatedTo(userIdToDelete);
       await FriendsHelper.deleteDataAssociatedTo(userIdToDelete);
@@ -308,5 +288,87 @@ class GlobalProvider extends ChangeNotifier {
       return false;
     }
     return true;
+  }
+
+  Future<List<UserData>> getFriendsData() async {
+    _friendsFuture ??= FriendsHelper.getFriendsData();
+    return (await _friendsFuture!)
+        .where((friend) => friend.partyStatus == PartyStatus.yes)
+        .toList();
+  }
+
+  Future<List<ClubData>> getFavoriteClubs() async {
+    final firestore = FirebaseFirestore.instance;
+    String? currentUserId = userDataHelper.currentUserId;
+    if (currentUserId == null) {
+      return [];
+    }
+
+    try {
+      // Ensure clubData is loaded (call loadInitialClubs if not already done)
+      if (clubDataHelper.clubData.isEmpty) {
+        await clubDataHelper.loadInitialClubs();
+      }
+
+      // Fetch the user's favorite club IDs from Firestore
+      DocumentSnapshot userDoc =
+          await firestore.collection('user_data').doc(currentUserId).get();
+
+      if (!userDoc.exists) return [];
+
+      List<dynamic> favoriteClubIds = userDoc['favorite_clubs'] ?? [];
+      if (favoriteClubIds.isEmpty) return [];
+
+      // Map the club IDs to ClubData objects from ClubDataHelper
+      List<ClubData> favoriteClubs = favoriteClubIds
+          .map((clubEntry) {
+            // Ensure clubEntry is a map and extract clubId
+            if (clubEntry is Map<String, dynamic>) {
+              String clubId = clubEntry['clubId'] as String? ?? '';
+              return clubDataHelper.clubData[clubId];
+            }
+            return null; // Skip invalid entries
+          })
+          .whereType<ClubData>() // Remove null values
+          .toList();
+
+      return favoriteClubs;
+    } catch (e) {
+      print('Error fetching favorite clubs: $e');
+      return [];
+    }
+  }
+
+  Future<List<ClubData>> getSortedClubList() async {
+    List<ClubData> allClubs = clubDataHelper.clubData.values.toList();
+
+    // Get user location
+    LatLng? userLocation = this.userLocation;
+    if (userLocation == null) return allClubs; // If no location, return all
+
+    // Sort clubs
+    allClubs.sort((a, b) {
+      double distanceA = _calculateDistance(userLocation, LatLng(a.lat, a.lon));
+      double distanceB = _calculateDistance(userLocation, LatLng(b.lat, b.lon));
+
+      bool aIsNearby = distanceA <= 1.0;
+      bool bIsNearby = distanceB <= 1.0;
+
+      if (aIsNearby && !bIsNearby) return -1;
+      if (!aIsNearby && bIsNearby) return 1;
+
+      if (a.visitors != b.visitors) {
+        return b.visitors.compareTo(a.visitors); // More visitors first
+      }
+
+      return distanceA.compareTo(distanceB); // Fallback: closer first
+    });
+
+    return allClubs;
+  }
+
+  double _calculateDistance(LatLng start, LatLng end) {
+    final Distance distance = Distance();
+    return distance.as(LengthUnit.Kilometer, start, end);
   }
 }

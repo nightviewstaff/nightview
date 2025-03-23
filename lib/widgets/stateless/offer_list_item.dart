@@ -17,7 +17,7 @@ class OfferListItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(kOfferItemPadding),
+        padding: EdgeInsets.all(kMainPadding),
         child: ListTile(
           leading: image,
           title: Column(
@@ -28,7 +28,7 @@ class OfferListItem extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                '${price} DKK - ved ${place}',
+                '$price DKK - ved $place',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

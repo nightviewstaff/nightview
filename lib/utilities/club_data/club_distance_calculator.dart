@@ -18,6 +18,30 @@ class ClubDistanceCalculator {
     );
   }
 
+  static List<ClubData> sortClubsByDistance({
+    required double userLat,
+    required double userLon,
+    required List<ClubData> clubs,
+  }) {
+    return [...clubs] // Copy list to avoid modifying the original
+      ..sort((a, b) {
+        final distanceA = calculateDistance(
+          lat1: userLat,
+          lon1: userLon,
+          lat2: a.lat,
+          lon2: a.lon,
+        );
+        final distanceB = calculateDistance(
+          lat1: userLat,
+          lon1: userLon,
+          lat2: b.lat,
+          lon2: b.lon,
+        );
+        return distanceA.compareTo(distanceB); // Sort ascending
+      });
+  }
+
+
   static String _formatDistance(double distance) {
     if (distance > 99) {
       // If distance is greater than 99 km, display as "99+"
