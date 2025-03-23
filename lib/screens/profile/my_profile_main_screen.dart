@@ -256,15 +256,33 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: Provider.of<GlobalProvider>(context)
-                                        .partyStatusColor,
-                                    width: 1.5),
+                                  color: Provider.of<GlobalProvider>(context)
+                                      .partyStatusColor,
+                                  width: 1.5,
+                                ),
                               ),
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    Provider.of<GlobalProvider>(context)
-                                        .profilePicture,
-                                radius: 70.0,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        Provider.of<GlobalProvider>(context)
+                                            .profilePicture,
+                                    radius: 70.0,
+                                  ),
+                                  if (Provider.of<GlobalProvider>(context)
+                                          .profilePicture is AssetImage &&
+                                      (Provider.of<GlobalProvider>(context)
+                                                  .profilePicture as AssetImage)
+                                              .assetName ==
+                                          'images/user_pb.jpg')
+                                    Text(
+                                      S.of(context).choose_picture, //TODO
+                                      style:
+                                          kTextStyleP1.copyWith(color: white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                ],
                               ),
                             ),
                           ),

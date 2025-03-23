@@ -92,6 +92,7 @@ class _NightSocialMainScreenState extends State<NightSocialMainScreen> {
                     },
                     icon: FaIcon(
                       FontAwesomeIcons.userPlus,
+                      color: primaryColor,
                     ),
                   ),
                 ],

@@ -10,13 +10,14 @@ import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
+import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
 import 'package:nightview/screens/option_menu/widgets/favorites_section.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
-import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
+
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/widgets/stateless/city_today_section.dart';
 import 'package:nightview/widgets/stateless/language_switcher.dart';
-import 'package:nightview/widgets/stateless/side_sheet_main_screen_section.dart';
+import 'package:nightview/screens/option_menu/widgets/side_sheet_main_screen_section.dart';
 import 'package:provider/provider.dart';
 
 class SideSheetMainScreen extends StatefulWidget {

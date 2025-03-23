@@ -42,6 +42,7 @@ import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
+import 'package:nightview/services/firestore/firestore_updater.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 

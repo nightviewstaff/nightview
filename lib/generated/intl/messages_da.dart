@@ -510,5 +510,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Vælg op til 5 favoritsteder"),
         "max_favorite_clubs_limit": MessageLookupByLibrary.simpleMessage(
             "Du kan kun vælge op til 5 klubber. Fjern en klub for at vælge en ny."),
+        "choose_picture": MessageLookupByLibrary.simpleMessage("Vælg billede"),
       };
 }

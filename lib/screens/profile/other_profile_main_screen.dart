@@ -64,13 +64,22 @@ class _OtherProfileMainScreenState extends State<OtherProfileMainScreen> {
             ?.name;
         if (clubName == null) {
           lastLocationText = '';
+        }
+        final now = DateTime.now();
+        final sixMonthsAgo =
+            now.subtract(const Duration(days: 182)); // Approx. 6 months
+        final isOlderThanSixMonths =
+            locationData.timestampAsDateTime.isBefore(sixMonthsAgo);
+
+        if (isOlderThanSixMonths) {
+          lastLocationText = '';
         } else {
           lastLocationText =
               '$clubName\nTidspunkt: ${locationData.readableTimestamp}';
         }
-      }
 
-      setState(() {});
+        setState(() {});
+      }
     });
   }
 
