@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,8 @@ class FavoriteClubButton extends StatefulWidget {
 }
 
 class _FavoriteClubButtonState extends State<FavoriteClubButton> {
+  int defaultClubAmount = 5;
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +44,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Der skete en fejl',
+                S.of(context).generic_error,
                 style: TextStyle(color: redAccent),
               ),
               backgroundColor: black,
@@ -58,10 +62,34 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
             provider.setChosenClubFavoriteLocal(false);
           }
         } else {
+          // Check the user's favorite count before adding
+          DocumentSnapshot<Map<String, dynamic>> userDoc =
+              await FirebaseFirestore.instance
+                  .collection('user_data')
+                  .doc(userId)
+                  .get();
+          List<Map<String, dynamic>> favoriteClubs =
+              List<Map<String, dynamic>>.from(userDoc['favorite_clubs'] ?? []);
+
+          // Check if user is admin (admins may bypass the limit)
+          bool isAdmin = false;
+          try {
+            isAdmin = userDoc.get('is_admin') as bool? ?? false;
+          } catch (e) {
+            print('Error accessing is_admin: $e');
+            isAdmin = false; // Treat missing field as false
+          }
+          if (!isAdmin && favoriteClubs.length >= defaultClubAmount) {
+            // Show error dialog if limit reached
+            await _showLimitReachedDialog(context);
+            return;
+          }
+
           // Add favorite club
           bool doFavorite = await _showConfirmationDialog(context);
           if (doFavorite) {
-            provider.clubDataHelper.setFavoriteClub(clubId, userId);
+            provider.clubDataHelper
+                .setFavoriteClub(clubId, userId); // Removed context parameter
             provider.setChosenClubFavoriteLocal(true);
           }
         }
@@ -75,19 +103,48 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
     );
   }
 
+  Future<void> _showLimitReachedDialog(BuildContext context) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'For mange favoritter!',
+          style: TextStyle(color: redAccent),
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            'Du kan højest have 5 favoritlokationer på samme tid.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Okay',
+              style: TextStyle(color: grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<bool> _showConfirmationDialog(BuildContext context) async {
     bool doFavorite = true;
     await showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => AlertDialog(
         title: Text(
-          'Tilføj favorit',
+          S.of(context).add_favorite,
           style: TextStyle(color: primaryColor),
         ),
         content: SingleChildScrollView(
           child: Text(
-            'Ved at tilføje en klub som favorit giver du lov til at denne klub/bar sender dig beskeder om deres tilbud.',
+            S.of(context).favorite_club_message,
           ),
         ),
         actions: [
@@ -97,7 +154,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fortryd',
+              S.of(context).undo,
               style: TextStyle(color: Colors.redAccent),
             ),
           ),
@@ -106,7 +163,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fortsæt',
+              S.of(context).continues,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -120,15 +177,15 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
     bool doRemove = false;
     await showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) => AlertDialog(
         title: Text(
-          'Fjern favorit',
+          S.of(context).remove_favorite,
           style: TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
           child: Text(
-            'Er du sikker på, at du vil fjerne denne klub fra dine favoritter?',
+            S.of(context).remove_favorite_confirmation,
           ),
         ),
         actions: [
@@ -138,7 +195,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fortryd',
+              S.of(context).undo,
               style: TextStyle(color: primaryColor),
             ),
           ),
@@ -148,7 +205,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
               Navigator.of(context).pop();
             },
             child: Text(
-              'Fjern',
+              S.of(context).remove,
               style: TextStyle(color: Colors.redAccent),
             ),
           ),

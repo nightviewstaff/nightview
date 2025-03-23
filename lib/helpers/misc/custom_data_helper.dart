@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 
 class CustomDataHelper {
-  static Future<List<String>?> getBalladeFabrikkenCertified() async { // Never finished.
+  static Future<List<String>?> getBalladeFabrikkenCertified() async {
+    // Never finished.
     final firestore = FirebaseFirestore.instance;
 
     try {
@@ -11,7 +15,9 @@ class CustomDataHelper {
           .get();
       return List<String>.from(snap.get('clubs'));
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
@@ -22,7 +28,7 @@ class CustomDataHelper {
     if (clubs == null) {
       return null;
     } else if (clubs.isEmpty) {
-      return 'Ingen steder';
+      return S.of(ourNavigatorKey.currentContext!).open_until;
     } else if (clubs.length == 1) {
       return clubs.first;
     } else {

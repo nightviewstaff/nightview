@@ -4,6 +4,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/users/chats/chat_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
@@ -28,10 +29,11 @@ class _NewChatScreenState extends State<NewChatScreen> {
       List<String> friendIds = await FriendsHelper.getAllFriendIds();
       List<UserData> friends = friendIds
           .map((id) => Provider.of<GlobalProvider>(context, listen: false)
-          .userDataHelper
-          .userData[id]!)
+              .userDataHelper
+              .userData[id]!)
           .toList();
-      Provider.of<SearchNewChatHelper>(context, listen: false).setFriends(friends);
+      Provider.of<SearchNewChatHelper>(context, listen: false)
+          .setFriends(friends);
     });
     super.initState();
   }
@@ -55,7 +57,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
               padding: EdgeInsets.all(kBigPadding),
               width: double.maxFinite,
               child: Text(
-                'Ny chat',
+                S.of(context).new_chat,
                 style: kTextStyleH1,
               ),
             ),
@@ -75,12 +77,13 @@ class _NewChatScreenState extends State<NewChatScreen> {
                   Expanded(
                     child: TextField(
                       decoration: kSearchInputDecoration.copyWith(
-                        hintText: 'Hvem vil du chatte med?',
+                        hintText: S.of(context).chat_prompt,
                       ),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
                       onChanged: (String input) {
-                        Provider.of<SearchNewChatHelper>(context, listen: false).updateSearch(input);
+                        Provider.of<SearchNewChatHelper>(context, listen: false)
+                            .updateSearch(input);
                       },
                     ),
                   ),
@@ -90,18 +93,20 @@ class _NewChatScreenState extends State<NewChatScreen> {
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) {
-                  UserData user = Provider.of<SearchNewChatHelper>(context, listen: false).filteredFriends[index];
+                  UserData user =
+                      Provider.of<SearchNewChatHelper>(context, listen: false)
+                          .filteredFriends[index];
 
                   return ListTile(
                     onTap: () async {
-
-                      String? newChatId = await ChatHelper.createNewChat(user.id);
+                      String? newChatId =
+                          await ChatHelper.createNewChat(user.id);
 
                       if (newChatId == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Kunne ikke oprette ny chat',
+                              S.of(context).chat_creation_error,
                               style: TextStyle(color: white),
                             ),
                             backgroundColor: black,
@@ -109,12 +114,13 @@ class _NewChatScreenState extends State<NewChatScreen> {
                         );
                         return;
                       }
-                      Provider.of<GlobalProvider>(context, listen: false).setChosenChatId(newChatId);
-                      Navigator.of(context).pushReplacementNamed(NightSocialConversationScreen.id);
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .setChosenChatId(newChatId);
+                      Navigator.of(context).pushReplacementNamed(
+                          NightSocialConversationScreen.id);
                     },
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(kMainBorderRadius),
+                      borderRadius: BorderRadius.circular(kMainBorderRadius),
                       side: BorderSide(
                         width: kMainStrokeWidth,
                         color: white,
@@ -132,7 +138,9 @@ class _NewChatScreenState extends State<NewChatScreen> {
                 separatorBuilder: (context, index) => SizedBox(
                   height: kSmallSpacerValue,
                 ),
-                itemCount: Provider.of<SearchNewChatHelper>(context).filteredFriends.length,
+                itemCount: Provider.of<SearchNewChatHelper>(context)
+                    .filteredFriends
+                    .length,
               ),
             ),
           ],

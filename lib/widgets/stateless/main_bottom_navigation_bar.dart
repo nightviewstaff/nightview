@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/utilities/messages/custom_modal_message.dart';
-import 'package:nightview/widgets/icons/loading_indicator_with_tick.dart';
+import 'package:nightview/screens/admin_screen.dart';
 import 'package:provider/provider.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
@@ -12,9 +13,8 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clubDataHelper = Provider
-        .of<NightMapProvider>(context, listen: false)
-        .clubDataHelper;
+    final clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
 
     return Stack(
       alignment: Alignment.center,
@@ -22,24 +22,22 @@ class MainBottomNavigationBar extends StatelessWidget {
         BottomNavigationBar(
           selectedItemColor: primaryColor,
           unselectedItemColor: secondaryColor,
-          currentIndex: Provider
-              .of<MainNavigationProvider>(context)
-              .currentScreenIndex,
+          currentIndex:
+              Provider.of<MainNavigationProvider>(context).currentScreenIndex,
           items: [
             BottomNavigationBarItem(
               icon: Stack(
                 alignment: Alignment.topRight,
                 children: [
                   const Icon(Icons.pin_drop), // Base icon
-
                 ],
               ),
               // TODO civilized colors at some point?
-              label: 'MAP',
+              label: S.of(context).map,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt),
-              label: 'SOCIAL',
+              label: S.of(context).social,
             ),
           ],
           onTap: (index) {
@@ -58,6 +56,37 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
+        Consumer<GlobalProvider>(
+          builder: (context, provider, child) {
+            // TODO
+            bool isAdmin = provider.isAdmin;
+            return isAdmin
+                ? Positioned(
+                    bottom: 20.0, // Adjust to position above the nav bar
+                    child: GestureDetector(
+                      onTap: () {
+                        print('Admin icon tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AdminScreen()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: const Icon(
+                          Icons.shield, // Admin icon
+                          color: nightviewOrange,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox(); // Hide if not admin
+          },
+        ),
+
+        /* TODO not working as intended. Not needed for now.
         ValueListenableBuilder<int>(
           valueListenable: clubDataHelper.remainingNearbyClubsNotifier,
           builder: (context, remainingNearby, child) {
@@ -105,8 +134,7 @@ class MainBottomNavigationBar extends StatelessWidget {
                 builder: (context, remainingClubs, child) {
                   if (remainingClubs > 0) {
                     return LoadingIndicatorWithTick(
-                      remainingItemsNotifier: clubDataHelper
-                          .remainingClubsNotifier,
+                      remainingItemsNotifier: clubDataHelper.remainingClubsNotifier,
                       messageOnTap: "Henter resterende lokationer i baggrunden ({count})",
                     );
                   }
@@ -116,7 +144,7 @@ class MainBottomNavigationBar extends StatelessWidget {
             }
           },
         ),
-
+        */
       ],
     );
   }

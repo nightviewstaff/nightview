@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class MainOfferRedemptionsHelper {
   final _firestore = FirebaseFirestore.instance;
@@ -16,7 +17,9 @@ class MainOfferRedemptionsHelper {
 
       return document.get('timestamp').toDate();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return DateTime(2000);
     }
   }

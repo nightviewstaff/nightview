@@ -1,13 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:nightview/constants/colors.dart';
-import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
@@ -16,7 +18,6 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
-import 'package:nightview/screens/night_map/search_bar_TODO/custom_search_bar.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_data_location_formatting.dart';
@@ -26,7 +27,6 @@ import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/widgets/icons/bar_type_toggle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../utilities/club_data/club_name_formatter.dart';
 
@@ -53,10 +53,10 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
   @override
   void initState() {
     super.initState();
-    clubDataHelper = Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    clubDataHelper =
+        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
     _searchController = SearchController();
   }
-
 
   @override
   void dispose() {
@@ -118,10 +118,12 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //TOP part
+                    //TODO MAKE LOGIC THAT makes "byen" interactable. It should start out in the bigest city
                     Text(
-                      'Brugere i byen nu',
+                      S.of(context).current_users,
                       style: kTextStyleH3,
                     ),
+                    // ActiveUsersWidget(),
                     Row(
                       children: [
                         Consumer<GlobalProvider>(
@@ -249,8 +251,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           // Toggle the state.
                                           _toggleNotifier.value =
                                               !_toggleNotifier.value;
-                                         _searchController.text = " "; //TODO Best way to refresh for now.
-                                         _searchController.text = "";
+                                          _searchController.text =
+                                              " "; //TODO Best way to refresh for now.
+                                          _searchController.text = "";
                                         },
                                       );
                                     },
@@ -275,16 +278,15 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                     controller: controller,
                                     leading: Icon(Icons.search_sharp,
                                         color: primaryColor),
-                                    hintText:
-                                        "Søg efter lokationer, områder eller andet",
+                                    hintText: S.of(context).search_locations,
                                     hintStyle:
-                                        MaterialStateProperty.all(kTextStyleP2),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        grey.shade800),
-                                    shadowColor: MaterialStateProperty.all(
-                                        secondaryColor),
-                                    elevation: MaterialStateProperty.all(4),
-                                    shape: MaterialStateProperty.all(
+                                        WidgetStateProperty.all(kTextStyleP2),
+                                    backgroundColor:
+                                        WidgetStateProperty.all(grey.shade800),
+                                    shadowColor:
+                                        WidgetStateProperty.all(secondaryColor),
+                                    elevation: WidgetStateProperty.all(4),
+                                    shape: WidgetStateProperty.all(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(50),
                                       ),
@@ -318,8 +320,9 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                                       WidgetsBinding.instance
                                           .addPostFrameCallback((_) {
-                                        if (!mounted)
+                                        if (!mounted) {
                                           return; // Only update if the widget is still in the tree.
+                                        }
                                         controller.clear();
                                         FocusManager.instance.primaryFocus
                                             ?.unfocus();
@@ -449,7 +452,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(16.0),
                                           child: Text(
-                                            "Ingen lokationer fundet",
+                                            S.of(context).no_locations_found,
                                             style: TextStyle(
                                                 color: redAccent, fontSize: 14),
                                           ),
@@ -494,23 +497,41 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
                                     return ListTile(
                                       leading: Container(
+                                        width: kNormalSizeRadius * 2,
+                                        height: kNormalSizeRadius * 2,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          // Ensure the outline is circular
                                           border: Border.all(
                                             color: ClubOpeningHoursFormatter
-                                                    .isClubOpen(club) //TODO secondaryColor if opening soon.
+                                                    .isClubOpen(club)
                                                 ? primaryColor
                                                 : redAccent,
-                                            width: 3.0, // Outline thickness
+                                            width: 3.0,
                                           ),
                                         ),
-                                        child: CircleAvatar(
-                                          backgroundImage:
-                                              CachedNetworkImageProvider(
-                                                  club.logo),
-                                          radius:
-                                              kNormalSizeRadius, // Same radius as before
+                                        child: ClipOval(
+                                          child: CachedNetworkImage(
+                                            imageUrl: club.logo,
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    CachedNetworkImage(
+                                              imageUrl: club.typeOfClubImg,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                            fit: BoxFit.cover,
+                                            cacheManager: CacheManager(Config(
+                                              "customCacheKey",
+                                              stalePeriod:
+                                                  const Duration(days: 7),
+                                              maxNrOfCacheObjects: 100,
+                                            )), // Optional: Force cache refresh
+                                          ),
                                         ),
                                       ),
                                       title: Column(
@@ -667,7 +688,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           CircularProgressIndicator(color: secondaryColor),
           const SizedBox(height: 16),
           Text(
-            'Henter lokationer',
+            S.of(context).fetching_locations,
             style: kTextStyleP1.copyWith(color: primaryColor),
           ),
         ],
@@ -746,7 +767,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
 
       return ListTile(
         leading: Container(
-          width: kNormalSizeRadius * 2, // Ensure proper size
+          width: kNormalSizeRadius * 2,
           height: kNormalSizeRadius * 2,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -754,15 +775,23 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
               color: ClubOpeningHoursFormatter.isClubOpen(club)
                   ? primaryColor
                   : redAccent,
-              width: 3.0, // Outline thickness
+              width: 3.0,
             ),
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(club.logo),
-              fit: BoxFit.cover, // Ensures proper image scaling
+          ),
+          child: ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: club.logo,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => CachedNetworkImage(
+                imageUrl: club.typeOfClubImg,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
+              fit: BoxFit.cover,
             ),
           ),
         ),
-
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -801,7 +830,8 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
             ),
             Text(
               clubOpeningHoursFormatted,
-              style: clubOpeningHoursFormatted.toLowerCase() == "lukket i dag."
+              style: clubOpeningHoursFormatted.toLowerCase() ==
+                      S.of(context).closed_today
                   ? kTextStyleP3.copyWith(color: redAccent)
                   : kTextStyleP3,
             ),

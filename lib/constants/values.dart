@@ -1,10 +1,8 @@
-
 typedef CheckBoxCallback = void Function(bool?);
 typedef Callback<T> = void Function(T?);
 typedef GeneralAsyncCallback<T> = Future<void> Function(T?);
 
 const defaultFontSize = 15.0;
-
 
 const kSmallSpacerValue = 5.0;
 const kNormalSpacerValue = 20.0;
@@ -20,6 +18,7 @@ const kBigPadding = 16.0;
 const kBiggerPadding = 20.0;
 const kSwipeBottomPadding = 50.0;
 
+const kThinStrokeWidth = 1.0;
 const kMainStrokeWidth = 3.0;
 const kFocussedStrokeWidth = 4.0;
 const kMainBorderRadius = 20.0;

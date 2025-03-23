@@ -1,3 +1,6 @@
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
+
 class ChatMessageData {
   final String sender;
   final String message;
@@ -22,19 +25,19 @@ class ChatMessageData {
 
     switch (timestamp.weekday) {
       case 1:
-        return 'MAN ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_monday} ';
       case 2:
-        return 'TIR ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_tuesday} ';
       case 3:
-        return 'ONS ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_wednesday} ';
       case 4:
-        return 'TOR ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_thursday} ';
       case 5:
-        return 'FRE ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_friday} ';
       case 6:
-        return 'LØR ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_saturday} ';
       case 7:
-        return 'SØN ';
+        return '${S.of(ourNavigatorKey.currentContext!).short_sunday} ';
     }
 
     return '';

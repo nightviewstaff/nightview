@@ -12,7 +12,6 @@ class CustomTextField {
     required String? Function(String?) validator,
     bool isObscure = false, // Default false
   }) {
-
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,

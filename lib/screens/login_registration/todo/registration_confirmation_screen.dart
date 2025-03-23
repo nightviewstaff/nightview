@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/login_registration_layout.dart';
 import 'package:provider/provider.dart';
 
-class RegistrationConfirmationScreen extends StatefulWidget { // TODO PRelude is working. Maybe use firebase instead?
+class RegistrationConfirmationScreen extends StatefulWidget {
+  // TODO PRelude is working. Maybe use firebase instead?
   static const id = 'registration_confirmation_screen';
 
   const RegistrationConfirmationScreen({super.key});
@@ -35,7 +37,7 @@ class _RegistrationConfirmationScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Du er blevet tilsendt en bekræftelseskode:',
+                S.of(context).confirmation_code_sent,
                 textAlign: TextAlign.center,
                 style: kTextStyleH2,
               ),
@@ -51,7 +53,7 @@ class _RegistrationConfirmationScreenState
                 height: kNormalSpacerValue * 2,
               ),
               Text(
-                'Skriv koden for at fortsætte',
+                S.of(context).enter_code_to_continue,
                 textAlign: TextAlign.center,
                 style: kTextStyleH2,
               ),
@@ -59,7 +61,7 @@ class _RegistrationConfirmationScreenState
                 height: kSmallSpacerValue,
               ),
               Text(
-                'Tjek din spam mappe, hvis den ikke dukker op',
+                S.of(context).check_spam_folder,
                 textAlign: TextAlign.center,
                 style: kTextStyleP2,
               ),
@@ -70,7 +72,7 @@ class _RegistrationConfirmationScreenState
             children: [
               TextFormField(
                 decoration: kMainInputDecoration.copyWith(
-                  hintText: '4-cifret kode',
+                  hintText: S.of(context).four_digit_code,
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -79,13 +81,13 @@ class _RegistrationConfirmationScreenState
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Skriv venligst en bekræftelseskode';
+                    return S.of(context).enter_confirmation_code;
                   }
                   if (!RegExp(r'^[0-9]{4}$').hasMatch(value)) {
-                    return 'Ugyldig bekræftelseskode';
+                    return S.of(context).invalid_confirmation_code;
                   }
                   if (value != provider.verificationCode) {
-                    return 'Forkert bekræftelseskode';
+                    return S.of(context).wrong_confirmation_code;
                   }
                   return null;
                 },
@@ -102,8 +104,8 @@ class _RegistrationConfirmationScreenState
                     return;
                   }
                   if (valid) {
-                    Navigator.of(context)
-                        .pushReplacementNamed(CreateAccountScreenThreePassword.id);
+                    Navigator.of(context).pushReplacementNamed(
+                        CreateAccountScreenThreePassword.id);
                   }
                 },
               ),

@@ -1,11 +1,14 @@
 import 'package:intl/intl.dart';
+import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/main.dart';
 import '../../models/clubs/club_data.dart';
 
 class ClubOpeningHoursFormatter {
   // TODO SOME CLOSETIME IS "luk" Take care.
   /// For testing you can override this value.
   static DateTime? now;
-  static final String closedTodayString = "Lukket i dag.";
+  static final String closedTodayString =
+      S.of(ourNavigatorKey.currentContext!).closed_today;
 
   // static final String closedUnknownOpening = "Ukendt Lukkettid i dag.";
 
@@ -100,28 +103,65 @@ class ClubOpeningHoursFormatter {
       final Duration remaining = currentClose.difference(_now);
 
       // Format the remaining time as hours and minutes.
-      final int hours = remaining.inHours;
+
       final int minutes = remaining.inMinutes % 60;
       final int totalMinutes = remaining.inMinutes;
-
+      double roundedHours = roundToNearestHalfHour(totalMinutes);
       if (remaining.inHours > 5) {
         // Format the closing time (ensure minutes are padded with a leading zero)
         final String closeTimeFormatted =
             "${currentClose.hour.toString().padLeft(2, '0')}:${currentClose.minute.toString().padLeft(2, '0')}";
-        return "Åben til $closeTimeFormatted i dag.";
+        return "${S.of(ourNavigatorKey.currentContext!).open_until} $closeTimeFormatted ${S.of(ourNavigatorKey.currentContext!).today}";
       }
       if (totalMinutes > 0) {
+        //TODO Should totalMinutes >60 not be here instead??!?
         // Calculate the remaining time in hours as a decimal.
         // For example, 90 minutes becomes 1.5 hours.
         final double remainingHours = totalMinutes / 60.0;
         // Format to one decimal place (so 30 minutes becomes 0.5)
-        final String formattedHours = remainingHours.toStringAsFixed(1);
+        String formattedHours = roundedHours == roundedHours.toInt()
+            ? roundedHours.toInt().toString()
+            : roundedHours.toStringAsFixed(1);
         // Choose singular/plural based on the numeric value (you may adjust this as needed)
-        final String hourText = (remainingHours == 1.0) ? 'time' : 'timer';
-        return "Åben $formattedHours $hourText endnu.";
+        //TODO TRANSLATE PROPER
+        final String hourText = roundedHours == 1.0
+            ? S
+                .of(ourNavigatorKey.currentContext!)
+                .hour // Should be "hour" in localization
+            : S
+                .of(ourNavigatorKey.currentContext!)
+                .hours; // Should be "hours" in localization
+        return "${S.of(ourNavigatorKey.currentContext!).open} $formattedHours $hourText ${S.of(ourNavigatorKey.currentContext!).yet}";
       } else {
-        return "Åben $minutes ${minutes == 1 ? 'minut' : 'minutter'} endnu.";
+        return "${S.of(ourNavigatorKey.currentContext!).open} $minutes ${minutes == 1 ? S.of(ourNavigatorKey.currentContext!).minute : S.of(ourNavigatorKey.currentContext!).minutes} ${S.of(ourNavigatorKey.currentContext!).yet}.";
       }
+
+// if (totalMinutes > 0) {
+//         //TODO Should totalMinutes >60 not be here instead??!?
+//         // Calculate the remaining time in hours as a decimal.
+//         // For example, 90 minutes becomes 1.5 hours.
+//         final double remainingHours = totalMinutes / 60.0;
+//         // Format to one decimal place (so 30 minutes becomes 0.5)
+//         final double roundedHours =
+//             double.parse(remainingHours.toStringAsFixed(1));
+//         String formattedHours = roundedHours == roundedHours.toInt()
+//             ? roundedHours.toInt().toString()
+//             : roundedHours.toStringAsFixed(1);
+
+//         // Use a single localized string that includes the number of hours and proper grammar
+//         return Intl.message(
+//           roundedHours == 1.0
+//               ? S
+//                   .of(ourNavigatorKey.currentContext!)
+//                   .open_one_more_hour(formattedHours)
+//               : S
+//                   .of(ourNavigatorKey.currentContext!)
+//                   .open_more_hours(formattedHours),
+//           args: [formattedHours],
+//         );
+//       } else {
+//         return "${S.of(ourNavigatorKey.currentContext!).open} $minutes ${minutes == 1 ? S.of(ourNavigatorKey.currentContext!).minute : S.of(ourNavigatorKey.currentContext!).minutes} ${S.of(ourNavigatorKey.currentContext!).yet}.";
+//       }
     }
 
     // Scenario 2: The club is not open now.
@@ -129,7 +169,10 @@ class ClubOpeningHoursFormatter {
     if (todayHours != null &&
         todayHours['open'] != null &&
         todayHours['close'] != null) {
-      return "${todayHours['open']} - ${todayHours['close']} i dag.";
+      final String closedTodayString =
+          S.of(ourNavigatorKey.currentContext!).today;
+
+      return "${todayHours['open']} - ${todayHours['close']} $closedTodayString.";
     }
 
     // Fallback: Consider the club closed.
@@ -154,7 +197,10 @@ class ClubOpeningHoursFormatter {
   /// Returns the lower-case weekday (e.g., "monday", "tuesday") for a given DateTime.
   static String _getWeekday(DateTime date) {
     // The DateFormat 'EEEE' returns the full weekday name.
-    return DateFormat('EEEE').format(date).toLowerCase();
+    return DateFormat(
+      'EEEE',
+      'en_US',
+    ).format(date).toLowerCase();
   }
 
   /// Returns true if the club is currently open, false otherwise.
@@ -234,5 +280,11 @@ class ClubOpeningHoursFormatter {
     }
 
     return false;
+  }
+
+  static double roundToNearestHalfHour(int totalMinutes) {
+    int quotient = (totalMinutes / 30).round();
+    int roundedMinutes = quotient * 30;
+    return roundedMinutes / 60.0;
   }
 }

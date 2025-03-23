@@ -52,32 +52,34 @@ class FriendsHelper {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
 
-    List<String> friendIds = [];
-
     if (auth.currentUser == null) {
       return [];
     }
 
     String userId = auth.currentUser!.uid;
+    List<String> friendIds = [];
 
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await firestore.collection('friends').doc(userId).get();
       Map<String, dynamic>? data = snapshot.data();
 
-      if (data == null) {
+      if (data == null || data.isEmpty) {
+        print("No friends found for user: $userId");
         return [];
       }
 
-      for (MapEntry<String, dynamic> friend in data.entries) {
-        if (friend.value) {
-          friendIds.add(friend.key);
+      for (var entry in data.entries) {
+        if (entry.value == true) {
+          // Ensure it's explicitly 'true'
+          friendIds.add(entry.key);
         }
       }
     } catch (e) {
-      // print(e);
+      print("Error fetching friend IDs: $e");
     }
 
+    print("Fetched Friend IDs: $friendIds");
     return friendIds;
   }
 
@@ -170,6 +172,34 @@ class FriendsHelper {
           await firestore.collection('user_data').doc(friendId).get();
       if (snapshot.exists) {
         friendsData.add(UserData.fromMap(snapshot.data()!));
+      }
+    }
+
+    return friendsData;
+  }
+
+  static Future<List<UserData>> getFriendsOut() async {
+    List<String> friendIds = await getAllFriendIds();
+    List<UserData> friends = await _fetchUserDataForIds(friendIds);
+    return friends
+        .where((friend) => friend.partyStatus == PartyStatus.yes)
+        .toList();
+  }
+
+  static Future<List<UserData>> _fetchUserDataForIds(
+      List<String> friendIds) async {
+    final firestore = FirebaseFirestore.instance;
+    List<UserData> friendsData = [];
+
+    for (String friendId in friendIds) {
+      try {
+        DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await firestore.collection('user_data').doc(friendId).get();
+        if (snapshot.exists) {
+          friendsData.add(UserData.fromMap(snapshot.data()!));
+        }
+      } catch (e) {
+        print("Error fetching user data for $friendId: $e");
       }
     }
 

@@ -10,9 +10,53 @@ enum LoginRegistrationButtonType {
 }
 
 enum CountryCode {
+  al,
+  ad,
+  am,
+  at,
+  by,
+  be,
+  ba,
+  bg,
+  hr,
+  cy,
+  cz,
   dk,
-  se,
+  ee,
+  fi,
+  fr,
+  ge,
+  de,
+  gr,
+  hu,
+  ic,
+  ie,
+  it,
+  lv,
+  li,
+  lt,
+  lu,
+  mt,
+  md,
+  mc,
+  me,
+  nl,
+  mk,
   no,
+  pl,
+  pt,
+  ro,
+  ru,
+  sm,
+  rs,
+  sk,
+  si,
+  es,
+  se,
+  ch,
+  ua,
+  uk,
+  us
 }
 
 enum PermissionState {
@@ -46,7 +90,4 @@ enum FriendRequestStatus {
   rejected,
 }
 
-enum FriendFilterType {
-  exclude,
-  include
-}
+enum FriendFilterType { exclude, include }

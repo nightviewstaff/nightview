@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_three_password.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/phone_country_code_dropdown_button.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
             .pushReplacementNamed(LoginOrCreateAccountScreen.id),
         currentStep: 2,
         title: Text(
-          'Resterende Oplysninger',
+          S.of(context).remaining_information,
           textAlign: TextAlign.center,
           style: kTextStyleH2,
         ),
@@ -101,12 +102,12 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                     Expanded(
                       child: CustomTextField.buildTextField(
                         controller: phoneInputController,
-                        hintText: 'Telefonnummer',
+                        hintText: S.of(context).phone_number,
                         keyboardType: TextInputType.phone,
                         onChanged: (value) {
                           provider.setPhone(value);
 
-                          bool phoneIsValid = value != null || value.isNotEmpty;
+                          bool phoneIsValid = value.isNotEmpty;
                           if (phoneIsValid) {
                             inputIsFilled[0] = true;
                           } else {
@@ -205,7 +206,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
                 //   ValidationHelper.updateValidationStateFormOneAndTwo(
                 //       _formKey, provider, inputIsFilled, 1, '',
                 //       isDateValid: false);
-              }else {
+              } else {
                 inputIsFilled[1] = false;
               }
               ValidationHelper.checkAllFieldsValid(provider, inputIsFilled);
@@ -228,7 +229,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
       if (selectedDate != null && selectedDate!.isAfter(legalAgeAgo)) {
         CustomModalMessage.showCustomBottomSheetOneSecond(
           context: context,
-          message: "Man skal være over 18 for at bruge NightView i Danmark",
+          message: S.of(context).age_restriction,
           textStyle: kTextStyleP3ErrorText,
           autoDismissDurationSeconds: 3,
         );
@@ -257,7 +258,7 @@ class _LoginGoogleScreenState extends State<LoginGoogleScreen> {
         child: Center(
           child: Text(
             showHintDatePicker
-                ? 'Fødselsdato' // Show hint
+                ? S.of(context).birthdate // Show hint
                 : '${selectedDate!.day} / ${selectedDate!.month} / ${selectedDate!.year}', // Show selected date
             style: TextStyle(
                 color: showHintDatePicker

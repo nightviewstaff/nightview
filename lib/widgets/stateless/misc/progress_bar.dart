@@ -15,31 +15,30 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      child: IgnorePointer(
-        // Prevents user interaction with the progress bar
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(totalSteps, (index) {
-            bool isCompleted = index < currentStep - 1;
-            bool isActive = index == currentStep - 1;
+    return IgnorePointer(
+      // Prevents user interaction with the progress bar
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: List.generate(totalSteps, (index) {
+          bool isCompleted = index < currentStep - 1;
+          bool isActive = index == currentStep - 1;
 
-            return Expanded(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: marginHorizontal, vertical: 0),
-                height: 5, // Adjust thickness if needed
-                decoration: BoxDecoration(
-                  color: isCompleted
-                      ? primaryColor // Completed
-                      : isActive
-                          ? secondaryColor // Active
-                          : grey, // Inactive
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: marginHorizontal, vertical: 0),
+              height: 5, // Adjust thickness if needed
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? primaryColor // Completed
+                    : isActive
+                        ? secondaryColor // Active
+                        : grey, // Inactive
+                borderRadius: BorderRadius.circular(20),
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
