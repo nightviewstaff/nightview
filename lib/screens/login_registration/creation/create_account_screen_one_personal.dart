@@ -11,7 +11,7 @@ import 'package:nightview/screens/login_registration/utility/custom_text_field.d
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:provider/provider.dart';
 

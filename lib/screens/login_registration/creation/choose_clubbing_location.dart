@@ -100,7 +100,7 @@ class _ChooseClubbingLocationScreenState
             ),
 
             /// **🔹 Logo (Top Right)**
-            Positioned(top: 10, right: 10, child: ImageInsertDefaultTopRight()),
+            ImageInsertDefaultTopRight(),
 
             /// **🔹 Main Content**
             Padding(

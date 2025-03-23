@@ -8,17 +8,17 @@ import 'package:nightview/helpers/misc/referral_points_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
+import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateAccountScreenThreePassword extends StatefulWidget {
-  //TODO FIX
   static const id = 'create_account_screen_three_password';
 
   const CreateAccountScreenThreePassword({super.key});
@@ -30,6 +30,11 @@ class CreateAccountScreenThreePassword extends StatefulWidget {
 
 class _CreateAccountScreenThreePasswordState
     extends State<CreateAccountScreenThreePassword> {
+  final _formKey = GlobalKey<FormState>();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  List<bool> inputIsFilled = [false, false];
+
   @override
   void initState() {
     super.initState();
@@ -44,11 +49,102 @@ class _CreateAccountScreenThreePasswordState
         inputIsFilled: inputIsFilled);
   }
 
-  final _formKey = GlobalKey<FormState>();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  Future<void> registerUser(BuildContext context) async {
+    try {
+      final provider =
+          Provider.of<LoginRegistrationProvider>(context, listen: false);
+      final globalProvider =
+          Provider.of<GlobalProvider>(context, listen: false);
 
-  List<bool> inputIsFilled = [false, false];
+      // Create the user with email and password directly using FirebaseAuth
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: provider.mail,
+        password: provider.password,
+      );
+
+      // Get the authenticated user
+      User? user = userCredential.user;
+
+      if (user != null) {
+        print('Current User ID: ${user.uid}'); // Debugging log
+
+        // Upload user data to Firestore
+        bool uploadSuccess = await globalProvider.userDataHelper.uploadUserData(
+          firstName: provider.firstName,
+          lastName: provider.lastName,
+          mail: provider.mail,
+          phone: provider.phone,
+          birthdateDay: provider.birthDate.day,
+          birthdateMonth: provider.birthDate.month,
+          birthdateYear: provider.birthDate.year,
+        );
+
+        if (uploadSuccess) {
+          print('User data uploaded successfully');
+
+          // Increment referral points
+          ReferralPointsHelper.incrementReferralPoints(1);
+
+          // Save credentials to SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('mail', provider.mail);
+          await prefs.setString('password', provider.password);
+          print('Credentials saved - Mail: ${provider.mail}');
+          provider.setCanContinue(false);
+
+          // Navigate to the next screen
+          Navigator.of(context)
+              .pushReplacementNamed(ChooseClubbingLocationScreen.id);
+        } else {
+          print('User data upload failed');
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text(S.of(context).user_data_upload_failed)),
+          // );
+        }
+      } else {
+        print('User is null after creation');
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   // SnackBar(content: Text(S.of(context).authentication_failed)),
+        // );
+      }
+    } catch (e) {
+      String errorMessage = S.of(context).generic_error;
+
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage = S.of(context).email_already_registered;
+            break;
+          case 'invalid-email':
+            errorMessage = S.of(context).invalid_email;
+            break;
+          case 'weak-password':
+            errorMessage = S.of(context).weak_password;
+            break;
+          case 'network-request-failed':
+            errorMessage = S.of(context).no_internet;
+            break;
+          default:
+            errorMessage = '${S.of(context).error_occurred}: ${e.message}';
+        }
+      }
+
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(S.of(context).error, style: TextStyle(color: redAccent)),
+          content: SingleChildScrollView(child: Text(errorMessage)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(S.of(context).ok, style: TextStyle(color: redAccent)),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +205,7 @@ class _CreateAccountScreenThreePasswordState
                     return null;
                   },
                 ),
-                SizedBox(
-                  height: kNormalSpacerValue,
-                ),
+                SizedBox(height: kNormalSpacerValue),
                 CustomTextField.buildTextField(
                   controller: confirmPasswordController,
                   hintText: S.of(context).confirm_password,
@@ -144,92 +238,12 @@ class _CreateAccountScreenThreePasswordState
         bottomContent: LoginRegistrationConfirmButton(
           enabled: provider.canContinue,
           onPressed: () async {
-            provider.setCanContinue(false);
             bool? valid = _formKey.currentState?.validate();
-            if (valid == null) {
+            if (valid == null || !valid) {
               return;
             }
-            if (valid) {
-              provider.setPassword(passwordController.text);
-              try {
-                if (provider.password.isNotEmpty) {
-                  await Provider.of<GlobalProvider>(context, listen: false)
-                      .userDataHelper
-                      .createUserWithEmail(
-                        email: provider.mail,
-                        password: provider.password,
-                      );
-
-                  await Provider.of<GlobalProvider>(context, listen: false)
-                      .userDataHelper
-                      .uploadUserData(
-                        firstName: provider.firstName,
-                        lastName: provider.lastName,
-                        mail: provider.mail,
-                        phone: provider.phone,
-                        birthdateDay: provider.birthDate.day,
-                        birthdateMonth: provider.birthDate.month,
-                        birthdateYear: provider.birthDate.year,
-                      );
-
-                  ReferralPointsHelper.incrementReferralPoints(1);
-
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.setString('mail', provider.mail);
-                  prefs.setString('password', provider.password);
-                  Navigator.of(context).pushReplacementNamed(
-                      // ChooseClubbingLocationScreen
-                      LocationPermissionCheckerScreen.id);
-                }
-              } catch (e) {
-                String errorMessage = S.of(context).generic_error;
-
-                if (e is FirebaseAuthException) {
-                  switch (e.code) {
-                    case 'email-already-in-use':
-                      errorMessage = S.of(context).email_already_registered;
-                      break;
-                    case 'invalid-email':
-                      errorMessage = S.of(context).invalid_email;
-                      break;
-                    case 'weak-password':
-                      errorMessage = S.of(context).weak_password;
-                      break;
-                    case 'network-request-failed':
-                      errorMessage = S.of(context).no_internet;
-                      break;
-                    default:
-                      errorMessage =
-                          '${S.of(context).error_occurred}: ${e.message}';
-                  }
-                }
-
-                await showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(
-                      S.of(context).error,
-                      style: TextStyle(color: redAccent),
-                    ),
-                    content: SingleChildScrollView(
-                      child: Text(errorMessage),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          S.of(context).ok,
-                          style: TextStyle(color: redAccent),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            }
+            provider.setPassword(passwordController.text);
+            await registerUser(context);
           },
         ),
       ),

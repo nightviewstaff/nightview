@@ -131,15 +131,13 @@ class _ChooseFavoriteClubsScreenState extends State<ChooseFavoriteClubsScreen> {
               ],
             ),
             // Back button and logo
-            Positioned(
-              top: 10,
-              left: 10,
-              child: BackButtonTopLeft(
-                onPressed: () => Navigator.pushReplacementNamed(
-                    context, ChooseClubbingTypesScreen.id),
-              ),
+            BackButtonTopLeft(
+              onPressed: () => Navigator.pushReplacementNamed(
+                  context, ChooseClubbingTypesScreen.id),
             ),
-            Positioned(top: 10, right: 10, child: ImageInsertDefaultTopRight()),
+
+            ImageInsertDefaultTopRight(),
+
             // Main content
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),

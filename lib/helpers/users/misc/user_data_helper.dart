@@ -104,6 +104,10 @@ class UserDataHelper {
         'birthdate_year': birthdateYear,
         'favorite_clubs': [],
       });
+      if (currentUserId == null) {
+        print('Error: No authenticated user found');
+        return false;
+      }
     } catch (e) {
       print("false0");
       print(e.toString());

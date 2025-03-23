@@ -169,7 +169,10 @@ class ClubOpeningHoursFormatter {
     if (todayHours != null &&
         todayHours['open'] != null &&
         todayHours['close'] != null) {
-      return "${todayHours['open']} - ${todayHours['close']} i dag.";
+      final String closedTodayString =
+          S.of(ourNavigatorKey.currentContext!).today;
+
+      return "${todayHours['open']} - ${todayHours['close']} $closedTodayString.";
     }
 
     // Fallback: Consider the club closed.

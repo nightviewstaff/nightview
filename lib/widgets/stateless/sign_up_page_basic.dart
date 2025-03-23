@@ -29,21 +29,30 @@ class SignUpPageBasic extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              children: [
-                if (showProgressBar && totalSteps > 2) // ✅ Ensure valid syntax
-                  ProgressBar(
-                    currentStep: currentStep,
-                    totalSteps: totalSteps,
-                  ),
-                if (totalSteps < 3) // ✅ Ensure valid syntax
-                  ProgressBar(
-                    currentStep: currentStep,
-                    totalSteps: totalSteps,
-                    marginHorizontal: 35,
-                  ),
-              ],
-            ),
+            // Progress Bar for totalSteps > 2
+            if (showProgressBar && totalSteps > 2)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ProgressBar(
+                  currentStep: currentStep,
+                  totalSteps: totalSteps,
+                ),
+              ),
+            // Progress Bar for totalSteps < 3
+            if (totalSteps < 3)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ProgressBar(
+                  currentStep: currentStep,
+                  totalSteps: totalSteps,
+                  marginHorizontal: 35,
+                ),
+              ),
+            // Other UI elements
             BackButtonTopLeft(onPressed: onBack),
             ImageInsertDefaultTopRight(),
             Padding(
@@ -51,21 +60,16 @@ class SignUpPageBasic extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Title (No Extra Space)
                   SizedBox(height: 60), // Minimum space from the top
                   Align(
                     alignment: Alignment.topCenter,
                     child: title,
                   ),
-
-                  // Form Fields (Directly Below Title)
                   Form(
                     child: Column(
                       children: formFields,
                     ),
                   ),
-
-                  // Bottom Content (e.g., Continue Button)
                   if (bottomContent != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 40.0),

@@ -10,6 +10,7 @@ import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
+import 'package:nightview/screens/option_menu/widgets/favorites_section.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/option_menu/bottom_sheet_status_screen.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
@@ -108,14 +109,6 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                       CircleAvatar(
                         backgroundImage:
                             Provider.of<GlobalProvider>(context).profilePicture,
-                        //    FaIcon(
-                        //     FontAwesomeIcons.solidCircleDot,
-                        //    color: Provider.of<GlobalProvider>(context)
-                        //         .partyStatusColor,
-                        //    size: 20.0,
-                        //   ),
-                        //  SizedBox(
-                        //     width: 30.0), // Add some spacing between dot and flag
                       ),
                     ],
                   ),
@@ -168,18 +161,37 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                     List<ClubData> favoriteClubs =
                                         snapshot.data!;
 
-                                    return Text(
-                                      S.of(context).favorite_clubs_count(
-                                            favoriteClubs.length.toString(),
-                                            favoriteClubMax.toString(),
+                                    return RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: '${favoriteClubs.length}',
+                                            style: TextStyle(
+                                              color: favoriteClubs.length <=
+                                                      (favoriteClubMax / 2)
+                                                          .floor()
+                                                  ? redAccent
+                                                  : primaryColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                      style: TextStyle(
-                                        color: (favoriteClubs.length >=
-                                                favoriteClubMax)
-                                            ? primaryColor
-                                            : redAccent,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                          TextSpan(
+                                            text: '/',
+                                            style: TextStyle(
+                                              color: white,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '$favoriteClubMax',
+                                            style: TextStyle(
+                                              color: primaryColor,
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   },
@@ -313,6 +325,8 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                           },
                         ),
                       ),
+//favorites TODO
+                      // FavoritesSection(favoriteClubMax: favoriteClubMax),
 
                       Divider(
                           color: secondaryColor, thickness: kThinStrokeWidth),
@@ -325,7 +339,7 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                         thickness: kMainStrokeWidth,
                       ),
 
-                      CityTodaySection(),
+                      // CityTodaySection(),
                     ],
                   ),
                 ),

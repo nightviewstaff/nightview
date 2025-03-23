@@ -9,7 +9,7 @@ import 'package:nightview/screens/location_permission/location_permission_checke
 import 'package:nightview/screens/login_registration/choice/login_or_create_account_screen.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/widgets/stateless/big_checkbox.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

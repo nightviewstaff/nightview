@@ -155,14 +155,9 @@ class ValidationHelper {
   }
 
   static String? validateEmail(BuildContext context, String? value) {
-    if (value == null || value.isEmpty) return '';
-    if (!RegExp(
-      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
-    ).hasMatch(value)) {
-      return S.of(context).invalid_email;
+    if (checkEmail(value) == true) {
+      return null;
     }
-    //TODO HOW DO I TRANSLATE HERE!
-    return null;
   }
 
   static bool validatePhone(String? value) {

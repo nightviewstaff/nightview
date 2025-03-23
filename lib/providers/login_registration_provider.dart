@@ -9,12 +9,12 @@ class LoginRegistrationProvider extends ChangeNotifier {
   bool _canContinue = false;
   String _verificationCode = '0000';
 
-  String? _firstName;
-  String? _lastName;
+  String _firstName = ''; // Changed from String? to String
+  String _lastName = ''; // Changed from String? to String
   DateTime _birthDate = DateTime(2000);
-  String? _mail;
-  String? _phone;
-  String _password = '';
+  String _mail = ''; // Changed from String? to String
+  String _phone = ''; // Changed from String? to String
+  String _password = ''; // Changed from String? to String
 
   bool get stayLoggedIn => _stayLoggedIn;
 
@@ -24,17 +24,12 @@ class LoginRegistrationProvider extends ChangeNotifier {
 
   String get verificationCode => _verificationCode;
 
-  String get firstName => _firstName!;
-
-  String get lastName => _lastName!;
-
+  String get firstName => _firstName; // Removed !
+  String get lastName => _lastName; // Removed !
   DateTime get birthDate => _birthDate;
-
-  String get mail => _mail!;
-
-  String get phone => _phone!;
-
-  String get password => _password;
+  String get mail => _mail; // Removed !
+  String get phone => _phone; // Removed !
+  String get password => _password; // Removed !
 
   void toggleStayLogin() {
     _stayLoggedIn = !_stayLoggedIn;

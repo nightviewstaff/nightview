@@ -32,7 +32,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
     _loadImages();
   }
 
-  /// **🔹 Fetch images dynamically & remove duplicates**
   Future<void> _loadImages() async {
     try {
       final manifestJson = await rootBundle.loadString('AssetManifest.json');
@@ -47,13 +46,12 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
         _selectedCategories = {for (var path in paths) path: false};
       });
 
-      await _loadSelections(); // ✅ Load saved selections after images load
+      await _loadSelections();
     } catch (e) {
       print("Error loading images: $e");
     }
   }
 
-  /// **🔹 Load stored selections**
   Future<void> _loadSelections() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -63,15 +61,13 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
     });
   }
 
-  /// **🔹 Toggle Selection & Save**
   Future<void> _toggleSelection(String path) async {
     setState(() {
-      _selectedCategories[path] =
-          !(_selectedCategories[path] ?? false); // Fix null check
+      _selectedCategories[path] = !(_selectedCategories[path] ?? false);
     });
 
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(path, _selectedCategories[path]!); // Safe after setting
+    await prefs.setBool(path, _selectedCategories[path]!);
   }
 
   @override
@@ -92,20 +88,15 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
               ),
             ),
 
-            /// **🔹 Back Button**
-            Positioned(
-              top: 10,
-              left: 10,
-              child: BackButtonTopLeft(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(
-                      context, ChooseClubbingLocationScreen.id);
-                },
-              ),
+            BackButtonTopLeft(
+              onPressed: () {
+                Navigator.pushReplacementNamed(
+                    context, ChooseClubbingLocationScreen.id);
+              },
             ),
 
             /// **🔹 Logo**
-            Positioned(top: 10, right: 10, child: ImageInsertDefaultTopRight()),
+            ImageInsertDefaultTopRight(),
 
             /// **🔹 Main Content**
             Padding(
@@ -120,8 +111,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 20),
-
-                  /// **🔹 Club Type Icons (Dynamic Grid) with Scrollbar**
                   Expanded(
                     child: Scrollbar(
                       child: _imagePaths.isEmpty
@@ -129,7 +118,7 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                               child: CircularProgressIndicator(
                                   color: primaryColor))
                           : GridView.builder(
-                              padding: EdgeInsets.only(bottom: 20),
+                              padding: EdgeInsets.only(top: 20),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -147,8 +136,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
                             ),
                     ),
                   ),
-
-                  /// **🔹 Bottom Buttons**
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 20),
@@ -194,7 +181,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
     );
   }
 
-  /// **🟢 Category Button with Label Inside**
   Widget _buildCategoryButton(String imagePath, bool isSelected) {
     String label = imagePath
         .split('/')
@@ -212,7 +198,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          /// **🟢 Circular Background**
           Container(
             width: 65,
             height: 65,
@@ -226,8 +211,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
               child: Image.asset(imagePath, fit: BoxFit.cover),
             ),
           ),
-
-          /// **🟢 Text Inside Circle**
           Positioned(
             top: 6,
             child: Text(
@@ -247,7 +230,6 @@ class _ChooseClubbingTypesScreenState extends State<ChooseClubbingTypesScreen> {
   }
 }
 
-/// **🔠 Capitalize String Extension**
 extension StringExtension on String {
   String capitalize() {
     if (isEmpty) return this;

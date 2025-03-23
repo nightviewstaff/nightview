@@ -10,7 +10,7 @@ import 'package:nightview/screens/login_registration/creation/create_account_scr
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
 import 'package:nightview/utilities/messages/custom_modal_message.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/phone_country_code_dropdown_button.dart';
 import 'package:provider/provider.dart';

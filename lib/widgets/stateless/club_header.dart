@@ -232,7 +232,8 @@ class ClubHeader extends StatelessWidget {
                 children: [
                   Text(
                     openingHoursToday,
-                    style: openingHoursToday.toLowerCase() == "lukket i dag."
+                    style: openingHoursToday.toLowerCase() ==
+                            S.of(context).closed_today
                         ? kTextStyleP1.copyWith(color: redAccent)
                         : kTextStyleP1,
                   ),

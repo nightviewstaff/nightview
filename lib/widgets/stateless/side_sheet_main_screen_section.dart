@@ -7,6 +7,7 @@ import 'package:nightview/helpers/users/friends/friends_helper.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:provider/provider.dart';
 
 class SideSheetMainScreenSection extends StatelessWidget {
@@ -188,6 +189,10 @@ class SideSheetMainScreenSection extends StatelessWidget {
                       String? pbUrl = friendsWithPbs[index]['pbUrl'];
                       return GestureDetector(
                         onTap: () {
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(user);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
                           // Add navigation or action if needed, similar to SideSheetMainScreen
                         },
                         child: Padding(

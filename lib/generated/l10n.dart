@@ -1676,15 +1676,6 @@ class S {
     );
   }
 
-  String favorite_clubs_count(String count, String max) {
-    return Intl.message(
-      '$count/$max',
-      name: 'favorite_clubs_count',
-      desc: 'Shows the number of favorite clubs out of the maximum allowed',
-      args: [count, max],
-    );
-  }
-
   String get error_fetching_favorite_clubs {
     return Intl.message(
       'Error fetching favorite clubs',
