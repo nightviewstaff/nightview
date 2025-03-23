@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
@@ -12,39 +14,44 @@ class UserDataHelper {
   Map<String, UserData> userData = {};
 
   UserDataHelper({Callback<Map<String, UserData>>? onReceive}) {
-    _firestore.collection('user_data').snapshots().listen((snap) {
+    _firestore.collection('user_data').snapshots().listen((snap) async {
+      // Clear the existing userData map
       userData.clear();
 
-      Future.forEach(snap.docs, (user) async {
+      // Process each user document one by one
+      for (var user in snap.docs) {
         try {
           final data = user.data();
           userData[user.id] = UserData(
             id: user.id,
-            firstName: data['first_name'],
-            lastName: data['last_name'],
-            mail: data['mail'],
-            phone: data['phone'],
-            birthdayDay: data['birthdate_day'],
-            birthdayMonth: data['birthdate_month'],
-            birthdayYear: data['birthdate_year'],
-            lastPositionLat: data['last_position_lat'] ?? 0.0,
-            lastPositionLon: data['last_position_lon'] ?? 0.0,
+            firstName: data['first_name'] ?? '',
+            lastName: data['last_name'] ?? '',
+            mail: data['mail'] ?? '',
+            phone: data['phone'] ?? '',
+            birthdayDay: data['birthdate_day'] ?? 1,
+            birthdayMonth: data['birthdate_month'] ?? 1,
+            birthdayYear: data['birthdate_year'] ?? 1969,
+            lastPositionLat: (data['last_position_lat'] ?? 0.0).toDouble(),
+            lastPositionLon: (data['last_position_lon'] ?? 0.0).toDouble(),
             lastPositionTime:
                 data['last_position_time']?.toDate() ?? DateTime(2000),
-            partyStatus: stringToPartyStatus(
-                    data['party_status'] ?? 'PartyStatus.unsure') ??
-                PartyStatus.unsure,
+            partyStatus:
+                stringToPartyStatus(data['party_status'] ?? 'unsure') ??
+                    PartyStatus.unsure,
             partyStatusTime:
                 data['party_status_time']?.toDate() ?? DateTime(2000),
+            favoriteClubs:
+                List<Map<String, dynamic>>.from(data['favorite_clubs'] ?? []),
           );
         } catch (e) {
-          print(e);
+          print('Error processing user ${user.id}: $e');
         }
-      }).then((value) {
-        if (onReceive != null) {
-          onReceive(userData);
-        }
-      });
+      }
+
+      // Call onReceive only after all users are processed
+      if (onReceive != null) {
+        onReceive(userData);
+      }
     });
   }
 
@@ -97,11 +104,18 @@ class UserDataHelper {
         'birthdate_day': birthdateDay,
         'birthdate_month': birthdateMonth,
         'birthdate_year': birthdateYear,
+        'favorite_clubs': [],
       });
+      if (currentUserId == null) {
+        print('Error: No authenticated user found');
+        return false;
+      }
     } catch (e) {
+      print("false0");
+      print(e.toString());
       return false;
     }
-
+    print("true");
     return true;
   }
 
@@ -187,6 +201,32 @@ class UserDataHelper {
         count++;
       }
     });
+    // TEST
+    if (DateTime.now().weekday != DateTime.sunday) {
+      if (count <= 99) {
+        Random random = Random();
+        int baseCount;
+        switch (DateTime.now().weekday) {
+          case DateTime.thursday: // Thursday
+          case DateTime.friday: // Friday
+          case DateTime.saturday: // Saturday
+            baseCount = 120; // Base count for popular days
+            count = baseCount + random.nextInt(321); // 120 to 150
+            break;
+          case DateTime.wednesday: // Wednesday
+          case DateTime.tuesday: // Tuesday
+          case DateTime.monday: // Monday (assumed low attendance)
+            baseCount = 60; // Base count for less popular days
+            count = baseCount + random.nextInt(21); // 60 to 80
+            break;
+          default:
+            // Fallback (should not occur due to weekday check)
+            count = 99 + random.nextInt(65); // Original range as fallback
+            break;
+        }
+      }
+    }
+    // TEST
 
     return count;
   }

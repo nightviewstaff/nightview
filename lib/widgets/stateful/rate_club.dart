@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/generated/l10n.dart';
 import '../../models/clubs/rating.dart';
 
 class RateClub extends StatefulWidget {
@@ -77,8 +78,6 @@ class _RateClubState extends State<RateClub>
     }
   }
 
-
-
   Future<void> _checkLocationAndRatingPermission() async {
     // DocumentSnapshot locationDoc = await FirebaseFirestore.instance
     //     .collection('location_data')        .doc(_currentUser!.uid).get();
@@ -92,7 +91,7 @@ class _RateClubState extends State<RateClub>
 
     bool canRate = false;
 
-    if(ratingQuerySnapshot.docs.isEmpty){
+    if (ratingQuerySnapshot.docs.isEmpty) {
       canRate = true;
     }
 
@@ -134,9 +133,9 @@ class _RateClubState extends State<RateClub>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Bekræft bedømmelse'),
+          title: Text(S.of(context).confirm_rating),
           content: Text(
-              'Vil du give $clubName en bedømmelse på $rating/5 stjerner?'),
+              '${S.of(context).give_rating} $clubName ${S.of(context).rating} $rating${S.of(context).stars}'),
           backgroundColor: black,
           titleTextStyle: TextStyle(color: primaryColor, fontSize: 20),
           contentTextStyle: TextStyle(color: white),
@@ -145,13 +144,15 @@ class _RateClubState extends State<RateClub>
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text('Fortryd', style: TextStyle(color: redAccent)),
+              child:
+                  Text(S.of(context).undo, style: TextStyle(color: redAccent)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text('Fortsæt', style: TextStyle(color: primaryColor)),
+              child: Text(S.of(context).continues,
+                  style: TextStyle(color: primaryColor)),
             ),
           ],
         );
@@ -199,7 +200,8 @@ class _RateClubState extends State<RateClub>
     DocumentReference clubDoc =
         FirebaseFirestore.instance.collection('club_data').doc(widget.clubId);
     CollectionReference ratings = clubDoc.collection('ratings');
-    await ratings.add(rating.toMap()); // Maybe make the document name the id of the rater.
+    await ratings.add(
+        rating.toMap()); // Maybe make the document name the id of the rater.
 
     // Calculate new average rating
     QuerySnapshot ratingsSnapshot = await ratings.get();
@@ -224,7 +226,7 @@ class _RateClubState extends State<RateClub>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Du har allerede bedømt $clubName for nylig.',
+                '${S.of(context).already_rated} $clubName ${S.of(context).recently}',
                 style: TextStyle(color: redAccent),
               ),
               backgroundColor: Colors.black,

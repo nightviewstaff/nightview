@@ -6,7 +6,6 @@ import 'package:nightview/widgets/stateless/offer_list_item.dart';
 import 'package:provider/provider.dart';
 
 class NightOffersMainScreen extends StatelessWidget {
-
   const NightOffersMainScreen({super.key});
 
   @override
@@ -34,9 +33,9 @@ class NightOffersMainScreen extends StatelessWidget {
             ),
           ),
           Text(Provider.of<GlobalProvider>(context)
-              .clubDataHelper
-              .clubData['jagtbar_0']
-              ?.logo ??
+                  .clubDataHelper
+                  .clubData['jagtbar_0']
+                  ?.logo ??
               'ERROR'),
           OfferListItem(
             image: Image.asset('images/logo_icon.png'),

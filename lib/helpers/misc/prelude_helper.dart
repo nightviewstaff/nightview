@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class PreludeHelper {
@@ -31,20 +32,26 @@ class PreludeHelper {
         }),
       );
 
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Status code: ${response.statusCode}');
+      // print('Response body: ${response.body}');
 
       if (response.statusCode == 400) {
-        print('Bad Request: Check the phone number format.');
+        // print('Bad Request: Check the phone number format.');
       } else if (response.statusCode == 401) {
-        print('Unauthorized: Check your API key.');
+        // print('Unauthorized: Check your API key.');
       } else if (response.statusCode == 429) {
-        print('Too Many Requests: Rate limit exceeded.');
+        if (kDebugMode) {
+          print('Too Many Requests: Rate limit exceeded.');
+        }
       } else {
-        print('Unexpected error: ${response.body}');
+        if (kDebugMode) {
+          print('Unexpected error: ${response.body}');
+        }
       }
     } catch (e) {
-      print('Error sending OTP: $e');
+      if (kDebugMode) {
+        print('Error sending OTP: $e');
+      }
     }
   }
 }

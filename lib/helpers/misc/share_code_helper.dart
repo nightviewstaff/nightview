@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 class ShareCodeHelper {
   static const _characters =
@@ -31,7 +32,9 @@ class ShareCodeHelper {
           0;
       return count > 0;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return true; // Assume code exists if there's an error
     }
   }
@@ -48,7 +51,9 @@ class ShareCodeHelper {
         'timestamp': Timestamp.now(),
       });
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
 
@@ -66,7 +71,9 @@ class ShareCodeHelper {
           .get();
       return snap.docs.first.get('status');
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
@@ -95,7 +102,9 @@ class ShareCodeHelper {
         });
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
 
@@ -135,11 +144,15 @@ Jeg glæder mig til, at vi skal fyre den af i byen sammen!''';
           doc.reference.update({'status': 'redeemed'});
           count++;
         } catch (e) {
-          print(e);
+          if (kDebugMode) {
+            print(e);
+          }
         }
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
 
@@ -169,7 +182,9 @@ Jeg glæder mig til, at vi skal fyre den af i byen sammen!''';
         await doc.reference.delete();
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

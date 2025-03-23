@@ -5,13 +5,14 @@ class CompleteProfileScreen extends StatelessWidget {
   final String lastName;
   final String mail;
   final Function(
-      String phone,
-      int birthdateDay,
-      int birthdateMonth,
-      int birthdateYear,
-      ) onProfileComplete;
+    String phone,
+    int birthdateDay,
+    int birthdateMonth,
+    int birthdateYear,
+  ) onProfileComplete;
 
-  CompleteProfileScreen({super.key, 
+  CompleteProfileScreen({
+    super.key,
     required this.firstName,
     required this.lastName,
     required this.mail,
@@ -57,7 +58,9 @@ class CompleteProfileScreen extends StatelessWidget {
                   final birthdateMonth = int.tryParse(parts[1]) ?? 0;
                   final birthdateYear = int.tryParse(parts[2]) ?? 0;
 
-                  if (birthdateDay > 0 && birthdateMonth > 0 && birthdateYear > 0) {
+                  if (birthdateDay > 0 &&
+                      birthdateMonth > 0 &&
+                      birthdateYear > 0) {
                     onProfileComplete(
                       phone,
                       birthdateDay,
@@ -71,11 +74,15 @@ class CompleteProfileScreen extends StatelessWidget {
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please fill in all fields")),
+                    SnackBar(content: Text(
+                        // AppLocalizations.of(context)!.fillAllFields,
+                        "Please fill in all fields")),
                   );
                 }
               },
-              child: Text("Save and Continue"),
+              child: Text(
+                  // AppLocalizations.of(context)!.saveAndContinue,
+                  "Save and Continue"),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/input_decorations.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
 import 'package:nightview/models/users/user_data.dart';
@@ -26,16 +27,21 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<SearchFriendsHelper>(context, listen: false).reset();
+      final searchHelper =
+          Provider.of<SearchFriendsHelper>(context, listen: false);
+      searchHelper.reset();
+      searchHelper.preloadInitialSuggestions(context); // Load users immediately
     });
   }
 
   ImageProvider getPb(int index) {
-    try {
-      return Provider.of<SearchFriendsHelper>(context, listen: false).searchedUserPbs[index];
-    } catch (e) {
-      return AssetImage('images/user_pb.jpg');
+    final searchHelper =
+        Provider.of<SearchFriendsHelper>(context, listen: false);
+    if (index < searchHelper.searchedUserPbs.length) {
+      return searchHelper.searchedUserPbs[index] ??
+          const AssetImage('images/user_pb.jpg');
     }
+    return const AssetImage('images/user_pb.jpg');
   }
 
   @override
@@ -46,32 +52,30 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.all(kBigPadding),
+              padding: const EdgeInsets.all(kBigPadding),
               color: black,
               width: double.maxFinite,
               child: Text(
-                'Find nye venner',
+                S.of(context).find_friends,
                 style: kTextStyleH1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Container(
-              padding: EdgeInsets.all(kMainPadding),
+              padding: const EdgeInsets.all(kMainPadding),
               color: black,
               child: Row(
                 children: [
-                  FaIcon(
+                  const FaIcon(
                     FontAwesomeIcons.magnifyingGlass,
                     color: primaryColor,
                     size: 35.0,
                   ),
-                  SizedBox(
-                    width: kSmallSpacerValue,
-                  ),
+                  const SizedBox(width: kSmallSpacerValue),
                   Expanded(
                     child: TextField(
                       decoration: kSearchInputDecoration.copyWith(
-                        hintText: 'Skriv navn',
+                        hintText: S.of(context).enter_name,
                       ),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
@@ -85,47 +89,52 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
               ),
             ),
             Expanded(
-              child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    UserData user = Provider.of<SearchFriendsHelper>(context)
-                        .searchedUsers[index];
-                    return ListTile(
-                      onTap: () {
-                        Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(user);
-                        Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
-                      },
-                      shape: RoundedRectangleBorder(
+              child: Consumer<SearchFriendsHelper>(
+                builder: (context, searchHelper, child) {
+                  return ListView.separated(
+                    itemBuilder: (context, index) {
+                      UserData user = searchHelper.searchedUsers[index];
+                      return ListTile(
+                        onTap: () {
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(user);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
+                        },
+                        shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(kMainBorderRadius),
-                          side: BorderSide(
+                          side: const BorderSide(
                             width: kMainStrokeWidth,
                             color: white,
-                          )),
-                      leading: CircleAvatar(
-                        backgroundImage: getPb(index),
-                      ),
-                      title: Text(
-                        '${user.firstName} ${user.lastName}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      trailing: IconButton(
-                        icon: FaIcon(
-                          FontAwesomeIcons.userPlus,
+                          ),
                         ),
-                        onPressed: () {
-                          FriendRequestHelper.sendFriendRequest(user.id);
-                          Provider.of<SearchFriendsHelper>(context, listen: false).removeFromSearch(index);
-                        },
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(
-                        height: kSmallSpacerValue,
-                      ),
-                  itemCount: Provider.of<SearchFriendsHelper>(context)
-                      .searchedUsers
-                      .length),
+                        leading: CircleAvatar(
+                          backgroundImage: getPb(index),
+                        ),
+                        title: Text(
+                          '${user.firstName} ${user.lastName}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                          icon: const FaIcon(
+                            FontAwesomeIcons.userPlus,
+                            color: primaryColor,
+                          ),
+                          onPressed: () {
+                            FriendRequestHelper.sendFriendRequest(user.id);
+                            searchHelper.removeFromSearch(index);
+                          },
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: kSmallSpacerValue),
+                    itemCount: searchHelper.searchedUsers.length,
+                  );
+                },
+              ),
             ),
           ],
         ),

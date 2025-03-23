@@ -24,8 +24,8 @@ class CustomMarkerLayer extends MarkerLayer {
     final markerWidgets = <Widget>[];
 
     for (final marker in markers) {
-      final markerWidth = marker.width ?? 1.0;
-      final markerHeight = marker.height ?? 1.0;
+      final markerWidth = marker.width;
+      final markerHeight = marker.height;
 
       // Calculate the projected position of the marker
       final pxPoint = mapState.latLngToScreenPoint(marker.point);

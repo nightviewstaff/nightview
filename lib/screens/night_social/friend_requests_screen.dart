@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/models/users/friend_request.dart';
 import 'package:nightview/helpers/users/friends/friend_request_helper.dart';
 import 'package:nightview/helpers/users/friends/friends_helper.dart';
@@ -43,10 +44,12 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
       friendRequests = requests.reversed.toList();
       friendRequestPbs.clear();
       for (FriendRequest request in friendRequests) {
-        String? url = await ProfilePictureHelper.getProfilePicture(request.fromId);
+        String? url =
+            await ProfilePictureHelper.getProfilePicture(request.fromId);
         if (url == null) {
           friendRequestPbs.add(const AssetImage('images/user_pb.jpg'));
         } else {
+          friendRequestPbs.add(CachedNetworkImageProvider(url));
           friendRequestPbs.add(CachedNetworkImageProvider(url));
         }
       }
@@ -67,7 +70,7 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
               color: Colors.black,
               width: double.maxFinite,
               child: Text(
-                'Venneanmodninger',
+                S.of(context).friend_requests,
                 style: kTextStyleH2,
               ),
             ),
@@ -95,8 +98,14 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
 
                       return ListTile(
                         onTap: () {
-                          Provider.of<GlobalProvider>(context, listen: false).setChosenProfile(fromUserData);
-                          Navigator.of(context).pushNamed(OtherProfileMainScreen.id);
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(fromUserData);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setChosenProfile(fromUserData);
+                          Navigator.of(context)
+                              .pushNamed(OtherProfileMainScreen.id);
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius:

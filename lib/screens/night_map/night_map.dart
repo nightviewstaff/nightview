@@ -33,19 +33,20 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
 
   // Map<String, Marker> friendMarkers = {};
   final Map<String, Marker> _markers = {};
-  final ValueNotifier<int> _updateTrigger = ValueNotifier(0); // Simple update trigger
+  final ValueNotifier<int> _updateTrigger =
+      ValueNotifier(0); // Simple update trigger
   StreamSubscription<ClubData>? _clubStreamSub;
 
   final ValueNotifier<Map<String, Marker>> _markersNotifier = ValueNotifier({});
   // final ValueNotifier<Map<String, Marker>> _friendMarkersNotifier =      ValueNotifier({});
   // StreamSubscription? _friendLocationSubscription; // what is this?
 
-
   @override
-  void initState() {    // How often is init called?
+  void initState() {
+    // How often is init called?
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final helper =context.read<NightMapProvider>().clubDataHelper;
+      final helper = context.read<NightMapProvider>().clubDataHelper;
       helper.loadInitialClubs();
       _clubStreamSub = helper.initialClubStream.listen(_addMarker);
       _initializeUserLocation();
@@ -69,20 +70,19 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
   }
 
-
-  void updateMarkers() { //TODO needs done soon. Should keep track of changing openingclosing state of clubs on map. IF SOON OPEN SECONDARYCOLOR! + hiding/showing when toggling
+  void updateMarkers() {
+    //TODO needs done soon. Should keep track of changing openingclosing state of clubs on map. IF SOON OPEN SECONDARYCOLOR! + hiding/showing when toggling
     final toggledStates = BarTypeMapToggle.toggledStates;
     // final clubDataHelper =
-        // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
     // _markersNotifier.value = {
-      // for (var club in clubDataHelper.clubData.values)
-      //   if (toggledStates[club.typeOfClub] ?? true)
-      //     club.id: _buildClubMarker(club)
+    // for (var club in clubDataHelper.clubData.values)
+    //   if (toggledStates[club.typeOfClub] ?? true)
+    //     club.id: _buildClubMarker(club)
     // };
   }
 
   Marker _buildClubMarker(ClubData club) {
-    // TODO find good place for this (other class)
     bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
 
     return Marker(
@@ -90,12 +90,21 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       width: 100.0,
       height: 100.0,
       child: ClubMarker(
-        logo: CachedNetworkImageProvider(club.logo),
-        borderColor: isOpen ? Colors.green : Colors.red, // TODO color not working
+        logo: CachedNetworkImage(
+          imageUrl: club.logo,
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          errorWidget: (context, url, error) => CachedNetworkImage(
+            imageUrl: club.typeOfClubImg,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+          fit: BoxFit.cover,
+        ),
+        borderColor: isOpen ? Colors.green : Colors.red,
         visitors: club.visitors,
         onTap: () {
-          // TODO better visual when clickiung at some point
-          Provider.of<GlobalProvider>(context, listen: false).setChosenClub(club);
+          Provider.of<GlobalProvider>(context, listen: false)
+              .setChosenClub(club);
           ClubBottomSheet.showClubSheet(context: context, club: club);
         },
       ),
@@ -103,7 +112,8 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   }
 
   @override
-  void dispose() {    //TODO who calls dispose and what does it do?    // _friendLocationSubscription?.cancel();    // _friendMarkersNotifier.dispose();
+  void dispose() {
+    //TODO who calls dispose and what does it do?    // _friendLocationSubscription?.cancel();    // _friendMarkersNotifier.dispose();
     _clubStreamSub?.cancel();
     _markersNotifier.dispose();
     super.dispose();
@@ -153,7 +163,8 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   void moveToPosition(LatLng position) {
     Provider.of<NightMapProvider>(context, listen: false)
         .nightMapController
-        .move(LatLng(position.latitude,position.longitude), // TODO
-        kCloseMapZoom);
+        .move(
+            LatLng(position.latitude, position.longitude), // TODO
+            kCloseMapZoom);
   }
 }

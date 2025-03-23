@@ -3,13 +3,14 @@ import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/constants/phone_country_code.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_one_personal.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
-import 'package:nightview/widgets/stateless/login_pages_basic.dart';
+import 'package:nightview/widgets/stateless/sign_up_page_basic.dart';
 import 'package:nightview/widgets/stateless/login_registration_confirm_button.dart';
 import 'package:nightview/widgets/stateless/phone_country_code_dropdown_button.dart';
 import 'package:provider/provider.dart';
@@ -57,9 +58,8 @@ class _CreateAccountScreenTwoContactState
         onBack: () => Navigator.of(context)
             .pushReplacementNamed(CreateAccountScreenOnePersonal.id),
         currentStep: 2,
-
         title: Text(
-          'Kontaktoplysninger',
+          S.of(context).contact_information,
           textAlign: TextAlign.center,
           style: kTextStyleH2,
         ),
@@ -94,7 +94,7 @@ class _CreateAccountScreenTwoContactState
                     Expanded(
                       child: CustomTextField.buildTextField(
                         controller: phoneInputController,
-                        hintText: 'Telefonnummer',
+                        hintText: S.of(context).phone_number,
                         keyboardType: TextInputType.phone,
                         onChanged: (value) {
                           ValidationHelper.updateValidationStateFormTwo(
@@ -116,14 +116,15 @@ class _CreateAccountScreenTwoContactState
 
                 CustomTextField.buildTextField(
                   controller: mailInputController,
-                  hintText: 'Mail',
+                  hintText: S.of(context).email,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
                     ValidationHelper.updateValidationStateFormTwo(
                         _formKey, provider, inputIsFilled, 1, value,
                         isMailValid: false);
                   },
-                  validator: ValidationHelper.validateEmail,
+                  validator: (value) =>
+                      ValidationHelper.validateEmail(context, value),
                 ),
                 // SizedBox(height: kNormalSpacerValue),
               ],
@@ -141,19 +142,19 @@ class _CreateAccountScreenTwoContactState
               _formKey.currentState!
                   .save(); // Todo look into saving and restoring instead of init?
               bool mailExistsAlready = Provider.of<GlobalProvider>(
-                context,listen: false,
+                context,
+                listen: false,
               ).userDataHelper.doesMailExist(mail: mailInputController.text);
               if (mailExistsAlready) {
                 await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(
-                      'Ugyldig mail',
+                      S.of(context).invalid_email_address,
                       style: TextStyle(color: redAccent),
                     ),
                     content: SingleChildScrollView(
-                      child:
-                          Text('Denne mail bliver brugt af en anden bruger.'),
+                      child: Text(S.of(context).email_in_use),
                     ),
                     actions: [
                       TextButton(
@@ -161,7 +162,7 @@ class _CreateAccountScreenTwoContactState
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          'OK',
+                          S.of(context).ok,
                           style: TextStyle(color: redAccent),
                         ),
                       ),

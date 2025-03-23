@@ -16,10 +16,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.4+300002
+version: 1.2.8+1
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,7 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations: # Add this for localization support
+    sdk: flutter
+  build_runner: ^2.4.6
+  
   cupertino_icons: ^1.0.8
   flutter_spinkit: ^5.2.1
   appinio_swiper: ^2.1.1
@@ -63,8 +66,13 @@ dependencies:
   slider_button: ^2.1.0
   modal_side_sheet: ^0.0.1
   shared_preferences: ^2.5.2
-  async: ^2.12.0
+  async: ^2.11.0
 
+  # easy_localization: ^3.0.7+1 Lightweight translation
+  
+  palette_generator: ^0.3.3+6
+  
+  
   cached_network_image: ^3.4.1
   image_picker: ^1.1.2
   image_cropper: ^9.0.0
@@ -79,7 +87,8 @@ dependencies:
   #  qr_flutter: ^4.0.0
 
   flutter_cache_manager: ^3.4.1
-  intl: ^0.20.2
+  intl: ^0.19.0
+  flutter_localization: ^0.3.1
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +100,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  intl_translation: ^0.20.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -101,6 +111,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:
@@ -111,9 +122,11 @@ flutter:
     - images/logo_text.png
     - images/logo_text_subtitle.png
 
-    - images/flags/dk.png
-    - images/flags/no.png
-    - images/flags/se.png
+    - images/flags/
+    - images/swipe/
+    - images/club_types/
+
+    # - assets/translations/
 #  - images/
 #   - images/flags/
 
@@ -142,3 +155,5 @@ flutter:
 #
 # For details regarding fonts from package dependencies,
 # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/login_registration/login/login_google_screen.dart';
 import 'package:nightview/screens/login_registration/utility/custom_dialog_helper.dart';
@@ -15,7 +16,7 @@ class GoogleSignInHelper {
 
       if (googleAccount == null) {
         CustomDialogHelper.showErrorDialog(
-            context, 'Login afbrudt', 'Du afbrød Google-login.');
+            context, S.of(context).error, S.of(context).google_login_cancelled);
         return;
       }
 
@@ -29,8 +30,8 @@ class GoogleSignInHelper {
 
       Navigator.of(context).pushReplacementNamed(LoginGoogleScreen.id);
     } catch (error) {
-      CustomDialogHelper.showErrorDialog(context, 'Login fejlede',
-          'Noget gik galt under Google-login. Prøv igen.');
+      CustomDialogHelper.showErrorDialog(
+          context, S.of(context).error, S.of(context).google_login_error);
     }
   }
 }
