@@ -14,7 +14,6 @@ import 'package:provider/provider.dart';
 
 class FindNewFriendsScreen extends StatefulWidget {
   static const id = 'find_new_friends_screen';
-
   const FindNewFriendsScreen({super.key});
 
   @override
@@ -22,26 +21,33 @@ class FindNewFriendsScreen extends StatefulWidget {
 }
 
 class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final searchHelper =
           Provider.of<SearchFriendsHelper>(context, listen: false);
       searchHelper.reset();
-      searchHelper.preloadInitialSuggestions(context); // Load users immediately
+      searchHelper.preloadInitialSuggestions(context);
+    });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        Provider.of<SearchFriendsHelper>(context, listen: false)
+            .loadMore(context);
+      }
     });
   }
 
   ImageProvider getPb(int index) {
     final searchHelper =
         Provider.of<SearchFriendsHelper>(context, listen: false);
-    if (index < searchHelper.searchedUserPbs.length) {
-      return searchHelper.searchedUserPbs[index] ??
-          const AssetImage('images/user_pb.jpg');
-    }
-    return const AssetImage('images/user_pb.jpg');
+    return index < searchHelper.searchedUserPbs.length
+        ? (searchHelper.searchedUserPbs[index] ??
+            const AssetImage('images/user_pb.jpg'))
+        : const AssetImage('images/user_pb.jpg');
   }
 
   @override
@@ -66,20 +72,16 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
               color: black,
               child: Row(
                 children: [
-                  const FaIcon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: primaryColor,
-                    size: 35.0,
-                  ),
+                  const FaIcon(FontAwesomeIcons.magnifyingGlass,
+                      color: primaryColor, size: 35.0),
                   const SizedBox(width: kSmallSpacerValue),
                   Expanded(
                     child: TextField(
                       decoration: kSearchInputDecoration.copyWith(
-                        hintText: S.of(context).enter_name,
-                      ),
+                          hintText: S.of(context).enter_name),
                       textCapitalization: TextCapitalization.words,
                       cursorColor: primaryColor,
-                      onChanged: (String input) {
+                      onChanged: (input) {
                         Provider.of<SearchFriendsHelper>(context, listen: false)
                             .updateSearch(context, input);
                       },
@@ -92,7 +94,13 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
               child: Consumer<SearchFriendsHelper>(
                 builder: (context, searchHelper, child) {
                   return ListView.separated(
+                    controller: _scrollController,
                     itemBuilder: (context, index) {
+                      if (index >= searchHelper.searchedUsers.length) {
+                        return searchHelper.hasMore
+                            ? const Center(child: CircularProgressIndicator())
+                            : const SizedBox.shrink();
+                      }
                       UserData user = searchHelper.searchedUsers[index];
                       return ListTile(
                         onTap: () {
@@ -105,12 +113,13 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                           borderRadius:
                               BorderRadius.circular(kMainBorderRadius),
                           side: const BorderSide(
-                            width: kMainStrokeWidth,
-                            color: white,
-                          ),
+                              width: kMainStrokeWidth, color: white),
                         ),
                         leading: CircleAvatar(
                           backgroundImage: getPb(index),
+                          child: searchHelper.searchedUserPbs[index] == null
+                              ? const CircularProgressIndicator()
+                              : null,
                         ),
                         title: Text(
                           '${user.firstName} ${user.lastName}',
@@ -118,10 +127,8 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         trailing: IconButton(
-                          icon: const FaIcon(
-                            FontAwesomeIcons.userPlus,
-                            color: primaryColor,
-                          ),
+                          icon: const FaIcon(FontAwesomeIcons.userPlus,
+                              color: primaryColor),
                           onPressed: () {
                             FriendRequestHelper.sendFriendRequest(user.id);
                             searchHelper.removeFromSearch(index);
@@ -131,7 +138,8 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
                     },
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: kSmallSpacerValue),
-                    itemCount: searchHelper.searchedUsers.length,
+                    itemCount: searchHelper.searchedUsers.length +
+                        (searchHelper.hasMore ? 1 : 0),
                   );
                 },
               ),
@@ -140,5 +148,11 @@ class _FindNewFriendsScreenState extends State<FindNewFriendsScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 }

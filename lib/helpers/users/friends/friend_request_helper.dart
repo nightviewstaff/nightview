@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/models/users/friend_request.dart';
 
-class FriendRequestHelper { // Too long class.
+class FriendRequestHelper {
+  // Too long class.
   static final _firestore = FirebaseFirestore.instance;
   static final _auth = FirebaseAuth.instance;
 
@@ -163,5 +164,35 @@ class FriendRequestHelper { // Too long class.
       default:
         return FriendRequestStatus.rejected;
     }
+  }
+
+  static Future<Map<String, bool>> batchCheckRequests(
+      List<String> userIds) async {
+    final currentUserId = _auth.currentUser!.uid;
+    final results = <String, bool>{};
+    const int batchSize = 10; // Firestore 'in' limit
+    for (int i = 0; i < userIds.length; i += batchSize) {
+      final batch = userIds.sublist(
+          i, i + batchSize > userIds.length ? userIds.length : i + batchSize);
+      final snap1 = await _firestore
+          .collection('friend_requests')
+          .where('from', whereIn: batch)
+          .where('to', isEqualTo: currentUserId)
+          .where('status',
+              isEqualTo: _enumToString(FriendRequestStatus.pending))
+          .get();
+      final snap2 = await _firestore
+          .collection('friend_requests')
+          .where('from', isEqualTo: currentUserId)
+          .where('to', whereIn: batch)
+          .where('status',
+              isEqualTo: _enumToString(FriendRequestStatus.pending))
+          .get();
+      for (final id in batch) {
+        results[id] = snap1.docs.any((doc) => doc['from'] == id) ||
+            snap2.docs.any((doc) => doc['to'] == id);
+      }
+    }
+    return results;
   }
 }

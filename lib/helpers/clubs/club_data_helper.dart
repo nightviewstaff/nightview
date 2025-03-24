@@ -235,6 +235,7 @@ class ClubDataHelper with ChangeNotifier {
 
 // Helper function to fetch URLs with a fallback
   String fallbackImage(String typeOfClub) {
+    //TODO access local images.
     return FirebaseStorageHelper.fetchStorageUrl(
         'nightview_images/club_type_images/${typeOfClub}_icon.png');
   }
