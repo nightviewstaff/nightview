@@ -1,49 +1,16 @@
-class FirestoreService{
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
 
+// class FirestoreService {
+//   final _firestore = FirebaseFirestore.instance;
+//   final _storageRef = FirebaseStorage.instance.ref();
 
-  // const admin = require("firebase-admin");
+//   Future<void> fetchFromFirestore(String collection) async {
+//     // if(already fetched){
+//     //   return already fetched
+//     // else
 
-// Initialize Firebase
-//   admin.initializeApp({
-//     credential: admin.credential.applicationDefault(),
-//   });
+//     try {
+//       final snapshotFuture = _firestore.collection(collection).get();
 
-  // const db = admin.firestore();
-  //
-  // async function findDuplicates() {
-  //   const clubsRef = db.collection("clubs");
-  //   const snapshot = await clubsRef.get();
-  //
-  //   const clubData = [];
-  //   const duplicates = new Map();
-  //
-  //   snapshot.forEach(doc => {
-  //   const data = doc.data();
-  //   const uniqueKey = `${data.name}-${data.lat}-${data.lon}`; // Define your criteria for duplicates
-  //   if (clubData.includes(uniqueKey)) {
-  //   if (!duplicates.has(uniqueKey)) {
-  //   duplicates.set(uniqueKey, []);
-  //   }
-  //   duplicates.get(uniqueKey).push(doc.id); // Store duplicate document IDs
-  //   } else {
-  //   clubData.push(uniqueKey);
-  //   }
-  //   });
-  //
-  //   if (duplicates.size > 0) {
-  //     console.log("Duplicates found:");
-  //     duplicates.forEach((docIds, key) => {
-  //     console.log(`Duplicate Key: ${key}`);
-  //         console.log(`Document IDs: ${docIds.join(", ")}`);
-  //   });
-  //   } else {
-  //   console.log("No duplicates found!");
-  //   }
-  // }
-  //
-  // findDuplicates().catch(console.error);
-//
-
-
-
-}
+// }catch}}

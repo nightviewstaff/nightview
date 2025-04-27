@@ -82,7 +82,6 @@ class NightViewApp extends StatelessWidget {
         ChangeNotifierProvider<GlobalProvider>(
           create: (_) => GlobalProvider(),
         ),
-        ChangeNotifierProvider<GlobalProvider>(create: (_) => GlobalProvider()),
         ChangeNotifierProvider<MainNavigationProvider>(
           create: (_) => MainNavigationProvider(),
         ),

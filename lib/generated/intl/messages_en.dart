@@ -66,7 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "be_center_of_party": MessageLookupByLibrary.simpleMessage(
-          "Are you planning to be the center of the party tonight?",
+          "Are you planning on being the center of the party tonight?",
         ),
         "be_my_date": MessageLookupByLibrary.simpleMessage(
           "Will you be my date tonight and let me show you how to have fun?",
@@ -142,12 +142,12 @@ class MessageLookup extends MessageLookupByLibrary {
           "An error occurred while loading new credentials",
         ),
         "current_users":
-            MessageLookupByLibrary.simpleMessage("Users in the city now"),
+            MessageLookupByLibrary.simpleMessage("Users out tonight"),
         "daily_redemption_limit": MessageLookupByLibrary.simpleMessage(
           "You have already redeemed this offer today.\ przypominanCome back tomorrow!",
         ),
         "dance_with_two_left_feet": MessageLookupByLibrary.simpleMessage(
-          "Are you ready to dance like we have two left feet?",
+          "Are you ready to dance like you have two left feet?",
         ),
         "dancefloor_as_stage": MessageLookupByLibrary.simpleMessage(
           "Are you ready to make the dance floor your stage tonight?",
@@ -186,13 +186,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_phone_number":
             MessageLookupByLibrary.simpleMessage("Enter phone number"),
         "epic_snapchat_stories": MessageLookupByLibrary.simpleMessage(
-          "Is it tonight we make some epic Snapchat stories?",
+          "Is tonight the night we make some epic Snapchat stories?",
         ),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
         "error_occurred":
             MessageLookupByLibrary.simpleMessage("An error occurred"),
         "favorite_club_message": MessageLookupByLibrary.simpleMessage(
-          "By adding a club as a favorite, you allow this club/bar to send you messages about their offers.",
+          "By adding a club as a favorite, you allow this club/bar to send you messages about their venue.",
         ),
         "fetching_locations":
             MessageLookupByLibrary.simpleMessage("Fetching locations"),
@@ -219,7 +219,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "give_rating":
             MessageLookupByLibrary.simpleMessage("Would you like to give"),
         "go_wild_on_dancefloor": MessageLookupByLibrary.simpleMessage(
-          "Is it tonight we go wild on the dance floor?",
+          "Is tonight the night we go wild on the dance floor?",
         ),
         "going_out": MessageLookupByLibrary.simpleMessage("Shall we go out?"),
         "going_out_tonight":
@@ -265,7 +265,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "latest_location":
             MessageLookupByLibrary.simpleMessage("Latest location"),
         "legendary_missteps": MessageLookupByLibrary.simpleMessage(
-          "Shall we go out and make some legendary missteps on the dance floor?",
+          "Shall we go out and make some legendary miss steps on the dance floor?",
         ),
         "let_go_of_inhibitions": MessageLookupByLibrary.simpleMessage(
           "Is it one of those nights where we let go of all inhibitions?",
@@ -405,7 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
           "Do you have plans to go out tonight?",
         ),
         "play_rockstars": MessageLookupByLibrary.simpleMessage(
-          "Shall we go out and play rockstars tonight?",
+          "Shall we go out and act like rockstars tonight?",
         ),
         "points": MessageLookupByLibrary.simpleMessage(" points"),
         "points_conversion": MessageLookupByLibrary.simpleMessage(
@@ -440,7 +440,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Profile picture updated"),
         "rating": MessageLookupByLibrary.simpleMessage("a rating of"),
         "ready_for_city_trip": MessageLookupByLibrary.simpleMessage(
-          "Are you ready for a city trip today?",
+          "Are you ready for a night out today?",
         ),
         "ready_for_the_city":
             MessageLookupByLibrary.simpleMessage("Ready for the city?"),
@@ -474,7 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "remove_favorite":
             MessageLookupByLibrary.simpleMessage("Remove favorite"),
         "remove_favorite_confirmation": MessageLookupByLibrary.simpleMessage(
-          "Are you sure you want to remove this club from your favorites?",
+          "Are you sure you want to remove this venue from your favorites?",
         ),
         "remove_friend": MessageLookupByLibrary.simpleMessage("Remove friend"),
         "remove_friend_confirmation": MessageLookupByLibrary.simpleMessage(

@@ -111,7 +111,7 @@ class ClubOpeningHoursFormatter {
         // Format the closing time (ensure minutes are padded with a leading zero)
         final String closeTimeFormatted =
             "${currentClose.hour.toString().padLeft(2, '0')}:${currentClose.minute.toString().padLeft(2, '0')}";
-        return "${S.of(ourNavigatorKey.currentContext!).open_until} $closeTimeFormatted ${S.of(ourNavigatorKey.currentContext!).today}";
+        return "${S.of(ourNavigatorKey.currentContext!).open_until} $closeTimeFormatted${S.of(ourNavigatorKey.currentContext!).today}";
       }
       if (totalMinutes > 0) {
         //TODO Should totalMinutes >60 not be here instead??!?
