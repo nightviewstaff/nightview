@@ -10,6 +10,8 @@ import 'package:nightview/providers/login_registration_provider.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/login_registration/creation/choose_clubbing_location.dart';
 import 'package:nightview/screens/login_registration/creation/create_account_screen_two_contact.dart';
+import 'package:nightview/screens/login_registration/creation/terms_and_conditions_screen.dart';
+// import 'package:nightview/screens/login_registration/creation/terms_and_conditions.dart';
 import 'package:nightview/screens/login_registration/utility/custom_text_field.dart';
 import 'package:nightview/screens/login_registration/utility/init_state_manager.dart';
 import 'package:nightview/screens/login_registration/utility/validation_helper.dart';
@@ -34,6 +36,7 @@ class _CreateAccountScreenThreePasswordState
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   List<bool> inputIsFilled = [false, false];
+  bool agreedToTerms = false;
 
   @override
   void initState() {
@@ -90,6 +93,8 @@ class _CreateAccountScreenThreePasswordState
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('mail', provider.mail);
           await prefs.setString('password', provider.password);
+          await prefs.setBool('justCreatedAccount', true);
+          await prefs.setBool('agreedToTerms', true);
           print('Credentials saved - Mail: ${provider.mail}');
           provider.setCanContinue(false);
 
@@ -234,9 +239,14 @@ class _CreateAccountScreenThreePasswordState
               ],
             ),
           ),
+          SizedBox(height: kNormalSpacerValue),
+          TermsAndConditionsCheckbox(
+            value: agreedToTerms,
+            onChanged: (val) => setState(() => agreedToTerms = val ?? false),
+          ),
         ],
         bottomContent: LoginRegistrationConfirmButton(
-          enabled: provider.canContinue,
+          enabled: provider.canContinue && agreedToTerms,
           onPressed: () async {
             bool? valid = _formKey.currentState?.validate();
             if (valid == null || !valid) {

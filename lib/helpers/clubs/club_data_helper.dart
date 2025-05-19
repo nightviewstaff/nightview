@@ -228,7 +228,7 @@ class ClubDataHelper with ChangeNotifier {
             data['total_possible_amount_of_visitors'] ?? 0,
       );
     } catch (e) {
-      print('❌ Error processing club ${club.id}: $e');
+      print('❌ Error processing ${club.id}: $e');
       return null;
     }
   }

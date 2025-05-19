@@ -1,4 +1,3 @@
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const defaultDownArrow = FontAwesomeIcons.chevronDown;
@@ -17,6 +16,10 @@ const defaultGoogleIcon = FontAwesomeIcons.google;
 const defaultGooglePlusIcon = FontAwesomeIcons.googlePlusG;
 const defaultGooglePlayIcon = FontAwesomeIcons.googlePlay;
 const defaultAppStoreIcon = FontAwesomeIcons.appStore;
+
+const defaultMaleFemaleIcon = FontAwesomeIcons.venusMars;
+const defaultFemaleIcon = FontAwesomeIcons.venus;
+const defaultMaleIcon = FontAwesomeIcons.mars;
 
 // const defaultLocationDot = FontAwesomeIcons.mapLocationDot;
 // const defaultLocationDot = FontAwesomeIcons.locationCrosshairs;

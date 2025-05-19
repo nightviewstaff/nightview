@@ -83,6 +83,7 @@ dependencies:
   google_sign_in: ^6.2.2
   sign_in_with_apple: ^6.1.4
 
+  webview_flutter: ^4.2.2
   #  flutter_dotenv: ^5.0.2
   #  qr_flutter: ^4.0.0
 
