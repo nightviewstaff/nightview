@@ -58,15 +58,15 @@ class _MainScreenState extends State<MainScreen> {
             return const TermsFullScreenDialog();
           },
         );
-      }
-
-      if (justCreated) {
-        await prefs.setBool('justCreatedAccount', false);
+      } else if (justCreated) {
+        await prefs.remove('justCreatedAccount');
         return;
       } else {
         await _checkGenderPrompt(currentUserId);
       }
     });
+
+    //TODO MAIN OFFER OF THE DAY HERE!
   }
 
   @override
@@ -120,10 +120,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: IndexedStack(
         index: navigationProvider.currentScreenIndex,
-        children: [
-          const NightMapMainScreen(),
-          NightSocialMainScreen(),
-        ],
+        children: navigationProvider.screens,
       ),
       bottomNavigationBar: MainBottomNavigationBar(),
     );

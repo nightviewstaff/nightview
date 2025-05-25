@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
@@ -20,25 +21,37 @@ class MainBottomNavigationBar extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         BottomNavigationBar(
+          type:
+              BottomNavigationBarType.fixed, // ✅ ensures all items are labeled
+          selectedFontSize: 12,
+          unselectedFontSize: 10, // ✅ smaller for unselected
           selectedItemColor: primaryColor,
           unselectedItemColor: secondaryColor,
+          showUnselectedLabels: true,
+          showSelectedLabels: true,
           currentIndex:
               Provider.of<MainNavigationProvider>(context).currentScreenIndex,
+          iconSize: 18, // TODO constant in "values.dart"
           items: [
             BottomNavigationBarItem(
               icon: Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  const Icon(Icons.pin_drop), // Base icon
+                  const Icon(defaultMap), // Base icon
                 ],
               ),
               // TODO civilized colors at some point?
               label: S.of(context).map,
             ),
             BottomNavigationBarItem(
+                icon: Icon(Icons.search_sharp), label: 'Explore'),
+            BottomNavigationBarItem(
               icon: const Icon(Icons.people_alt),
               label: S.of(context).social,
             ),
+            BottomNavigationBarItem(
+                icon: const Icon(Icons.person_4_rounded),
+                label: S.of(context).profile)
           ],
           onTap: (index) {
             switch (index) {
@@ -48,43 +61,51 @@ class MainBottomNavigationBar extends StatelessWidget {
                 break;
               case 1:
                 Provider.of<MainNavigationProvider>(context, listen: false)
+                    .setScreen(newPage: PageName.explore);
+                break;
+              case 2:
+                Provider.of<MainNavigationProvider>(context, listen: false)
                     .setScreen(newPage: PageName.nightSocial);
                 break;
+              case 3:
+                Provider.of<MainNavigationProvider>(context, listen: false)
+                    .setScreen(newPage: PageName.profile);
               default:
                 print('ERROR - BUTTON DOES NOT EXIST');
                 break;
             }
           },
         ),
-        Consumer<GlobalProvider>(
-          builder: (context, provider, child) {
-            // TODO
-            bool isAdmin = provider.isAdmin;
-            return isAdmin
-                ? Positioned(
-                    bottom: 20.0, // Adjust to position above the nav bar
-                    child: GestureDetector(
-                      onTap: () {
-                        print('Admin icon tapped');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AdminScreen()),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: const Icon(
-                          Icons.shield, // Admin icon
-                          color: nightviewOrange,
-                          size: 30.0,
-                        ),
-                      ),
-                    ),
-                  )
-                : const SizedBox(); // Hide if not admin
-          },
-        ),
+
+        // Consumer<GlobalProvider>(
+        //   builder: (context, provider, child) {
+        //     // TODO
+        //     bool isAdmin = provider.isAdmin;
+        //     return isAdmin
+        //         ? Positioned(
+        //             bottom: 20.0, // Adjust to position above the nav bar
+        //             child: GestureDetector(
+        //               onTap: () {
+        //                 print('Admin icon tapped');
+        //                 Navigator.push(
+        //                   context,
+        //                   MaterialPageRoute(
+        //                       builder: (context) => const AdminScreen()),
+        //                 );
+        //               },
+        //               child: Container(
+        //                 padding: const EdgeInsets.all(8.0),
+        //                 child: const Icon(
+        //                   Icons.shield, // Admin icon
+        //                   color: nightviewOrange,
+        //                   size: 30.0,
+        //                 ),
+        //               ),
+        //             ),
+        //           )
+        //         : const SizedBox(); // Hide if not admin
+        //   },
+        // ),
 
         /* TODO not working as intended. Not needed for now.
         ValueListenableBuilder<int>(

@@ -5,12 +5,23 @@
 //   final _firestore = FirebaseFirestore.instance;
 //   final _storageRef = FirebaseStorage.instance.ref();
 
-//   Future<void> fetchFromFirestore(String collection) async {
-//     // if(already fetched){
-//     //   return already fetched
-//     // else
+// //   Future<void> fetchFromFirestore(String collection) async {
+// //     // if(already fetched){
+// //     //   return already fetched
+// //     // else
 
-//     try {
-//       final snapshotFuture = _firestore.collection(collection).get();
+// //     try {
+// //       final snapshotFuture = _firestore.collection(collection).get();
 
-// }catch}}
+// // }catch}}
+
+//   static Future<List<NightOffer>> getTodaysOffers() async {
+//     final querySnapshot = await FirebaseFirestore.instance
+//         .collection('night_offers')
+//         .where('active', isEqualTo: true)
+//         .limit(9)
+//         .get();
+
+//     return querySnapshot.docs.map((doc) => Offer.fromMap(doc.data())).toList();
+//   }
+// }

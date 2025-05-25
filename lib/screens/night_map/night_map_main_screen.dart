@@ -737,7 +737,7 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
           clubType: type,
           onToggle: (isToggled) {},
           updateMarkers: () {
-            nightMapKey.currentState?.updateMarkers(); //TODO NEED REWORK
+            // nightMapKey.currentState?.updateMarkers(); //TODO NEED REWORK
           },
         ),
         CircleAvatar(

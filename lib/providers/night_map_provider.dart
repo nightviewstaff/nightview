@@ -1,44 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/misc/location_helper.dart';
 import 'package:nightview/locations/location_service.dart';
+import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/screens/night_map/club_overlay_controller.dart';
 
 class NightMapProvider with ChangeNotifier {
-  final MapController nightMapController = MapController();
-  final ClubDataHelper clubDataHelper = ClubDataHelper();
-  final locationHelper = LocationHelper(
-    // Default no-op function to avoid errors
-    onPositionUpdate: (location) async {},
-  );
+  MapboxMap? mapController;
+  ClubOverlayController? _overlayController;
+  bool isInitialized = false;
 
+  final ClubDataHelper clubDataHelper = ClubDataHelper();
+  final MapController nightMapController = MapController();
+  final locationHelper = LocationHelper(onPositionUpdate: (location) async {});
   final List<Marker> _markers = [];
 
   List<Marker> get markers => _markers;
-  Future<LatLng?> _lastKnownPosition =
-      LocationService.getUserLocation(); // initial
-
-  get lastKnownPosition =>
-      _lastKnownPosition; //TODO store value and update when called
+  Future<LatLng?> _lastKnownPosition = LocationService.getUserLocation();
+  get lastKnownPosition => _lastKnownPosition;
 
   void setLastknownPosition(LatLng pos) {
     _lastKnownPosition = pos as Future<LatLng?>;
   }
 
-  // void updateMarkers(List<Marker> newMarkers) { // TODO NEED REWORK
-  //   _markers = newMarkers;
-  //   notifyListeners(); // ✅ Updates only relevant UI components, not the entire map.
-  // }
+  Future<void> initMapbox(MapboxMap map, void Function(dynamic) onTap) async {
+    if (isInitialized) return; // ✅ Prevent duplicate controller setup
+    isInitialized = true;
 
-  Future<void> updatePositionAndEvaluateVisitors(
-      {required double lat, required double lon}) async {
-    clubDataHelper.evaluateVisitors();
-    notifyListeners(); // ✅ Only updates relevant map components.
-    // TODO setUserLastposition  figure out. This maybe needs replacing.
+    mapController = map;
+    _overlayController = ClubOverlayController(map, null, null);
+    await _overlayController!.init();
   }
 
-  void moveToUserLocation(LatLng position) {
-    nightMapController.move(position, nightMapController.camera.zoom);
+  void disposeOverlay() {
+    _overlayController?.dispose();
+    _overlayController = null;
+    isInitialized = false; // ✅ Reset for next view lifecycle
   }
 }

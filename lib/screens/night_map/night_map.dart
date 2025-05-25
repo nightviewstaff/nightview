@@ -1,170 +1,104 @@
-import 'dart:async';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:nightview/constants/values.dart';
-import 'package:nightview/helpers/clubs/club_data_helper.dart';
-import 'package:nightview/models/clubs/club_data.dart';
-import 'package:nightview/providers/global_provider.dart';
-import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
-import 'package:nightview/screens/night_map/custom_marker_layer.dart';
-import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
-import 'package:nightview/widgets/icons/bar_type_toggle.dart';
-import 'package:nightview/widgets/stateless/club_marker.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:nightview/locations/location_service.dart';
+import 'package:nightview/providers/night_map_provider.dart';
 
 class NightMap extends StatefulWidget {
   const NightMap({super.key});
-
   @override
   State<NightMap> createState() => NightMapState();
 }
 
 class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
+  MapboxMap? _map;
+  bool _mapCreated = false;
+  CameraOptions? _camera;
+
   @override
-  bool get wantKeepAlive => true; // ✅ Keeps it alive when switching tabs
-
-  ClubDataHelper clubDataHelper = ClubDataHelper();
-
-  // Map<String, Marker> friendMarkers = {};
-  final Map<String, Marker> _markers = {};
-  final ValueNotifier<int> _updateTrigger =
-      ValueNotifier(0); // Simple update trigger
-  StreamSubscription<ClubData>? _clubStreamSub;
-
-  final ValueNotifier<Map<String, Marker>> _markersNotifier = ValueNotifier({});
-  // final ValueNotifier<Map<String, Marker>> _friendMarkersNotifier =      ValueNotifier({});
-  // StreamSubscription? _friendLocationSubscription; // what is this?
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    // How often is init called?
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final helper = context.read<NightMapProvider>().clubDataHelper;
-      helper.loadInitialClubs();
-      _clubStreamSub = helper.initialClubStream.listen(_addMarker);
-      _initializeUserLocation();
+    _initializeCamera();
+  }
 
-      // _initializeMarkers();
+  Future<void> _initializeCamera() async {
+    final latLng = LatLng(55.6761, 12.5683); // Copenhagen
+    setState(() {
+      _camera = CameraOptions(
+        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)),
+        zoom: 12.0,
+      );
     });
   }
 
-  void _addMarker(ClubData club) {
-    _markers[club.id] = _buildClubMarker(club);
-    _updateTrigger.value++; // Trigger UI update
-  }
+  void _onMapCreated(MapboxMap map) async {
+    if (_mapCreated) return; // ⛔ avoid duplicate view instantiation
+    _mapCreated = true;
+    _map = map;
 
-  void _initializeUserLocation() async {
-    final position = await Provider.of<NightMapProvider>(context, listen: false)
-        .locationHelper
-        .getCurrentPosition();
-
-    Provider.of<NightMapProvider>(context, listen: false)
-        .nightMapController
-        .move(LatLng(position.latitude, position.longitude), kFarMapZoom);
-  }
-
-  void updateMarkers() {
-    //TODO needs done soon. Should keep track of changing openingclosing state of clubs on map. IF SOON OPEN SECONDARYCOLOR! + hiding/showing when toggling
-    final toggledStates = BarTypeMapToggle.toggledStates;
-    // final clubDataHelper =
-    // Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
-    // _markersNotifier.value = {
-    // for (var club in clubDataHelper.clubData.values)
-    //   if (toggledStates[club.typeOfClub] ?? true)
-    //     club.id: _buildClubMarker(club)
-    // };
-  }
-
-  Marker _buildClubMarker(ClubData club) {
-    bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
-
-    return Marker(
-      point: LatLng(club.lat, club.lon),
-      width: 100.0,
-      height: 100.0,
-      child: ClubMarker(
-        logo: CachedNetworkImage(
-          imageUrl: club.logo,
-          placeholder: (context, url) => const CircularProgressIndicator(),
-          errorWidget: (context, url, error) => CachedNetworkImage(
-            imageUrl: club.typeOfClubImg,
-            placeholder: (context, url) => const CircularProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          ),
-          fit: BoxFit.cover,
+    final status = await Permission.locationWhenInUse.request();
+    if (status.isGranted) {
+      await map.location.updateSettings(
+        LocationComponentSettings(
+          enabled: true,
+          pulsingEnabled: true,
+          showAccuracyRing: true,
         ),
-        borderColor: isOpen ? Colors.green : Colors.red,
-        visitors: club.visitors,
-        onTap: () {
-          Provider.of<GlobalProvider>(context, listen: false)
-              .setChosenClub(club);
-          ClubBottomSheet.showClubSheet(context: context, club: club);
-        },
-      ),
+      );
+    }
+
+    await map.scaleBar.updateSettings(ScaleBarSettings(enabled: false));
+    await map.attribution.updateSettings(AttributionSettings(enabled: false));
+  }
+
+  Future<void> _onStyleLoaded(StyleLoadedEventData data) async {
+    if (_map == null) return;
+    final map = _map!;
+    final provider = context.read<NightMapProvider>();
+
+    await provider.initMapbox(map, (_) {});
+
+    await map.setBounds(CameraBoundsOptions(minZoom: 1.0));
+    await map.attribution.updateSettings(AttributionSettings(
+      position: OrnamentPosition.TOP_LEFT,
+      marginLeft: 4.0,
+      marginTop: 4.0,
+      iconColor: 0x00000000,
+    ));
+    await map.logo.updateSettings(LogoSettings(enabled: false));
+    await map.compass.updateSettings(CompassSettings(
+      enabled: true,
+      position: OrnamentPosition.TOP_RIGHT,
+      marginRight: 8.0,
+      marginTop: 8.0,
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    if (_camera == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return MapWidget(
+      key: const ValueKey("mapWidget"),
+      styleUri: "mapbox://styles/nightview/cmb0q53y2008l01rk9wqb0jv3",
+      cameraOptions: _camera!,
+      onMapCreated: _onMapCreated,
+      onStyleLoadedListener: _onStyleLoaded,
     );
   }
 
   @override
   void dispose() {
-    //TODO who calls dispose and what does it do?    // _friendLocationSubscription?.cancel();    // _friendMarkersNotifier.dispose();
-    _clubStreamSub?.cancel();
-    _markersNotifier.dispose();
+    context.read<NightMapProvider>().disposeOverlay();
     super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAlive
-    final nightMapProvider =
-        Provider.of<NightMapProvider>(context, listen: false);
-
-    return FlutterMap(
-      mapController: nightMapProvider.nightMapController,
-      options: MapOptions(
-        initialCenter: LatLng(55.6761, 12.5683), // Copenhagen coordinates
-        initialZoom: kFarMapZoom, // Adjust the zoom level as needed
-      ),
-      children: [
-        TileLayer(
-          urlTemplate: 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.nightview.nightview',
-          // tileProvider:
-        ),
-        CurrentLocationLayer(),
-        ValueListenableBuilder<int>(
-          valueListenable: _updateTrigger,
-          builder: (context, _, __) {
-            return CustomMarkerLayer(
-              markers: _markers.values.toList(),
-            );
-          },
-        ),
-        RichAttributionWidget(
-          attributions: [
-            TextSourceAttribution(
-              'OpenStreetMap contributors',
-              onTap: () {
-                launchUrl(Uri.parse('https://openstreetmap.org/copyright'));
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  void moveToPosition(LatLng position) {
-    Provider.of<NightMapProvider>(context, listen: false)
-        .nightMapController
-        .move(
-            LatLng(position.latitude, position.longitude), // TODO
-            kCloseMapZoom);
   }
 }

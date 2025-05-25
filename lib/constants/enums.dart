@@ -1,7 +1,8 @@
 enum PageName {
   nightMap,
-  // nightOffers,
+  explore,
   nightSocial,
+  profile,
 }
 
 enum LoginRegistrationButtonType {
