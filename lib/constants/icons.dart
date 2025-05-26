@@ -11,6 +11,7 @@ const defaultAdmin = FontAwesomeIcons.personBreastfeeding;
 const defaultMap = FontAwesomeIcons.map;
 const defaultLocationDot = FontAwesomeIcons.locationDot;
 const defaultLocationDotLocked = FontAwesomeIcons.locationPinLock;
+const defaultCompassIcon = FontAwesomeIcons.compass;
 
 // Utility
 const defaultDownArrow = FontAwesomeIcons.chevronDown;

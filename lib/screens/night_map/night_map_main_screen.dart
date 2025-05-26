@@ -17,6 +17,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
+import 'package:nightview/screens/night_map/club_overlay_controller.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
 import 'package:nightview/screens/utility/hour_glass_loading_screen.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
@@ -56,6 +57,15 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
     clubDataHelper =
         Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
     _searchController = SearchController();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final mapboxMap = await nightMapKey.currentState?.getMapboxMap();
+      if (mapboxMap != null) {
+        Provider.of<NightMapProvider>(context, listen: false).setMap(mapboxMap);
+        final overlayController =
+            ClubOverlayController(mapboxMap, clubDataHelper, context);
+        await overlayController.init();
+      }
+    });
   }
 
   @override
@@ -581,21 +591,18 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                                           : const SizedBox(
                                               width: 30, height: 30),
                                       onTap: () {
-                                        if (controller.isOpen) {
-                                          controller.closeView("");
-                                        }
-                                        Provider.of<NightMapProvider>(context,
-                                                listen: false)
-                                            .nightMapController
-                                            .move(LatLng(club.lat, club.lon),
-                                                kCloseMapZoom);
-                                        FocusManager.instance.primaryFocus
-                                            ?.unfocus();
-                                        Provider.of<GlobalProvider>(context,
-                                                listen: false)
-                                            .setChosenClub(club);
-                                        ClubBottomSheet.showClubSheet(
-                                            context: context, club: club);
+                                        Navigator.pop(context);
+
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          if (!context.mounted) return;
+
+                                          Provider.of<GlobalProvider>(context,
+                                                  listen: false)
+                                              .setChosenClub(club);
+                                          ClubBottomSheet.showClubSheet(
+                                              context: context, club: club);
+                                        });
                                       },
                                     );
                                   }).toList();

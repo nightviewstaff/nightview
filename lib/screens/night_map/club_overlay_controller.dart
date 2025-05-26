@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
-import 'package:provider/provider.dart';
+import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
+import 'package:nightview/screens/night_map/annotation_click_listener.dart';
 
 class ClubOverlayController {
   final MapboxMap map;
@@ -12,12 +14,24 @@ class ClubOverlayController {
   CircleAnnotationManager? _circleMgr;
   PointAnnotationManager? _pointMgr;
   final Map<String, PointAnnotation> annotationMap = {};
+  final BuildContext context;
+  bool _isBottomSheetOpen = false;
 
-  ClubOverlayController(this.map, this.clubDataHelper);
+  ClubOverlayController(this.map, this.clubDataHelper, this.context);
 
   Future<void> init() async {
     _pointMgr = await map.annotations.createPointAnnotationManager();
+    _pointMgr?.addOnPointAnnotationClickListener(
+      AnnotationClickListener(map, clubDataHelper, annotationMap, context),
+    );
     await _addImageAnnotationsForAllClubs();
+  }
+
+  bool get isBottomSheetOpen => _isBottomSheetOpen;
+
+  // Method to update the bottom sheet state
+  void setBottomSheetOpen(bool isOpen) {
+    _isBottomSheetOpen = isOpen;
   }
 
   Future<void> _addImageAnnotationsForAllClubs() async {
@@ -26,7 +40,6 @@ class ClubOverlayController {
       return;
     }
 
-    // STEP 1: Add local type-based icon markers immediately
     for (final club in clubDataHelper.clubDataList.value) {
       try {
         final assetPath = 'images/club_types/${club.typeOfClub}_icon.png';
@@ -36,7 +49,7 @@ class ClubOverlayController {
         final decoded = img.decodeImage(rawBytes);
         if (decoded == null)
           throw Exception("Image decode failed for $assetPath");
-        final resized = img.copyResize(decoded, width: 80, height: 80);
+        final resized = img.copyResize(decoded, width: 100, height: 100);
         final circular = img.copyCropCircle(resized);
         final imageData = Uint8List.fromList(img.encodePng(circular));
 
@@ -76,10 +89,8 @@ class ClubOverlayController {
         try {
           final logoData = await fetchNetworkImageBytes(club.logo);
 
-          // Remove existing annotation
           await _pointMgr?.delete(existing);
 
-          // Re-create with updated image
           final newAnnotation = await _pointMgr?.create(PointAnnotationOptions(
             geometry: existing.geometry,
             image: logoData,
@@ -110,7 +121,6 @@ class ClubOverlayController {
       throw Exception("Failed to decode image");
     }
 
-    // Resize and circular crop
     final resized = img.copyResize(decodedImage, width: 80, height: 80);
     final circular = img.copyCropCircle(resized);
 
@@ -120,7 +130,7 @@ class ClubOverlayController {
   Future<void> _addCircle() async {
     _circleMgr = await map.annotations.createCircleAnnotationManager();
     await _circleMgr!.create(CircleAnnotationOptions(
-      geometry: Point(coordinates: Position(13.5683, 55.6761)), // Copenhagen
+      geometry: Point(coordinates: Position(13.5683, 55.6761)),
       circleRadius: 15.0,
       circleColor: secondaryColor.value,
       circleOpacity: 1,

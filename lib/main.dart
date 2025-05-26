@@ -8,7 +8,7 @@ import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
-import 'package:nightview/screens/night_map/mapbox/mapbox_settings.dart';
+
 import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/language_provider.dart';

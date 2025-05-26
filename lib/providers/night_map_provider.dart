@@ -27,7 +27,7 @@ class NightMapProvider with ChangeNotifier {
     _lastKnownPosition = pos as Future<LatLng?>;
   }
 
-  Future<void> initMapbox(MapboxMap map, void Function(dynamic) onTap) async {
+  Future<void> initMapbox(MapboxMap map, BuildContext context) async {
     if (isInitialized) return;
     isInitialized = true;
 
@@ -35,9 +35,13 @@ class NightMapProvider with ChangeNotifier {
 
     // ✅ Ensure club data is loaded before overlay initialization
     await clubDataHelper.loadInitialClubs();
-
-    _overlayController = ClubOverlayController(map, clubDataHelper);
+    _overlayController = ClubOverlayController(map, clubDataHelper, context);
     await _overlayController!.init();
+  }
+
+  void setMap(MapboxMap newMap) {
+    mapController = newMap;
+    notifyListeners();
   }
 
   void disposeOverlay() {

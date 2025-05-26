@@ -272,22 +272,22 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                                   .isClubOpen(club);
                                           return GestureDetector(
                                             onTap: () {
-                                              Navigator.pop(context);
+                                              Navigator.pop(
+                                                  context); // Close the side sheet
 
-                                              Provider.of<NightMapProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .nightMapController
-                                                  .move(
-                                                      LatLng(
-                                                          club.lat, club.lon),
-                                                      kCloseMapZoom);
-                                              Provider.of<GlobalProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .setChosenClub(club);
-                                              ClubBottomSheet.showClubSheet(
-                                                  context: context, club: club);
+                                              // Delay the bottom sheet to ensure context is valid after pop
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                if (!context.mounted) return;
+
+                                                Provider.of<GlobalProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .setChosenClub(club);
+                                                ClubBottomSheet.showClubSheet(
+                                                    context: context,
+                                                    club: club);
+                                              });
                                             },
                                             child: Padding(
                                               padding:
