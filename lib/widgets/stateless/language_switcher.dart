@@ -38,7 +38,7 @@ class LanguageSwitcher extends StatelessWidget {
 
   const LanguageSwitcher({
     super.key,
-    this.radius = 15.0,
+    this.radius = 20.0,
     this.borderRadius = 25.0,
   });
 
@@ -48,9 +48,14 @@ class LanguageSwitcher extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _showLanguageDialog(context),
-      child: CircleAvatar(
-        backgroundImage: AssetImage(languageProvider.flagPath),
-        radius: radius,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: Image.asset(
+          languageProvider.flagPath,
+          width: radius,
+          height: radius,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -100,9 +105,15 @@ class LanguageSwitcher extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: languageProvider.availableFlags.map((flagPath) {
               return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(flagPath),
-                  radius: 15,
+                leading: ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(5), // Square with slight rounding
+                  child: Image.asset(
+                    flagPath,
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 title: FutureBuilder<List<Color>>(
                   future: getDominantColors(flagPath),

@@ -20,7 +20,11 @@ class ExploreScreen extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.tune, color: primaryColor),
+                    const Icon(
+                      Icons.tune,
+                      color: primaryColor,
+                      size: 20,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Container(

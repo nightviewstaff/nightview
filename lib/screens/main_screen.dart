@@ -13,6 +13,7 @@ import 'package:nightview/screens/login_registration/creation/terms_and_conditio
 import 'package:nightview/screens/night_map/night_map_main_screen.dart';
 import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 import 'package:nightview/screens/option_menu/side_sheet_main_screen.dart';
+import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:nightview/widgets/stateless/main_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,6 +98,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         actions: [
+          LanguageSwitcher(),
+          SizedBox(width: 12.0),
           GestureDetector(
             onTap: () {
               showModalSideSheet(

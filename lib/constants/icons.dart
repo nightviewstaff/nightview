@@ -1,16 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nightview/constants/colors.dart';
+
+const defaultSize = 20.0;
+const defaultColor = primaryColor;
 
 const defaultAdmin = FontAwesomeIcons.personBreastfeeding;
 
-const defaultDownArrow = FontAwesomeIcons.chevronDown;
-const defaultUpArrow = FontAwesomeIcons.chevronUp;
-
 // Location
+const defaultMap = FontAwesomeIcons.map;
 const defaultLocationDot = FontAwesomeIcons.locationDot;
 const defaultLocationDotLocked = FontAwesomeIcons.locationPinLock;
-const defaultMap = FontAwesomeIcons.map;
 
 // Utility
+const defaultDownArrow = FontAwesomeIcons.chevronDown;
+const defaultUpArrow = FontAwesomeIcons.chevronUp;
 const defaultGoBackIcon = FontAwesomeIcons.arrowLeft;
 
 // Platform
@@ -28,6 +32,12 @@ const defaultMaleIcon = FontAwesomeIcons.mars;
 
 const defaultGearIcon = FontAwesomeIcons.gear;
 const defaultPercentIcon = FontAwesomeIcons.percent;
+
+const defaultSettingIcon = const Icon(
+  Icons.tune,
+  color: defaultColor,
+  size: defaultSize,
+);
 
 // const defaultProfileIcon = FontAwesomeIcons.person;
 

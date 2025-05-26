@@ -16,6 +16,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   MapboxMap? _map;
   bool _mapCreated = false;
   CameraOptions? _camera;
+  double? _lastZoom;
 
   @override
   bool get wantKeepAlive => true;

@@ -75,9 +75,16 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                   onTap: () {
                     Navigator.of(context).pop();
                   },
-                  trailing: LanguageSwitcher(
-                    radius: 19.0,
-                    borderRadius: 25.0,
+                  trailing: InkWell(
+                    onTap: () {
+                      print('Location icon tapped');
+                    },
+                    child: Icon(
+                      //TODO
+                      1 > 0 ? defaultLocationDot : defaultLocationDotLocked,
+                      color: 1 > 2 ? primaryColor : grey,
+                      size: 20.0,
+                    ),
                   ),
                 ),
                 ListTile(
@@ -362,17 +369,6 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                   //     size: 20.0,
                   //   ),
                   // ),
-                  InkWell(
-                    onTap: () {
-                      print('Location icon tapped');
-                    },
-                    child: Icon(
-                      //TODO
-                      1 > 0 ? defaultLocationDot : defaultLocationDotLocked,
-                      color: 1 > 2 ? primaryColor : grey,
-                      size: 20.0,
-                    ),
-                  ),
                 ],
               ),
             ),

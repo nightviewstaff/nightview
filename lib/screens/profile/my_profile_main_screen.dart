@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/generated/l10n.dart';
@@ -105,10 +106,7 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 18.0),
-            child: LanguageSwitcher(
-              radius: 19.0,
-              borderRadius: 25.0,
-            ),
+            child: defaultSettingIcon, // TODO add functionallity
           ),
         ],
       ),

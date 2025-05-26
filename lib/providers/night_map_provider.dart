@@ -28,11 +28,15 @@ class NightMapProvider with ChangeNotifier {
   }
 
   Future<void> initMapbox(MapboxMap map, void Function(dynamic) onTap) async {
-    if (isInitialized) return; // ✅ Prevent duplicate controller setup
+    if (isInitialized) return;
     isInitialized = true;
 
     mapController = map;
-    _overlayController = ClubOverlayController(map, null, null);
+
+    // ✅ Ensure club data is loaded before overlay initialization
+    await clubDataHelper.loadInitialClubs();
+
+    _overlayController = ClubOverlayController(map, clubDataHelper);
     await _overlayController!.init();
   }
 
