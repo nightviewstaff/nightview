@@ -55,7 +55,7 @@ class ClubBottomSheet {
     // Show the bottom sheet
     final sheet = showStickyFlexibleBottomSheet(
       context: context,
-      initHeight: 0.4,
+      initHeight: 0.61,
       minHeight: 0.40,
       maxHeight: 0.82,
       headerHeight: 350,

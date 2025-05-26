@@ -23,6 +23,8 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
   bool shouldShowCenterButton = true;
   bool shouldShowNorthButton = true;
   bool shouldShowTopDownButton = true;
+  double localPitch = 0;
+  double localBearing = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -64,43 +66,24 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
             ],
           ),
         ),
+        // if (localBearing != 0)
         Positioned(
           top: 10,
           right: 10,
-          child: Column(
-            children: [
-              _buildMapButton(
-                icon: Icons.compass_calibration_sharp,
-                tooltip: "Face north",
-                onPressed: _faceNorth,
-              ),
-            ],
+          child: _buildMapButton(
+            icon: defaultCompassIcon,
+            tooltip: "Face north",
+            onPressed: _faceNorth,
           ),
         ),
-        Positioned(
-          top: 10,
-          right: 10,
-          child: Column(
-            children: [
-              _buildMapButton(
-                icon: defaultCompassIcon,
-                tooltip: "Face north",
-                onPressed: _faceNorth,
-              ),
-            ],
-          ),
-        ),
+        // if (localPitch != 0)
         Positioned(
           top: 60,
           right: 10,
-          child: Column(
-            children: [
-              _buildMapButton(
-                icon: Icons.rotate_90_degrees_ccw_sharp,
-                tooltip: "Top-down",
-                onPressed: _topDownView,
-              ),
-            ],
+          child: _buildMapButton(
+            icon: Icons.rotate_90_degrees_ccw_sharp,
+            tooltip: "Top-down",
+            onPressed: _topDownView,
           ),
         ),
       ],
@@ -122,6 +105,8 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       ),
       MapAnimationOptions(duration: 1500),
     );
+    localBearing = 0;
+    localPitch = 0;
   }
 
   void _faceNorth() {
@@ -133,6 +118,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       CameraOptions(bearing: 0),
       MapAnimationOptions(duration: 500),
     );
+    localBearing = 0;
   }
 
   void _topDownView() {
@@ -144,6 +130,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       CameraOptions(pitch: 0),
       MapAnimationOptions(duration: 500),
     );
+    localPitch = 0;
   }
 
   Future<void> _initializeCamera() async {
