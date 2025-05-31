@@ -80,9 +80,9 @@ class ClubOverlayController {
       final batch = clubs.skip(i).take(batchSize);
 
       await Future.wait(batch.map((club) async {
-        if (club.logo.contains('default_logo') ||
-            club.logo.contains('club_type_images')) return;
-
+        // if (club.logo.contains('default_logo') ||
+        //     club.logo.contains('club_type_images')) return;
+// TODO check
         final existing = annotationMap[club.id];
         if (existing == null) return;
 

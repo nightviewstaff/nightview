@@ -1417,8 +1417,11 @@ class S {
 
   /// `Search for locations, areas, or anything else`
   String get search_locations {
-    return Intl.message('Search for locations, areas, or anything else',
-        name: 'search_locations', desc: '', args: []);
+    return Intl.message(
+        'Search for locations, age restriction, areas or anything else',
+        name: 'search_locations',
+        desc: '',
+        args: []);
   }
 
   /// `Select Image`

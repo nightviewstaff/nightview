@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:marquee/marquee.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/providers/global_provider.dart';
+import 'package:nightview/screens/night_social/utility/image_upload_screen.dart';
 import 'package:provider/provider.dart';
 
 class NightSocialMainScreen extends StatelessWidget {
@@ -58,13 +60,72 @@ class NightSocialMainScreen extends StatelessWidget {
                 itemCount: 111,
                 separatorBuilder: (_, __) => const SizedBox(width: 0),
                 itemBuilder: (context, index) {
-                  final onAvatarTap = () {
+                  onAvatarTap() {
                     if (index == 0) {
-                      print('Add new story or profile update action');
+                      final picker = ImagePicker();
+
+                      showModalBottomSheet(
+                        context: context,
+                        backgroundColor: black,
+                        builder: (ctx) => SafeArea(
+                          child: Wrap(
+                            children: [
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.camera_alt,
+                                  color: primaryColor,
+                                ),
+                                title: const Text(
+                                  'Take a photo',
+                                  selectionColor: white,
+                                ),
+                                onTap: () async {
+                                  final image = await picker.pickImage(
+                                      source: ImageSource.camera);
+                                  if (image != null && context.mounted) {
+                                    Navigator.pop(ctx);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            ImageUploadScreen(image: image),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.photo_library,
+                                  color: secondaryColor,
+                                ),
+                                title: const Text(
+                                  'Choose from gallery',
+                                  selectionColor: white,
+                                ),
+                                onTap: () async {
+                                  final image = await picker.pickImage(
+                                      source: ImageSource.gallery);
+                                  if (image != null && context.mounted) {
+                                    Navigator.pop(ctx);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            ImageUploadScreen(image: image),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     } else {
                       print('TOP Avatar $index tapped');
                     }
-                  };
+                  }
 
                   if (index == 0) {
                     return GestureDetector(

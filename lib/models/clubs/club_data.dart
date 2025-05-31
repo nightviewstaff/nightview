@@ -4,10 +4,12 @@ class ClubData {
   final String id;
   final String name;
   final String logo;
+  final List<String>? tags;
 
   final String? mainOfferImg;
   final String typeOfClub;
   final String typeOfClubImg;
+  final bool hasMoodImages;
 
   final int ageRestriction;
   final int totalPossibleAmountOfVisitors;
@@ -42,6 +44,8 @@ class ClubData {
     required this.rating,
     required this.openingHours,
     required this.totalPossibleAmountOfVisitors,
+    this.hasMoodImages = false,
     this.visitors = 0,
+    this.tags,
   });
 }

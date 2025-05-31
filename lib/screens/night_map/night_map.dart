@@ -9,6 +9,7 @@ import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 
 class NightMap extends StatefulWidget {
+  static const id = 'night_map';
   const NightMap({super.key});
   @override
   State<NightMap> createState() => NightMapState();

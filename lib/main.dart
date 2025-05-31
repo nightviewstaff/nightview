@@ -36,6 +36,7 @@ import 'package:nightview/screens/login_registration/login/login_nightview_scree
 import 'package:nightview/screens/login_registration/todo/registration_confirmation_screen.dart';
 import 'package:nightview/screens/main_screen.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
+import 'package:nightview/screens/night_map/night_map_main_screen.dart';
 import 'package:nightview/screens/night_social/chats_screen.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/night_social/friend_requests_screen.dart';
@@ -157,8 +158,7 @@ class NightViewApp extends StatelessWidget {
               SwipeScreen.id: (context) => const SwipeScreen(),
               WaitingForLoginScreen.id: (context) =>
                   const WaitingForLoginScreen(),
-              NightMapMainOfferScreen.id: (context) =>
-                  const NightMapMainOfferScreen(),
+              NightMapMainScreen.id: (context) => const NightMapMainScreen(),
               LocationPermissionWhileInUseScreen.id: (context) =>
                   const LocationPermissionWhileInUseScreen(),
               LocationPermissionAlwaysScreen.id: (context) =>

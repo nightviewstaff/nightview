@@ -56,6 +56,7 @@ class ClubDataLocationFormatting {
   /// Instead of dozens of _isInCity functions, we define bounding boxes here.
   /// The keys are the official city names.
   static final Map<String, Map<String, double>> cityBoundingBoxes = {
+    // Denmark
     "København": {
       "minLat": 55.6,
       "maxLat": 55.8,
@@ -65,169 +66,125 @@ class ClubDataLocationFormatting {
     "Aarhus": {"minLat": 56.1, "maxLat": 56.2, "minLon": 10.1, "maxLon": 10.3},
     "Odense": {"minLat": 55.3, "maxLat": 55.5, "minLon": 10.3, "maxLon": 10.5},
     "Aalborg": {"minLat": 57.0, "maxLat": 57.1, "minLon": 9.8, "maxLon": 10.0},
-    "Frederiksberg": {
-      "minLat": 55.66,
-      "maxLat": 55.68,
-      "minLon": 12.50,
-      "maxLon": 12.55
+    // Sweden
+    "Stockholm": {
+      "minLat": 59.25,
+      "maxLat": 59.40,
+      "minLon": 17.95,
+      "maxLon": 18.15
     },
-    "Esbjerg": {
-      "minLat": 55.45,
-      "maxLat": 55.55,
-      "minLon": 8.40,
-      "maxLon": 8.50
+    "Göteborg": {
+      "minLat": 57.65,
+      "maxLat": 57.75,
+      "minLon": 11.90,
+      "maxLon": 12.00
     },
-    "Randers": {
-      "minLat": 56.45,
-      "maxLat": 56.50,
-      "minLon": 10.00,
+    "Malmö": {
+      "minLat": 55.55,
+      "maxLat": 55.65,
+      "minLon": 12.95,
+      "maxLon": 13.05
+    },
+    // Germany
+    "Berlin": {
+      "minLat": 52.45,
+      "maxLat": 52.55,
+      "minLon": 13.30,
+      "maxLon": 13.50
+    },
+    "Hamburg": {
+      "minLat": 53.50,
+      "maxLat": 53.60,
+      "minLon": 9.90,
       "maxLon": 10.10
     },
-    "Kolding": {
-      "minLat": 55.48,
-      "maxLat": 55.54,
-      "minLon": 9.46,
-      "maxLon": 9.52
+    "München": {
+      "minLat": 48.10,
+      "maxLat": 48.20,
+      "minLon": 11.50,
+      "maxLon": 11.65
     },
-    "Vejle": {"minLat": 55.70, "maxLat": 55.74, "minLon": 9.50, "maxLon": 9.56},
-    "Horsens": {
-      "minLat": 55.85,
-      "maxLat": 55.90,
-      "minLon": 9.80,
-      "maxLon": 10.00
+    // France
+    "Paris": {"minLat": 48.80, "maxLat": 48.90, "minLon": 2.25, "maxLon": 2.40},
+    "Marseille": {
+      "minLat": 43.25,
+      "maxLat": 43.35,
+      "minLon": 5.35,
+      "maxLon": 5.45
     },
-    "Herning": {
-      "minLat": 56.13,
-      "maxLat": 56.18,
-      "minLon": 8.95,
-      "maxLon": 9.05
+    "Lyon": {"minLat": 45.70, "maxLat": 45.80, "minLon": 4.80, "maxLon": 4.90},
+    // United Kingdom
+    "London": {
+      "minLat": 51.45,
+      "maxLat": 51.55,
+      "minLon": -0.20,
+      "maxLon": 0.00
     },
-    "Roskilde": {
-      "minLat": 55.63,
-      "maxLat": 55.67,
-      "minLon": 12.07,
-      "maxLon": 12.13
+    "Manchester": {
+      "minLat": 53.45,
+      "maxLat": 53.50,
+      "minLon": -2.30,
+      "maxLon": -2.20
     },
-    "Silkeborg": {
-      "minLat": 56.17,
-      "maxLat": 56.22,
-      "minLon": 9.53,
-      "maxLon": 9.57
+    // Spain
+    "Madrid": {
+      "minLat": 40.35,
+      "maxLat": 40.45,
+      "minLon": -3.75,
+      "maxLon": -3.65
     },
-    "Næstved": {
-      "minLat": 55.22,
-      "maxLat": 55.27,
-      "minLon": 11.75,
-      "maxLon": 11.82
+    "Barcelona": {
+      "minLat": 41.35,
+      "maxLat": 41.45,
+      "minLon": 2.10,
+      "maxLon": 2.20
     },
-    "Fredericia": {
-      "minLat": 55.56,
-      "maxLat": 55.61,
-      "minLon": 9.74,
-      "maxLon": 9.80
+    // Italy
+    "Rome": {
+      "minLat": 41.85,
+      "maxLat": 41.95,
+      "minLon": 12.45,
+      "maxLon": 12.55
     },
-    "Helsingør": {
-      "minLat": 56.02,
-      "maxLat": 56.05,
-      "minLon": 12.60,
-      "maxLon": 12.63
+    "Milan": {"minLat": 45.40, "maxLat": 45.50, "minLon": 9.15, "maxLon": 9.25},
+    // Netherlands
+    "Amsterdam": {
+      "minLat": 52.35,
+      "maxLat": 52.40,
+      "minLon": 4.85,
+      "maxLon": 4.95
     },
-    "Viborg": {
-      "minLat": 56.45,
-      "maxLat": 56.50,
-      "minLon": 9.38,
-      "maxLon": 9.42
+    "Rotterdam": {
+      "minLat": 51.90,
+      "maxLat": 51.95,
+      "minLon": 4.45,
+      "maxLon": 4.55
     },
-    "Køge": {
-      "minLat": 55.45,
-      "maxLat": 55.50,
-      "minLon": 12.17,
-      "maxLon": 12.22
+    // Norway
+    "Oslo": {
+      "minLat": 59.90,
+      "maxLat": 59.95,
+      "minLon": 10.70,
+      "maxLon": 10.80
     },
-    "Holstebro": {
-      "minLat": 56.36,
-      "maxLat": 56.41,
-      "minLon": 8.61,
-      "maxLon": 8.66
+    "Bergen": {
+      "minLat": 60.35,
+      "maxLat": 60.40,
+      "minLon": 5.30,
+      "maxLon": 5.35
     },
-    "Slagelse": {
-      "minLat": 55.40,
-      "maxLat": 55.45,
-      "minLon": 11.34,
-      "maxLon": 11.39
+    // Finland
+    "Helsinki": {
+      "minLat": 60.15,
+      "maxLat": 60.20,
+      "minLon": 24.90,
+      "maxLon": 25.00
     },
-    "Svendborg": {
-      "minLat": 55.05,
-      "maxLat": 55.10,
-      "minLon": 10.60,
-      "maxLon": 10.65
-    },
-    "Sønderborg": {
-      "minLat": 54.90,
-      "maxLat": 54.95,
-      "minLon": 9.75,
-      "maxLon": 9.80
-    },
-    "Hjørring": {
-      "minLat": 57.45,
-      "maxLat": 57.50,
-      "minLon": 9.90,
-      "maxLon": 10.00
-    },
-    "Holbæk": {
-      "minLat": 55.70,
-      "maxLat": 55.75,
-      "minLon": 11.63,
-      "maxLon": 11.67
-    },
-    "Frederikshavn": {
-      "minLat": 57.43,
-      "maxLat": 57.48,
-      "minLon": 10.50,
-      "maxLon": 10.55
-    },
-    "Haderslev": {
-      "minLat": 55.24,
-      "maxLat": 55.27,
-      "minLon": 9.47,
-      "maxLon": 9.52
-    },
-    "Skive": {"minLat": 56.34, "maxLat": 56.39, "minLon": 9.02, "maxLon": 9.08},
-    "Ringsted": {
-      "minLat": 55.44,
-      "maxLat": 55.48,
-      "minLon": 11.77,
-      "maxLon": 11.82
-    },
-    "Farum": {
-      "minLat": 55.80,
-      "maxLat": 55.85,
-      "minLon": 12.35,
-      "maxLon": 12.40
-    },
-    "Nykøbing Falster": {
-      "minLat": 54.76,
-      "maxLat": 54.80,
-      "minLon": 11.87,
-      "maxLon": 11.92
-    },
-    "Aabenraa": {
-      "minLat": 55.03,
-      "maxLat": 55.07,
-      "minLon": 9.42,
-      "maxLon": 9.47
-    },
-    "Kalundborg": {
-      "minLat": 55.66,
-      "maxLat": 55.70,
-      "minLon": 11.07,
-      "maxLon": 11.12
-    },
-    "Nyborg": {
-      "minLat": 55.32,
-      "maxLat": 55.36,
-      "minLon": 10.78,
-      "maxLon": 10.82
+    "Tampere": {
+      "minLat": 61.45,
+      "maxLat": 61.50,
+      "minLon": 23.75,
+      "maxLon": 23.85
     },
   };
 

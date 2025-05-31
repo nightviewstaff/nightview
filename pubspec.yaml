@@ -84,6 +84,7 @@ dependencies:
   google_sign_in: ^6.2.2
   sign_in_with_apple: ^6.1.4
 
+  syncfusion_flutter_sliders: ^29.2.7
   # webview_flutter: ^4.13.0
   #  flutter_dotenv: ^5.0.2
   #  qr_flutter: ^4.0.0

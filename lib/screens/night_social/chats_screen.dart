@@ -162,6 +162,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              arrowIcon: false,
             ),
           ],
         ),

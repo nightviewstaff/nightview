@@ -17,6 +17,8 @@ class ClubDataHelper with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   // final _storageRef = FirebaseStorage.instance.ref();
 
+  static Map<String, String> tagEmojiMap = {};
+
   Map<String, ClubData> clubData = {};
   final ValueNotifier<List<ClubData>> clubDataList = ValueNotifier([]);
   final ValueNotifier<Set<String>> allClubTypes = ValueNotifier({});
@@ -31,20 +33,22 @@ class ClubDataHelper with ChangeNotifier {
   int totalAmountOfClubs = 0;
 
   ClubDataHelper({Callback<Map<String, ClubData>>? onReceive}) {
-    _firestore.collection('club_data').snapshots().listen((snap) {
-      print("🔄 Firestore updated: Processing only changed clubs...");
+    _fetchTagEmojiMap().then((_) {
+      _firestore.collection('club_data').snapshots().listen((snap) {
+        print("🔄 Firestore updated: Processing only changed clubs...");
 
-      for (var club in snap.docChanges) {
-        switch (club.type) {
-          case DocumentChangeType.added:
-          case DocumentChangeType.modified:
-            // _processClub(club.doc); // ✅ Update only the changed club
-            break;
-          case DocumentChangeType.removed:
-            clubData.remove(club.doc.id); // ✅ Remove deleted club
-            break;
+        for (var club in snap.docChanges) {
+          switch (club.type) {
+            case DocumentChangeType.added:
+            case DocumentChangeType.modified:
+              // _processClub(club.doc); // ✅ Update only the changed club
+              break;
+            case DocumentChangeType.removed:
+              clubData.remove(club.doc.id); // ✅ Remove deleted club
+              break;
+          }
         }
-      }
+      });
     });
   }
 
@@ -226,10 +230,35 @@ class ClubDataHelper with ChangeNotifier {
         visitors: data['visitors'] ?? 0,
         totalPossibleAmountOfVisitors:
             data['total_possible_amount_of_visitors'] ?? 0,
+        tags: (data['tags'] as List<dynamic>?)?.cast<String>(),
       );
     } catch (e) {
       print('❌ Error processing ${club.id}: $e');
       return null;
+    }
+  }
+
+  Future<void> _fetchTagEmojiMap() async {
+    try {
+      _firestore.collection('club_tags').snapshots().listen((snapshot) {
+        final newMap = <String, String>{};
+        for (var doc in snapshot.docs) {
+          final data = doc.data();
+          final name = data['name'] as String?;
+          final emoji = data['emoji'] as String?;
+          if (name != null && name.isNotEmpty && emoji != null) {
+            newMap[name] = emoji;
+          } else {
+            print('⚠️ Skipping invalid tag document: $data');
+          }
+        }
+        // tagEmojiMap.clear();
+        // TODO FUCKED UP HERE!?!!?
+        tagEmojiMap.addAll(newMap);
+        notifyListeners(); // Notify if used with ChangeNotifier
+      });
+    } catch (e) {
+      print('❌ Error setting up tag-to-emoji listener: $e');
     }
   }
 

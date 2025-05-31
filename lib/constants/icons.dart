@@ -17,6 +17,7 @@ const defaultCompassIcon = FontAwesomeIcons.compass;
 const defaultDownArrow = FontAwesomeIcons.chevronDown;
 const defaultUpArrow = FontAwesomeIcons.chevronUp;
 const defaultGoBackIcon = FontAwesomeIcons.arrowLeft;
+const ChevronGoBackIcon = FontAwesomeIcons.chevronLeft;
 const defaultPlusIcon = FontAwesomeIcons.plus;
 
 // Platform

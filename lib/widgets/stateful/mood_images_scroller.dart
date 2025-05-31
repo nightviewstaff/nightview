@@ -3,6 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:marquee/marquee.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 
@@ -181,9 +182,53 @@ class _MoodImageScrollerState extends State<MoodImageScroller> {
                                       ),
                                     ),
                                   if (comment.isNotEmpty)
-                                    Text(comment,
-                                        style: const TextStyle(
-                                            color: white, fontSize: 10)),
+                                    Builder(
+                                      builder: (context) {
+                                        // Estimate width by character count for simplicity (optional: use TextPainter for pixel-perfect)
+                                        final shouldScroll =
+                                            comment.length > 20;
+
+                                        final constrainedWidth =
+                                            imageWidth * 0.5;
+
+                                        return SizedBox(
+                                          width: constrainedWidth,
+                                          height: 20,
+                                          child: shouldScroll
+                                              ? Marquee(
+                                                  text: comment,
+                                                  style: const TextStyle(
+                                                      color: white,
+                                                      fontSize: 10),
+                                                  scrollAxis: Axis.horizontal,
+                                                  blankSpace: 30.0,
+                                                  velocity: 30,
+                                                  pauseAfterRound:
+                                                      const Duration(
+                                                          seconds: 1),
+                                                  startPadding: 10.0,
+                                                  accelerationDuration:
+                                                      const Duration(
+                                                          seconds: 1),
+                                                  accelerationCurve:
+                                                      Curves.linear,
+                                                  decelerationDuration:
+                                                      const Duration(
+                                                          milliseconds: 500),
+                                                  decelerationCurve:
+                                                      Curves.easeOut,
+                                                )
+                                              : Text(
+                                                  comment,
+                                                  style: const TextStyle(
+                                                      color: white,
+                                                      fontSize: 10),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                        );
+                                      },
+                                    ),
                                 ],
                               ),
                             ),
