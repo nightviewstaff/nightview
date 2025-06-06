@@ -15,6 +15,6 @@ const white = Colors.white;
 // const darkGrey = Color.fromRGBO(66, 66, 66, 1);
 const grey = Color.fromRGBO(66, 66, 66, 1);
 
-const lighterBlack = Colors.black87;
+const lighterBlack = Color.fromARGB(221, 184, 178, 178);
 // const lighterLighterBlack = Colors.black12;
 const redAccent = Colors.redAccent;

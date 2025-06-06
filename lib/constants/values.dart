@@ -37,4 +37,6 @@ const kNormalSizeRadius = 20.0;
 const kSmallSizeRadius = 15.0;
 const kSmallerSizeRadius = 15.0;
 
+const double kDividerPadding = 12.0;
+
 const backgroundLocationEnabled = false; // TODO?

@@ -90,8 +90,20 @@ class _MoodImageScrollerState extends State<MoodImageScroller> {
     );
   }
 
-  double _calculateRotation(int index) {
-    return (_scrollPosition - index * imageWidth) / 1000;
+  double _calculateScale(int index, double scrollPosition) {
+    final itemPosition = index * imageWidth;
+    final centerPosition =
+        scrollPosition + (MediaQuery.of(context).size.width / 2);
+    final distanceFromCenter = (itemPosition - centerPosition).abs();
+
+    const maxScale = 1.2; // Middle image is 20% larger
+    const minScale = 0.8; // Side images are slightly smaller
+    final scaleRange = maxScale - minScale;
+
+    // Smooth scale transition based on distance from center
+    final normalizedDistance =
+        (distanceFromCenter / imageWidth).clamp(0.0, 1.0);
+    return maxScale - (scaleRange * normalizedDistance);
   }
 
   @override
@@ -120,7 +132,7 @@ class _MoodImageScrollerState extends State<MoodImageScroller> {
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
-              final rotation = _calculateRotation(index);
+              final scale = _calculateScale(index, _scrollPosition);
               String imageUrl;
               String comment = '';
               String rating = '';
@@ -134,107 +146,115 @@ class _MoodImageScrollerState extends State<MoodImageScroller> {
                 imageUrl = items[index];
               }
 
-              return Transform.rotate(
-                angle: rotation,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          width: imageWidth,
-                          height: imageHeight,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            width: imageWidth,
-                            height: imageHeight,
-                            color: transparent,
-                          ),
-                          errorWidget: (context, url, error) => Container(),
-                        ),
-                        if (comment.isNotEmpty || rating.isNotEmpty)
-                          Positioned(
-                            bottom: 8,
-                            left: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(8),
+              return Container(
+                width: imageWidth,
+                height: imageHeight,
+                alignment: Alignment.center,
+                child: Transform.scale(
+                  scale: scale,
+                  child: Stack(
+                    clipBehavior: Clip.none, // Allows overlap
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20.0),
+                        child: Stack(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: imageUrl,
+                              width: imageWidth,
+                              height: imageHeight,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                width: imageWidth,
+                                height: imageHeight,
+                                color: Colors.transparent,
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (rating.isNotEmpty)
-                                    Row(
-                                      children: List.generate(
-                                        5,
-                                        (i) => Icon(
-                                          i < double.parse(rating)
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          size: 14,
-                                          color: primaryColor,
-                                        ),
-                                      ),
-                                    ),
-                                  if (comment.isNotEmpty)
-                                    Builder(
-                                      builder: (context) {
-                                        // Estimate width by character count for simplicity (optional: use TextPainter for pixel-perfect)
-                                        final shouldScroll =
-                                            comment.length > 20;
-
-                                        final constrainedWidth =
-                                            imageWidth * 0.5;
-
-                                        return SizedBox(
-                                          width: constrainedWidth,
-                                          height: 20,
-                                          child: shouldScroll
-                                              ? Marquee(
-                                                  text: comment,
-                                                  style: const TextStyle(
-                                                      color: white,
-                                                      fontSize: 10),
-                                                  scrollAxis: Axis.horizontal,
-                                                  blankSpace: 30.0,
-                                                  velocity: 30,
-                                                  pauseAfterRound:
-                                                      const Duration(
-                                                          seconds: 1),
-                                                  startPadding: 10.0,
-                                                  accelerationDuration:
-                                                      const Duration(
-                                                          seconds: 1),
-                                                  accelerationCurve:
-                                                      Curves.linear,
-                                                  decelerationDuration:
-                                                      const Duration(
-                                                          milliseconds: 500),
-                                                  decelerationCurve:
-                                                      Curves.easeOut,
-                                                )
-                                              : Text(
-                                                  comment,
-                                                  style: const TextStyle(
-                                                      color: white,
-                                                      fontSize: 10),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                        );
-                                      },
-                                    ),
-                                ],
-                              ),
+                              errorWidget: (context, url, error) => Container(),
                             ),
-                          ),
-                      ],
-                    ),
+                            if (comment.isNotEmpty || rating.isNotEmpty)
+                              Positioned(
+                                bottom: 8,
+                                left: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (rating.isNotEmpty)
+                                        Row(
+                                          children: List.generate(
+                                            5,
+                                            (i) => Icon(
+                                              i < double.parse(rating)
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              size: 14,
+                                              color: primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      if (comment.isNotEmpty)
+                                        Builder(
+                                          builder: (context) {
+                                            final shouldScroll =
+                                                comment.length > 20;
+                                            final constrainedWidth =
+                                                imageWidth * 0.5;
+
+                                            return SizedBox(
+                                              width: constrainedWidth,
+                                              height: 20,
+                                              child: shouldScroll
+                                                  ? Marquee(
+                                                      text: comment,
+                                                      style: const TextStyle(
+                                                          color: white,
+                                                          fontSize: 10),
+                                                      scrollAxis:
+                                                          Axis.horizontal,
+                                                      blankSpace: 30.0,
+                                                      velocity: 30,
+                                                      pauseAfterRound:
+                                                          const Duration(
+                                                              seconds: 1),
+                                                      startPadding: 10.0,
+                                                      accelerationDuration:
+                                                          const Duration(
+                                                              seconds: 1),
+                                                      accelerationCurve:
+                                                          Curves.linear,
+                                                      decelerationDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  500),
+                                                      decelerationCurve:
+                                                          Curves.easeOut,
+                                                    )
+                                                  : Text(
+                                                      comment,
+                                                      style: const TextStyle(
+                                                          color: white,
+                                                          fontSize: 10),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                            );
+                                          },
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );

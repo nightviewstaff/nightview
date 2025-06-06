@@ -20,6 +20,7 @@ import 'package:nightview/utilities/club_data/club_name_formatter.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
 import 'package:nightview/utility/utility.dart';
+import 'package:nightview/widgets/stateless/offer_image_grid.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -91,10 +92,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
     // basic info
     score += club.ageRestriction >= 18 ? 2 : -2;
     score += (club.openingHours?.isNotEmpty ?? false) ? 1 : -1;
+    // all has TODO ONLY SHOW OPEN TODAY!
     score += RegExp(r'^https?://').hasMatch(club.logo) ? 3 : -2;
     score += (club.tags?.length ?? 0).clamp(0, 3);
 
-    score += club.hasMoodImages ? 2 : -2;
+// If TILBUD LOTS
+
+    score += club.hasMoodImages ? 5 : -2;
     //TODO rank higher for good images.
     // ⭐ Rating
     score += (2 * club.rating).round();
@@ -141,16 +145,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
     //   // print('${club.id} after halve: $score');
     // }
     score -= distanceInMeters > 200000
-        ? 8
+        ? 50
         : distanceInMeters > 99000
-            ? 5 // TODO
+            ? 10 // TODO
             : distanceInMeters > 65000
-                ? 2
+                ? 3
                 : 0;
 
 // Tests
 
-    score += (club.tags?.isNotEmpty ?? false) ? 50 : 0; // TEST
+    // score += (club.tags?.isNotEmpty ?? false) ? 50 : 0; // TEST
     // score += (club.name.length > 20) ? 100 : 0;
 
     if (score >= 100) print('⭐ club over 100!: ${club.name} ($score)');
@@ -324,8 +328,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   } else if (value == 2) {
                                     return '💰'; // Price rising (money bag)
                                   } else if (value == 3) {
-                                    return '💵'; // Higher price (stack of money)
+                                    return '3'; // Higher price (stack of money)
                                   } else if (value == 4) {
+                                    return '💵'; // Higher price (stack of money)
+                                  } else if (value == 5) {
                                     return '💳'; // Expensive (credit card)
                                   } else
                                     return '';
@@ -847,21 +853,22 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget buildClubCard(ClubData club) {
     return GestureDetector(
       onTap: () {
+        // DONT GO TO MAP! TODO
         ClubBottomSheet.showClubSheet(context: context, club: club);
       },
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 360),
-          margin: const EdgeInsets.only(top: 30),
+          margin: const EdgeInsets.only(top: 35),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: grey,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                    color: black,
+                    border: Border.all(color: grey, width: 0.5),
+                    borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -880,10 +887,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 fontSize: 15,
                               ),
                             ),
-
-                            // const SizedBox(width: 4),
-                            // const Icon(Icons.star_border, size: 18), Giver ikke mening at like her?
-                            // const Icon(Icons.favorite_border, size: 18),
                           ],
                         ),
                         if (club.ageRestriction >= 18)
@@ -1107,6 +1110,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   ),
                                 );
                               }
+
                               return ClubSearchWidget(
                                 // TODO CAHNGE TO FIT HERE!
                                 clubs: allClubs,
@@ -1128,6 +1132,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ),
                   ),
                 ),
+                if (1 < 2) //TODO IF OFFER IMAGES!
+                  const SliverToBoxAdapter(
+                    child: OfferImageGrid(),
+                  ),
                 SliverList(
                   delegate: buildClubListDelegate(userLocation),
                 ),

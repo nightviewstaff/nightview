@@ -23,7 +23,7 @@ class ImageUploadScreen extends StatefulWidget {
 
 class _ImageUploadScreenState extends State<ImageUploadScreen> {
   final TextEditingController _captionController = TextEditingController();
-  bool _isPrivate = false;
+
   int _rating = 0;
   List<String> selectedFriendIds = [];
 
@@ -167,31 +167,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                 ),
               ],
             ),
-
-            // Optional: Comment out private checkbox for now
-            // Transform.translate(
-            //   offset: const Offset(0, -6),
-            //   child: Column(
-            //     children: [
-            //       Transform.scale(
-            //         scale: 1.5,
-            //         child: Checkbox(
-            //           value: _isPrivate,
-            //           onChanged: (val) {
-            //             setState(() {
-            //               _isPrivate = val ?? false;
-            //             });
-            //           },
-            //           checkColor: secondaryColor,
-            //         ),
-            //       ),
-            //       const Text(
-            //         "Private",
-            //         style: TextStyle(fontSize: 9, color: white),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -292,7 +267,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
     final searchController = TextEditingController();
     String searchQuery = '';
 
-    bool isPrivate = false;
     String? selectedClubId;
     if (clubDataHelper.clubDataList.value.isEmpty) {
       await clubDataHelper.loadInitialClubs();
@@ -333,15 +307,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CheckboxListTile(
-                title: const Text('Private'),
-                value: isPrivate,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isPrivate = value ?? false;
-                  });
-                },
-              ),
               // TextField(
               //   controller: searchController,
               //   onChanged: (value) {
@@ -434,7 +399,6 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
                 imageFile: widget.image,
                 clubId: selectedClubId!,
                 caption: caption,
-                isPrivate: isPrivate,
                 rating: _rating,
                 taggedUserIds: selectedFriendIds,
                 uploaderId: userId!,
