@@ -19,7 +19,8 @@ const defaultUpArrow = FontAwesomeIcons.chevronUp;
 const defaultGoBackIcon = FontAwesomeIcons.arrowLeft;
 const ChevronGoBackIcon = FontAwesomeIcons.chevronLeft;
 const defaultPlusIcon = FontAwesomeIcons.plus;
-const defaultHeartIcon = FontAwesomeIcons.heart;
+const defaultEmptyHeartIcon = FontAwesomeIcons.heart;
+const defaultFullHeartIcon = FontAwesomeIcons.solidHeart;
 const defaultCommentIcon = FontAwesomeIcons.comment;
 
 // Platform

@@ -1,6 +1,6 @@
 class EmojiPriorityHelper {
-  static const List<String> _moneyEmojis = ['💰️', '💸', '💵'];
-  static const List<String> _freeEmojis = ['🆓', '🍹'];
+  static const List<String> moneyEmojis = ['💰️', '💸', '💵'];
+  static const List<String> freeEmojis = ['🆓', '🍹'];
   static const List<String> _clubTypeEmojis = [
     '🎛️', // higher in display within category
     '🪩',
@@ -31,8 +31,8 @@ class EmojiPriorityHelper {
   ];
 
   static final Set<String> _allEmojis = {
-    ..._moneyEmojis,
-    ..._freeEmojis,
+    ...moneyEmojis,
+    ...freeEmojis,
     ..._clubTypeEmojis,
     ..._dancingEmojis,
     ..._beerpongEmojis,
@@ -43,8 +43,8 @@ class EmojiPriorityHelper {
   };
 
   static int getEmojiPriority(String emoji) {
-    if (_moneyEmojis.contains(emoji)) return 100;
-    if (_freeEmojis.contains(emoji)) return 99;
+    if (moneyEmojis.contains(emoji)) return 100;
+    if (freeEmojis.contains(emoji)) return 99;
     if (_clubTypeEmojis.contains(emoji)) return 95;
     if (_dancingEmojis.contains(emoji)) return 90;
     if (_beerpongEmojis.contains(emoji)) return 89;
@@ -60,9 +60,9 @@ class EmojiPriorityHelper {
     int categoryPriority = getEmojiPriority(emoji);
     int indexInCategory = 999; // large fallback
 
-    if ((indexInCategory = _moneyEmojis.indexOf(emoji)) != -1)
+    if ((indexInCategory = moneyEmojis.indexOf(emoji)) != -1)
       return [categoryPriority, indexInCategory];
-    if ((indexInCategory = _freeEmojis.indexOf(emoji)) != -1)
+    if ((indexInCategory = freeEmojis.indexOf(emoji)) != -1)
       return [categoryPriority, indexInCategory];
     if ((indexInCategory = _clubTypeEmojis.indexOf(emoji)) != -1)
       return [categoryPriority, indexInCategory];

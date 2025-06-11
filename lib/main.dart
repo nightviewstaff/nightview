@@ -8,6 +8,7 @@ import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/helpers/users/chats/chat_subscriber.dart';
 import 'package:nightview/helpers/users/chats/search_new_chat_helper.dart';
 import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
+import 'package:nightview/models/clubs/club_data.dart';
 
 import 'package:nightview/providers/balladefabrikken_provider.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -19,6 +20,8 @@ import 'package:nightview/providers/search_provider.dart';
 import 'package:nightview/screens/balladefabrikken/balladefabrikken_main_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_accumulation_screen.dart';
 import 'package:nightview/screens/balladefabrikken/shot_redemption_screen.dart';
+import 'package:nightview/screens/clubs/club_bar_card_screen.dart';
+import 'package:nightview/screens/clubs/club_more_info_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_checker_screen.dart';
 import 'package:nightview/screens/location_permission/location_permission_precise_screen.dart';
@@ -134,8 +137,8 @@ class NightViewApp extends StatelessWidget {
             ),
             initialRoute:
                 // ChooseClubbingLocationScreen.id, //TEST
-                WaitingForLoginScreen.id,
-            // SwipeScreen.id, // TEST
+                // WaitingForLoginScreen.id,
+                SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),
               LoginOrCreateAccountScreen.id: (context) =>
@@ -188,6 +191,16 @@ class NightViewApp extends StatelessWidget {
               ChooseFavoriteClubsScreen.id: (context) =>
                   const ChooseFavoriteClubsScreen(),
               ChatsScreen.id: (context) => const ChatsScreen(),
+              ClubMoreInfoScreen.id: (context) {
+                final args =
+                    ModalRoute.of(context)!.settings.arguments as ClubData;
+                return ClubMoreInfoScreen(club: args);
+              },
+              ClubBarCardScreen.id: (context) {
+                final args =
+                    ModalRoute.of(context)!.settings.arguments as ClubData;
+                return ClubBarCardScreen(club: args);
+              },
             },
           );
         },

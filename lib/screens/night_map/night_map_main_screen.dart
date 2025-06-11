@@ -225,13 +225,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                        onTap: () {
-                          // TODO Implement search criteria
-                          print("PRESSED SEARCH SETTINGS");
-                        },
-                        child: defaultSettingIcon),
-                    const SizedBox(width: kNormalSpacerValue),
                     Expanded(
                       child: ValueListenableBuilder<List<ClubData>>(
                         valueListenable: clubDataHelper.clubDataList,

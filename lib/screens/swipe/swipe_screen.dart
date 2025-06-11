@@ -86,174 +86,127 @@ class _SwipeScreenState extends State<SwipeScreen> {
         backgroundColor: backgroundColor,
         child: Stack(
           children: [
-            Column(
-              children: [
-                // Swipe card content
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 1.0,
-                  child: Padding(
-                    padding: const EdgeInsets.only(),
-                    child: isImageLoaded
-                        ? (selectedImagePath != null
-                            ? AppinioSwiper(
-                                invertAngleOnBottomDrag: true,
-                                backgroundCardCount: 0,
-                                swipeOptions: const SwipeOptions.all(),
-                                // All 4 directions possible.
-                                controller: controller,
-                                onCardPositionChanged:
-                                    (SwiperPosition position) {
-                                  const double threshold =
-                                      20.0; // Minimum distance to trigger a color change
-                                  if (position.offset != Offset.zero) {
-                                    if (isShaking) {
-                                      isShaking = false;
-                                    }
-                                    isDragging = true;
-                                    shakeTimer?.cancel();
-
-                                    // Calculate total distance moved
-                                    double distance = sqrt(
-                                        pow(position.offset.dx, 2) +
-                                            pow(position.offset.dy, 2));
-
-                                    if (position.offset.dx < -threshold) {
-                                      setState(() {
-                                        // backgroundColor =                                            redAccent; // Left for "No"
-                                      });
-                                    } else if (position.offset.dx > threshold ||
-                                        position.offset.dy > threshold) {
-                                      setState(() {
-                                        // backgroundColor =                                            primaryColor; // Right or Up for "Yes"
-                                      });
-                                    } else if (position.offset.dy.abs() >
-                                            threshold &&
-                                        position.offset.dy < 0) {
-                                      setState(() {
-                                        // backgroundColor =                                            grey; // Down for "Unsure"
-                                      });
-                                    }
-                                  } else if (isDragging) {
-                                    isDragging = false;
-                                    setState(() {
-                                      backgroundColor =
-                                          black; // Reset to transparent when back at center
-                                    });
-                                  }
-                                },
-                                onSwipeEnd: _swipeEnd,
-                                onEnd: _onEnd,
-                                cardCount: _cardCount,
-                                cardBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      // Trigger shake immediately and restart the timer
-                                      _shakeCardRightSlowly();
-                                      startShakeTimer();
-                                    },
-                                    child: Stack(
-                                      children: [
-                                        Container(
-                                          // The image
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: AssetImage(
-                                                  selectedImagePath!),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                                kMainBorderRadius),
-                                            border: Border.all(
-                                              color: secondaryColor,
-                                              width: 5,
-                                            ),
-                                          ),
-                                          width: double.maxFinite,
-                                        ),
-                                        // Centered text
-                                        Positioned(
-                                          top: 350.0,
-                                          left: 25,
-                                          right: 25,
-                                          child: Center(
-                                            child: Text(
-                                              selectedMessage,
-                                              style:
-                                                  kTextStyleSwipeH2.copyWith(),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                        // Bottom controls
-                                        Positioned(
-                                          bottom: kSwipeBottomPadding,
-                                          left: 0,
-                                          right: 0,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const SizedBox(
-                                                  height: kNormalSpacerValue),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Container(
-                                                    child: IconWithText(
-                                                      icon: FontAwesomeIcons
-                                                          .xmark,
-                                                      text: S
-                                                          .of(context)
-                                                          .not_today,
-                                                      onTap: () {
-                                                        controller.swipeLeft();
-                                                      },
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      controller.swipeRight();
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              30.0),
-                                                      // Increases clickable area by ~30px (15px on each side)
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: Colors
-                                                            .transparent, // Keeps the area invisible
-                                                      ),
-                                                      child: IconWithText(
-                                                        icon: FontAwesomeIcons
-                                                            .solidHeart,
-                                                        text:
-                                                            '${S.of(context).yes}!',
-                                                        iconColor: primaryColor,
-                                                        showCircle: false,
-                                                        onTap:
-                                                            () {}, // Override internal onTap to prevent duplicate handling
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+            if (isImageLoaded && selectedImagePath != null)
+              Positioned(
+                left: 50,
+                right: 50,
+                bottom: 100,
+                top: 150,
+                child: AppinioSwiper(
+                  invertAngleOnBottomDrag: true,
+                  backgroundCardCount: 0,
+                  swipeOptions: const SwipeOptions.all(),
+                  controller: controller,
+                  onCardPositionChanged: (SwiperPosition position) {
+                    const double threshold = 20.0;
+                    if (position.offset != Offset.zero) {
+                      if (isShaking) isShaking = false;
+                      isDragging = true;
+                      shakeTimer?.cancel();
+                      double distance = sqrt(pow(position.offset.dx, 2) +
+                          pow(position.offset.dy, 2));
+                      setState(() {
+                        if (position.offset.dx < -threshold) {
+                          // backgroundColor = redAccent;
+                        } else if (position.offset.dx > threshold ||
+                            position.offset.dy > threshold) {
+                          // backgroundColor = primaryColor;
+                        } else if (position.offset.dy.abs() > threshold &&
+                            position.offset.dy < 0) {
+                          // backgroundColor = grey;
+                        }
+                      });
+                    } else if (isDragging) {
+                      isDragging = false;
+                      setState(() {
+                        backgroundColor = black;
+                      });
+                    }
+                  },
+                  onSwipeEnd: _swipeEnd,
+                  onEnd: _onEnd,
+                  cardCount: _cardCount,
+                  cardBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
+                        _shakeCardRightSlowly();
+                        startShakeTimer();
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(selectedImagePath!),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius:
+                                  BorderRadius.circular(kMainBorderRadius),
+                              border:
+                                  Border.all(color: secondaryColor, width: 3),
+                            ),
+                            width: double.maxFinite,
+                          ),
+                          Positioned(
+                            top: 60.0,
+                            left: 25,
+                            right: 25,
+                            child: Center(
+                              child: Text(
+                                selectedMessage,
+                                style: kTextStyleSwipeH2.copyWith(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: kSwipeBottomPadding,
+                            left: 0,
+                            right: 0,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(height: kNormalSpacerValue),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconWithText(
+                                      icon: FontAwesomeIcons.xmark,
+                                      text: S.of(context).not_today,
+                                      onTap: () => controller.swipeLeft(),
                                     ),
-                                  );
-                                },
-                              )
-                            : Center(child: Text('')))
-                        : Center(child: CircularProgressIndicator()),
-                  ),
+                                    GestureDetector(
+                                      onTap: () => controller.swipeRight(),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(30.0),
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: transparent,
+                                        ),
+                                        child: IconWithText(
+                                          icon: FontAwesomeIcons.solidHeart,
+                                          text: '${S.of(context).yes}!',
+                                          iconColor: primaryColor,
+                                          showCircle: false,
+                                          onTap: () {},
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              )
+            else
+              const Center(child: CircularProgressIndicator()),
+
             // Overlay text
             Positioned(
               top: 50.0,
@@ -296,7 +249,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
-    backgroundColor = primaryColor;
+    // backgroundColor = primaryColor.withOpacity(0.6);
     if (isDragging || !isShaking) {
       isShaking = false;
       return;
@@ -319,7 +272,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       duration: const Duration(milliseconds: 1500),
       curve: Curves.easeInOut,
     );
-    backgroundColor = primaryColor;
+    // backgroundColor = primaryColor.withOpacity(0.6);
 
     if (isDragging || !isShaking) {
       isShaking = false;
@@ -356,7 +309,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
       duration: const Duration(milliseconds: 2000),
       curve: Curves.easeInOut,
     );
-    backgroundColor = primaryColor;
+    // backgroundColor = primaryColor.withOpacity(0.6);
 
 //Default set status to yes if no response. TODO Needs to be done cleaner.
     final globalProvider = Provider.of<GlobalProvider>(context, listen: false);

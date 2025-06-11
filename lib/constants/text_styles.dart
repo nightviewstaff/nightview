@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/colors.dart';
 
-
 //TOdo: Names, normalText, NightViewNormal, etc
-
-
 
 const kTextStyleH1 = TextStyle(
   fontSize: 36.0,
@@ -45,7 +42,7 @@ const kTextStyleH3ToP1 = TextStyle(
 
 const kTextStyleP1 = TextStyle(
   fontSize: 14.0,
-  color: Colors.white,
+  color: white,
 );
 
 const kTextStyleP2 = TextStyle(
@@ -82,9 +79,9 @@ const kTextStyleP3ErrorText = TextStyle(
 // );
 
 const kTextStyleSwipeH2 = TextStyle(
-    fontSize: 24.0,
-    fontWeight: FontWeight.bold,
-    color: white,
+  fontSize: 24.0,
+  fontWeight: FontWeight.bold,
+  color: white,
   shadows: [
     Shadow(
       offset: Offset(-1, -1), // Top-left shadow
@@ -157,4 +154,3 @@ const kTextStyleSwipeH1 = TextStyle(
     ),
   ],
 );
-

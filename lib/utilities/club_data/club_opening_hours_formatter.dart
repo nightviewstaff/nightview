@@ -287,4 +287,19 @@ class ClubOpeningHoursFormatter {
     int roundedMinutes = quotient * 30;
     return roundedMinutes / 60.0;
   }
+
+  static String displayClubOpeningHoursTodaySimple(ClubData club) {
+    final String todayKey = _getWeekday(_now);
+    final todayData = club.openingHours?[todayKey];
+
+    if (todayData == null) return '';
+    final open = todayData['open'];
+    final close = todayData['close'];
+
+    if (open == null || close == null || open == '' || close == '') {
+      return 'closed';
+    }
+
+    return "$open - $close";
+  }
 }

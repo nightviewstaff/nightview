@@ -66,7 +66,7 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
         icon: Icon(
           defaultDownArrow,
           size: 15,
-          color: primaryColor,
+          color: white,
         ),
         itemBuilder: (context) => [
           PopupMenuItem(
@@ -81,38 +81,77 @@ class CustomPopupMenuButtonOpeningHours extends StatelessWidget {
     }
 
     // Build PopupMenuButton
-    return PopupMenuButton<MapEntry<String, dynamic>>(
-      icon: Icon(
-        defaultDownArrow,
-        size: 15,
-        color: primaryColor,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        popupMenuTheme: PopupMenuThemeData(
+          color: grey, // Set your desired background color here
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(20.0), // Adjust for rounded corners
+          ),
+        ),
       ),
-      itemBuilder: (context) {
-        return filteredOpeningHours.map((entry) {
-          final englishDay = entry.key; // e.g., "monday"
-          final danishDay = currentLocale == Locale('en')
-              ? englishDay
-              : _mapDayToDanish(englishDay); // e.g., "mandag" or "monday"
-          final capitalizedDay =
-              _capitalizeFirstLetter(danishDay); // e.g., "Mandag" or "Monday"
-          final hours = entry.value;
-          final openTime = hours?['open'];
-          final closeTime = hours?['close'];
+      child: PopupMenuButton<MapEntry<String, dynamic>>(
+        icon: Icon(
+          defaultDownArrow,
+          size: 15,
+          color: white,
+        ),
+        constraints: BoxConstraints(
+          minWidth: 250.0, // Adjust this value to make the popup wide enough
+        ),
+        itemBuilder: (context) {
+          return filteredOpeningHours.map((entry) {
+            final englishDay = entry.key; // e.g., "monday"
+            final danishDay = currentLocale == Locale('en')
+                ? englishDay
+                : _mapDayToDanish(englishDay); // e.g., "mandag" or "monday"
+            final capitalizedDay =
+                _capitalizeFirstLetter(danishDay); // e.g., "Mandag" or "Monday"
+            final hours = entry.value;
+            final openTime = hours?['open'];
+            final closeTime = hours?['close'];
+            // Check for day-specific age restriction, fall back to club.ageRestriction
+            final rawAgeRestriction =
+                hours?['ageRestriction'] ?? club.ageRestriction;
+            // Only display if 18 or above, otherwise empty string
+            final ageRestriction = (rawAgeRestriction != null &&
+                    int.tryParse(rawAgeRestriction.toString()) != null &&
+                    int.parse(rawAgeRestriction.toString()) >= 18)
+                ? rawAgeRestriction.toString()
+                : '';
 
-          return PopupMenuItem(
-            value: entry,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '$capitalizedDay: $openTime - $closeTime', // Display capitalized day
-                  style: kTextStyleP1,
-                ),
-              ],
-            ),
-          );
-        }).toList();
-      },
+            return PopupMenuItem(
+              value: entry,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width:
+                        100.0, // Fixed width for day to align hours consistently
+                    child: Text(
+                      capitalizedDay,
+                      style: kTextStyleP1,
+                    ),
+                  ),
+                  Text(
+                    '$openTime - $closeTime',
+                    style: kTextStyleP1,
+                  ),
+                  Expanded(
+                    child:
+                        SizedBox(), // Fills space to push age restriction right
+                  ),
+                  SizedBox(width: 16.0), // Fixed gap for consistent spacing
+                  Text(
+                    ageRestriction.isNotEmpty ? '$ageRestriction+' : '',
+                    style: kTextStyleP1,
+                  ),
+                ],
+              ),
+            );
+          }).toList();
+        },
+      ),
     );
   }
 }

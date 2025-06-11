@@ -77,7 +77,7 @@ class _ClubSearchWidgetState extends State<ClubSearchWidget> {
       viewElevation: 2,
       viewConstraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width * 1,
-        maxHeight: MediaQuery.of(context).size.height * 0.40,
+        maxHeight: MediaQuery.of(context).size.height * 0.30,
       ),
       builder: (context, controller) {
         return SearchBar(
@@ -88,6 +88,7 @@ class _ClubSearchWidgetState extends State<ClubSearchWidget> {
           backgroundColor: WidgetStateProperty.all(grey),
           shadowColor: WidgetStateProperty.all(secondaryColor),
           elevation: WidgetStateProperty.all(4),
+
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50),
@@ -205,8 +206,8 @@ class _ClubSearchWidgetState extends State<ClubSearchWidget> {
 
           return ListTile(
             leading: Container(
-              width: 48,
-              height: 48,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(

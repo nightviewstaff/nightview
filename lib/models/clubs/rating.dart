@@ -5,12 +5,15 @@ class Rating {
   final String clubId;
   final int rating;
   final Timestamp timestamp;
+  final String comment;
 
-  Rating(
-      {required this.userId,
-      required this.clubId,
-      required this.rating,
-      required this.timestamp});
+  Rating({
+    required this.userId,
+    required this.clubId,
+    required this.rating,
+    required this.timestamp,
+    this.comment = '',
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -18,6 +21,7 @@ class Rating {
       'club_id': clubId,
       'rating': rating,
       'timestamp': timestamp,
+      'comment': comment,
     };
   }
 }

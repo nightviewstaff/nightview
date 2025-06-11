@@ -24,6 +24,7 @@ class _RateClubState extends State<RateClub>
   late Animation<double> _scaleAnimation;
   late Animation<double> _moveAnimation;
   late Animation<Color?> _colorAnimation;
+  final TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
@@ -58,6 +59,7 @@ class _RateClubState extends State<RateClub>
   @override
   void dispose() {
     _animationController.dispose();
+    _commentController.dispose();
     super.dispose();
   }
 
@@ -133,26 +135,44 @@ class _RateClubState extends State<RateClub>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(S.of(context).confirm_rating),
-          content: Text(
-              '${S.of(context).give_rating} $clubName ${S.of(context).rating} $rating${S.of(context).stars}'),
           backgroundColor: black,
-          titleTextStyle: TextStyle(color: primaryColor, fontSize: 20),
-          contentTextStyle: TextStyle(color: white),
+          title: Text(S.of(context).confirm_rating,
+              style: const TextStyle(color: primaryColor)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${S.of(context).give_rating} $clubName ${S.of(context).rating} $rating${S.of(context).stars}',
+                style: const TextStyle(color: white),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _commentController,
+                maxLines: 2,
+                maxLength: 150,
+                style: const TextStyle(color: white, fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Optional comment',
+                  hintStyle: TextStyle(color: white.withOpacity(0.6)),
+                  filled: true,
+                  fillColor: grey,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child:
-                  Text(S.of(context).undo, style: TextStyle(color: redAccent)),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(S.of(context).undo,
+                  style: const TextStyle(color: redAccent)),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
+              onPressed: () => Navigator.of(context).pop(true),
               child: Text(S.of(context).continues,
-                  style: TextStyle(color: primaryColor)),
+                  style: const TextStyle(color: primaryColor)),
             ),
           ],
         );
@@ -165,7 +185,10 @@ class _RateClubState extends State<RateClub>
         clubId: widget.clubId,
         rating: rating,
         timestamp: Timestamp.now(),
+        comment: _commentController.text.trim(),
       );
+      _commentController.clear();
+
       await addRating(ratingObj);
       await _fetchClubData(); // Refresh club rating from the database
       setState(() {
@@ -246,13 +269,15 @@ class _RateClubState extends State<RateClub>
                 children: [
                   Icon(
                     Icons.star_border,
-                    color: Colors.amber, // Golden outline color
-                    size: 35,
+                    color: secondaryColor, // Golden outline color
+                    size: 20,
                   ),
                   Icon(
                     index < clubRating ? Icons.star : Icons.star_border,
-                    color: index < clubRating ? secondaryColor : primaryColor,
-                    size: 35,
+                    color: _canRate
+                        ? transparent
+                        : (index < clubRating ? secondaryColor : primaryColor),
+                    size: 20,
                   ),
                 ],
               ),
@@ -266,10 +291,10 @@ class _RateClubState extends State<RateClub>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: 120, // Fixed width to fit smaller section
       child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: 4.0,
+        alignment: WrapAlignment.start,
+        spacing: 2.0, // Reduced spacing
         children: List.generate(5, (index) {
           return _buildStar(index);
         }),

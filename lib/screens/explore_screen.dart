@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:marquee/marquee.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/locations/location_service.dart';
@@ -14,6 +15,7 @@ import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/location_permission/location_permission_always_screen.dart';
 import 'package:nightview/screens/utility/club_search_widget.dart';
+import 'package:nightview/screens/utility/club_search_widget_explore.dart';
 import 'package:nightview/screens/utility/emoji_priority_helper.dart';
 import 'package:nightview/utilities/advanced_search_filter.dart';
 import 'package:nightview/utilities/club_data/club_name_formatter.dart';
@@ -154,7 +156,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
 // Tests
 
-    // score += (club.tags?.isNotEmpty ?? false) ? 50 : 0; // TEST
+    // score += (club.tags?.isNotEmpty ?? false) ? 2000 : 0; // TEST
     // score += (club.name.length > 20) ? 100 : 0;
 
     if (score >= 100) print('⭐ club over 100!: ${club.name} ($score)');
@@ -262,7 +264,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   setState(() {
                                     _tempFilter = _tempFilter.copyWith(
                                       distanceMin: 0,
-                                      distanceMax: km * 1000,
+                                      distanceMax: km >=
+                                              AdvancedSearchFilter.maxDistanceKm
+                                          ? double.infinity
+                                          : km * 100000,
                                     );
                                   });
                                 },
@@ -288,56 +293,56 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 },
                               ),
                             ),
-                            _buildFilterSection(
-                              title: 'Price Range',
-                              filterValue: _tempFilter.moneyMin ==
-                                      _tempFilter.moneyMax
-                                  ? '€${_tempFilter.moneyMin.toStringAsFixed(0)}'
-                                  : '€${_tempFilter.moneyMax.toStringAsFixed(0)}',
-                              child: SfRangeSlider(
-                                min: 0,
-                                max: 5, // Max price, change as needed
-                                values: SfRangeValues(
-                                  _tempFilter.moneyMin,
-                                  _tempFilter.moneyMax,
-                                ),
-                                showLabels: true,
-                                showTicks: true,
-                                minorTicksPerInterval: 0,
-                                interval: 1, // Interval for price steps
-                                activeColor: primaryColor,
-                                inactiveColor: secondaryColor,
-                                trackShape: const SfTrackShape(),
-                                onChanged: (SfRangeValues values) {
-                                  setState(() {
-                                    _tempFilter = _tempFilter.copyWith(
-                                      moneyMin: values.start,
-                                      moneyMax: values.end,
-                                    );
-                                  });
-                                },
-                                labelFormatterCallback: (dynamic actualValue,
-                                    String formattedText) {
-                                  final value = (actualValue as num).toDouble();
+                            // _buildFilterSection(
+                            //   title: 'Price Range',
+                            //   filterValue: _tempFilter.moneyMin ==
+                            //           _tempFilter.moneyMax
+                            //       ? '€${_tempFilter.moneyMin.toStringAsFixed(0)}'
+                            //       : '€${_tempFilter.moneyMax.toStringAsFixed(0)}',
+                            //   child: SfRangeSlider(
+                            //     min: 0,
+                            //     max: 5, // Max price, change as needed
+                            //     values: SfRangeValues(
+                            //       _tempFilter.moneyMin,
+                            //       _tempFilter.moneyMax,
+                            //     ),
+                            //     showLabels: true,
+                            //     showTicks: true,
+                            //     minorTicksPerInterval: 0,
+                            //     interval: 1, // Interval for price steps
+                            //     activeColor: primaryColor,
+                            //     inactiveColor: secondaryColor,
+                            //     trackShape: const SfTrackShape(),
+                            //     onChanged: (SfRangeValues values) {
+                            //       setState(() {
+                            //         _tempFilter = _tempFilter.copyWith(
+                            //           moneyMin: values.start,
+                            //           moneyMax: values.end,
+                            //         );
+                            //       });
+                            //     },
+                            //     labelFormatterCallback: (dynamic actualValue,
+                            //         String formattedText) {
+                            //       final value = (actualValue as num).toDouble();
 
-                                  // Emoji logic for different price ranges
-                                  if (value == 0) {
-                                    return '🆓'; // Free or low-cost
-                                  } else if (value == 1) {
-                                    return '💸'; // Moderate price (money with wings)
-                                  } else if (value == 2) {
-                                    return '💰'; // Price rising (money bag)
-                                  } else if (value == 3) {
-                                    return '3'; // Higher price (stack of money)
-                                  } else if (value == 4) {
-                                    return '💵'; // Higher price (stack of money)
-                                  } else if (value == 5) {
-                                    return '💳'; // Expensive (credit card)
-                                  } else
-                                    return '';
-                                },
-                              ),
-                            ),
+                            //       // Emoji logic for different price ranges
+                            //       if (value == 0) {
+                            //         return '🆓'; // Free or low-cost
+                            //       } else if (value == 1) {
+                            //         return '💸'; // Moderate price (money with wings)
+                            //       } else if (value == 2) {
+                            //         return '💰'; // Price rising (money bag)
+                            //       } else if (value == 3) {
+                            //         return '3'; // Higher price (stack of money)
+                            //       } else if (value == 4) {
+                            //         return '💵'; // Higher price (stack of money)
+                            //       } else if (value == 5) {
+                            //         return '💳'; // Expensive (credit card)
+                            //       } else
+                            //         return '';
+                            //     },
+                            //   ),
+                            // ),
                             _buildFilterSection(
                               title: 'Age Restriction',
                               filterValue:
@@ -591,84 +596,84 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ),
                               ),
                             ),
-                            _buildFilterSection(
-                              title: 'Crowd Presence',
-                              filterValue: _tempFilter.minCrowdFillPercent ==
-                                      100
-                                  ? '100%'
-                                  : '${_tempFilter.minCrowdFillPercent.toInt()}%+',
-                              child: SfSlider(
-                                min: 0,
-                                max: 80,
-                                value: _tempFilter.minCrowdFillPercent,
-                                showLabels: true,
-                                showTicks: true,
-                                minorTicksPerInterval: 0,
-                                //TODO make some softcoded logic for interval compared to stepsize
-                                interval: 20,
-                                stepSize: 5,
-                                activeColor: primaryColor,
-                                inactiveColor: secondaryColor,
-                                trackShape: const SfTrackShape(),
-                                onChanged: (dynamic value) {
-                                  setState(() {
-                                    _tempFilter = _tempFilter.copyWith(
-                                      minCrowdFillPercent: (value as double),
-                                    );
-                                  });
-                                },
-                                labelFormatterCallback: (dynamic actualValue,
-                                    String formattedText) {
-                                  final value = (actualValue as num).toDouble();
-                                  if (value == 0) return '🪦'; // Empty
-                                  if (value == 20) return '25%';
-                                  if (value == 40) return '💃';
-                                  if (value == 60) return '60%';
-                                  if (value == 80) return '🔥';
-                                  return ''; // Full
-                                },
-                              ),
-                            ),
-                            _buildFilterSection(
-                              title: 'Female Presence',
-                              filterValue:
-                                  '${_tempFilter.minFemalePercent.toInt()}%+',
-                              child: SfSlider(
-                                min: 0,
-                                max: 40,
-                                value:
-                                    _tempFilter.minFemalePercent.clamp(0, 40),
-                                showLabels: true,
-                                showTicks: true,
-                                minorTicksPerInterval: 0,
-                                interval: 5,
-                                stepSize: 5,
-                                activeColor: primaryColor,
-                                inactiveColor: secondaryColor,
-                                trackShape: const SfTrackShape(),
-                                onChanged: (dynamic value) {
-                                  setState(() {
-                                    _tempFilter = _tempFilter.copyWith(
-                                      minFemalePercent: (value as double),
-                                    );
-                                  });
-                                },
-                                labelFormatterCallback: (dynamic actualValue,
-                                    String formattedText) {
-                                  final value = (actualValue as num).toDouble();
-                                  if (value == 0) return '🍆';
-                                  if (value == 5) return '5%';
-                                  if (value == 10) return '🧍‍♂️';
-                                  if (value == 15) return '15%';
-                                  if (value == 20) return '💁‍♀️';
-                                  if (value == 25) return '25%';
-                                  if (value == 30) return '💃';
-                                  if (value == 35) return '35%';
-                                  if (value == 40) return '👯‍♀️';
-                                  return '';
-                                },
-                              ),
-                            ),
+                            // _buildFilterSection(
+                            //   title: 'Crowd Presence',
+                            //   filterValue: _tempFilter.minCrowdFillPercent ==
+                            //           100
+                            //       ? '100%'
+                            //       : '${_tempFilter.minCrowdFillPercent.toInt()}%+',
+                            //   child: SfSlider(
+                            //     min: 0,
+                            //     max: 80,
+                            //     value: _tempFilter.minCrowdFillPercent,
+                            //     showLabels: true,
+                            //     showTicks: true,
+                            //     minorTicksPerInterval: 0,
+                            //     //TODO make some softcoded logic for interval compared to stepsize
+                            //     interval: 20,
+                            //     stepSize: 5,
+                            //     activeColor: primaryColor,
+                            //     inactiveColor: secondaryColor,
+                            //     trackShape: const SfTrackShape(),
+                            //     onChanged: (dynamic value) {
+                            //       setState(() {
+                            //         _tempFilter = _tempFilter.copyWith(
+                            //           minCrowdFillPercent: (value as double),
+                            //         );
+                            //       });
+                            //     },
+                            //     labelFormatterCallback: (dynamic actualValue,
+                            //         String formattedText) {
+                            //       final value = (actualValue as num).toDouble();
+                            //       if (value == 0) return '🪦'; // Empty
+                            //       if (value == 20) return '25%';
+                            //       if (value == 40) return '💃';
+                            //       if (value == 60) return '60%';
+                            //       if (value == 80) return '🔥';
+                            //       return ''; // Full
+                            //     },
+                            //   ),
+                            // ),
+                            // _buildFilterSection(
+                            //   title: 'Female Presence',
+                            //   filterValue:
+                            //       '${_tempFilter.minFemalePercent.toInt()}%+',
+                            //   child: SfSlider(
+                            //     min: 0,
+                            //     max: 40,
+                            //     value:
+                            //         _tempFilter.minFemalePercent.clamp(0, 40),
+                            //     showLabels: true,
+                            //     showTicks: true,
+                            //     minorTicksPerInterval: 0,
+                            //     interval: 5,
+                            //     stepSize: 5,
+                            //     activeColor: primaryColor,
+                            //     inactiveColor: secondaryColor,
+                            //     trackShape: const SfTrackShape(),
+                            //     onChanged: (dynamic value) {
+                            //       setState(() {
+                            //         _tempFilter = _tempFilter.copyWith(
+                            //           minFemalePercent: (value as double),
+                            //         );
+                            //       });
+                            //     },
+                            //     labelFormatterCallback: (dynamic actualValue,
+                            //         String formattedText) {
+                            //       final value = (actualValue as num).toDouble();
+                            //       if (value == 0) return '🍆';
+                            //       if (value == 5) return '5%';
+                            //       if (value == 10) return '🧍‍♂️';
+                            //       if (value == 15) return '15%';
+                            //       if (value == 20) return '💁‍♀️';
+                            //       if (value == 25) return '25%';
+                            //       if (value == 30) return '💃';
+                            //       if (value == 35) return '35%';
+                            //       if (value == 40) return '👯‍♀️';
+                            //       return '';
+                            //     },
+                            //   ),
+                            // ),
                           ],
                         );
                       },
@@ -728,9 +733,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             hintText: 'Enter value',
-                            hintStyle: TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: white),
                           ),
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: white),
                           onSubmitted: (value) {
                             // Call the onValueChanged when user submits the value
                             // onValueChanged(value);
@@ -775,58 +780,142 @@ class _ExploreScreenState extends State<ExploreScreen> {
       );
     }
 
+    // Filter clubs based on all criteria
     List<ClubData> filteredClubs = allClubs.where((club) {
+      // Distance filter
       double dist = calculateDistance(userLocation, LatLng(club.lat, club.lon));
       bool withinDistance =
           dist >= _filter.distanceMin && dist <= _filter.distanceMax;
+
+      // Age restriction filter
       bool withinAge = club.ageRestriction >= _filter.ageMin &&
           club.ageRestriction <= _filter.ageMax;
-      bool withinMoney = true; // Add money field if available in ClubData
+
+      // Price range filter (assuming club.price exists; adjust if not)
+      // bool withinMoney = club.price != null
+      //     ? (club.price >= _filter.moneyMin && club.price <= _filter.moneyMax)
+      //     : true; // Default to true if price is unavailable
+
+      // Rating filter
       bool withinRating = club.rating >= _filter.ratingMin;
 
+      // Location types filter
+      bool withinLocationType =
+          _filter.selectedLocationTypes.contains(club.typeOfClub);
+
+      // Crowd presence filter (assuming club.currentCrowdPercent exists; adjust if not)
+      // bool withinCrowd = club.visitors != null
+      //     ? (club.visitors >= club.totalPossibleAmountOfVisitors/Filter.minCrowdFillPercent)
+      //     : true; // Default to true if unavailable
+
+      // Female presence filter (assuming club.femalePercent exists; adjust if not)
+      // bool withinFemale = club.femalePercent != null
+      //     ? (club.femalePercent >= _filter.minFemalePercent)
+      //     : true; // Default to true if unavailable
+
+      // Open now filter
       bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
       bool openFilter = !_filter.showOpenOnly || isOpen;
 
-//TODO
-      bool meetsCrowdRequirement = true;
-      //     club.currentCrowdPercent >= _filter.minCrowdFillPercent;
-
       return withinDistance &&
           withinAge &&
-          withinMoney &&
+          //  withinMoney &&
           withinRating &&
-          meetsCrowdRequirement &&
+          withinLocationType &&
+          // withinCrowd &&
+          // withinFemale &&
           openFilter;
     }).toList();
 
-    List<ClubData> sortedClubs = List.from(allClubs); // TODO Actually filter
-    sortedClubs.sort((a, b) {
-      // Sort by openness first (open clubs come first)
+    // If no clubs match, show message and relaxed filter results
+    if (filteredClubs.isEmpty) {
+      // Relaxed filter: loosen distance, age, and rating slightly
+      List<ClubData> relaxedClubs = allClubs.where((club) {
+        double dist =
+            calculateDistance(userLocation, LatLng(club.lat, club.lon));
+        bool withinRelaxedDistance =
+            dist <= _filter.distanceMax * 1.5; // 50% more distance
+        bool withinRelaxedAge =
+            club.ageRestriction >= _filter.ageMin - 2 && // Lower age by 2
+                club.ageRestriction <= _filter.ageMax + 2; // Raise age by 2
+        bool withinRelaxedRating =
+            club.rating >= _filter.ratingMin - 1; // Lower rating by 1
+        bool withinLocationType =
+            _filter.selectedLocationTypes.contains(club.typeOfClub);
+        bool isOpen = ClubOpeningHoursFormatter.isClubOpen(club);
+        bool openFilter = !_filter.showOpenOnly || isOpen;
+
+        return withinRelaxedDistance &&
+            withinRelaxedAge &&
+            withinRelaxedRating &&
+            withinLocationType &&
+            openFilter;
+      }).toList();
+
+      // Sort relaxed clubs
+      relaxedClubs.sort((a, b) {
+        bool aOpen = ClubOpeningHoursFormatter.isClubOpen(a);
+        bool bOpen = ClubOpeningHoursFormatter.isClubOpen(b);
+        if (aOpen != bOpen) {
+          return aOpen ? -1 : 1;
+        }
+        double distA = calculateDistance(userLocation, LatLng(a.lat, a.lon));
+        double distB = calculateDistance(userLocation, LatLng(b.lat, b.lon));
+        int aScore = _calculateCompletenessScore(a, distA);
+        int bScore = _calculateCompletenessScore(b, distB);
+        if (bScore != aScore) {
+          return bScore.compareTo(aScore);
+        } else {
+          return distA.compareTo(distB);
+        }
+      });
+
+      return SliverChildBuilderDelegate(
+        (context, index) {
+          if (index == 0) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'No locations found with your current filters!',
+                  style: TextStyle(color: redAccent, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          ClubData club = relaxedClubs[index - 1];
+          return buildClubCard(club);
+        },
+        childCount: relaxedClubs.isEmpty ? 1 : relaxedClubs.length + 1,
+      );
+    }
+
+    // Sort the filtered clubs
+    filteredClubs.sort((a, b) {
       bool aOpen = ClubOpeningHoursFormatter.isClubOpen(a);
       bool bOpen = ClubOpeningHoursFormatter.isClubOpen(b);
       if (aOpen != bOpen) {
-        return aOpen ? -1 : 1; // Open clubs before closed ones
+        return aOpen ? -1 : 1;
       }
-
-      // Within open/closed groups, sort by completeness score (descending)
       double distA = calculateDistance(userLocation, LatLng(a.lat, a.lon));
       double distB = calculateDistance(userLocation, LatLng(b.lat, b.lon));
-
       int aScore = _calculateCompletenessScore(a, distA);
       int bScore = _calculateCompletenessScore(b, distB);
-
       if (bScore != aScore) {
-        return bScore.compareTo(aScore); // Higher score first
+        return bScore.compareTo(aScore);
       } else {
-        return distA.compareTo(distB); // If equal score, closer first
+        return distA.compareTo(distB);
       }
     });
+
     return SliverChildBuilderDelegate(
       (context, index) {
-        ClubData club = sortedClubs[index];
+        ClubData club = filteredClubs[index];
         return buildClubCard(club);
       },
-      childCount: sortedClubs.length,
+      childCount: filteredClubs.length,
     );
   }
 
@@ -867,7 +956,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: black,
-                    border: Border.all(color: grey, width: 0.5),
+                    border: Border.all(color: grey, width: 0.7),
                     borderRadius: BorderRadius.circular(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1091,48 +1180,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       children: [
                         GestureDetector(
                           onTap: _showAdvancedSearch,
-                          child: const Icon(
-                            Icons.tune,
-                            color: primaryColor,
-                            size: 20,
-                          ),
+                          child: defaultSettingIcon,
                         ),
                         const SizedBox(width: 12),
-                        Expanded(
-                          child: ValueListenableBuilder<List<ClubData>>(
-                            valueListenable: clubDataHelper.clubDataList,
-                            builder: (context, allClubs, _) {
-                              if (allClubs.isEmpty) {
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1,
-                                    color: secondaryColor,
-                                  ),
-                                );
-                              }
-
-                              return ClubSearchWidget(
-                                // TODO CAHNGE TO FIT HERE!
-                                clubs: allClubs,
-                                userLocation: userLocation,
-                                onClubSelected: (club) {
-                                  Provider.of<GlobalProvider>(context,
-                                          listen: false)
-                                      .setChosenClub(club);
-                                  ClubBottomSheet.showClubSheet(
-                                    context: context,
-                                    club: club,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: ValueListenableBuilder<List<ClubData>>(
+                        //     valueListenable: clubDataHelper.clubDataList,
+                        //     builder: (context, allClubs, _) {
+                        //       if (allClubs.isEmpty) {
+                        //         return const Center(
+                        //           child: CircularProgressIndicator(
+                        //             strokeWidth: 1,
+                        //             color: secondaryColor,
+                        //           ),
+                        //         );
+                        //       }
+                        //       // return ClubSearchWidgetExplore(controller: controller, onChanged: ClubBottomSheet.showClubSheet(context: ));
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
                 ),
-                if (1 < 2) //TODO IF OFFER IMAGES!
+                if (2 < 2) //TODO When working OFFER IMAGES!
                   const SliverToBoxAdapter(
                     child: OfferImageGrid(),
                   ),
