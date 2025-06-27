@@ -280,10 +280,6 @@ class _SideSheetMainScreenState extends State<SideSheetMainScreen> {
                                                   .addPostFrameCallback((_) {
                                                 if (!context.mounted) return;
 
-                                                Provider.of<GlobalProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .setChosenClub(club);
                                                 ClubBottomSheet.showClubSheet(
                                                     context: context,
                                                     club: club);

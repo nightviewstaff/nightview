@@ -51,6 +51,7 @@ class GlobalProvider extends ChangeNotifier {
 
   ClubData? _chosenClub;
   bool _chosenClubFavoriteLocal = false;
+  bool _chosenClubLikedLocal = false;
   PartyStatus _partyStatusLocal = PartyStatus.unsure;
   PermissionState _permissionState = PermissionState.noPermissions;
   int _partyCount = 0;
@@ -104,6 +105,7 @@ class GlobalProvider extends ChangeNotifier {
   ClubData get chosenClub => _chosenClub!;
 
   bool get chosenClubFavoriteLocal => _chosenClubFavoriteLocal;
+  bool get chosenClubLikedLocal => _chosenClubLikedLocal;
 
   PartyStatus get partyStatusLocal => _partyStatusLocal;
 
@@ -337,6 +339,23 @@ class GlobalProvider extends ChangeNotifier {
       print('Error fetching favorite clubs: $e');
       return [];
     }
+  }
+
+  void setChosenClubLikedLocal(bool value) {
+    _chosenClubLikedLocal = value;
+    notifyListeners();
+  }
+
+  Future<bool> getChosenClubLiked() async {
+    String? userId = userDataHelper.currentUserId;
+    String clubId = chosenClub.id;
+    if (userId == null) return false;
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('user_data')
+        .doc(userId)
+        .get();
+    List<String> likes = List<String>.from(userDoc['likes'] ?? []);
+    return likes.contains(clubId);
   }
 
   Future<List<ClubData>> getSortedClubList() async {

@@ -56,7 +56,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
         ),
         Positioned(
           bottom: 10,
-          right: 10,
+          right: 5,
           child: Column(
             children: [
               _buildMapButton(
@@ -68,19 +68,19 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
           ),
         ),
         // if (localBearing != 0)
-        Positioned(
-          top: 10,
-          right: 10,
-          child: _buildMapButton(
-            icon: defaultCompassIcon,
-            tooltip: "Face north",
-            onPressed: _faceNorth,
-          ),
-        ),
+        // Positioned(
+        //   top: 10,
+        //   right: 10,
+        //   child: _buildMapButton(
+        //     icon: defaultCompassIcon,
+        //     tooltip: "Face north",
+        //     onPressed: _faceNorth,
+        //   ),
+        // ),
         // if (localPitch != 0)
         Positioned(
-          top: 60,
-          right: 10,
+          top: 55,
+          right: 5,
           child: _buildMapButton(
             icon: Icons.rotate_90_degrees_ccw_sharp,
             tooltip: "Top-down",
@@ -216,7 +216,8 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
       mini: true,
       heroTag: tooltip,
       tooltip: tooltip,
-      backgroundColor: black,
+      backgroundColor: black.withOpacity(0.5),
+      // backgroundColor: grey.withOpacity(0.8),
       onPressed: onPressed,
       child: Icon(icon, color: secondaryColor),
     );

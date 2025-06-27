@@ -14,18 +14,12 @@ class ClubAgeRestrictionFormatter {
   static String displayClubAgeRestrictionFormattedShort(ClubData club) {
     // Never used
     final ageRestriction = formatAgeRestriction(club);
-    return ageRestriction ==
-            S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
-        ? '??+'
-        : ageRestriction;
+    return ageRestriction == '' ? '??+' : ageRestriction;
   }
 
   static String displayClubAgeRestrictionFormattedOnlyAge(ClubData club) {
     final ageRestriction = formatAgeRestriction(club);
-    return ageRestriction ==
-            S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
-        ? ''
-        : ageRestriction;
+    return ageRestriction == '' ? '' : ageRestriction;
   }
 
   static String formatAgeRestriction(ClubData club) {
@@ -37,9 +31,7 @@ class ClubAgeRestrictionFormatter {
     final int currentAgeRestriction =
         (openingHoursToday?['ageRestriction'] as int?) ?? club.ageRestriction;
 
-    return currentAgeRestriction <= 17
-        ? S.of(ourNavigatorKey.currentContext!).age_limit_not_specified
-        : '$currentAgeRestriction+';
+    return currentAgeRestriction <= 17 ? '' : '$currentAgeRestriction+';
   }
 
   static String formatAgeRestrictionForSpecificDay(

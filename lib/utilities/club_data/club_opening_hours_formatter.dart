@@ -302,4 +302,69 @@ class ClubOpeningHoursFormatter {
 
     return "$open - $close";
   }
+
+  static String displayClubOpeningHoursForWeekday(ClubData club, int weekday) {
+    final Map<int, String> weekdayKeyMap = {
+      DateTime.monday: 'monday',
+      DateTime.tuesday: 'tuesday',
+      DateTime.wednesday: 'wednesday',
+      DateTime.thursday: 'thursday',
+      DateTime.friday: 'friday',
+      DateTime.saturday: 'saturday',
+      DateTime.sunday: 'sunday',
+    };
+
+    final key = weekdayKeyMap[weekday];
+    if (key == null) return '';
+
+    final Map<String, dynamic>? dayData = club.openingHours?[key];
+    if (dayData == null) return '';
+
+    final open = dayData['open'];
+    final close = dayData['close'];
+
+    if (open == null ||
+        close == null ||
+        open.toString().isEmpty ||
+        close.toString().isEmpty) {
+      return '';
+    }
+
+    return "$open - $close";
+  }
+
+  // TODO ADD "^+1" when next day
+//   bool showPlusOne = false;
+
+// final openHour = int.tryParse(open.split(':')[0]);
+// final closeHour = int.tryParse(close.split(':')[0]);
+// if (openHour != null && closeHour != null && closeHour < openHour) {
+//   showPlusOne = true;
+// }width: 100,
+//   child: Stack(
+//     alignment: Alignment.centerRight,
+//     children: [
+//       Padding(
+//         padding: const EdgeInsets.only(top: 6),
+//         child: Text(
+//           "$open - $close",
+//           style: kTextStyleP2.copyWith(color: white, fontSize: 12),
+//         ),
+//       ),
+//       if (showPlusOne)
+//         const Positioned(
+//           top: 0,
+//           right: 0,
+//           child: Text(
+//             "+1",
+//             style: TextStyle(
+//               fontSize: 9,
+//               color: white,
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//         ),
+//     ],
+//   ),
+// ),
 }

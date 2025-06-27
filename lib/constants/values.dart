@@ -31,6 +31,7 @@ const kSemiCloseMapZoom = 17.0;
 const kMaxMapZoom = 18.4;
 const kNewDayHour = 8;
 
+const kHugeSizeRadius = 70.0;
 const kBiggerSizeRadius = 30.0;
 const kBigSizeRadius = 25.0;
 const kNormalSizeRadius = 20.0;

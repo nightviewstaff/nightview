@@ -46,7 +46,7 @@ dependencies:
   firebase_messaging: ^15.2.4
 
   workmanager: ^0.5.2
-
+  path_provider: ^2.1.5
   latlong2: ^0.9.1
   url_launcher: ^6.3.1
 
@@ -72,7 +72,7 @@ dependencies:
   async: ^2.11.0
   
   palette_generator: ^0.3.3+6
-  
+  syncfusion_flutter_pdfviewer: ^29.2.11
   
   cached_network_image: ^3.4.1
   image_picker: ^1.1.2

@@ -15,163 +15,67 @@ class LikeClubButton extends StatefulWidget {
 }
 
 class _LikeClubButtonState extends State<LikeClubButton> {
-  int defaultClubAmount = 5;
-
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      GlobalProvider provider =
-          Provider.of<GlobalProvider>(context, listen: false);
-
-      bool isFavorite =
-          await provider.getChosenClubFavorite(); // ✅ Await the async function
-      provider.setChosenClubFavoriteLocal(isFavorite); // ✅ Update state safely
+      final provider = Provider.of<GlobalProvider>(context, listen: false);
+      bool isLiked = await provider.getChosenClubLiked();
+      provider.setChosenClubLikedLocal(isLiked);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        GlobalProvider provider =
-            Provider.of<GlobalProvider>(context, listen: false);
+    final provider = Provider.of<GlobalProvider>(context);
+    final bool isLiked = provider.chosenClubLikedLocal;
 
-        String? userId = provider.userDataHelper.currentUserId;
-        String clubId = provider.chosenClub.id;
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () async {
+          final String? userId = provider.userDataHelper.currentUserId;
+          final String clubId = provider.chosenClub.id;
 
-        if (userId == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                S.of(context).generic_error,
-                style: TextStyle(color: redAccent),
+          if (userId == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  S.of(context).generic_error,
+                  style: const TextStyle(color: redAccent),
+                ),
+                backgroundColor: black,
               ),
-              backgroundColor: black,
-            ),
-          );
-          return;
-        }
-
-        bool isFavorite = provider.chosenClubFavoriteLocal;
-        if (isFavorite) {
-          // Remove favorite club
-          bool doRemove = await _showRemoveConfirmationDialog(context);
-          if (doRemove) {
-            provider.clubDataHelper.removeFavoriteClub(clubId, userId);
-            provider.setChosenClubFavoriteLocal(false);
-          }
-        } else {
-          // Check the user's favorite count before adding
-          DocumentSnapshot<Map<String, dynamic>> userDoc =
-              await FirebaseFirestore.instance
-                  .collection('user_data')
-                  .doc(userId)
-                  .get();
-          List<Map<String, dynamic>> favoriteClubs =
-              List<Map<String, dynamic>>.from(userDoc['favorite_clubs'] ?? []);
-
-          // Check if user is admin (admins may bypass the limit)
-          bool isAdmin = false;
-          try {
-            isAdmin = userDoc.get('is_admin') as bool? ?? false;
-          } catch (e) {
-            print('Error accessing is_admin: $e');
-            isAdmin = false; // Treat missing field as false
-          }
-          if (!isAdmin && favoriteClubs.length >= defaultClubAmount) {
-            // Show error dialog if limit reached
-            await _showLimitReachedDialog(context);
+            );
             return;
           }
 
-          // Add favorite club
-          bool doFavorite = await _showConfirmationDialog(context);
-          if (doFavorite) {
-            provider.clubDataHelper
-                .setFavoriteClub(clubId, userId); // Removed context parameter
-            provider.setChosenClubFavoriteLocal(true);
+          if (isLiked) {
+            bool doRemove = await _showRemoveConfirmationDialog(context);
+            if (doRemove) {
+              // 👇 Optimistic visual update BEFORE async completes
+              provider.setChosenClubLikedLocal(false);
+              provider.clubDataHelper
+                  .unlikeClub(clubId, userId)
+                  .catchError((e) {
+                provider.setChosenClubLikedLocal(true); // rollback if failed
+              });
+            }
+          } else {
+            provider
+                .setChosenClubLikedLocal(true); // 👈 Instant visual feedback
+            provider.clubDataHelper.likeClub(clubId, userId).catchError((e) {
+              provider.setChosenClubLikedLocal(false); // rollback if failed
+            });
           }
-        }
-      },
-      child: IconButton(
-        icon: const Icon(defaultEmptyHeartIcon, color: white),
-        onPressed: () {},
-      ),
-      //TODO
-      // ? defaultFullHeartIcon, color: redaccent;
-    );
-  }
-
-  Future<void> _showLimitReachedDialog(BuildContext context) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'For mange favoritter!',
-          style: TextStyle(color: redAccent),
+        },
+        child: Icon(
+          isLiked ? defaultFullHeartIcon : defaultEmptyHeartIcon,
+          color: isLiked ? redAccent : white,
+          // size: 26,
         ),
-        content: SingleChildScrollView(
-          child: Text(
-            'Du kan højest have 5 favoritlokationer på samme tid.',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(
-              'Okay',
-              style: TextStyle(color: grey),
-            ),
-          ),
-        ],
       ),
     );
-  }
-
-  Future<bool> _showConfirmationDialog(BuildContext context) async {
-    bool doFavorite = true;
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: Text(
-          S.of(context).add_favorite,
-          style: TextStyle(color: primaryColor),
-        ),
-        content: SingleChildScrollView(
-          child: Text(
-            S.of(context).favorite_club_message,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              doFavorite = false;
-              Navigator.of(context).pop();
-            },
-            child: Text(
-              S.of(context).undo,
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(
-              S.of(context).continues,
-              style: TextStyle(color: primaryColor),
-            ),
-          ),
-        ],
-      ),
-    );
-    return doFavorite;
   }
 
   Future<bool> _showRemoveConfirmationDialog(BuildContext context) async {
@@ -181,13 +85,14 @@ class _LikeClubButtonState extends State<LikeClubButton> {
       barrierDismissible: true,
       builder: (context) => AlertDialog(
         title: Text(
-          S.of(context).remove_favorite,
-          style: TextStyle(color: redAccent),
+          // S.of(context).remove_like,
+          "Remove Like",
+          style: const TextStyle(color: redAccent),
         ),
         content: SingleChildScrollView(
+          // child: Text(S.of(context).remove_like_confirmation),
           child: Text(
-            S.of(context).remove_favorite_confirmation,
-          ),
+              "Are you sure you want to remove your like from this location?"),
         ),
         actions: [
           TextButton(
@@ -197,7 +102,7 @@ class _LikeClubButtonState extends State<LikeClubButton> {
             },
             child: Text(
               S.of(context).undo,
-              style: TextStyle(color: primaryColor),
+              style: const TextStyle(color: primaryColor),
             ),
           ),
           TextButton(
@@ -207,7 +112,7 @@ class _LikeClubButtonState extends State<LikeClubButton> {
             },
             child: Text(
               S.of(context).remove,
-              style: TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: redAccent),
             ),
           ),
         ],
@@ -216,3 +121,200 @@ class _LikeClubButtonState extends State<LikeClubButton> {
     return doRemove;
   }
 }
+
+// TODOD Animations below. When implemented favorite buttons crashes...
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter/material.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:nightview/constants/colors.dart';
+// import 'package:nightview/constants/icons.dart';
+// import 'package:nightview/generated/l10n.dart';
+// import 'package:nightview/providers/global_provider.dart';
+// import 'package:provider/provider.dart';
+
+// class LikeClubButton extends StatefulWidget {
+//   const LikeClubButton({super.key});
+
+//   @override
+//   State<LikeClubButton> createState() => _LikeClubButtonState();
+// }
+
+// class _LikeClubButtonState extends State<LikeClubButton> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       final provider = Provider.of<GlobalProvider>(context, listen: false);
+//       bool isLiked = await provider.getChosenClubLiked();
+//       provider.setChosenClubLikedLocal(isLiked);
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final provider = Provider.of<GlobalProvider>(context);
+//     final bool isLiked = provider.chosenClubLikedLocal;
+
+//     return Padding(
+//       padding: const EdgeInsets.all(8.0),
+//       child: Stack(
+//         alignment: Alignment.center,
+//         children: [
+//           GestureDetector(
+//             onTap: () async {
+//               final String? userId = provider.userDataHelper.currentUserId;
+//               final String clubId = provider.chosenClub.id;
+
+//               if (userId == null) {
+//                 ScaffoldMessenger.of(context).showSnackBar(
+//                   SnackBar(
+//                     content: Text(
+//                       S.of(context).generic_error,
+//                       style: const TextStyle(color: redAccent),
+//                     ),
+//                     backgroundColor: black,
+//                   ),
+//                 );
+//                 return;
+//               }
+
+//               if (isLiked) {
+//                 bool doRemove = await _showRemoveConfirmationDialog(context);
+//                 if (doRemove) {
+//                   provider.setChosenClubLikedLocal(false);
+//                   provider.clubDataHelper
+//                       .unlikeClub(clubId, userId)
+//                       .catchError((e) {
+//                     provider.setChosenClubLikedLocal(true);
+//                   });
+//                 }
+//               } else {
+//                 provider.setChosenClubLikedLocal(true);
+//                 provider.clubDataHelper
+//                     .likeClub(clubId, userId)
+//                     .catchError((e) {
+//                   provider.setChosenClubLikedLocal(false);
+//                 });
+//               }
+//             },
+//             child: Icon(
+//               isLiked ? defaultFullHeartIcon : defaultEmptyHeartIcon,
+//               color: isLiked ? redAccent : white,
+//             ),
+//           ),
+//           LoveBubbles(isLiked: isLiked),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Future<bool> _showRemoveConfirmationDialog(BuildContext context) async {
+//     bool doRemove = false;
+//     await showDialog(
+//       context: context,
+//       barrierDismissible: true,
+//       builder: (context) => AlertDialog(
+//         title: Text(
+//           "Remove Like",
+//           style: const TextStyle(color: redAccent),
+//         ),
+//         content: SingleChildScrollView(
+//           child: Text(
+//               "Are you sure you want to remove your like from this location?"),
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               doRemove = false;
+//               Navigator.of(context).pop();
+//             },
+//             child: Text(
+//               S.of(context).undo,
+//               style: const TextStyle(color: primaryColor),
+//             ),
+//           ),
+//           TextButton(
+//             onPressed: () {
+//               doRemove = true;
+//               Navigator.of(context).pop();
+//             },
+//             child: Text(
+//               S.of(context).remove,
+//               style: const TextStyle(color: redAccent),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//     return doRemove;
+//   }
+// }
+
+// class LoveBubbles extends StatefulWidget {
+//   final bool isLiked;
+
+//   const LoveBubbles({required this.isLiked, super.key});
+
+//   @override
+//   State<LoveBubbles> createState() => _LoveBubblesState();
+// }
+
+// class _LoveBubblesState extends State<LoveBubbles>
+//     with SingleTickerProviderStateMixin {
+//   late AnimationController _controller;
+//   bool _wasLiked = false;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller = AnimationController(
+//       duration: const Duration(seconds: 2),
+//       vsync: this,
+//     );
+//   }
+
+//   @override
+//   void didUpdateWidget(LoveBubbles oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     if (widget.isLiked && !_wasLiked) {
+//       _controller.forward(from: 0);
+//     }
+//     _wasLiked = widget.isLiked;
+//   }
+
+//   @override
+//   void dispose() {
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return AnimatedBuilder(
+//       animation: _controller,
+//       builder: (context, child) {
+//         return Stack(
+//           alignment: Alignment.center,
+//           children: [
+//             for (int i = 0; i < 3; i++)
+//               Transform.translate(
+//                 offset: Offset(
+//                   (i - 1) * 10.0,
+//                   -50 * _controller.value,
+//                 ),
+//                 child: Opacity(
+//                   opacity: widget.isLiked ? (1 - _controller.value) : 0,
+//                   child: const Icon(
+//                     Icons.favorite,
+//                     color: redAccent,
+//                     size: 10,
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }

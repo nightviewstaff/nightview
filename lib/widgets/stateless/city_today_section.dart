@@ -108,8 +108,7 @@ class CityTodaySection extends StatelessWidget {
                       Provider.of<NightMapProvider>(context, listen: false)
                           .nightMapController
                           .move(LatLng(club.lat, club.lon), kCloseMapZoom);
-                      Provider.of<GlobalProvider>(context, listen: false)
-                          .setChosenClub(club);
+
                       ClubBottomSheet.showClubSheet(
                           context: context, club: club);
                     },

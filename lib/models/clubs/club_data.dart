@@ -14,6 +14,7 @@ class ClubData {
   final int ageRestriction;
   final int totalPossibleAmountOfVisitors;
   int visitors;
+  // double rating;
   int rating;
 
   final double lat;

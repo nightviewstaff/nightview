@@ -11,6 +11,7 @@ import 'package:nightview/helpers/users/friends/search_friends_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 
 import 'package:nightview/providers/balladefabrikken_provider.dart';
+import 'package:nightview/providers/filtered_clubs_notifier.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/language_provider.dart';
 import 'package:nightview/providers/login_registration_provider.dart';
@@ -112,6 +113,9 @@ class NightViewApp extends StatelessWidget {
           // Add LanguageProvider
           create: (_) => LanguageProvider(),
         ),
+        // ChangeNotifierProvider(
+        //   create: (context) => FilteredClubsNotifier(),
+        // )
       ],
       child: Consumer<LanguageProvider>(
         // Wrap MaterialApp with Consumer for language updates
@@ -137,8 +141,8 @@ class NightViewApp extends StatelessWidget {
             ),
             initialRoute:
                 // ChooseClubbingLocationScreen.id, //TEST
-                // WaitingForLoginScreen.id,
-                SwipeScreen.id, // TEST
+                WaitingForLoginScreen.id,
+            // SwipeScreen.id, // TEST
             routes: {
               LoginScreen.id: (context) => const LoginScreen(),
               LoginOrCreateAccountScreen.id: (context) =>

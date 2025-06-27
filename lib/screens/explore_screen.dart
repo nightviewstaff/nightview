@@ -42,6 +42,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   late AdvancedSearchFilter _filter;
   late AdvancedSearchFilter _tempFilter;
+  List<ClubData> _filteredClubs = [];
 
   double expBase = 4;
   double maxDistanceKm = AdvancedSearchFilter.maxDistanceKm;
@@ -64,6 +65,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _filter = AdvancedSearchFilter(
       selectedLocationTypes: ClubTypeFormatter.clubTypes.keys.toList(),
     );
+    _filteredClubs = clubDataHelper.clubDataList.value;
   }
 
   void _onClubDataChanged() {
@@ -155,7 +157,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 : 0;
 
 // Tests
-
+    // if (club.name.startsWith("Al")) score + 1000; //TEST
     // score += (club.tags?.isNotEmpty ?? false) ? 2000 : 0; // TEST
     // score += (club.name.length > 20) ? 100 : 0;
 
@@ -222,7 +224,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 Row(
                                   children: [
                                     const Text(
-                                      'Open Now',
+                                      'Open Today',
                                       style:
                                           TextStyle(color: white, fontSize: 12),
                                     ),
@@ -772,7 +774,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   SliverChildDelegate buildClubListDelegate(LatLng userLocation) {
-    List<ClubData> allClubs = clubDataHelper.clubDataList.value;
+    List<ClubData> allClubs =
+        clubDataHelper.clubDataList.value; // Use filtered clubs from search
     if (allClubs.isEmpty) {
       return SliverChildBuilderDelegate(
         (context, index) => const Center(child: CircularProgressIndicator()),
@@ -943,6 +946,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return GestureDetector(
       onTap: () {
         // DONT GO TO MAP! TODO
+
         ClubBottomSheet.showClubSheet(context: context, club: club);
       },
       child: Center(
@@ -1084,17 +1088,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 height: 80,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: stockImages.isNotEmpty
-                                      ? stockImages.length
-                                      : 15,
+                                  itemCount: stockImages.length,
                                   itemBuilder: (context, imageIndex) {
-                                    final imageProvider = stockImages.isNotEmpty
-                                        ? NetworkImage(stockImages[imageIndex])
-                                        : AssetImage(
-                                                'images/swipe/${imageIndex + 1}.png')
-                                            as ImageProvider;
+                                    if (stockImages.isEmpty)
+                                      return const SizedBox.shrink();
 
-                                    // Fallback backup
+                                    final imageProvider =
+                                        NetworkImage(stockImages[imageIndex]);
+
                                     return Container(
                                       margin: const EdgeInsets.only(right: 6),
                                       width: 80,
@@ -1183,33 +1184,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           child: defaultSettingIcon,
                         ),
                         const SizedBox(width: 12),
-                        // Expanded(
-                        //   child: ValueListenableBuilder<List<ClubData>>(
-                        //     valueListenable: clubDataHelper.clubDataList,
-                        //     builder: (context, allClubs, _) {
-                        //       if (allClubs.isEmpty) {
-                        //         return const Center(
-                        //           child: CircularProgressIndicator(
-                        //             strokeWidth: 1,
-                        //             color: secondaryColor,
-                        //           ),
-                        //         );
-                        //       }
-                        //       // return ClubSearchWidgetExplore(controller: controller, onChanged: ClubBottomSheet.showClubSheet(context: ));
-                        //     },
-                        //   ),
-                        // ),
+                        Expanded(
+                          child: ClubSearchBarWidgetExplore(
+                            clubs: clubDataHelper.clubDataList.value,
+                            userLocation: userLocation,
+                            onFilteredClubsChanged: (filteredClubs) {
+                              setState(() {
+                                _filteredClubs = filteredClubs;
+                              });
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                if (2 < 2) //TODO When working OFFER IMAGES!
-                  const SliverToBoxAdapter(
-                    child: OfferImageGrid(),
-                  ),
-                SliverList(
-                  delegate: buildClubListDelegate(userLocation),
-                ),
+                if (2 < 2) const SliverToBoxAdapter(child: OfferImageGrid()),
+                SliverList(delegate: buildClubListDelegate(userLocation)),
               ],
             ),
           ),

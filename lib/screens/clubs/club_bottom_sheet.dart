@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:nightview/constants/colors.dart';
@@ -12,8 +13,10 @@ import 'package:nightview/constants/values.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
+import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
 import 'package:nightview/screens/clubs/club_bar_card_screen.dart';
+import 'package:nightview/screens/clubs/club_cover_image.dart';
 import 'package:nightview/screens/clubs/club_more_info_screen.dart';
 import 'package:nightview/screens/main_screen.dart';
 import 'package:nightview/screens/night_map/night_map.dart';
@@ -37,6 +40,7 @@ class ClubBottomSheet {
     bool moveMap = true,
   }) {
     if (_isBottomSheetOpen) return; // Prevent multiple sheets
+    Provider.of<GlobalProvider>(context, listen: false).setChosenClub(club);
 
     final mapProvider = Provider.of<NightMapProvider>(context, listen: false);
     final map = mapProvider.mapController;
@@ -70,14 +74,8 @@ class ClubBottomSheet {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            height: 200,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/swipe/12.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
+          ClubCoverImage(
+            clubId: club.id,
           ),
           Positioned(
             top: 150,
@@ -120,7 +118,6 @@ class ClubBottomSheet {
                       Row(
                         children: [
                           const FavoriteClubButton(),
-                          // TODO when func added.
                           const LikeClubButton(),
                         ],
                       ),
@@ -175,30 +172,40 @@ class ClubBottomSheet {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              //TODO FEATURE
-              // Row(
-              //   children: [
-              //     const Icon(Icons.mail_outline_outlined, color: primaryColor),
-              //     Container(
-              //       margin: const EdgeInsets.only(left: 5),
-              //       padding: const EdgeInsets.symmetric(
-              //           horizontal: 9.0, vertical: 3.0),
-              //       decoration: BoxDecoration(
-              //         color: black,
-              //         borderRadius: BorderRadius.circular(8.0),
-              //         border: Border.all(color: white),
-              //       ),
-              //       child: const Text(
-              //         'Bookings',
-              //         style:
-              //             TextStyle(color: white, fontWeight: FontWeight.w600),
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              // BOOKINGS (aligned with top of right column)
+              // if (POSSIBLE TO BOOK)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.mail_outline_outlined,
+                          color: primaryColor),
+                      Container(
+                        margin: const EdgeInsets.only(left: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 9.0, vertical: 3.0),
+                        decoration: BoxDecoration(
+                          color: black,
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: white),
+                        ),
+                        child: const Text(
+                          'Bookings',
+                          style: TextStyle(
+                              color: white, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      //TODO FIX FUNCTIONALLITY
+                    ],
+                  ),
+                ],
+              ),
+
+              // RIGHT: OPENING HOURS + RATING
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -213,12 +220,14 @@ class ClubBottomSheet {
                               horizontal: 9.0, vertical: 3.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: white, width: 1),
+                            border: Border.all(
+                              color: white,
+                            ),
                           ),
                           child: Text(
                             ClubOpeningHoursFormatter
                                 .displayClubOpeningHoursTodaySimple(club),
-                            style: const TextStyle(fontSize: 10, color: white),
+                            style: const TextStyle(fontSize: 13, color: white),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -242,7 +251,7 @@ class ClubBottomSheet {
                                 decoration: BoxDecoration(
                                   color: white,
                                   border:
-                                      Border.all(color: primaryColor, width: 2),
+                                      Border.all(color: primaryColor, width: 3),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -276,29 +285,30 @@ class ClubBottomSheet {
                         ),
                         const SizedBox(height: 2),
                         Align(
-                            alignment: Alignment.centerRight,
-                            child: FutureBuilder<String>(
-                              future: fetchRatingCount(club
-                                  .id), // Make sure `club.id == 1656_0` or similar
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const SizedBox
-                                      .shrink(); // Or a small placeholder/spinner
-                                }
+                          alignment: Alignment.centerRight,
+                          child: FutureBuilder<String>(
+                            future: fetchRatingCount(club.id),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const SizedBox.shrink();
+                              }
 
-                                final ratingText = snapshot.data ?? '';
-                                return Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    ratingText,
-                                    style: const TextStyle(
-                                        color: white, fontSize: 10),
-                                    textAlign: TextAlign.right,
+                              final ratingText = snapshot.data ?? '';
+                              return Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  ratingText,
+                                  style: const TextStyle(
+                                    color: white,
+                                    fontSize: 10,
                                   ),
-                                );
-                              },
-                            )),
+                                  textAlign: TextAlign.right,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -396,63 +406,75 @@ class ClubBottomSheet {
           else
             const SizedBox.shrink(),
           const SizedBox(height: 32.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ClubMoreInfoScreen(club: club),
-                    ),
-                  );
-                },
-                child: Container(
-                  width: screenWidth * 0.28,
-                  height: screenHeight * 0.04,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: black,
-                    border: Border.all(color: white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    "More Info",
-                    style: TextStyle(
-                        color: white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
-              if (1 == 3) //TODO. IF Barcard.
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ClubBarCardScreen(club: club),
+          FutureBuilder<bool>(
+            future: doesBarcardExist(club.id),
+            builder: (context, snapshot) {
+              final clubHasBarCard =
+                  snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data == true;
+
+              return Row(
+                mainAxisAlignment: clubHasBarCard
+                    ? MainAxisAlignment.spaceEvenly
+                    : MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ClubMoreInfoScreen(club: club),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: screenWidth * 0.28,
+                      height: screenHeight * 0.04,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: black,
+                        border: Border.all(color: white),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: screenWidth * 0.28,
-                    height: screenHeight * 0.04,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: black,
-                      border: Border.all(color: white),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      "Bar Card",
-                      style: TextStyle(
+                      child: const Text(
+                        "More Info",
+                        style: TextStyle(
                           color: white,
                           fontSize: 14,
-                          fontWeight: FontWeight.w500),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-            ],
+                  if (clubHasBarCard)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ClubBarCardScreen(club: club),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: screenWidth * 0.28,
+                        height: screenHeight * 0.04,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: black,
+                          border: Border.all(color: white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          "Bar Card",
+                          style: TextStyle(
+                              color: white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -587,20 +609,51 @@ class ClubBottomSheet {
     ];
 
     // Show the bottom sheet
+
     final sheet = showStickyFlexibleBottomSheet(
       context: context,
       initHeight: 0.8,
       minHeight: 0.40,
       maxHeight: 1,
       headerHeight: 0, // No sticky header
-      bottomSheetColor: black,
+      bottomSheetColor: transparent, // Ensures no overlay
       headerBuilder: (context, offset) => const SizedBox.shrink(),
-      bodyBuilder: (context, offset) => SliverChildListDelegate(allContent),
+      bodyBuilder: (context, offset) => SliverChildListDelegate([
+        Container(
+          decoration: BoxDecoration(
+            color: black, // Background color
+            borderRadius: BorderRadius.vertical(
+                top: Radius.circular(kHugeSizeRadius)), // Rounded top corners
+            border: Border.all(color: grey, width: 0.6), // Border color
+          ),
+          clipBehavior: Clip.hardEdge, // Clips content to container shape
+          child: ClipRRect(
+            // Additional clipping for Stack content
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(kHugeSizeRadius)),
+            child: Column(
+              children: allContent, // Existing content
+            ),
+          ),
+        ),
+      ]),
     );
 
     sheet.then((_) {
       _isBottomSheetOpen = false; // Reset flag when sheet closes
     });
+  }
+
+  static Future<bool> doesBarcardExist(String clubId) async {
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('club_images/$clubId/barcard.pdf');
+      await ref.getDownloadURL();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   static Future<String> fetchRatingCount(String clubId) async {
@@ -612,7 +665,8 @@ class ClubBottomSheet {
           .get();
 
       final count = snapshot.docs.length;
-      return count >= 10 ? '($count)' : '';
+      return '($count)';
+      // count >= 10 ? '($count)' : '';
     } catch (e) {
       return '';
     }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/icons.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
@@ -94,11 +95,13 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
           }
         }
       },
-      child: FaIcon(
+      child: Icon(
         Provider.of<GlobalProvider>(context).chosenClubFavoriteLocal
-            ? FontAwesomeIcons.solidStar
-            : FontAwesomeIcons.star,
-        color: primaryColor,
+            ? defaultFullStarIcon
+            : defaultEmptyStarIcon,
+        color: Provider.of<GlobalProvider>(context).chosenClubFavoriteLocal
+            ? primaryColor
+            : white,
       ),
     );
   }
@@ -206,7 +209,7 @@ class _FavoriteClubButtonState extends State<FavoriteClubButton> {
             },
             child: Text(
               S.of(context).remove,
-              style: TextStyle(color: Colors.redAccent),
+              style: TextStyle(color: redAccent),
             ),
           ),
         ],

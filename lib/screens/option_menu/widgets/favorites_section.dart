@@ -138,9 +138,7 @@ class FavoritesSection extends StatelessWidget {
                                     .nightMapController
                                     .move(LatLng(club.lat, club.lon),
                                         kCloseMapZoom);
-                                Provider.of<GlobalProvider>(context,
-                                        listen: false)
-                                    .setChosenClub(club);
+
                                 ClubBottomSheet.showClubSheet(
                                     context: context, club: club);
                               },

@@ -241,9 +241,6 @@ class _NightMapMainScreenState extends State<NightMapMainScreen> {
                             clubs: allClubs,
                             userLocation: userLocation,
                             onClubSelected: (club) {
-                              Provider.of<GlobalProvider>(context,
-                                      listen: false)
-                                  .setChosenClub(club);
                               ClubBottomSheet.showClubSheet(
                                   context: context, club: club);
                             },

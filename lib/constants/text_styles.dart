@@ -47,12 +47,12 @@ const kTextStyleP1 = TextStyle(
 
 const kTextStyleP2 = TextStyle(
   fontSize: 12.0,
-  color: Colors.white,
+  color: white,
 );
 
 const kTextStyleP3 = TextStyle(
   fontSize: 10.0,
-  color: Colors.white,
+  color: white,
 );
 
 const kTextStyleP4 = TextStyle(

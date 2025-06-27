@@ -5,6 +5,7 @@ import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class DistanceDisplayWidget extends StatelessWidget {
@@ -27,11 +28,7 @@ class DistanceDisplayWidget extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text(
-                S.of(context).calculating,
-                style: TextStyle(
-                  color: primaryColor,
-                  fontSize: 16.0,
-                ),
+                '',
               );
             } else if (snapshot.hasError || snapshot.data == null) {
               return Text(
@@ -61,21 +58,46 @@ class DistanceDisplayWidget extends StatelessWidget {
                     throw 'Could not launch maps';
                   }
                 },
-
-                //DISPLAY!
-                child: Text(
-                  ClubDistanceCalculator.displayDistanceToClub(
-                    club: club,
-                    userLon: userLocation.longitude,
-                    userLat: userLocation.latitude,
-                  ),
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    decoration:
-                        TextDecoration.underline, // Indicate it's clickable
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '🚶',
+                            style: TextStyle(fontSize: 22), // Bigger emoji
+                          ),
+                          TextSpan(
+                            text:
+                                ClubDistanceCalculator.displayWalkingTimeToClub(
+                              club: club,
+                              userLon: userLocation.longitude,
+                              userLat: userLocation.latitude,
+                            ),
+                            style: const TextStyle(
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '(${ClubDistanceCalculator.displayDistanceToClub(
+                          club: club,
+                          userLon: userLocation.longitude,
+                          userLat: userLocation.latitude,
+                        )})',
+                        style: TextStyle(
+                          color: white,
+                          fontSize: 10.0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             }

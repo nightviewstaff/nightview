@@ -601,4 +601,83 @@ class ClubDataHelper with ChangeNotifier {
 
     return total = total / snapshot.docs.length;
   }
+
+  Future<void> likeClub(String clubId, String userId) async {
+    DocumentReference clubRef =
+        FirebaseFirestore.instance.collection('club_data').doc(clubId);
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('user_data').doc(userId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot clubSnap = await transaction.get(clubRef);
+      DocumentSnapshot userSnap = await transaction.get(userRef);
+
+      // Ensure fields exist with default values
+      final Map<String, dynamic> clubData =
+          (clubSnap.data() as Map<String, dynamic>? ?? {});
+      final Map<String, dynamic> userData =
+          (userSnap.data() as Map<String, dynamic>? ?? {});
+
+      int currentLikes = (clubData['likes'] as int?) ?? 0;
+      List<String> likedClubs =
+          (userData['likes'] as List?)?.cast<String>() ?? [];
+
+      // Only proceed if user hasn't liked this club yet
+      if (!likedClubs.contains(clubId)) {
+        transaction.set(
+            clubRef,
+            {
+              'likes': currentLikes + 1,
+            },
+            SetOptions(merge: true));
+
+        transaction.set(
+            userRef,
+            {
+              'likes': FieldValue.arrayUnion([clubId]),
+            },
+            SetOptions(merge: true));
+      }
+    });
+  }
+
+  Future<void> unlikeClub(String clubId, String userId) async {
+    DocumentReference clubRef =
+        FirebaseFirestore.instance.collection('club_data').doc(clubId);
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('user_data').doc(userId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot clubSnap = await transaction.get(clubRef);
+      DocumentSnapshot userSnap = await transaction.get(userRef);
+
+      final Map<String, dynamic> clubData =
+          (clubSnap.data() as Map<String, dynamic>? ?? {});
+      final Map<String, dynamic> userData =
+          (userSnap.data() as Map<String, dynamic>? ?? {});
+
+      int currentLikes = (clubData['likes'] as int?) ?? 0;
+      List<String> likedClubs =
+          (userData['likes'] as List?)?.cast<String>() ?? [];
+
+      if (likedClubs.contains(clubId)) {
+        // Prevent negative likes
+        int updatedLikes = currentLikes > 0 ? currentLikes - 1 : 0;
+
+        transaction.set(
+            clubRef,
+            {
+              'likes': updatedLikes,
+            },
+            SetOptions(merge: true));
+
+        transaction.set(
+            userRef,
+            {
+              'likes': FieldValue.arrayRemove([clubId]),
+            },
+            SetOptions(merge: true));
+      }
+    });
+  }
 }
