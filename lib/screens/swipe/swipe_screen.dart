@@ -148,7 +148,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             width: double.maxFinite,
                           ),
                           Positioned(
-                            top: 120,
+                            top: 100, // TODO find good height.
                             left: 20,
                             right: 20,
                             child: Center(
