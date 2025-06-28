@@ -5,6 +5,7 @@ class ClubData {
   final String name;
   final String logo;
   final List<String>? tags;
+  final String? description;
 
   final String? mainOfferImg;
   final String typeOfClub;
@@ -28,25 +29,26 @@ class ClubData {
 
   final OfferType offerType;
 
-  ClubData({
-    // would be nice to only have the necessaries required, so the marker can be displayed even if db is incomplete
-    required this.id,
-    required this.name,
-    required this.logo,
-    required this.lat,
-    required this.lon,
-    required this.favorites,
-    required this.corners,
-    required this.offerType,
-    required this.mainOfferImg,
-    required this.ageRestriction,
-    required this.typeOfClub,
-    required this.typeOfClubImg,
-    required this.rating,
-    required this.openingHours,
-    required this.totalPossibleAmountOfVisitors,
-    this.hasMoodImages = false,
-    this.visitors = 0,
-    this.tags,
-  });
+  ClubData(
+      {
+      // would be nice to only have the necessaries required, so the marker can be displayed even if db is incomplete
+      required this.id,
+      required this.name,
+      required this.logo,
+      required this.lat,
+      required this.lon,
+      required this.favorites,
+      required this.corners,
+      required this.offerType,
+      required this.mainOfferImg,
+      required this.ageRestriction,
+      required this.typeOfClub,
+      required this.typeOfClubImg,
+      required this.rating,
+      required this.openingHours,
+      required this.totalPossibleAmountOfVisitors,
+      this.hasMoodImages = false,
+      this.visitors = 0,
+      this.tags,
+      this.description});
 }

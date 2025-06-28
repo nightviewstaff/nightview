@@ -31,6 +31,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
   final AppinioSwiperController controller = AppinioSwiperController();
   String? selectedImagePath; // Nullable, as it’s set asynchronously
   bool isImageLoaded = false;
+  double imageOpacity = 1.0;
 
   Future<List<String>> loadImagePaths() async {
     // Load the AssetManifest.json content
@@ -38,7 +39,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
     // Parse it into a map
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
     // Filter keys to get only those starting with 'images/swipe/'
-    final imagePaths = manifestMap.keys
+    var imagePaths = manifestMap.keys
         .where((String key) => key.startsWith('images/swipe/'))
         .toList();
     return imagePaths;
@@ -49,18 +50,17 @@ class _SwipeScreenState extends State<SwipeScreen> {
     super.initState();
     // Load all images and select one randomly
     loadImagePaths().then((imagePaths) {
-      if (imagePaths.isNotEmpty) {
-        setState(() {
-          selectedImagePath = imagePaths[Random().nextInt(imagePaths.length)];
-          isImageLoaded = true;
-        });
-      } else {
-        setState(() {
-          isImageLoaded = true; // Proceed even if no images
-          selectedImagePath =
-              'images/default_swipe_picture.png'; // Fallback picture.
-        });
-      }
+// TODO Specific images to specific people.
+// user.gender == "M" ? imagePaths = manifestMap.keys
+//         .where((String key) => key.startsWith('images/swipe/male'))
+//         .toList() :  imagePaths = manifestMap.keys
+//         .where((String key) => key.startsWith('images/swipe/female'))
+//         .toList();
+
+      setState(() {
+        selectedImagePath = imagePaths[Random().nextInt(imagePaths.length)];
+        isImageLoaded = true;
+      });
     });
     // Get one message from SwipeMessages.
     selectedMessage = SwipeMessages.messages()[
@@ -77,7 +77,7 @@ class _SwipeScreenState extends State<SwipeScreen> {
   bool isDragging = false;
   bool isShaking = false;
   Timer? shakeTimer;
-  Color backgroundColor = black.withOpacity(0.0);
+  Color backgroundColor = black;
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +88,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
           children: [
             if (isImageLoaded && selectedImagePath != null)
               Positioned(
-                left: 50,
-                right: 50,
+                left: 30,
+                right: 30,
                 bottom: 100,
-                top: 150,
+                top: 130,
                 child: AppinioSwiper(
                   invertAngleOnBottomDrag: true,
                   backgroundCardCount: 0,
@@ -148,14 +148,28 @@ class _SwipeScreenState extends State<SwipeScreen> {
                             width: double.maxFinite,
                           ),
                           Positioned(
-                            top: 60.0,
-                            left: 25,
-                            right: 25,
+                            top: 120,
+                            left: 20,
+                            right: 20,
                             child: Center(
-                              child: Text(
-                                selectedMessage,
-                                style: kTextStyleSwipeH2.copyWith(),
-                                textAlign: TextAlign.center,
+                              child: Stack(
+                                children: [
+                                  // Stroke
+                                  Text(
+                                    selectedMessage,
+                                    textAlign: TextAlign.center,
+                                    style: kTextStyleSwipeH2.copyWith(
+                                      foreground: Paint()
+                                        ..style = PaintingStyle.stroke
+                                        ..strokeWidth = 4
+                                        ..color = primaryColor,
+                                    ),
+                                  ),
+                                  // Fill
+                                  Text(selectedMessage,
+                                      textAlign: TextAlign.center,
+                                      style: kTextStyleSwipeH2),
+                                ],
                               ),
                             ),
                           ),
@@ -208,17 +222,17 @@ class _SwipeScreenState extends State<SwipeScreen> {
               const Center(child: CircularProgressIndicator()),
 
             // Overlay text
-            Positioned(
-              top: 50.0,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Text(
-                  'Swipe!',
-                  style: kTextStyleSwipeH1,
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 50.0,
+            //   left: 0,
+            //   right: 0,
+            //   child: Center(
+            //     child: Text(
+            //       'Swipe!',
+            //       style: kTextStyleSwipeH1,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -267,6 +281,14 @@ class _SwipeScreenState extends State<SwipeScreen> {
     if (isShaking || isDragging) return;
     isShaking = true;
     const double distance = 50;
+
+    // Switch image and message here
+    final imagePaths = await loadImagePaths();
+    setState(() {
+      selectedImagePath = imagePaths[Random().nextInt(imagePaths.length)];
+      isImageLoaded = true;
+    });
+
     await controller.animateTo(
       const Offset(distance, 0),
       duration: const Duration(milliseconds: 1500),
@@ -278,6 +300,26 @@ class _SwipeScreenState extends State<SwipeScreen> {
       isShaking = false;
       return;
     }
+    setState(() {
+      imageOpacity = 0.0; // Start fade-out
+    });
+
+    await Future.delayed(const Duration(milliseconds: 250));
+
+    String newPath = imagePaths.isNotEmpty
+        ? imagePaths[Random().nextInt(imagePaths.length)]
+        : 'images/default_swipe_picture.png';
+
+    setState(() {
+      selectedImagePath = newPath;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 50));
+
+    setState(() {
+      imageOpacity = 1.0; // Fade-in new image
+    });
+
     await controller.animateTo(
       const Offset(0, 0),
       duration: const Duration(milliseconds: 250),
@@ -287,12 +329,20 @@ class _SwipeScreenState extends State<SwipeScreen> {
       isShaking = false;
       return;
     }
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 1500));
     if (isDragging || !isShaking) {
       isShaking = false;
       return;
     }
-
+    setState(() {
+      selectedImagePath = imagePaths[Random().nextInt(imagePaths.length)];
+      isImageLoaded = true;
+    });
+    await Future.delayed(const Duration(milliseconds: 1000));
+    if (isDragging || !isShaking) {
+      isShaking = false;
+      return;
+    }
     //TODO CAN DO A LOT OF FUN STUFF HERE IN TIME!
     // await controller.animateTo(
     //   const Offset(distance * 4, 0),

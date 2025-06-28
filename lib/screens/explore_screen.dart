@@ -946,7 +946,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return GestureDetector(
       onTap: () {
         // DONT GO TO MAP! TODO
-
         ClubBottomSheet.showClubSheet(context: context, club: club);
       },
       child: Center(

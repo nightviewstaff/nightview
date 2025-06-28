@@ -17,6 +17,7 @@ import 'package:nightview/screens/utility/emoji_priority_helper.dart';
 import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_name_formatter.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
+import 'package:nightview/widgets/stateful/add_rating_button.dart';
 import 'package:nightview/widgets/stateful/favorite_club_button.dart';
 import 'package:nightview/widgets/stateful/like_club_button.dart';
 import 'package:nightview/widgets/stateful/rate_club.dart';
@@ -24,12 +25,49 @@ import 'package:nightview/widgets/stateless/distance_display_widget.dart';
 import 'package:nightview/widgets/stateless/misc/custom_popup_menu_button.dart';
 import 'package:provider/provider.dart';
 
-class ClubMoreInfoScreen extends StatelessWidget {
+class ClubMoreInfoScreen extends StatefulWidget {
   static const id = 'club_more_info';
   final ClubData club;
+  final bool initiallyExpandOpeningHours;
+  final bool scrollToReviews; //TODO Dont work!
 
-  const ClubMoreInfoScreen({super.key, required this.club});
+  const ClubMoreInfoScreen({
+    super.key,
+    required this.club,
+    this.initiallyExpandOpeningHours = false,
+    this.scrollToReviews = false,
+  });
 
+  @override
+  State<ClubMoreInfoScreen> createState() => _ClubMoreInfoScreenState();
+}
+
+class _ClubMoreInfoScreenState extends State<ClubMoreInfoScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _reviewKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.scrollToReviews) {
+        Scrollable.ensureVisible(
+          _reviewKey.currentContext!,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildClubHeader(BuildContext context, ClubData club) {
     final screenWidth = MediaQuery.of(context).size.width;
     final formattedClubName = ClubNameFormatter.displayClubName(club);
@@ -121,9 +159,11 @@ class ClubMoreInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String openHours =
-        ClubOpeningHoursFormatter.displayClubOpeningHoursTodaySimple(club);
+        ClubOpeningHoursFormatter.displayClubOpeningHoursTodaySimple(
+            widget.club);
     final String ageRestriction =
-        ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(club);
+        ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(
+            widget.club);
 
     return Scaffold(
       backgroundColor: black,
@@ -137,7 +177,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
               children: [
                 const TextSpan(text: 'Information about '),
                 TextSpan(
-                  text: club.name,
+                  text: widget.club.name,
                   style: const TextStyle(color: primaryColor),
                 ),
               ],
@@ -146,9 +186,10 @@ class ClubMoreInfoScreen extends StatelessWidget {
         ),
       ), // Keep as placeholder, will be overridden by header
       body: ListView(
+        controller: _scrollController,
         padding: const EdgeInsets.only(top: 0),
         children: [
-          buildClubHeader(context, club),
+          buildClubHeader(context, widget.club),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
@@ -211,7 +252,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  club.rating.toStringAsFixed(1),
+                                  widget.club.rating.toStringAsFixed(1),
                                   style: const TextStyle(
                                     color: black,
                                     fontWeight: FontWeight.w600,
@@ -223,7 +264,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                               Row(
                                 textDirection: TextDirection.rtl,
                                 children: List.generate(5, (index) {
-                                  final rating = club.rating ?? 0.0;
+                                  final rating = widget.club.rating ?? 0.0;
                                   if (rating >= index + 1) {
                                     return const Icon(Icons.star,
                                         color: primaryColor, size: 14);
@@ -243,7 +284,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: FutureBuilder<String>(
-                            future: fetchRatingCount(club.id),
+                            future: fetchRatingCount(widget.club.id),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -264,7 +305,10 @@ class ClubMoreInfoScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 15),
-                ClubInfoHeaderBar(club: club),
+                ClubInfoHeaderBar(
+                  club: widget.club,
+                  initiallyExpanded: widget.initiallyExpandOpeningHours,
+                ),
                 const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +317,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                     // LEFT SIDE: entrance or empty space filler
                     ConstrainedBox(
                       constraints: BoxConstraints(minWidth: 100),
-                      child: buildEntranceFeeRow(club.tags),
+                      child: buildEntranceFeeRow(widget.club.tags),
                     ),
 
                     // RIGHT SIDE: distance + icon always right-aligned
@@ -283,7 +327,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                         Baseline(
                           baseline: 26,
                           baselineType: TextBaseline.alphabetic,
-                          child: DistanceDisplayWidget(club: club),
+                          child: DistanceDisplayWidget(club: widget.club),
                         ),
                         const SizedBox(width: 6),
                         const Icon(Icons.location_on,
@@ -293,18 +337,17 @@ class ClubMoreInfoScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 15),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: white),
-                    borderRadius: BorderRadius.circular(12),
+                if (widget.club.description != null)
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: grey),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(widget.club.description.toString(),
+                        style: kTextStyleP1),
                   ),
-                  child: Text(
-                    'Beskrivelse af stedet',
-                    style: kTextStyleP1.copyWith(color: white),
-                  ),
-                ),
                 const SizedBox(height: 24),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,12 +359,11 @@ class ClubMoreInfoScreen extends StatelessWidget {
                           'Overall Rating',
                           style: kTextStyleH2.copyWith(color: white),
                         ),
-                        TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Add Rating',
-                            style: kTextStyleP1.copyWith(color: white),
-                          ),
+                        AddRatingButton(
+                          clubId: widget.club.id,
+                          onRatingSubmitted: () {
+                            Navigator.push;
+                          },
                         ),
                       ],
                     ),
@@ -334,14 +376,13 @@ class ClubMoreInfoScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              club.rating.toStringAsFixed(1),
-                              style: kTextStyleH1.copyWith(
-                                  color: white, fontSize: 28),
+                              widget.club.rating.toStringAsFixed(1),
+                              style: kTextStyleH1.copyWith(fontSize: 28),
                             ),
                             const SizedBox(height: 4),
                             Row(
                               children: List.generate(5, (index) {
-                                final rating = club.rating;
+                                final rating = widget.club.rating;
                                 if (rating >= index + 1) {
                                   return const Icon(Icons.star,
                                       color: primaryColor, size: 14);
@@ -356,7 +397,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             FutureBuilder<String>(
-                              future: fetchRatingCount(club.id),
+                              future: fetchRatingCount(widget.club.id),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -371,7 +412,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                                 );
                               },
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 15),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -386,7 +427,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                RateClub(clubId: club.id),
+                                RateClub(clubId: widget.club.id),
                               ],
                             ),
                           ],
@@ -395,7 +436,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                         FutureBuilder<QuerySnapshot>(
                           future: FirebaseFirestore.instance
                               .collection('club_data')
-                              .doc(club.id)
+                              .doc(widget.club.id)
                               .collection('ratings')
                               .get(),
                           builder: (context, snapshot) {
@@ -429,7 +470,7 @@ class ClubMoreInfoScreen extends StatelessWidget {
                                     [5, 3, 1].contains(ratingValue);
 
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 18.0),
+                                  padding: const EdgeInsets.only(bottom: 12.0),
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -472,26 +513,32 @@ class ClubMoreInfoScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
                 const Divider(color: white),
-                const SizedBox(height: 5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Reviews",
-                      style: const TextStyle(
-                          color: white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ],
+                KeyedSubtree(
+                  key: _reviewKey,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Reviews",
+                        style: const TextStyle(
+                            color: white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      AddRatingButton(
+                        clubId: widget.club.id,
+                        onRatingSubmitted: () {},
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 5),
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('club_data')
-                      .doc(club.id)
+                      .doc(widget.club.id)
                       .collection('ratings')
                       .orderBy('timestamp', descending: true)
                       .snapshots(),

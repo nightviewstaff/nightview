@@ -82,28 +82,6 @@ const kTextStyleSwipeH2 = TextStyle(
   fontSize: 24.0,
   fontWeight: FontWeight.bold,
   color: white,
-  shadows: [
-    Shadow(
-      offset: Offset(-1, -1), // Top-left shadow
-      blurRadius: 0,
-      color: black,
-    ),
-    Shadow(
-      offset: Offset(1, -1), // Top-right shadow
-      blurRadius: 0,
-      color: black,
-    ),
-    Shadow(
-      offset: Offset(1, 1), // Bottom-right shadow
-      blurRadius: 0,
-      color: black,
-    ),
-    Shadow(
-      offset: Offset(-1, 1), // Bottom-left shadow
-      blurRadius: 0,
-      color: black,
-    ),
-  ],
 );
 
 const kTextStyleSwipeH1 = TextStyle(

@@ -106,15 +106,11 @@ class ClubBottomSheet {
                                     ..color = primaryColor,
                                 ),
                               ),
-                              Text(
-                                formattedClubName,
-                                style: kTextStyleH1.copyWith(color: white),
-                              ),
+                              Text(formattedClubName, style: kTextStyleH1),
                             ],
                           ),
                         ),
                       ),
-
                       Row(
                         children: [
                           const FavoriteClubButton(),
@@ -214,73 +210,98 @@ class ClubBottomSheet {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 9.0, vertical: 3.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                              color: white,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ClubMoreInfoScreen(
+                                  club: club,
+                                  initiallyExpandOpeningHours: true,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 9.0, vertical: 3.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              border: Border.all(
+                                color: white,
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            ClubOpeningHoursFormatter
-                                .displayClubOpeningHoursTodaySimple(club),
-                            style: const TextStyle(fontSize: 13, color: white),
-                            textAlign: TextAlign.center,
+                            child: Text(
+                              ClubOpeningHoursFormatter
+                                  .displayClubOpeningHoursTodaySimple(club),
+                              style:
+                                  const TextStyle(fontSize: 13, color: white),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Container(
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 9.0, vertical: 0),
-                          decoration: BoxDecoration(
-                            color: grey,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 0),
-                                decoration: BoxDecoration(
-                                  color: white,
-                                  border:
-                                      Border.all(color: primaryColor, width: 3),
-                                  borderRadius: BorderRadius.circular(8),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ClubMoreInfoScreen(
+                                  club: club,
+                                  scrollToReviews: true,
                                 ),
-                                child: Text(
-                                  (club.rating).toStringAsFixed(1),
-                                  style: const TextStyle(
-                                    color: black,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
+                              ),
+                            );
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 9.0, vertical: 0),
+                            decoration: BoxDecoration(
+                              color: grey,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 0),
+                                  decoration: BoxDecoration(
+                                    color: white,
+                                    border: Border.all(
+                                        color: primaryColor, width: 3),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    (club.rating).toStringAsFixed(1),
+                                    style: const TextStyle(
+                                      color: black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 6),
-                              Row(
-                                textDirection: TextDirection.rtl,
-                                children: List.generate(5, (index) {
-                                  final rating = club.rating ?? 0.0;
-                                  if (rating >= index + 1) {
-                                    return const Icon(Icons.star,
-                                        color: primaryColor, size: 14);
-                                  } else if (rating > index) {
-                                    return const Icon(Icons.star_half,
-                                        color: primaryColor, size: 14);
-                                  } else {
-                                    return const Icon(Icons.star_border,
-                                        color: primaryColor, size: 14);
-                                  }
-                                }),
-                              ),
-                            ],
+                                const SizedBox(width: 6),
+                                Row(
+                                  textDirection: TextDirection.rtl,
+                                  children: List.generate(5, (index) {
+                                    final rating = club.rating ?? 0.0;
+                                    if (rating >= index + 1) {
+                                      return const Icon(Icons.star,
+                                          color: primaryColor, size: 14);
+                                    } else if (rating > index) {
+                                      return const Icon(Icons.star_half,
+                                          color: primaryColor, size: 14);
+                                    } else {
+                                      return const Icon(Icons.star_border,
+                                          color: primaryColor, size: 14);
+                                    }
+                                  }),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 2),

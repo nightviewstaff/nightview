@@ -5,7 +5,6 @@ import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 
 class DistanceDisplayWidget extends StatelessWidget {
@@ -84,6 +83,7 @@ class DistanceDisplayWidget extends StatelessWidget {
                       ),
                     ),
                     Align(
+                      //TODO wont go right??
                       alignment: Alignment.centerRight,
                       child: Text(
                         '(${ClubDistanceCalculator.displayDistanceToClub(
@@ -91,10 +91,11 @@ class DistanceDisplayWidget extends StatelessWidget {
                           userLon: userLocation.longitude,
                           userLat: userLocation.latitude,
                         )})',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: white,
                           fontSize: 10.0,
                         ),
+                        textAlign: TextAlign.end,
                       ),
                     ),
                   ],

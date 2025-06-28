@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,18 +22,20 @@ class _RateClubState extends State<RateClub>
   String clubName = "";
   User? _currentUser;
   bool _canRate = false;
+  int? userRating;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _moveAnimation;
   late Animation<Color?> _colorAnimation;
   final TextEditingController _commentController = TextEditingController();
+  late final StreamSubscription _ratingListener;
 
   @override
   void initState() {
     super.initState();
     _fetchClubData();
     _getCurrentUser();
-    _checkLocationAndRatingPermission();
+    _listenForRating();
 
     // Initialize AnimationController
     _animationController = AnimationController(
@@ -58,6 +62,7 @@ class _RateClubState extends State<RateClub>
 
   @override
   void dispose() {
+    _ratingListener.cancel();
     _animationController.dispose();
     _commentController.dispose();
     super.dispose();
@@ -80,22 +85,25 @@ class _RateClubState extends State<RateClub>
     }
   }
 
-  Future<void> _checkLocationAndRatingPermission() async {
-    // DocumentSnapshot locationDoc = await FirebaseFirestore.instance
-    //     .collection('location_data')        .doc(_currentUser!.uid).get();
+  void _listenForRating() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
 
-    QuerySnapshot ratingQuerySnapshot = await FirebaseFirestore.instance
+    _ratingListener = FirebaseFirestore.instance
         .collection('club_data')
         .doc(widget.clubId)
         .collection('ratings')
-        .where('user_id', isEqualTo: _currentUser!.uid)
-        .get();
-
-    bool canRate = false;
-
-    if (ratingQuerySnapshot.docs.isEmpty) {
-      canRate = true;
-    }
+        .where('user_id', isEqualTo: userId)
+        .snapshots()
+        .listen((snapshot) {
+      final doc = snapshot.docs.isNotEmpty ? snapshot.docs.first : null;
+      if (mounted) {
+        setState(() {
+          _canRate = doc == null;
+          userRating = doc != null ? (doc['rating'] as int) : null;
+        });
+      }
+    });
 
     // DocumentSnapshot ratingDoc = ratingQuerySnapshot.docs.first;
     // DateTime lastRating = ratingDoc['timestamp'].toDate();
@@ -116,13 +124,6 @@ class _RateClubState extends State<RateClub>
     // else {
     //   canRate = true;
     // }
-
-    setState(() {
-      _canRate = canRate;
-      // _canRate = true; //TEST
-
-      // RIGHT NOW PEOPLE CAN rate forever if they dont close the club_header. TODO
-    });
   }
 
   void _rateClub(int rating) async {
@@ -171,8 +172,7 @@ class _RateClubState extends State<RateClub>
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text(S.of(context).continues,
-                  style: const TextStyle(color: primaryColor)),
+              child: Text("Rate", style: const TextStyle(color: primaryColor)),
             ),
           ],
         );
@@ -273,10 +273,12 @@ class _RateClubState extends State<RateClub>
                     size: 20,
                   ),
                   Icon(
-                    index < clubRating ? Icons.star : Icons.star_border,
+                    index < (userRating ?? 0) ? Icons.star : Icons.star_border,
                     color: _canRate
                         ? transparent
-                        : (index < clubRating ? secondaryColor : primaryColor),
+                        : (index < (userRating ?? 0)
+                            ? secondaryColor
+                            : primaryColor),
                     size: 20,
                   ),
                 ],
