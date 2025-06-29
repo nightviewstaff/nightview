@@ -144,7 +144,7 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
       }
 
       if (now.isAfter(adjustedClose)) {
-        displayDate = now.add(Duration(days: 1));
+        displayDate = now.add(Duration(days: -1));
         weekdayIndex = displayDate.weekday;
       }
     }

@@ -5,6 +5,7 @@ class UserData {
   final String id;
   final String firstName;
   final String lastName;
+  final String? gender;
   final String mail;
   final String phone;
   final int birthdayDay;
@@ -32,6 +33,7 @@ class UserData {
     required this.partyStatus,
     required this.partyStatusTime,
     required this.favoriteClubs,
+    this.gender,
   });
 
   bool answeredStatusToday() {

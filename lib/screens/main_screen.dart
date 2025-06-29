@@ -4,6 +4,7 @@ import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/icons.dart';
+import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/users/misc/profile_picture_helper.dart';
 import 'package:nightview/providers/global_provider.dart';
@@ -17,6 +18,7 @@ import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:nightview/widgets/stateless/main_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainScreen extends StatefulWidget {
   static const id = 'main_screen';
@@ -49,6 +51,7 @@ class _MainScreenState extends State<MainScreen> {
 
       final bool justCreated = prefs.getBool('justCreatedAccount') ?? false;
       final bool agreedToTerms = prefs.getBool('agreedToTerms') ?? false;
+      final bool askedToBeTester = prefs.getBool('askedToBeTester') ?? false;
 
       if (!agreedToTerms) {
         await showGeneralDialog(
@@ -63,7 +66,11 @@ class _MainScreenState extends State<MainScreen> {
         await prefs.remove('justCreatedAccount');
         return;
       } else {
-        await _checkGenderPrompt(currentUserId);
+        final gender = await _checkGenderPrompt(currentUserId);
+        if (gender != null && !askedToBeTester) {
+          prefs.setBool('askedToBeTester', true);
+          await _askToBeTester(currentUserId);
+        }
       }
     });
 
@@ -129,22 +136,22 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Future<void> _checkGenderPrompt(String userId) async {
+  Future<String?> _checkGenderPrompt(String userId) async {
     final userDocRef =
         FirebaseFirestore.instance.collection('user_data').doc(userId);
     final userDoc = await userDocRef.get();
 
-    if (!userDoc.exists) {
-      return;
-    }
+    if (!userDoc.exists) return null;
 
     final data = userDoc.data() ?? {};
     String? gender = data['gender'];
 
-    // If gender is null or empty, show prompt
     if (gender == null || gender.isEmpty) {
       _showGenderDialog(userDocRef);
+      return null;
     }
+
+    return gender;
   }
 
   void _showGenderDialog(DocumentReference userDocRef) {
@@ -199,5 +206,109 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _askToBeTester(String userId) async {
+    final String inviteMessage = '🟣 You’ve been selected!\n\n'
+        'Join our invite-only Testing Program and get early access to powerful new features — before the public.\n\n'
+        'Spots are limited.';
+
+    final testUsersRef = FirebaseFirestore.instance.collection('test_users');
+    final existingTester =
+        await testUsersRef.where('user_id', isEqualTo: userId).get();
+
+    if (existingTester.docs.isNotEmpty) return; // Already a tester
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kMainBorderRadius),
+          side: const BorderSide(color: white, width: kMainStrokeWidth),
+        ),
+        title: const Text('Become a tester?', style: kTextStyleH2),
+        content: Text(
+          inviteMessage,
+          style: TextStyle(color: white),
+        ),
+        actions: [
+          TextButton(
+            child: const Text('No thanks', style: TextStyle(color: white)),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          ElevatedButton(
+            child: const Text('Yes!'),
+            onPressed: () => Navigator.of(context).pop(true),
+            style: kFilledButtonStyle,
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      await testUsersRef.add({
+        'user_id': userId,
+        'started_testing': Timestamp.now(),
+        'platform': Theme.of(context).platform == TargetPlatform.iOS
+            ? 'ios'
+            : 'android',
+      });
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false, // Prevents closing by tapping outside
+        builder: (context) => AlertDialog(
+          backgroundColor: black,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kMainBorderRadius),
+            side: const BorderSide(color: white, width: 1.5),
+          ),
+          contentPadding: const EdgeInsets.only(
+            top: 16,
+            right: 16,
+            left: 24,
+            bottom: 24,
+          ),
+          content: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Join our Discord to stay updated!',
+                      style: kTextStyleH3,
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () async {
+                        Navigator.of(context).pop();
+
+                        final url =
+                            Uri.parse('https://discord.com/invite/5zSXxakF35');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url,
+                              mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: const Text(
+                        'https://discord.com/invite/5zSXxakF35',
+                        style: TextStyle(
+                          color: primaryColor,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

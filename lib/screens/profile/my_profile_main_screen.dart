@@ -31,6 +31,7 @@ class MyProfileMainScreen extends StatefulWidget {
 class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
   final TextEditingController biographyController = TextEditingController();
   late Future<void> _loadFriendsFuture;
+  bool showImages = true;
 
   @override
   void initState() {
@@ -103,11 +104,8 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(S.of(context).profile),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 18.0),
-            child: defaultSettingIcon, // TODO add functionallity
-          ),
+        actions: const [
+          ProfileMenuDropdown(),
         ],
       ),
       body: SafeArea(
@@ -319,97 +317,208 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                 Container(
                   padding: EdgeInsets.all(kBigPadding),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(S.of(context).friends, style: kTextStyleH2),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showImages = true;
+                          });
+                        },
+                        child: Text(
+                          "My Images",
+                          style: kTextStyleH2.copyWith(
+                            color: showImages ? primaryColor : white,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showImages = false;
+                          });
+                        },
+                        child: Text(
+                          S.of(context).friends,
+                          style: kTextStyleH2.copyWith(
+                            color: !showImages ? primaryColor : white,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                FutureBuilder<void>(
-                  future: _loadFriendsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Expanded(
-                        child: Center(
-                          child: SpinKitPouringHourGlass(
-                            color: primaryColor,
-                            size: 150.0,
-                            strokeWidth: 2.0,
-                          ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Expanded(
-                        child: Center(
-                          child: Text(
-                            'Error loading friends',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      );
-                    }
-                    return Expanded(
-                      child: ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
-                          kMainPadding,
-                          kMainPadding,
-                          kMainPadding,
-                          kMainPadding +
-                              60.0, // Add padding to avoid overlap with menu icons
-                        ),
-                        itemBuilder: (context, index) {
-                          UserData user = Provider.of<GlobalProvider>(context)
-                              .friends[index];
-                          return ListTile(
-                            onTap: () {
-                              Provider.of<GlobalProvider>(context,
-                                      listen: false)
-                                  .setChosenProfile(user);
-                              Navigator.of(context)
-                                  .pushNamed(OtherProfileMainScreen.id);
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(kMainBorderRadius),
-                              side: BorderSide(
-                                width: kMainStrokeWidth,
-                                color: getStatusColor(user.partyStatus),
-                              ),
-                            ),
-                            leading: Container(
-                              padding: EdgeInsets.all(0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: getStatusColor(user.partyStatus),
-                                  width: 1.5,
+                Flexible(
+                  child: showImages
+                      ? GridView.count(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 20,
+                          crossAxisSpacing: 20,
+                          childAspectRatio: 0.7,
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
+                          children: [
+                            //TODO IF LESS THAN 6 IMAGES
+                            GestureDetector(
+                              onTap: () {
+                                // Add upload logic
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: grey, width: 0.7),
+                                    borderRadius: BorderRadius.circular(33),
+                                    color: secondaryColor),
+                                child: Center(
+                                  child: Icon(Icons.add_a_photo_outlined,
+                                      color: white, size: 24),
                                 ),
                               ),
-                              child: CircleAvatar(
-                                backgroundImage: getPb(index),
-                                radius: 20.0,
+                            ),
+                            ...[
+                              "images/swipe/99.png",
+                              "images/swipe/12.png",
+                              "images/swipe/2.png",
+                              "images/swipe/4.png",
+                              "images/swipe/13.png",
+                              "images/swipe/11.png",
+                              "images/swipe/10.png",
+                              "images/swipe/8.png"
+                            ].map(
+                              (path) => GestureDetector(
+                                onTap: () {
+                                  final screenSize =
+                                      MediaQuery.of(context).size;
+                                  final dialogWidth = screenSize.width * 0.95;
+                                  final dialogHeight = screenSize.height * 0.65;
+
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (_) {
+                                      return Dialog(
+                                        child: SizedBox(
+                                          width: dialogWidth,
+                                          height: dialogHeight,
+                                          child: Column(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: const BorderRadius
+                                                    .vertical(
+                                                    top: Radius.circular(12),
+                                                    bottom:
+                                                        Radius.circular(12)),
+                                                child: Image.asset(
+                                                  path,
+                                                  width: dialogWidth,
+                                                  height: dialogHeight,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(33),
+                                  child: Image.asset(
+                                    path,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
-                            title: Text(
-                              '${user.firstName} ${user.lastName}',
-                              overflow: TextOverflow.ellipsis,
-                              style: kTextStyleP1,
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: kSmallSpacerValue),
-                        itemCount:
-                            Provider.of<GlobalProvider>(context).friends.length,
-                      ),
-                    );
-                  },
+                          ],
+                        )
+                      : FutureBuilder<void>(
+                          future: _loadFriendsFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Expanded(
+                                child: Center(
+                                  child: SpinKitPouringHourGlass(
+                                    color: primaryColor,
+                                    size: 150.0,
+                                    strokeWidth: 2.0,
+                                  ),
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Expanded(
+                                child: Center(
+                                  child: Text(
+                                    'Error loading friends',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              );
+                            }
+                            return Expanded(
+                              child: ListView.separated(
+                                padding: EdgeInsets.fromLTRB(
+                                  kMainPadding,
+                                  kMainPadding,
+                                  kMainPadding,
+                                  kMainPadding +
+                                      60.0, // Add padding to avoid overlap with menu icons
+                                ),
+                                itemBuilder: (context, index) {
+                                  UserData user =
+                                      Provider.of<GlobalProvider>(context)
+                                          .friends[index];
+                                  return ListTile(
+                                    onTap: () {
+                                      Provider.of<GlobalProvider>(context,
+                                              listen: false)
+                                          .setChosenProfile(user);
+                                      Navigator.of(context)
+                                          .pushNamed(OtherProfileMainScreen.id);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          kMainBorderRadius),
+                                      side: BorderSide(
+                                        width: kMainStrokeWidth,
+                                        color: getStatusColor(user.partyStatus),
+                                      ),
+                                    ),
+                                    leading: Container(
+                                      padding: EdgeInsets.all(0),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color:
+                                              getStatusColor(user.partyStatus),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      child: CircleAvatar(
+                                        backgroundImage: getPb(index),
+                                        radius: 20.0,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      '${user.firstName} ${user.lastName}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: kTextStyleP1,
+                                    ),
+                                  );
+                                },
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: kSmallSpacerValue),
+                                itemCount: Provider.of<GlobalProvider>(context)
+                                    .friends
+                                    .length,
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             ),
-            // Use the new BottomMenuBar widget
-            const BottomMenuBar(),
-            // Bottom right icons
           ],
         ),
       ),

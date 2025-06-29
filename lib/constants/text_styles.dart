@@ -37,7 +37,7 @@ const kTextStyleH4 = TextStyle(
 const kTextStyleH3ToP1 = TextStyle(
   fontSize: 15.0,
   fontWeight: FontWeight.w600,
-  color: Colors.white,
+  color: white,
 );
 
 const kTextStyleP1 = TextStyle(

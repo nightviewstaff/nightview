@@ -93,6 +93,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
   int _calculateCompletenessScore(ClubData club, double distanceInMeters) {
     int score = 0;
 
+    score += ClubOpeningHoursFormatter.isClubOpen(club) ? 5 : 0;
+
     // basic info
     score += club.ageRestriction >= 18 ? 2 : -2;
     score += (club.openingHours?.isNotEmpty ?? false) ? 1 : -1;

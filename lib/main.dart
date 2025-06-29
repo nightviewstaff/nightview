@@ -48,6 +48,7 @@ import 'package:nightview/screens/night_social/new_chat_screen.dart';
 import 'package:nightview/screens/night_social/night_social_conversation_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
+import 'package:nightview/screens/profile/setting_screen.dart';
 import 'package:nightview/screens/swipe/swipe_screen.dart';
 import 'package:nightview/screens/utility/waiting_for_login_screen.dart';
 import 'package:nightview/services/firestore/firestore_updater.dart';
@@ -205,6 +206,7 @@ class NightViewApp extends StatelessWidget {
                     ModalRoute.of(context)!.settings.arguments as ClubData;
                 return ClubBarCardScreen(club: args);
               },
+              SettingsScreen.id: (context) => const SettingsScreen(),
             },
           );
         },
