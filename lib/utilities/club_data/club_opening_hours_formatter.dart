@@ -289,14 +289,58 @@ class ClubOpeningHoursFormatter {
   }
 
   static String displayClubOpeningHoursTodaySimple(ClubData club) {
-    final String todayKey = _getWeekday(_now);
+    final DateTime now = _now;
+    final String todayKey = _getWeekday(now);
+    final String yesterdayKey = _getWeekday(now.subtract(Duration(days: 1)));
+
+    // Helper function to parse time strings into DateTime objects
+    DateTime? parseTime(String time, DateTime baseDate) {
+      if (!RegExp(r'^\d{1,2}:\d{2}$').hasMatch(time)) return null;
+      final parts = time.split(':');
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+      return DateTime(
+          baseDate.year, baseDate.month, baseDate.day, hour, minute);
+    }
+
+    // Check if the club is still open from yesterday's schedule
+    final yesterdayData = club.openingHours?[yesterdayKey];
+    if (yesterdayData != null &&
+        yesterdayData['open'] != null &&
+        yesterdayData['close'] != null) {
+      final openYesterdayStr = yesterdayData['open'] as String;
+      final closeYesterdayStr = yesterdayData['close'] as String;
+      if (openYesterdayStr.isNotEmpty && closeYesterdayStr.isNotEmpty) {
+        final openYesterday =
+            parseTime(openYesterdayStr, now.subtract(Duration(days: 1)));
+        if (openYesterday != null) {
+          DateTime closeYesterday;
+          if (closeYesterdayStr.toLowerCase() == 'luk') {
+            // If "luk", assume open for 24 hours
+            closeYesterday = openYesterday.add(Duration(days: 1));
+          } else {
+            closeYesterday =
+                parseTime(closeYesterdayStr, now.subtract(Duration(days: 1)))!;
+            if (closeYesterday.isBefore(openYesterday)) {
+              // Closing time is after midnight, so adjust to next day
+              closeYesterday = closeYesterday.add(Duration(days: 1));
+            }
+          }
+          if (now.isAfter(openYesterday) && now.isBefore(closeYesterday)) {
+            // Club is still open from yesterday's schedule
+            return "$openYesterdayStr - $closeYesterdayStr";
+          }
+        }
+      }
+    }
+
+    // If not open from yesterday, return today's hours
     final todayData = club.openingHours?[todayKey];
-
     if (todayData == null) return '';
-    final open = todayData['open'];
-    final close = todayData['close'];
+    final open = todayData['open'] as String?;
+    final close = todayData['close'] as String?;
 
-    if (open == null || close == null || open == '' || close == '') {
+    if (open == null || close == null || open.isEmpty || close.isEmpty) {
       return 'closed';
     }
 

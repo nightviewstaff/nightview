@@ -111,42 +111,48 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    int weekdayIndex = now.weekday; // Monday = 1, Sunday = 7
-
-// Get today's opening hours
-    String todayHours =
-        ClubOpeningHoursFormatter.displayClubOpeningHoursForWeekday(
-      widget.club,
-      weekdayIndex,
-    );
-
-// Default to today
     DateTime displayDate = now;
+    int weekdayIndex = now.weekday;
 
-// Check if we need to move to next day
-    if (todayHours.contains(' - ')) {
-      final parts = todayHours.split(' - ');
-      final closeTime = parts[1];
+    // Check if the club is open now
+    if (ClubOpeningHoursFormatter.isClubOpen(widget.club)) {
+      // Check if it's open under yesterday's schedule
+      final yesterday = now.subtract(Duration(days: 1));
+      final yesterdayKey =
+          DateFormat('EEEE', 'en_US').format(yesterday).toLowerCase();
+      final yesterdayHours = widget.club.openingHours?[yesterdayKey];
 
-      final closeDateTime = DateFormat('HH:mm').parse(closeTime);
-      final openHour = int.parse(parts[0].split(':')[0]);
-      // only switches after location closes.
-      DateTime adjustedClose = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        closeDateTime.hour,
-        closeDateTime.minute,
-      );
+      if (yesterdayHours != null &&
+          yesterdayHours['open'] != null &&
+          yesterdayHours['close'] != null) {
+        // Parse yesterday's open and close times
+        DateTime? parseTime(String time, DateTime baseDate) {
+          if (!RegExp(r'^\d{1,2}:\d{2}$').hasMatch(time)) return null;
+          final parts = time.split(':');
+          final hour = int.parse(parts[0]);
+          final minute = int.parse(parts[1]);
+          return DateTime(
+              baseDate.year, baseDate.month, baseDate.day, hour, minute);
+        }
 
-      if (closeDateTime.hour < openHour) {
-        adjustedClose = adjustedClose.add(Duration(days: 1));
+        final openYesterday = parseTime(yesterdayHours['open'], yesterday);
+        final closeYesterday = parseTime(yesterdayHours['close'], yesterday);
+
+        if (openYesterday != null && closeYesterday != null) {
+          final actualCloseYesterday = closeYesterday.isAfter(openYesterday)
+              ? closeYesterday
+              : closeYesterday.add(Duration(days: 1));
+          // If current time is within yesterday's hours, use yesterday's schedule
+          if (now.isAfter(openYesterday) &&
+              now.isBefore(actualCloseYesterday)) {
+            displayDate = yesterday;
+            weekdayIndex = yesterday.weekday;
+          }
+        }
       }
-
-      if (now.isAfter(adjustedClose)) {
-        displayDate = now.add(Duration(days: -1));
-        weekdayIndex = displayDate.weekday;
-      }
+      // If not open under yesterday's schedule, assume it's today's schedule
+    } else {
+      // If not open, default to today
     }
 
     final String weekday = DateFormat.EEEE().format(displayDate);
@@ -155,11 +161,12 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
       widget.club,
       weekdayIndex,
     );
-
     final String ageRestriction =
         ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormatted(
-            widget.club);
+      widget.club,
+    );
 
+    // Rest of your build method remains unchanged
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -182,9 +189,7 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
                   width: 100,
                   child: Text(
                     weekday,
-                    style: kTextStyleP2.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: kTextStyleP2.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
                 SizedBox(
@@ -200,12 +205,9 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
                               if (parts.length < 2) {
                                 return [TextSpan(text: openHours)];
                               }
-
                               final open = parts[0];
                               final close = parts[1];
-
                               final uplift = close.startsWith('0');
-
                               return [
                                 TextSpan(text: '$open - $close'),
                                 if (uplift)
@@ -228,14 +230,14 @@ class _ClubInfoHeaderBarState extends State<ClubInfoHeaderBar> {
                         ),
                 ),
                 SizedBox(
-                    child: openHours.isEmpty
-                        ? Text("")
-                        : Text(
-                            ageRestriction,
-                            style: kTextStyleP2.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )),
+                  child: openHours.isEmpty
+                      ? Text("")
+                      : Text(
+                          ageRestriction,
+                          style: kTextStyleP2.copyWith(
+                              fontWeight: FontWeight.w600),
+                        ),
+                ),
                 IconButton(
                   padding: EdgeInsets.zero,
                   constraints: BoxConstraints(),
