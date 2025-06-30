@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // TODO Remove 
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -23,12 +24,16 @@ class BottomSheetStatusScreen extends StatelessWidget {
                 FontAwesomeIcons.solidCircleDot,
                 color: primaryColor,
               ),
-              onTap: () {
+              onTap: () async {
                 Provider.of<GlobalProvider>(context, listen: false)
                     .setPartyStatusLocal(PartyStatus.yes);
                 Provider.of<GlobalProvider>(context, listen: false)
                     .userDataHelper
-                    .setCurrentUsersPartyStatus(status: PartyStatus.yes);
+                    .setCurrentUsersPartyStatus(
+                        status: PartyStatus.yes,
+                        sourceType: PartyStatusSourceType.manual,
+                        location:
+                            await LocationService.getUserGeoPointOrNull());
                 Navigator.of(context).pop();
               },
             ),
@@ -38,12 +43,16 @@ class BottomSheetStatusScreen extends StatelessWidget {
                 FontAwesomeIcons.solidCircleDot,
                 color: redAccent,
               ),
-              onTap: () {
+              onTap: () async {
                 Provider.of<GlobalProvider>(context, listen: false)
                     .setPartyStatusLocal(PartyStatus.no);
                 Provider.of<GlobalProvider>(context, listen: false)
                     .userDataHelper
-                    .setCurrentUsersPartyStatus(status: PartyStatus.no);
+                    .setCurrentUsersPartyStatus(
+                        status: PartyStatus.no,
+                        sourceType: PartyStatusSourceType.manual,
+                        location:
+                            await LocationService.getUserGeoPointOrNull());
                 Navigator.of(context).pop();
               },
             ),
@@ -53,12 +62,16 @@ class BottomSheetStatusScreen extends StatelessWidget {
                 FontAwesomeIcons.solidCircleDot,
                 color: grey,
               ),
-              onTap: () {
+              onTap: () async {
                 Provider.of<GlobalProvider>(context, listen: false)
                     .setPartyStatusLocal(PartyStatus.unsure);
                 Provider.of<GlobalProvider>(context, listen: false)
                     .userDataHelper
-                    .setCurrentUsersPartyStatus(status: PartyStatus.unsure);
+                    .setCurrentUsersPartyStatus(
+                        status: PartyStatus.unsure,
+                        sourceType: PartyStatusSourceType.manual,
+                        location:
+                            await LocationService.getUserGeoPointOrNull());
                 Navigator.of(context).pop();
               },
             ),

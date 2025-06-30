@@ -181,6 +181,7 @@ class NightMapState extends State<NightMap> with AutomaticKeepAliveClientMixin {
     await provider.initMapbox(map, context);
 
     await map.setBounds(CameraBoundsOptions(minZoom: 5.0));
+
     await map.attribution.updateSettings(AttributionSettings(
       position: OrnamentPosition.TOP_LEFT,
       marginLeft: 4.0,

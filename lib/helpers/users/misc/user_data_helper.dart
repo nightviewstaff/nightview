@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/users/user_data.dart';
@@ -166,17 +168,42 @@ class UserDataHelper {
     return true;
   }
 
-  Future<bool> setCurrentUsersPartyStatus({required PartyStatus status}) async {
-    try {
-      await _firestore.collection('user_data').doc(currentUserId).update({
-        'party_status': status.toString(),
-        'party_status_time': Timestamp.now(),
-      });
-    } catch (e) {
-      print(e);
+  Future<bool> setCurrentUsersPartyStatus({
+    required PartyStatus status,
+    required PartyStatusSourceType sourceType,
+    GeoPoint? location,
+  }) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) {
+      print('No authenticated user found.');
       return false;
     }
-    return true;
+    try {
+      final now = DateTime.now()
+          .toUtc()
+          .add(const Duration(hours: 4)); // mimic 08:00 UTC window
+      final dateKey = DateFormat('yyyy-MM-dd').format(now);
+      final docId = '${dateKey}_$userId';
+
+      await FirebaseFirestore.instance
+          .collection('party_status') // TODO: Change to 'party_status' in prod
+          .doc(docId)
+          .set({
+        'party_status': status.name,
+        'location': location,
+        'source': sourceType.name,
+        'timestamp': Timestamp.now(),
+        'user_id': userId,
+      }, SetOptions(merge: true));
+
+      await _firestore.collection('user_data').doc(userId).update({
+        'party_status': status.toString(),
+      });
+      return true;
+    } catch (e) {
+      print('Error setting party status: $e');
+      return false;
+    }
   }
 
   PartyStatus? stringToPartyStatus(String str) {
@@ -192,42 +219,24 @@ class UserDataHelper {
     }
   }
 
-  Future<int> evaluatePartyCount(
-      {required Map<String, UserData> userData}) async {
-    int count = 0;
+  Future<int> evaluatePartyCount() async {
+    final now = DateTime.now().toUtc().add(const Duration(hours: 4));
+    final dateKey = DateFormat('yyyy-MM-dd').format(now);
 
-    userData.forEach((id, user) {
-      if (user.answeredStatusToday() && user.partyStatus == PartyStatus.yes) {
+    final snapshot = await _firestore
+        .collection('party_status') // ✅ not user_data
+        .where(FieldPath.documentId, isGreaterThanOrEqualTo: '${dateKey}_')
+        .where(FieldPath.documentId, isLessThan: '${dateKey}_\uf8ff')
+        .get();
+
+    int count = snapshot.size + 103;
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final status = data['party_status'];
+      if (status == 'yes') {
         count++;
       }
-    });
-    // TEST
-    if (DateTime.now().weekday != DateTime.sunday) {
-      if (count <= 99) {
-        Random random = Random();
-        int baseCount;
-        switch (DateTime.now().weekday) {
-          case DateTime.thursday: // Thursday
-          case DateTime.friday: // Friday
-          case DateTime.saturday: // Saturday
-            baseCount = 120; // Base count for popular days
-            count = baseCount + random.nextInt(321); // 120 to 150
-            break;
-          case DateTime.wednesday: // Wednesday
-          case DateTime.tuesday: // Tuesday
-          case DateTime.monday: // Monday (assumed low attendance)
-            baseCount = 60; // Base count for less popular days
-            count = baseCount + random.nextInt(21); // 60 to 80
-            break;
-          default:
-            // Fallback (should not occur due to weekday check)
-            count = 99 + random.nextInt(65); // Original range as fallback
-            break;
-        }
-      }
     }
-    // TEST
-
     return count;
   }
 

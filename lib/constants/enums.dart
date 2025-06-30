@@ -1,9 +1,4 @@
-enum PageName {
-  nightMap,
-  explore,
-  nightSocial,
-  profile,
-}
+enum PageName { nightMap, explore, nightSocial, profile, admin }
 
 enum LoginRegistrationButtonType {
   filled,
@@ -73,11 +68,11 @@ enum MainOfferRedemptionPermisson {
   denied,
 }
 
-enum PartyStatus {
-  unsure,
-  yes,
-  no,
-}
+enum PartyStatus { yes, no, unsure }
+
+enum PlatformType { android, ios }
+
+enum PartyStatusSourceType { swipe, manual }
 
 enum OfferType {
   none,

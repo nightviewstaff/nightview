@@ -20,13 +20,17 @@ const kTextStyleH1SColor = TextStyle(
 const kTextStyleH2 = TextStyle(
   fontSize: 24.0,
   fontWeight: FontWeight.w600,
-  color: Colors.white,
+  color: white,
 );
-
+const kTextStyleAdmin = TextStyle(
+  fontSize: 22,
+  fontWeight: FontWeight.w600,
+  color: nightviewOrange,
+);
 const kTextStyleH3 = TextStyle(
   fontSize: 20.0,
   fontWeight: FontWeight.w600,
-  color: Colors.white,
+  color: white,
 );
 const kTextStyleH4 = TextStyle(
   fontSize: 18.0,

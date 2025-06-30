@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_side_sheet/modal_side_sheet.dart';
 import 'package:nightview/constants/button_styles.dart';
 import 'package:nightview/constants/colors.dart';
+import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
 import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
@@ -83,8 +84,9 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // title: Text(Provider.of<MainNavigationProvider>(context)
-        //     .currentPageNameAsString),
+        backgroundColor: navigationProvider.currentScreenIndex == 4
+            ? nightviewOrange
+            : black,
         leading: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(BalladefabrikkenMainScreen.id);
@@ -92,28 +94,31 @@ class _MainScreenState extends State<MainScreen> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.only(left: kSmallSpacerValue),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundImage: AssetImage('images/bolt_icon.jpg'),
               ),
             ),
           ),
         ),
-        title: Center(
-          child: SizedBox(
-            height: 200.0,
-            child: Image.asset('images/logo_text.png'),
-          ),
+        title: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              height: 150,
+              child: Image.asset('images/logo_text.png'),
+            ),
+          ],
         ),
         actions: [
-          LanguageSwitcher(),
-          SizedBox(width: 12.0),
+          const LanguageSwitcher(),
+          const SizedBox(width: 12.0),
           GestureDetector(
             onTap: () {
               showModalSideSheet(
                 context: context,
                 barrierDismissible: true,
                 withCloseControll: false,
-                body: SideSheetMainScreen(),
+                body: const SideSheetMainScreen(),
               );
             },
             child: Center(
@@ -127,6 +132,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ],
+        centerTitle: true,
       ),
       body: IndexedStack(
         index: navigationProvider.currentScreenIndex,
@@ -251,8 +257,8 @@ class _MainScreenState extends State<MainScreen> {
         'user_id': userId,
         'started_testing': Timestamp.now(),
         'platform': Theme.of(context).platform == TargetPlatform.iOS
-            ? 'ios'
-            : 'android',
+            ? PlatformType.ios
+            : PlatformType.android,
       });
 
       await showDialog(

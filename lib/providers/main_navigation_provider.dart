@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/never_used/night_offers/night_offers_main_screen.dart';
+import 'package:nightview/screens/admin/admin_screen.dart';
 import 'package:nightview/screens/night_map/night_map_main_screen.dart';
 import 'package:nightview/screens/night_social/night_social_main_screen.dart';
 import 'package:nightview/screens/profile/my_profile_main_screen.dart';
@@ -14,8 +15,9 @@ class MainNavigationProvider extends ChangeNotifier {
   final List<Widget> screens = [
     const NightMapMainScreen(), // index 0
     const ExploreScreen(), // index 1
-    const NightSocialMainScreen(), // index 3
-    const MyProfileMainScreen(), // index 4
+    const NightSocialMainScreen(), // index 2
+    const MyProfileMainScreen(), // index 3
+    const AdminScreen(), // index 4
   ];
 
   Widget get currentScreen => screens[_currentIndex];
@@ -38,6 +40,9 @@ class MainNavigationProvider extends ChangeNotifier {
 
       case PageName.profile:
         return 'Profile';
+
+      case PageName.admin:
+        return 'Admin';
     }
   }
 
@@ -51,6 +56,10 @@ class MainNavigationProvider extends ChangeNotifier {
         return 2;
       case PageName.profile:
         return 3;
+      case PageName.admin:
+        return 4;
+      default:
+        return 0;
     }
   }
 

@@ -1,9 +1,44 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class LocationService {
+  static Future<GeoPoint?> getUserGeoPointOrNull() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print('Location services are disabled.');
+        return null;
+      }
+
+      // Check and request permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        print('Location permission denied.');
+        return null;
+      }
+
+      // Get position (with timeout for safety)
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: Duration(seconds: 2),
+      );
+
+      return GeoPoint(position.latitude, position.longitude);
+    } catch (e) {
+      print('Location fetch failed: $e');
+      return null;
+    }
+  }
+
   static Future<LatLng> getUserLocation() async {
     // return LatLng(55.6761, 12.5683);
     try {

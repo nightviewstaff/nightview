@@ -11,6 +11,7 @@ import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/generated/l10n.dart';
+import 'package:nightview/locations/location_service.dart';
 import 'package:nightview/main.dart';
 import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/main_screen.dart';
@@ -63,8 +64,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
       });
     });
     // Get one message from SwipeMessages.
-    selectedMessage = SwipeMessages.messages()[
-        Random().nextInt(SwipeMessages.messages().length)];
+    final messages = SwipeMessages.messages();
+    selectedMessage = messages[Random().nextInt(messages.length)];
     // shake animation after 0,4 sec.
     Future.delayed(const Duration(milliseconds: 400)).then((_) {
       _shakeCardRight();
@@ -364,8 +365,10 @@ class _SwipeScreenState extends State<SwipeScreen> {
 //Default set status to yes if no response. TODO Needs to be done cleaner.
     final globalProvider = Provider.of<GlobalProvider>(context, listen: false);
     globalProvider.setPartyStatusLocal(PartyStatus.yes);
-    globalProvider.userDataHelper
-        .setCurrentUsersPartyStatus(status: PartyStatus.yes);
+    globalProvider.userDataHelper.setCurrentUsersPartyStatus(
+        status: PartyStatus.yes,
+        sourceType: PartyStatusSourceType.swipe,
+        location: await LocationService.getUserGeoPointOrNull());
 
     // Navigate to MainScreen
     Navigator.of(context).pushReplacementNamed(MainScreen.id);
@@ -384,7 +387,8 @@ class _SwipeScreenState extends State<SwipeScreen> {
     // isShaking = false;
   }
 
-  void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
+  void _swipeEnd(
+      int previousIndex, int targetIndex, SwiperActivity activity) async {
     // Only handle Swipe activities (ignore Unswipe, CancelSwipe, etc.)
     if (activity is Swipe) {
       final globalProvider =
@@ -393,21 +397,27 @@ class _SwipeScreenState extends State<SwipeScreen> {
         case AxisDirection.up: // YES
         case AxisDirection.right: // YES
           globalProvider.setPartyStatusLocal(PartyStatus.yes);
-          globalProvider.userDataHelper
-              .setCurrentUsersPartyStatus(status: PartyStatus.yes);
+          globalProvider.userDataHelper.setCurrentUsersPartyStatus(
+              status: PartyStatus.yes,
+              sourceType: PartyStatusSourceType.swipe,
+              location: await LocationService.getUserGeoPointOrNull());
           print('Swiped right: PartyStatus set to Yes');
           break;
         case AxisDirection.left: // NO
           globalProvider.setPartyStatusLocal(PartyStatus.no);
-          globalProvider.userDataHelper
-              .setCurrentUsersPartyStatus(status: PartyStatus.no);
+          globalProvider.userDataHelper.setCurrentUsersPartyStatus(
+              status: PartyStatus.no,
+              sourceType: PartyStatusSourceType.swipe,
+              location: await LocationService.getUserGeoPointOrNull());
           print('Swiped left: PartyStatus set to No');
           break;
 
         case AxisDirection.down: // UNSURE
           globalProvider.setPartyStatusLocal(PartyStatus.unsure);
-          globalProvider.userDataHelper
-              .setCurrentUsersPartyStatus(status: PartyStatus.unsure);
+          globalProvider.userDataHelper.setCurrentUsersPartyStatus(
+              status: PartyStatus.unsure,
+              sourceType: PartyStatusSourceType.swipe,
+              location: await LocationService.getUserGeoPointOrNull());
           print('Swiped up/down: PartyStatus set to Unsure');
           break;
       }

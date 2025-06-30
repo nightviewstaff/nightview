@@ -22,15 +22,18 @@ import 'package:nightview/helpers/users/misc/user_data_helper.dart';
 class GlobalProvider extends ChangeNotifier {
   Future<List<UserData>>? _friendsFuture;
   GlobalProvider() {
-    userDataHelper = UserDataHelper(
-      onReceive: (data) {
-        // Extract isAdmin from the received data
-        _isAdmin = data?['isAdmin'] as bool? ?? false;
-        userDataHelper.evaluatePartyCount(userData: data ?? {}).then((count) {
-          _partyCount = count;
+    userDataHelper = UserDataHelper(onReceive: (data) {
+      refreshAdminStatus();
+      userDataHelper.evaluatePartyCount().then((count) {
+        _partyCount = count;
+        notifyListeners();
+      });
+    });
 
-          notifyListeners();
-        });
+    clubDataHelper = ClubDataHelper(
+      onReceive: (data) {
+        clubDataHelper.evaluateVisitors();
+        notifyListeners();
       },
     );
 
@@ -81,7 +84,7 @@ class GlobalProvider extends ChangeNotifier {
 
   // TEST //
 
-  bool _isAdmin = false; // Cached admin status
+  bool _isAdmin = false; // Default to false
 
   bool get isAdmin => _isAdmin;
 
@@ -90,16 +93,20 @@ class GlobalProvider extends ChangeNotifier {
     String? userId = userDataHelper.currentUserId;
     if (userId == null) return;
 
+    print(userId);
+    print("userId");
+    DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+        .instance
+        .collection('user_data')
+        .doc(userId)
+        .get();
     try {
-      DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await firestore.collection('user_data').doc(userId).get();
-      if (snapshot.exists) {
-        _isAdmin = snapshot.data()?['isAdmin'] as bool? ?? false;
-        notifyListeners();
-      }
+      _isAdmin = userDoc.get('is_admin') as bool? ?? false;
     } catch (e) {
-      print("Error refreshing admin status: $e");
+      print('Error accessing is_admin: $e');
+      _isAdmin = false; // Treat missing field as false
     }
+    notifyListeners();
   }
 
   ClubData get chosenClub => _chosenClub!;

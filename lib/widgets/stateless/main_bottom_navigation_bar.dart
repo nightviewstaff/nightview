@@ -6,7 +6,7 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/generated/l10n.dart';
 import 'package:nightview/providers/main_navigation_provider.dart';
 import 'package:nightview/providers/night_map_provider.dart';
-import 'package:nightview/screens/admin_screen.dart';
+import 'package:nightview/screens/admin/admin_screen.dart';
 import 'package:provider/provider.dart';
 
 class MainBottomNavigationBar extends StatelessWidget {
@@ -14,68 +14,68 @@ class MainBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clubDataHelper =
-        Provider.of<NightMapProvider>(context, listen: false).clubDataHelper;
+    final isAdmin = Provider.of<GlobalProvider>(context).isAdmin;
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        BottomNavigationBar(
-          type:
-              BottomNavigationBarType.fixed, // ✅ ensures all items are labeled
-          selectedFontSize: 12,
-          unselectedFontSize: 10, // ✅ smaller for unselected
-          selectedItemColor: primaryColor,
-          unselectedItemColor: secondaryColor,
-          showUnselectedLabels: true,
-          showSelectedLabels: true,
-          currentIndex:
-              Provider.of<MainNavigationProvider>(context).currentScreenIndex,
-          iconSize: 18, // TODO constant in "values.dart"
-          items: [
-            BottomNavigationBarItem(
-              icon: Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  const Icon(defaultMap), // Base icon
-                ],
-              ),
-              // TODO civilized colors at some point?
-              label: S.of(context).map,
-            ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search_sharp), label: 'Explore'),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.people_alt),
-              label: S.of(context).social,
-            ),
-            BottomNavigationBarItem(
-                icon: const Icon(Icons.person_4_rounded),
-                label: S.of(context).profile)
-          ],
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                Provider.of<MainNavigationProvider>(context, listen: false)
-                    .setScreen(newPage: PageName.nightMap);
-                break;
-              case 1:
-                Provider.of<MainNavigationProvider>(context, listen: false)
-                    .setScreen(newPage: PageName.explore);
-                break;
-              case 2:
-                Provider.of<MainNavigationProvider>(context, listen: false)
-                    .setScreen(newPage: PageName.nightSocial);
-                break;
-              case 3:
-                Provider.of<MainNavigationProvider>(context, listen: false)
-                    .setScreen(newPage: PageName.profile);
-              default:
-                print('ERROR - BUTTON DOES NOT EXIST');
-                break;
-            }
-          },
+    final navProvider = Provider.of<MainNavigationProvider>(context);
+    final currentIndex = navProvider.currentScreenIndex;
+
+    final items = <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: const Icon(defaultMap),
+        label: S.of(context).map,
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.search_sharp),
+        label: 'Explore',
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.people_alt),
+        label: S.of(context).social,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.person_4_rounded),
+        label: S.of(context).profile,
+      ),
+    ];
+    if (isAdmin) {
+      items.add(
+        const BottomNavigationBarItem(
+          icon: Icon(
+            Icons.shield,
+            color: nightviewOrange,
+          ),
+          label: 'Admin',
         ),
+      );
+    }
+
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      selectedFontSize: 12,
+      unselectedFontSize: 10,
+      selectedItemColor: primaryColor,
+      unselectedItemColor: secondaryColor,
+      showUnselectedLabels: true,
+      showSelectedLabels: true,
+      currentIndex: currentIndex,
+      iconSize: 18,
+      items: items,
+      onTap: (index) {
+        if (index == 0) {
+          navProvider.setScreen(newPage: PageName.nightMap);
+        } else if (index == 1) {
+          navProvider.setScreen(newPage: PageName.explore);
+        } else if (index == 2) {
+          navProvider.setScreen(newPage: PageName.nightSocial);
+        } else if (index == 3) {
+          navProvider.setScreen(newPage: PageName.profile);
+        } else if (isAdmin && index == 4) {
+          navProvider.setScreen(newPage: PageName.admin);
+        }
+      },
+    );
+  }
+}
 
         // Consumer<GlobalProvider>(
         //   builder: (context, provider, child) {
@@ -166,7 +166,3 @@ class MainBottomNavigationBar extends StatelessWidget {
           },
         ),
         */
-      ],
-    );
-  }
-}
