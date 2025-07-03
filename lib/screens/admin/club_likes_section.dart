@@ -50,6 +50,32 @@ class _ClubLikesSectionState extends State<ClubLikesSection> {
           ],
         ),
 
+        // 🔸 Column Labels
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text('Name', style: kTextStyleP1),
+              ),
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: Text('Amount', style: kTextStyleP1),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Location', style: kTextStyleP1),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // Clubs Scrollable List
         StreamBuilder<QuerySnapshot>(
           stream:
@@ -107,20 +133,23 @@ class _ClubLikesSectionState extends State<ClubLikesSection> {
                         child: Row(
                           children: [
                             Expanded(
-                              flex: 3,
+                              flex: 2,
                               child: Text(
                                 club['name'].toString(),
                                 style: kTextStyleP1.copyWith(
-                                    fontWeight: FontWeight.w600),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             Expanded(
-                              flex: 1,
-                              child: Text(
-                                '${club['likes']}',
-                                style: kTextStyleP1.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: nightviewOrange,
+                              flex: 2,
+                              child: Center(
+                                child: Text(
+                                  '${club['likes']}',
+                                  style: kTextStyleP1.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: nightviewOrange,
+                                  ),
                                 ),
                               ),
                             ),
