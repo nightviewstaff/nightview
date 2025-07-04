@@ -87,3 +87,16 @@ enum FriendRequestStatus {
 }
 
 enum FriendFilterType { exclude, include }
+
+enum SubscriptionTypeClub {
+  free,
+  premium,
+}
+
+enum SubscriptionTypeUser {
+  free,
+  premium,
+  reviewer,
+  admin,
+  tester,
+}

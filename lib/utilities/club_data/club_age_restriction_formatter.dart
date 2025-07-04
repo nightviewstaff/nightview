@@ -14,7 +14,7 @@ class ClubAgeRestrictionFormatter {
   static String displayClubAgeRestrictionFormattedShort(ClubData club) {
     // Never used
     final ageRestriction = formatAgeRestriction(club);
-    return ageRestriction == '' ? '??+' : ageRestriction;
+    return ageRestriction == '' ? '' : ageRestriction;
   }
 
   static String displayClubAgeRestrictionFormattedOnlyAge(ClubData club) {

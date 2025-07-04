@@ -17,6 +17,7 @@ class ClubData {
   int visitors;
   // double rating;
   int rating;
+  int likes;
 
   final double lat;
   final double lon;
@@ -50,5 +51,6 @@ class ClubData {
       this.hasMoodImages = false,
       this.visitors = 0,
       this.tags,
-      this.description});
+      this.description,
+      this.likes = 0});
 }

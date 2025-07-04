@@ -23,6 +23,7 @@ import 'package:nightview/screens/night_map/night_map.dart';
 import 'package:nightview/screens/night_map/night_map_main_offer_screen.dart';
 import 'package:nightview/screens/night_map/night_map_main_screen.dart';
 import 'package:nightview/screens/utility/emoji_priority_helper.dart';
+import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
 import 'package:nightview/utilities/club_data/club_name_formatter.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utility/utility.dart';
@@ -222,21 +223,28 @@ class ClubBottomSheet {
                             );
                           },
                           child: Container(
-                            alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 9.0, vertical: 3.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
-                              border: Border.all(
-                                color: white,
-                              ),
+                              border: Border.all(color: white),
                             ),
-                            child: Text(
-                              ClubOpeningHoursFormatter
-                                  .displayClubOpeningHoursTodaySimple(club),
-                              style:
-                                  const TextStyle(fontSize: 13, color: white),
-                              textAlign: TextAlign.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  ClubOpeningHoursFormatter
+                                      .displayClubOpeningHoursTodaySimple(club),
+                                  style: const TextStyle(
+                                      fontSize: 13, color: white),
+                                ),
+                                Text(
+                                  ClubAgeRestrictionFormatter
+                                      .displayClubAgeRestrictionFormatted(club),
+                                  style: const TextStyle(
+                                      fontSize: 13, color: white),
+                                ),
+                              ],
                             ),
                           ),
                         ),

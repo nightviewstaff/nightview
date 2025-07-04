@@ -27,8 +27,11 @@ class ClubCoverImage extends StatelessWidget {
       future: _getCoverImageUrl(clubId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
+          // While loading, show a placeholder or loading indicator
+          return Container(
             height: 200,
+            color: black, // Placeholder color
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -46,7 +49,7 @@ class ClubCoverImage extends StatelessWidget {
 
         // Fallback to solid black background
         return Container(
-          height: 200,
+          height: 80,
           color: black,
         );
       },

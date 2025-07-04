@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/models/users/user_data.dart';
+import 'package:nightview/utility/utility.dart';
 
 class UserDataHelper {
   // Needs refac
@@ -26,8 +27,9 @@ class UserDataHelper {
           final data = user.data();
           userData[user.id] = UserData(
             id: user.id,
-            firstName: data['first_name'] ?? '',
-            lastName: data['last_name'] ?? '',
+            firstName:
+                Utility.formatString(data['first_name'].toString()) ?? '',
+            lastName: Utility.formatString(data['last_name'].toString()) ?? '',
             mail: data['mail'] ?? '',
             phone: data['phone'] ?? '',
             birthdayDay: data['birthdate_day'] ?? 1,
@@ -44,7 +46,10 @@ class UserDataHelper {
                 data['party_status_time']?.toDate() ?? DateTime(2000),
             favoriteClubs:
                 List<Map<String, dynamic>>.from(data['favorite_clubs'] ?? []),
+            gender: data['gender']?.toString().toLowerCase(),
           );
+          // Print the user data for debugging
+          print('User ${user.id} processed: ${userData[user.id]}');
         } catch (e) {
           print('Error processing user ${user.id}: $e');
         }
@@ -107,6 +112,7 @@ class UserDataHelper {
         'birthdate_month': birthdateMonth,
         'birthdate_year': birthdateYear,
         'favorite_clubs': [],
+        'created_at': Timestamp.now(),
       });
       if (currentUserId == null) {
         print('Error: No authenticated user found');

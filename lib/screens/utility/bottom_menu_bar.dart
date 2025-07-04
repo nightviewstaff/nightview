@@ -26,16 +26,16 @@ class ProfileMenuDropdown extends StatelessWidget {
         side: BorderSide(color: grey, width: 0.7),
       ),
       itemBuilder: (context) => [
-        // PopupMenuItem(
-        //   value: 0,
-        //   child: Row(
-        //     children: [
-        //       Icon(Icons.settings, color: primaryColor, size: 18),
-        //       SizedBox(width: 10),
-        //       Text("Settings", style: kTextStyleP2),
-        //     ],
-        //   ),
-        // ),
+        PopupMenuItem(
+          value: 0,
+          child: Row(
+            children: [
+              Icon(Icons.settings, color: primaryColor, size: 18),
+              SizedBox(width: 10),
+              Text("Settings", style: kTextStyleP2),
+            ],
+          ),
+        ),
         PopupMenuItem(
           value: 1,
           child: Row(

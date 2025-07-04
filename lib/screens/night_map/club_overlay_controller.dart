@@ -7,6 +7,8 @@ import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/models/clubs/club_data.dart';
 import 'package:nightview/screens/clubs/club_bottom_sheet.dart';
 import 'package:nightview/screens/night_map/annotation_click_listener.dart';
+import 'package:nightview/utilities/club_data/club_age_restriction_formatter.dart';
+import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 
 class ClubOverlayController {
   final MapboxMap map;
@@ -53,20 +55,59 @@ class ClubOverlayController {
         final circular = img.copyCropCircle(resized);
         final imageData = Uint8List.fromList(img.encodePng(circular));
 
-        final annotation = await _pointMgr?.create(PointAnnotationOptions(
+        final mainAnnotation = await _pointMgr?.create(PointAnnotationOptions(
           geometry: Point(coordinates: Position(club.lon, club.lat)),
           image: imageData,
           iconSize: 1.0,
           textColor: secondaryColor.value,
-          textHaloColor: primaryColor.value,
-          textHaloWidth: 1.5,
+          textHaloColor: ClubOpeningHoursFormatter.isClubOpen(club)
+              ? primaryColor.value
+              : redAccent.value,
+          textHaloWidth: 1.0,
+          textField:
+              "${club.typeOfClubImg}     ${ClubOpeningHoursFormatter.displayClubOpeningHoursTodaySimple(club)}  ${ClubAgeRestrictionFormatter.displayClubAgeRestrictionFormattedShort(club)}",
+          textAnchor: TextAnchor.TOP,
+          textOffset: [0, 2.0],
         ));
 
-        if (annotation != null) {
-          annotationMap[club.id] = annotation;
+        if (mainAnnotation != null) {
+          annotationMap[club.id] = mainAnnotation;
+        }
+
+        // 🔥 Add flame icon if crowded
+        double ratio = club.totalPossibleAmountOfVisitors == 0
+            ? 0
+            : club.visitors / club.totalPossibleAmountOfVisitors;
+
+        String? flameAsset;
+        if (ratio >= 0.95) {
+          flameAsset = 'images/effects/flame_large.png';
+        } else if (ratio >= 0.85) {
+          flameAsset = 'images/effects/flame_medium.png';
+        } else if (ratio >= 0.7) {
+          flameAsset = 'images/effects/flame_small.png';
+        }
+
+        if (flameAsset != null) {
+          final flameData = await rootBundle.load(flameAsset);
+          final flameBytes = flameData.buffer.asUint8List();
+          final flameDecoded = img.decodeImage(flameBytes);
+          if (flameDecoded == null)
+            throw Exception("Flame decode failed for $flameAsset");
+          final flameResized =
+              img.copyResize(flameDecoded, width: 70, height: 70);
+          final flamePng = Uint8List.fromList(img.encodePng(flameResized));
+
+          await _pointMgr?.create(PointAnnotationOptions(
+            geometry: Point(coordinates: Position(club.lon, club.lat)),
+            image: flamePng,
+            iconSize: 1.0,
+            iconAnchor: IconAnchor.BOTTOM,
+            iconOffset: [0, -55], // Position flame above club icon
+          ));
         }
       } catch (e) {
-        print("⚠️ Failed to load local asset for club ${club.id}: $e");
+        print("⚠️ Failed to process club ${club.id}: $e");
       }
     }
 
@@ -74,7 +115,7 @@ class ClubOverlayController {
   }
 
   Future<void> _unloadRemainingLogos(List<ClubData> clubs) async {
-    const batchSize = 10;
+    const batchSize = 20;
 
     for (int i = 0; i < clubs.length; i += batchSize) {
       final batch = clubs.skip(i).take(batchSize);

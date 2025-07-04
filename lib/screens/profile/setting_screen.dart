@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
       return Center(child: Text("User not logged in"));
     }
     String birthday =
-        "${user.birthdayDay.toString().padLeft(2, '0')}/${user.birthdayMonth.toString().padLeft(2, '0')}/${user.birthdayYear}";
+        "${user.birthdayDay.toString().padLeft(2, '0')}-${user.birthdayMonth.toString().padLeft(2, '0')}-${user.birthdayYear}";
     IconData? genderIcon;
     if (user.gender?.toLowerCase() == "m") {
       genderIcon = defaultMaleIcon;
@@ -61,24 +61,37 @@ class SettingsScreen extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: userTile("Gender", "",
-                    icon: genderIcon,
-                    onTap: () => _editField(
-                        context, "Gender", user.gender ?? '', 'gender')),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                  child: userTile("Phone", user.phone,
-                      onTap: () => _editField(
-                          context, "Phone", user.phone ?? '', 'phone'))),
-              SizedBox(width: 8),
-              Expanded(
+                flex: 2,
                 child: userTile(
                   "Birthday",
                   birthday,
                   onTap: () => _editField(
                       context, "Birthday", birthday, 'birthdate_day'),
                 ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                flex: 2,
+                child: userTile(
+                  "Phone",
+                  user.phone != null && user.phone!.length > 3
+                      ? '${user.phone!.substring(0, 3)} ${_formatPhoneNumber(user.phone!.substring(3))}'
+                      : user.phone,
+                  onTap: () => _editField(
+                    context,
+                    "Phone",
+                    user.phone,
+                    'phone',
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                flex: 1,
+                child: userTile("Gender", "",
+                    icon: genderIcon,
+                    onTap: () => _editField(
+                        context, "Gender", user.gender ?? '', 'gender')),
               ),
             ],
           ),
@@ -92,7 +105,7 @@ class SettingsScreen extends StatelessWidget {
             value: true, // Always on for visual purposes
             onChanged: (_) {}, // No-op for now
             title: Text(
-              "Share My Location With Friends",
+              "Share location with friends",
               style: kTextStyleP1,
             ),
             activeColor: primaryColor,
@@ -105,7 +118,7 @@ class SettingsScreen extends StatelessWidget {
             thickness: 0.2,
             height: 30,
           ),
-          sectionHeader("Notification"),
+          sectionHeader("Notifications"),
           Consumer<GlobalProvider>(
             builder: (context, provider, child) {
               return FutureBuilder<List<ClubData>>(
@@ -195,6 +208,9 @@ class SettingsScreen extends StatelessWidget {
                     color: value.isEmpty ? grey : white,
                   ),
                   textAlign: TextAlign.center,
+                  overflow:
+                      TextOverflow.ellipsis, // Handles overflow gracefully
+                  softWrap: false,
                 ),
               ),
             ],
@@ -238,4 +254,13 @@ class SettingsScreen extends StatelessWidget {
       // Optionally show a Snackbar or update local cache
     }
   }
+}
+
+String _formatPhoneNumber(String number) {
+  final buffer = StringBuffer();
+  for (int i = 0; i < number.length; i++) {
+    if (i != 0 && i % 2 == 0) buffer.write(' ');
+    buffer.write(number[i]);
+  }
+  return buffer.toString();
 }

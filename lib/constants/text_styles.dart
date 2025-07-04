@@ -61,7 +61,7 @@ const kTextStyleP3 = TextStyle(
 
 const kTextStyleP4 = TextStyle(
   fontSize: 8.0,
-  color: Colors.white,
+  color: white,
 );
 
 final TextStyle linkTextStyle = TextStyle(

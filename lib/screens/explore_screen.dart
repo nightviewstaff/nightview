@@ -6,6 +6,7 @@ import 'package:marquee/marquee.dart';
 import 'package:nightview/constants/colors.dart';
 import 'package:nightview/constants/enums.dart';
 import 'package:nightview/constants/icons.dart';
+import 'package:nightview/constants/text_styles.dart';
 import 'package:nightview/constants/values.dart';
 import 'package:nightview/helpers/clubs/club_data_helper.dart';
 import 'package:nightview/locations/location_service.dart';
@@ -18,6 +19,7 @@ import 'package:nightview/screens/utility/club_search_widget.dart';
 import 'package:nightview/screens/utility/club_search_widget_explore.dart';
 import 'package:nightview/screens/utility/emoji_priority_helper.dart';
 import 'package:nightview/utilities/advanced_search_filter.dart';
+import 'package:nightview/utilities/club_data/club_distance_calculator.dart';
 import 'package:nightview/utilities/club_data/club_name_formatter.dart';
 import 'package:nightview/utilities/club_data/club_opening_hours_formatter.dart';
 import 'package:nightview/utilities/club_data/club_type_formatter.dart';
@@ -102,6 +104,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
     score += RegExp(r'^https?://').hasMatch(club.logo) ? 3 : -2;
     score += (club.tags?.length ?? 0).clamp(0, 3);
 
+    score += club.likes > 9
+        ? 1
+        : club.likes > 49
+            ? 2
+            : club.likes > 149
+                ? 3
+                : club.likes > 249
+                    ? 4
+                    : club.likes > 499
+                        ? 5
+                        : club.likes > 749
+                            ? 6
+                            : club.likes > 999
+                                ? 7
+                                : club.likes > 1499
+                                    ? 8
+                                    : club.likes > 1999
+                                        ? 9
+                                        : club.likes > 2499
+                                            ? 10
+                                            : club.likes > 4999
+                                                ? 15
+                                                : 0;
 // If TILBUD LOTS
 
     score += club.hasMoodImages ? 5 : -2;
@@ -189,7 +214,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           onTap: () =>
               Navigator.of(context).pop(), // Dismiss when tapping outside
           child: Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: transparent,
             body: Center(
               child: GestureDetector(
                 onTap: () {}, // Prevent tap propagation
@@ -891,7 +916,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           }
 
           ClubData club = relaxedClubs[index - 1];
-          return buildClubCard(club);
+          return buildClubCard(club, userLocation);
         },
         childCount: relaxedClubs.isEmpty ? 1 : relaxedClubs.length + 1,
       );
@@ -918,7 +943,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return SliverChildBuilderDelegate(
       (context, index) {
         ClubData club = filteredClubs[index];
-        return buildClubCard(club);
+        return buildClubCard(club, userLocation);
       },
       childCount: filteredClubs.length,
     );
@@ -926,10 +951,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   /// Fetches mood image URLs from Firestore based on club ID
   Future<List<String>> fetchMoodImages(String clubId) async {
+    const bool isTestMode = true;
+
+    if (isTestMode) {
+      // Return local mock images
+      return List.generate(15, (index) => 'images/swipe/${index + 1}.png');
+    }
+
+    // Actual Firestore fetch
     final querySnapshot = await FirebaseFirestore.instance
         .collection('mood_images')
         .where('club_id', isEqualTo: clubId)
         .get();
+
     return querySnapshot.docs.map((doc) => doc['url'] as String).toList();
   }
 
@@ -944,11 +978,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget buildClubCard(ClubData club) {
+  Widget buildClubCard(ClubData club, LatLng userLocation) {
     return GestureDetector(
       onTap: () {
         // DONT GO TO MAP! TODO
-        ClubBottomSheet.showClubSheet(context: context, club: club);
+        ClubBottomSheet.showClubSheet(
+            context: context, club: club, moveMap: false);
       },
       child: Center(
         child: Container(
@@ -970,26 +1005,53 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            const SizedBox(width: 25),
-                            Text(
-                              // if(!club.displayname)
-                              ClubNameFormatter.formatClubName(club.name),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                              ),
+                            const SizedBox(
+                                width:
+                                    25), // ✅ Now this spacing works as expected
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    ClubNameFormatter.formatClubName(club.name),
+                                    style: kTextStyleH3ToP1),
+                                Row(
+                                  children: [
+                                    Text(
+                                        ClubDistanceCalculator
+                                            .displayDistanceToClub(
+                                          userLat: userLocation.latitude,
+                                          userLon: userLocation.longitude,
+                                          club: club,
+                                        ),
+                                        style: kTextStyleP4.copyWith(
+                                            color: lighterBlack)),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text('${club.rating.toStringAsFixed(1)} ⭐',
+                                        style: kTextStyleP4),
+                                  ],
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        if (club.ageRestriction >= 18)
-                          Text(
-                            "${club.ageRestriction}+",
-                            style: const TextStyle(
-                              color: white,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (club.ageRestriction >= 18)
+                              Text(
+                                "${club.ageRestriction}+",
+                                style: kTextStyleP1,
+                              ),
+                            Text(
+                              ClubOpeningHoursFormatter
+                                  .displayClubOpeningHoursTodaySimple(club),
+                              style: kTextStyleP4.copyWith(color: lighterBlack),
                             ),
-                          ),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1128,8 +1190,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                   image: DecorationImage(
-                                    image: NetworkImage(imageUrl),
+                                    image: imageUrl.startsWith('http')
+                                        ? NetworkImage(imageUrl)
+                                        : AssetImage(imageUrl) as ImageProvider,
                                     fit: BoxFit.cover,
+                                  ),
+                                  border: Border.all(
+                                    color: grey,
+                                    width: 0.8,
                                   ),
                                 ),
                               );
@@ -1150,6 +1218,27 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   backgroundImage: NetworkImage(club.logo),
                 ),
               ),
+              //   Positioned(
+              //   top: -20,
+              //   left: -20,
+              //   child: Container(
+              //     width: 52, // 2 * radius
+              //     height: 52,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       border: Border.all(
+              //           color: ClubOpeningHoursFormatter.isClubOpen(club)
+              //               ? primaryColor
+              //               : redAccent,
+              //           width: 1),
+              //     ),
+              //     child: CircleAvatar(
+              //       radius: 26,
+              //       backgroundColor: transparent,
+              //       backgroundImage: NetworkImage(club.logo),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -1159,6 +1248,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isNightOfferToday = context.watch<GlobalProvider>().isNightOfferToday;
     return FutureBuilder<LatLng?>(
       future: LocationService.getUserLocation(),
       builder: (context, snapshot) {
@@ -1200,7 +1290,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ),
                   ),
                 ),
-                if (2 < 2) const SliverToBoxAdapter(child: OfferImageGrid()),
+                if (isNightOfferToday)
+                  const SliverToBoxAdapter(child: OfferImageGrid()),
                 SliverList(delegate: buildClubListDelegate(userLocation)),
               ],
             ),

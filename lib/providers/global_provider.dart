@@ -176,6 +176,35 @@ class GlobalProvider extends ChangeNotifier {
     }
   }
 
+  bool _isNightOfferToday = false; //TODO Placeholder
+
+  bool get isNightOfferToday => _isNightOfferToday;
+
+  Future<void> refreshNightOfferToday() async {
+    final firestore = FirebaseFirestore.instance;
+
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+
+    try {
+      final snapshot = await firestore
+          .collection('night_offers')
+          .where('timestamp',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
+          .where('timestamp', isLessThan: Timestamp.fromDate(todayEnd))
+          .limit(1)
+          .get();
+
+      _isNightOfferToday = snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking night_offers: $e');
+      _isNightOfferToday = false;
+    }
+
+    notifyListeners();
+  }
+
   void setChosenClub(ClubData newValue) {
     _chosenClub = newValue;
     notifyListeners();

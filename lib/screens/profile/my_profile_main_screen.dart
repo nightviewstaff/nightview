@@ -15,6 +15,8 @@ import 'package:nightview/providers/global_provider.dart';
 import 'package:nightview/screens/night_social/find_new_friends_screen.dart';
 import 'package:nightview/screens/profile/other_profile_main_screen.dart';
 import 'package:nightview/screens/utility/bottom_menu_bar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nightview/screens/night_social/utility/image_upload_screen.dart';
 
 import 'package:nightview/widgets/stateless/language_switcher.dart';
 import 'package:provider/provider.dart';
@@ -359,8 +361,68 @@ class _MyProfileMainScreenState extends State<MyProfileMainScreen> {
                           children: [
                             //TODO IF LESS THAN 6 IMAGES
                             GestureDetector(
-                              onTap: () {
-                                // Add upload logic
+                              onTap: () async {
+                                final picker = ImagePicker();
+
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: black,
+                                  builder: (ctx) => SafeArea(
+                                    child: Wrap(
+                                      children: [
+                                        ListTile(
+                                          leading: const Icon(Icons.camera_alt,
+                                              color: primaryColor),
+                                          title: const Text('Take a photo',
+                                              selectionColor: white),
+                                          onTap: () async {
+                                            final image =
+                                                await picker.pickImage(
+                                                    source: ImageSource.camera);
+                                            if (image != null &&
+                                                context.mounted) {
+                                              Navigator.pop(ctx);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      ImageUploadScreen(
+                                                          image: image),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(
+                                              Icons.photo_library,
+                                              color: secondaryColor),
+                                          title: const Text(
+                                              'Choose from gallery',
+                                              selectionColor: white),
+                                          onTap: () async {
+                                            final image =
+                                                await picker.pickImage(
+                                                    source:
+                                                        ImageSource.gallery);
+                                            if (image != null &&
+                                                context.mounted) {
+                                              Navigator.pop(ctx);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      ImageUploadScreen(
+                                                          image: image),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(

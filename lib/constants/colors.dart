@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Color(0xFF00AD89);
-const secondaryColor = Color(0xFF591C61); //TODO
+const primaryColor = Color(0xFF00AD89); // 255,0,173,137
+const secondaryColor = Color(0xFF591C61); // 255,89,28,97
 const transparent = Colors.transparent;
 
 const secondaryColorLight = Colors.deepPurpleAccent;
-const nightviewOrange = Colors.deepOrange;
+const nightviewOrange = Colors.deepOrange; // 255,255,87,34
 
-// const secondaryColor = Colors.deepOrange;
 // const red = Color(value);
 
 const black = Colors.black;
