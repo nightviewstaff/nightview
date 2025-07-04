@@ -43,19 +43,19 @@ class SettingsScreen extends StatelessWidget {
         children: [
           sectionHeader("Personal"),
           userTile("Email", user.mail,
-              onTap: () => _editField(context, "Email", user.mail, 'mail')),
+              onTap: () => _editField(context, "Email", user.mail, 'Email')),
           Row(
             children: [
               Expanded(
                 child: userTile("First Name", user.firstName,
-                    onTap: () => _editField(context, "First Name",
-                        user.firstName ?? '', 'First Name')),
+                    onTap: () => _editField(
+                        context, "First Name", user.firstName, 'First Name')),
               ),
               SizedBox(width: 16),
               Expanded(
                   child: userTile("Last Name", user.lastName,
-                      onTap: () => _editField(context, "Last Name",
-                          user.lastName ?? '', 'Last Name'))),
+                      onTap: () => _editField(
+                          context, "Last Name", user.lastName, 'Last Name'))),
             ],
           ),
           Row(
